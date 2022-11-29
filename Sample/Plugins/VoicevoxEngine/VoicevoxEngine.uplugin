@@ -1,0 +1,27 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1",
+	"FriendlyName": "VoicevoxEngine",
+	"Description": "Voicevox Engine for UnrealEngine",
+	"Category": "TextToSpeech",
+	"CreatedBy": "YuukiOgino",
+	"CreatedByURL": "https://twitter.com/YuukiOgino",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "VoicevoxEngine",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"WhitelistPlatforms" : [
+				"Win64"
+			]
+		}
+	]
+}

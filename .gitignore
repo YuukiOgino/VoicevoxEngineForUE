@@ -1,5 +1,9 @@
 # Visual Studio 2015 user specific files
 .vs/
+.vscode/
+
+# JetBrains Rider user specific files
+.idea/
 
 # Compiled Object files
 *.slo
@@ -48,6 +52,19 @@ SourceArt/**/*.tga
 # Binary Files
 Binaries/*
 Plugins/*/Binaries/*
+Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/VoicevoxCore/*
+!Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/VoicevoxCore/README.md
+Plugins/*/Intermediate/*
+Plugins/Developer/*
+Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Private/*
+Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/*
+
+!Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Private/VoicevoxToolTipTextSpeech.cpp
+!Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Private/VoicevoxToolTipTextSpeechAction.cpp
+!Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Private/VoicevoxToolTipTextSpeechCommands.cpp
+!Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/VoicevoxToolTipTextSpeech.h
+!Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/VoicevoxToolTipTextSpeechActions.h
+!Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/VoicevoxToolTipTextSpeechCommands.h
 
 # Builds
 Build/*
@@ -72,3 +89,5 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+*.code-workspace
