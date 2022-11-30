@@ -22,7 +22,7 @@ VOICEVOX COREのReadMEに従って、最低限CPUモードの動作に必要な�
 
 次に[Open JTalk から配布されている辞書ファイル](https://sourceforge.net/projects/open-jtalk/files/Dictionary/open_jtalk_dic-1.11/open_jtalk_dic_utf_8-1.11.tar.gz/download?use_mirror=jaist) をダウンロードして、上記コアライブラリを展開したディレクトリに展開してください。
 
-最後に[ONNX Runtime](https://github.com/microsoft/onnxruntime/releases/tag/v1.13.1)をダウンロード、、上記コアライブラリを展開したディレクトリに展開してください。
+最後に[ONNX Runtime](https://github.com/microsoft/onnxruntime/releases/tag/v1.13.1)をダウンロード、上記コアライブラリを展開したディレクトリに展開してください。
 
 ## プラグインへ展開
 
@@ -39,7 +39,7 @@ Plugins\VoicevoxEngine\Source\ThirdParty\VoicevoxCore\x64\VoicevoxCore
 あとはuprojectを起動してビルドが通れば成功です。
 
 # 各クラスについて
-Qiitaに記事を公開していますので、そちらを見てください。
+[Qiitaに記事を公開しています](https://qiita.com/YuukiOgino/items/bc3ab31de4b1d0689625)ので、そちらを見てください。
 
 # 現在判明している不具合
 
@@ -59,11 +59,11 @@ Qiitaに記事を公開していますので、そちらを見てください。
   - こちら原因調査中です。
 
 # 利用規約
-VOICEVOX Engine for UE5の利用規約は[VOICEVOXのホームページに記載された利用規約](https://voicevox.hiroshiba.jp/term)を継承するため、利用前に必ず一読してください。
+VOICEVOX Engine for UE5の利用規約は[VOICEVOXのホームページに記載された利用規約](https://voicevox.hiroshiba.jp/term)を継承するため、利用前に必ず一読してください。<br/>
 各スピーカーモデルのライセンスは[VOICEVOX公式ホームページのキャラクター一覧](https://voicevox.hiroshiba.jp/)を参照してください。
 
 # 問い合わせに関して
-VOICEVOX Engine for UE5プラグインに関して質問があれば、[Twitter](https://twitter.com/YuukiOgino)及びQiitaのコメント欄で聞いてもらうか、[issue](https://github.com/YuukiOgino/VoicevoxEngineForUE/issues)に記載してください。
+VOICEVOX Engine for UE5プラグインに関して質問があれば、[Twitter](https://twitter.com/YuukiOgino)で聞いてもらうか、[Qiitaのコメント欄](https://qiita.com/YuukiOgino/items/bc3ab31de4b1d0689625)、及び[issue](https://github.com/YuukiOgino/VoicevoxEngineForUE/issues)に記載してください。
 
 ※VOICEVOX CORE作者のヒホ氏、VOICEVOX公式Twitterアカウント及びVOICEVOX ホームページで、VOICEVOX Engine for UE5プラグインの問い合わせをしないようにお願いいたします。
 
