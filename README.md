@@ -46,7 +46,11 @@ VOICEVOX Engine for UE5の利用規約は[VOICEVOXのホームページに記載
 各スピーカーモデルのライセンスは[VOICEVOX公式ホームページのキャラクター一覧](https://voicevox.hiroshiba.jp/)を参照してください。
 
 # 問い合わせに関して
-VOICEVOX Engine for UE5プラグインに関して質問があれば、[Twitter](https://twitter.com/YuukiOgino)及びQiitaのコメント欄で聞いてもらうか、issueに記載してください。
+VOICEVOX Engine for UE5プラグインに関して質問があれば、[Twitter](https://twitter.com/YuukiOgino)及びQiitaのコメント欄で聞いてもらうか、[issue](https://github.com/YuukiOgino/VoicevoxEngineForUE/issues)に記載してください。
+
+:::note alert
+間違ってもVOICEVOX CORE作者のヒホさん、VOICEVOX公式Twitterアカウント及びVOICEVOX ホームページで、VOICEVOX Engine for UE5プラグインの問い合わせをしないようにお願いいたします。
+:::
 
 # ライセンス
 VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコードの公開が不要な別ライセンスのデュアルライセンスとなります。
