@@ -41,6 +41,23 @@ Plugins\VoicevoxEngine\Source\ThirdParty\VoicevoxCore\x64\VoicevoxCore
 # 各クラスについて
 Qiitaに記事を公開していますので、そちらを見てください。
 
+# 現在判明している不具合
+
+* COREのAPIを非同期で行った場合、特にRunTextToSpeechからの戻りを待たずにプレイ終了したり、続けてRunTextToSpeechを実行するとクラッシュします。
+<br/>→この部分はどうしようか、現在模索中です。
+
+* パッケージングを行うとOpen JTalkフォルダのみコピーを失敗します。
+<br/>→お手数ですが、パッケージング済みのフォルダにopen_jtalk_dic_utf_8-1.11フォルダを手動でコピーしてください。
+![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/104377/23f5f42c-a281-399f-fb57-5b6ad2b1aa74.png)
+
+以下にコピーしてもらえれば動作します。
+```
+【パッケージング出力フォルダ名】\Windows\【プロジェクト名】\Binaries\Win64
+```
+
+* GPUモードに対応したCOREライブラリでGPUに切り替えるとエラー、もしくはクラッシュする
+<br/>→こちら原因調査中です。
+
 # 利用規約
 VOICEVOX Engine for UE5の利用規約は[VOICEVOXのホームページに記載された利用規約](https://voicevox.hiroshiba.jp/term)を継承するため、利用前に必ず一読してください。
 各スピーカーモデルのライセンスは[VOICEVOX公式ホームページのキャラクター一覧](https://voicevox.hiroshiba.jp/)を参照してください。
@@ -48,9 +65,7 @@ VOICEVOX Engine for UE5の利用規約は[VOICEVOXのホームページに記載
 # 問い合わせに関して
 VOICEVOX Engine for UE5プラグインに関して質問があれば、[Twitter](https://twitter.com/YuukiOgino)及びQiitaのコメント欄で聞いてもらうか、[issue](https://github.com/YuukiOgino/VoicevoxEngineForUE/issues)に記載してください。
 
-:::note alert
-間違ってもVOICEVOX CORE作者のヒホさん、VOICEVOX公式Twitterアカウント及びVOICEVOX ホームページで、VOICEVOX Engine for UE5プラグインの問い合わせをしないようにお願いいたします。
-:::
+※VOICEVOX CORE作者のヒホ氏、VOICEVOX公式Twitterアカウント及びVOICEVOX ホームページで、VOICEVOX Engine for UE5プラグインの問い合わせをしないようにお願いいたします。
 
 # ライセンス
 VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコードの公開が不要な別ライセンスのデュアルライセンスとなります。
