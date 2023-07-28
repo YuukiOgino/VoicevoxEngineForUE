@@ -7,9 +7,9 @@
 	"Category": "TextToSpeech",
 	"CreatedBy": "YuukiOgino",
 	"CreatedByURL": "https://twitter.com/YuukiOgino",
-	"DocsURL": "",
+	"DocsURL": "https://github.com/YuukiOgino/VoicevoxEngineForUE#readme",
 	"MarketplaceURL": "",
-	"SupportURL": "",
+	"SupportURL": "https://github.com/YuukiOgino/VoicevoxEngineForUE/issues",
 	"CanContainContent": false,
 	"IsBetaVersion": true,
 	"IsExperimentalVersion": false,
@@ -19,7 +19,7 @@
 			"Name": "VoicevoxEngine",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
-			"WhitelistPlatforms" : [
+			"PlatformAllowList": [
 				"Win64"
 			]
 		}

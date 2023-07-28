@@ -24,12 +24,12 @@ public class VoicevoxCore : ModuleRules
 	{
 		Type = ModuleType.External;
 		CppStandard = CppStandardVersion.Latest;
-		
-		// core.hはEngine側も同名のヘッダーファイルがあるため、意図的にx64フォルダまでをIncludePathに含める
-		PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "x64")));
-		
+
 		if (Target.Platform == UnrealTargetPlatform.Win64)
 		{
+			// core.hはEngine側も同名のヘッダーファイルがあるため、意図的にx64フォルダまでをIncludePathに含める
+			PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "x64")));
+			
 			// Add the import library
 			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "core.lib"));
 
