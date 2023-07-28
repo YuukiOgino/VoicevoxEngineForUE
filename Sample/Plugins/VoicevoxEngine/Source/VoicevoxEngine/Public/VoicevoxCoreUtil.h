@@ -133,6 +133,86 @@ struct FVoicevoxMeta
 	FString Version;
 };
 
+USTRUCT(BlueprintType)
+struct FVoicevoxMora
+{
+	GENERATED_USTRUCT_BODY()
+
+	// モデル名
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	FString Text;
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	FString Consonant;
+	
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	float Consonant_Length;
+	
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	FString Vowel;
+	
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	float Vowel_Length;
+	
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	float Pitch;
+	
+};
+
+USTRUCT(BlueprintType)
+struct FVoicevoxAccentPhrase
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	TArray<FVoicevoxMora> Moras;
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	int Accent;
+	
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	FVoicevoxMora Pause_Mora;
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	bool Is_Interrogative;
+};
+
+USTRUCT(BlueprintType)
+struct FVoicevoxAudioQuery
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	TArray<FVoicevoxAccentPhrase> Accent_Phrases;
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	float Speed_Scale;
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	float Pitch_Scale;
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	float Intonation_Scale;
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	float Volume_Scale;
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	float Pre_Phoneme_Length;
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	float Post_Phoneme_Length;
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	int Output_Sampling_Rate;
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	bool bOutput_Stereo;
+
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	FString Kana;
+};
+
 //------------------------------------------------------------------------
 // FVoicevoxCoreUtil
 //------------------------------------------------------------------------
@@ -209,8 +289,8 @@ public:
 
 	/**
 	 * @fn
-	 * VOICEVOX COERのvoicevox_audio_queryを実行
-	 * @brief AudioQuery を実行する。
+	 * VOICEVOX COERのvoicevox_audio_queryを取得
+	 * @brief AudioQuery を取得する。
 	 * @param[in] SpeakerId 話者番号
 	 * @param[in] Message 音声データに変換するtextデータ
 	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
@@ -218,8 +298,21 @@ public:
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	static char* RunAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
+	static char* GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
 
+	/**
+	 * @fn
+	 * VOICEVOX COERのvoicevox_audio_queryを取得
+	 * @brief AudioQuery を取得する。
+	 * @param[in] SpeakerId 話者番号
+	 * @param[in] Message 音声データに変換するtextデータ
+	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
+	 * @return AudioQueryをjsonでフォーマットしたもの。使用が終わったらvoicevox_audio_query_json_freeで開放する必要がある
+	 * @details
+	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	static FVoicevoxAudioQuery GetAudioQueryList(int64 SpeakerId, const FString& Message, bool bKana);
+	
 	/**
 	 * @fn
 	 * VOICEVOX COERのvoicevox_synthesisを実行
@@ -233,6 +326,8 @@ public:
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	static uint8* RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak, long& OutputBinarySize);
+
+	static uint8* RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak, long& OutputBinarySize);
 	
 	/**
 	 * @fn
@@ -299,8 +394,7 @@ public:
 											  TArray<int64> StartAccentList, TArray<int64> EndAccentList,
 											  TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
 											  int64 SpeakerID);
-
-
+	
 	/**
 	 * @fn
 	 * 波形を求める

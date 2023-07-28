@@ -153,7 +153,7 @@ UVoicevoxSimplePlayTextToAudioQueryAsyncTask* UVoicevoxSimplePlayTextToAudioQuer
  */	
 void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
 {
-	char* q = FVoicevoxCoreUtil::RunAudioQuery(SpeakerId, Message, bRunKana);
+	char* q = FVoicevoxCoreUtil::GetAudioQuery(SpeakerId, Message, bRunKana);
 	long OutputBinarySize = 0;
 
 	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunSynthesis(q, SpeakerId, bRunKana, OutputBinarySize); OutputWAV != nullptr)
@@ -178,5 +178,27 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
  */
 void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQuery(FString& Query, ESpeakerType SpeakerType, FString Message, bool bRunKana)
 {
-	Query = UTF8_TO_TCHAR(FVoicevoxCoreUtil::RunAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana));
+	Query = UTF8_TO_TCHAR(FVoicevoxCoreUtil::GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana));
+}
+
+/**
+ * @brief  VOICEVOX COERで変換したAudioQueryを取得する(Blueprint公開ノード)
+ */
+void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQueryToStruct(FVoicevoxAudioQuery& AudioQuery, ESpeakerType SpeakerType, FString Message, bool bRunKana)
+{
+	AudioQuery = FVoicevoxCoreUtil::GetAudioQueryList(static_cast<int64>(SpeakerType), Message, bRunKana);
+}
+
+void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQueryStruct(FVoicevoxAudioQuery AudioQuery, ESpeakerType SpeakerType, bool bRunKana)
+{
+	long OutputBinarySize = 0;
+
+	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bRunKana, OutputBinarySize); OutputWAV != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		PlaySound(reinterpret_cast<LPCTSTR>(OutputWAV), nullptr, SND_MEMORY);
+#endif
+		FVoicevoxCoreUtil::WavFree(OutputWAV);
+		
+	}
 }

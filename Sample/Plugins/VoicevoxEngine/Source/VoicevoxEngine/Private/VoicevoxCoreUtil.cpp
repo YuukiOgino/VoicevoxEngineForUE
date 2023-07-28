@@ -109,7 +109,7 @@ uint8* FVoicevoxCoreUtil::RunTextToSpeech(const int64 SpeakerId, const FString& 
 	return nullptr;
 }
 
-char* FVoicevoxCoreUtil::RunAudioQuery(const int64 SpeakerId, const FString& Message, const bool bKana)
+char* FVoicevoxCoreUtil::GetAudioQuery(const int64 SpeakerId, const FString& Message, const bool bKana)
 {
 	// スピーカーモデルがロードされていない場合はロードを実行する
 	if (LoadModel(SpeakerId))
@@ -132,6 +132,20 @@ char* FVoicevoxCoreUtil::RunAudioQuery(const int64 SpeakerId, const FString& Mes
 	return nullptr;
 }
 
+FVoicevoxAudioQuery FVoicevoxCoreUtil::GetAudioQueryList(const int64 SpeakerId, const FString& Message, const bool bKana)
+{
+	FVoicevoxAudioQuery AudioQuery;
+	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
+	if (bIsInit)
+	{
+		const auto Q = GetAudioQuery(SpeakerId, Message, bKana);
+		FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(Q), &AudioQuery, 0, 0);
+		AudioQueryFree(Q);
+	}
+	
+	return AudioQuery;
+}
+
 uint8* FVoicevoxCoreUtil::RunSynthesis(const char* AudioQueryJson, const int64 SpeakerId, bool bEnableInterrogativeUpspeak, long& OutputBinarySize)
 {
 	// スピーカーモデルがロードされていない場合はロードを実行する
@@ -142,6 +156,34 @@ uint8* FVoicevoxCoreUtil::RunSynthesis(const char* AudioQueryJson, const int64 S
 		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
 		uint64 o = 0;
 		if (const VoicevoxResultCode Result = voicevox_synthesis(AudioQueryJson, SpeakerId, Options, &o, &OutputWAV);
+			Result != VOICEVOX_RESULT_OK)
+		{
+			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
+			const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
+			ShowVoicevoxErrorMessage(ErrorMessage);
+			return nullptr;	
+		}
+
+		OutputBinarySize = static_cast<long>(o);
+		return OutputWAV;
+	}
+
+	return nullptr;
+}
+
+uint8* FVoicevoxCoreUtil::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak, long& OutputBinarySize)
+{
+	// スピーカーモデルがロードされていない場合はロードを実行する
+	if (LoadModel(SpeakerId))
+	{
+		uint8* OutputWAV = nullptr;
+		VoicevoxSynthesisOptions Options;
+		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
+		uint64 o = 0;
+		FString q;
+		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
+		FJsonObjectConverter::UStructToJsonObjectString(AudioQueryJson, q);
+		if (const VoicevoxResultCode Result = voicevox_synthesis(TCHAR_TO_UTF8(*q), SpeakerId, Options, &o, &OutputWAV);
 			Result != VOICEVOX_RESULT_OK)
 		{
 			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
