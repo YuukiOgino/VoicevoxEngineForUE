@@ -120,10 +120,8 @@ void UVoicevoxSimplePlayTextToSpeechAsyncTask::Activate()
 {
 	UE::Tasks::Launch(TEXT("VoicevoxCoreTask"), [&]
 	{
-		int OutputBinarySize = 0;
-		if (uint8* OutputWAV = bRunKana ?
-			FVoicevoxCoreUtil::RunTextToSpeechFromKana(SpeakerId, *Message, OutputBinarySize) :
-			FVoicevoxCoreUtil::RunTextToSpeech(SpeakerId, *Message, OutputBinarySize);
+		long OutputBinarySize = 0;
+		if (uint8* OutputWAV = FVoicevoxCoreUtil::RunTextToSpeech(SpeakerId, *Message, bRunKana, true, OutputBinarySize);
 			OutputWAV != nullptr)
 		{
 #if PLATFORM_WINDOWS

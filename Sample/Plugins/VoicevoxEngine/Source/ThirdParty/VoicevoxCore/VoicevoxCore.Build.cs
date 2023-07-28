@@ -31,21 +31,25 @@ public class VoicevoxCore : ModuleRules
 			PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "x64")));
 			
 			// Add the import library
-			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "core.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "voicevox_core.lib"));
 
 			// Delay-load the DLL, so we can load it from the right place first
-			PublicDelayLoadDLLs.Add("core.dll");
+			PublicDelayLoadDLLs.Add("voicevox_core.dll");
 			PublicDelayLoadDLLs.Add("onnxruntime.dll");
 			PublicDelayLoadDLLs.Add("onnxruntime_providers_shared.dll");
 
 			// Ensure that the DLL is staged along with the executable
-			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Win64/core.dll", Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "core.dll"));
+			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Win64/voicevox_core.dll", Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "voicevox_core.dll"));
 			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Win64/onnxruntime.dll", Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "onnxruntime.dll"));
 			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Win64/onnxruntime_providers_shared.dll", Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "onnxruntime_providers_shared.dll"));
 			
 			// Open JTalkライブラリフォルダもコピーする
 			DeleteDirectory($"{ProjectDirectory}/Binaries/Win64/{OpenJtalkDicName}");
 			DirectoryCopy(Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", OpenJtalkDicName), $"{ProjectDirectory}/Binaries/Win64/{OpenJtalkDicName}", true);
+			
+			// modelフォルダもコピーする
+			DeleteDirectory($"{ProjectDirectory}/Binaries/Win64/model");
+			DirectoryCopy(Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "model"), $"{ProjectDirectory}/Binaries/Win64/model", true);
         }
 		
 		PublicDefinitions.Add($"OPEN_JTALK_DIC_NAME=\"{OpenJtalkDicName}\"");
