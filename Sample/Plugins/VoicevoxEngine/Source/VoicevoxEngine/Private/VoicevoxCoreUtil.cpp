@@ -8,7 +8,12 @@
 #include "VoicevoxCoreUtil.h"
 
 #include "JsonObjectConverter.h"
+
+#if defined(PLATFORM_MAC)
+#include "VoicevoxCore/osx/VoicevoxCore/voicevox_core.h"
+#else
 #include "VoicevoxCore/voicevox_core.h"
+#endif
 
 DEFINE_LOG_CATEGORY(LogVoicevoxEngine);
 
@@ -19,6 +24,8 @@ bool FVoicevoxCoreUtil::Initialize(const bool bUseGPU, const int CPUNumThreads, 
 {
 #if PLATFORM_WINDOWS
 	const FString PlatformFolderName = TEXT("Win64");
+#elif PLATFORM_MAC
+	const FString PlatformFolderName = TEXT("Mac");
 #else
 	const FString PlatformFolderName = "";
 #endif
@@ -36,7 +43,7 @@ bool FVoicevoxCoreUtil::Initialize(const bool bUseGPU, const int CPUNumThreads, 
 	Option.acceleration_mode = bUseGPU ? VOICEVOX_ACCELERATION_MODE_GPU : VOICEVOX_ACCELERATION_MODE_CPU;
 	Option.cpu_num_threads = CPUNumThreads;
 	Option.load_all_models = bLoadAllModels;
-	Option.open_jtalk_dict_dir =TCHAR_TO_UTF8(*JtalkPath);
+	Option.open_jtalk_dict_dir = TCHAR_TO_UTF8(*JtalkPath);
 
 	if (const VoicevoxResultCode Result = voicevox_initialize(Option); Result != VOICEVOX_RESULT_OK)
 	{
@@ -92,7 +99,12 @@ uint8* FVoicevoxCoreUtil::RunTextToSpeech(const int64 SpeakerId, const FString& 
 		VoicevoxTtsOptions Options;
 		Options.kana = bKana;
 		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
+#ifdef PLATFORM_MAC
+		uintptr_t o = 0;
+#else
 		uint64 o = 0;
+#endif
+		
 		if (const VoicevoxResultCode Result = voicevox_tts(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &o, &OutputWAV);
 			Result != VOICEVOX_RESULT_OK)
 		{
@@ -154,7 +166,11 @@ uint8* FVoicevoxCoreUtil::RunSynthesis(const char* AudioQueryJson, const int64 S
 		uint8* OutputWAV = nullptr;
 		VoicevoxSynthesisOptions Options;
 		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
+#ifdef PLATFORM_MAC
+		uintptr_t o = 0;
+#else
 		uint64 o = 0;
+#endif
 		if (const VoicevoxResultCode Result = voicevox_synthesis(AudioQueryJson, SpeakerId, Options, &o, &OutputWAV);
 			Result != VOICEVOX_RESULT_OK)
 		{
@@ -179,7 +195,11 @@ uint8* FVoicevoxCoreUtil::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson
 		uint8* OutputWAV = nullptr;
 		VoicevoxSynthesisOptions Options;
 		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
+#ifdef PLATFORM_MAC
+		uintptr_t o = 0;
+#else
 		uint64 o = 0;
+#endif
 		FString q;
 		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
 		FJsonObjectConverter::UStructToJsonObjectString(AudioQueryJson, q);
@@ -243,7 +263,11 @@ TArray<float> FVoicevoxCoreUtil::GetPhonemeLength(const int64 Length, TArray<int
 {
 	TArray<float> Output;
 	Output.Init(0, Length);
+#ifdef PLATFORM_MAC
+	uintptr_t o = 0;
+#else
 	uint64 o = 0;
+#endif
 	if (const VoicevoxResultCode Result = voicevox_predict_duration(Length, PhonemeList.GetData(), SpeakerID, &o, reinterpret_cast<float**>(Output.GetData())); Result != VOICEVOX_RESULT_OK)
 	{
 		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
@@ -263,7 +287,11 @@ TArray<float> FVoicevoxCoreUtil::FindPitchEachMora(const int64 Length, TArray<in
 {
 	TArray<float> Output;
 	Output.Init(0, Length);
+#ifdef PLATFORM_MAC
+	uintptr_t o = 0;
+#else
 	uint64 o = 0;
+#endif
 	if (const VoicevoxResultCode Result = voicevox_predict_intonation(Length, VowelPhonemeList.GetData(), ConsonantPhonemeList.GetData(),
 	                                            StartAccentList.GetData(), EndAccentList.GetData(), StartAccentPhraseList.GetData(),
 	                                            EndAccentPhraseList.GetData(), SpeakerID, &o, reinterpret_cast<float**>(Output.GetData())); Result != VOICEVOX_RESULT_OK)
@@ -283,8 +311,11 @@ TArray<float> FVoicevoxCoreUtil::DecodeForward(int64 Length, int64 PhonemeSize, 
 									  int64 SpeakerID)
 {
 	TArray<float> Output;
-	Output.Init(0, Length);
+#ifdef PLATFORM_MAC
+	uintptr_t o = 0;
+#else
 	uint64 o = 0;
+#endif
 	if (const VoicevoxResultCode Result = voicevox_decode(Length, PhonemeSize, F0.GetData(), Phoneme.GetData(), SpeakerID, &o, reinterpret_cast<float**>(Output.GetData())); Result != VOICEVOX_RESULT_OK)
 	{
 		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));

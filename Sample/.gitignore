@@ -54,6 +54,8 @@ Binaries/*
 Plugins/*/Binaries/*
 Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/VoicevoxCore/*
 !Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/VoicevoxCore/README.md
+Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/osx/VoicevoxCore/*
+!Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/osx/VoicevoxCore/README.md
 
 # Builds
 Build/*
