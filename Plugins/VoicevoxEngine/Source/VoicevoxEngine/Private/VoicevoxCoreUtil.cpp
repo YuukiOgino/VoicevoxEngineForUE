@@ -8,7 +8,7 @@
 #include "VoicevoxCoreUtil.h"
 
 #include "JsonObjectConverter.h"
-#include "VoicevoxCore/core.h"
+#include "VoicevoxCore/voicevox_core.h"
 
 DEFINE_LOG_CATEGORY(LogVoicevoxEngine);
 
@@ -25,30 +25,29 @@ bool FVoicevoxCoreUtil::Initialize(const bool bUseGPU, const int CPUNumThreads, 
 
 	if (PlatformFolderName.IsEmpty())
 	{
-		FString ErrorMessage = TEXT("VOICEVOX Initialize Error:Not covered Platform");
-		ShowVoicevoxErrorMessage(ErrorMessage);
-		return false;
-	}
-
-	if (!initialize(bUseGPU, CPUNumThreads, bLoadAllModels))
-	{
-		const FString LastMessage = UTF8_TO_TCHAR(last_error_message());
-		FString ErrorMessage = FString::Printf(TEXT("VOICEVOX Initialize Error:%s"), *LastMessage);
+		const FString ErrorMessage = TEXT("VOICEVOX Initialize Error:Not covered Platform");
 		ShowVoicevoxErrorMessage(ErrorMessage);
 		return false;
 	}
 
 	const FString JtalkPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, OPEN_JTALK_DIC_NAME));
-	const VoicevoxResultCode Result = voicevox_load_openjtalk_dict(TCHAR_TO_UTF8(*JtalkPath));
-	if (Result !=  VOICEVOX_RESULT_SUCCEED)
+
+	VoicevoxInitializeOptions Option;
+	Option.acceleration_mode = bUseGPU ? VOICEVOX_ACCELERATION_MODE_GPU : VOICEVOX_ACCELERATION_MODE_CPU;
+	Option.cpu_num_threads = CPUNumThreads;
+	Option.load_all_models = bLoadAllModels;
+	Option.open_jtalk_dict_dir =TCHAR_TO_UTF8(*JtalkPath);
+
+	if (const VoicevoxResultCode Result = voicevox_initialize(Option); Result != VOICEVOX_RESULT_OK)
 	{
-		const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
-		FString ErrorMessage = FString::Printf(TEXT("VOICEVOX Initialize Error:%s"), *ResultMessage);
+		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
+		const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX Initialize Error:%s"), *LastMessage);
 		ShowVoicevoxErrorMessage(ErrorMessage);
+		return false;
 	}
 
-	bIsInit = Result == VOICEVOX_RESULT_SUCCEED;
-	return Result == VOICEVOX_RESULT_SUCCEED;
+	bIsInit = true;
+	return true;
 }
 
 /**
@@ -56,7 +55,7 @@ bool FVoicevoxCoreUtil::Initialize(const bool bUseGPU, const int CPUNumThreads, 
  */
 void FVoicevoxCoreUtil::Finalize()
 {
-	finalize();
+	voicevox_finalize();
 	bIsInit = false;
 }
 
@@ -66,9 +65,16 @@ void FVoicevoxCoreUtil::Finalize()
 bool FVoicevoxCoreUtil::LoadModel(const int64 SpeakerId)
 {
 	// 重い処理のため、スピーカーモデルがロードされていない場合のみロードを実行する
-	if (!is_model_loaded(SpeakerId))
+	if (!voicevox_is_model_loaded(SpeakerId))
 	{
-		return load_model(SpeakerId);
+		if (const VoicevoxResultCode Result = voicevox_load_model(SpeakerId); Result != VOICEVOX_RESULT_OK)
+		{
+			const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
+			const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX voicevox_load_model Error:%s"), *LastMessage);
+			ShowVoicevoxErrorMessage(ErrorMessage);
+			return false;
+		}
+		return true;
 	}
 	
 	return true;
@@ -77,48 +83,77 @@ bool FVoicevoxCoreUtil::LoadModel(const int64 SpeakerId)
 /**
  * @brief VOICEVOX COERのtext to speechを実行
  */
-uint8* FVoicevoxCoreUtil::RunTextToSpeech(const int64 SpeakerId, const FString& Message, int& OutputBinarySize)
+uint8* FVoicevoxCoreUtil::RunTextToSpeech(const int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak,  long& OutputBinarySize)
 {
 	// スピーカーモデルがロードされていない場合はロードを実行する
 	if (LoadModel(SpeakerId))
 	{
 		uint8* OutputWAV = nullptr;
-		if (const VoicevoxResultCode Result = voicevox_tts(TCHAR_TO_UTF8(*Message), SpeakerId, &OutputBinarySize, &OutputWAV);
-			Result != VOICEVOX_RESULT_SUCCEED)
+		VoicevoxTtsOptions Options;
+		Options.kana = bKana;
+		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
+		uint64 o = 0;
+		if (const VoicevoxResultCode Result = voicevox_tts(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &o, &OutputWAV);
+			Result != VOICEVOX_RESULT_OK)
 		{
 			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
-			FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
+			const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
 			ShowVoicevoxErrorMessage(ErrorMessage);
 			return nullptr;	
 		}
 
+		OutputBinarySize = static_cast<long>(o);
 		return OutputWAV;
 	}
 
 	return nullptr;
 }
 
-/**
- * @brief VOICEVOX COERのtext to speech（AquesTalkライクな記法版）を実行
- */
-uint8* FVoicevoxCoreUtil::RunTextToSpeechFromKana(const int64 SpeakerId, const FString& Message, int& OutputBinarySize)
+char* FVoicevoxCoreUtil::RunAudioQuery(const int64 SpeakerId, const FString& Message, const bool bKana)
+{
+	// スピーカーモデルがロードされていない場合はロードを実行する
+	if (LoadModel(SpeakerId))
+	{
+		char* Output = nullptr;
+		VoicevoxAudioQueryOptions Options;
+		Options.kana = bKana;
+		if (const VoicevoxResultCode Result = voicevox_audio_query(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &Output);
+			Result != VOICEVOX_RESULT_OK)
+		{
+			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
+			const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
+			ShowVoicevoxErrorMessage(ErrorMessage);
+			return nullptr;	
+		}
+
+		return Output;
+	}
+
+	return nullptr;
+}
+
+uint8* FVoicevoxCoreUtil::RunSynthesis(const char* AudioQueryJson, const int64 SpeakerId, bool bEnableInterrogativeUpspeak, long& OutputBinarySize)
 {
 	// スピーカーモデルがロードされていない場合はロードを実行する
 	if (LoadModel(SpeakerId))
 	{
 		uint8* OutputWAV = nullptr;
-		if (const VoicevoxResultCode Result = voicevox_tts_from_kana(TCHAR_TO_UTF8(*Message), SpeakerId, &OutputBinarySize, &OutputWAV);
-			Result != VOICEVOX_RESULT_SUCCEED)
+		VoicevoxSynthesisOptions Options;
+		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
+		uint64 o = 0;
+		if (const VoicevoxResultCode Result = voicevox_synthesis(AudioQueryJson, SpeakerId, Options, &o, &OutputWAV);
+			Result != VOICEVOX_RESULT_OK)
 		{
 			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
-			FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS(Kana) Error:%s"), *ResultMessage);
+			const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
 			ShowVoicevoxErrorMessage(ErrorMessage);
 			return nullptr;	
 		}
 
+		OutputBinarySize = static_cast<long>(o);
 		return OutputWAV;
 	}
-	
+
 	return nullptr;
 }
 
@@ -131,12 +166,20 @@ void FVoicevoxCoreUtil::WavFree(uint8* Wav)
 }
 
 /**
+ * @brief jsonフォーマットされた AudioQuery データのメモリを解放する
+ */
+void FVoicevoxCoreUtil::AudioQueryFree(char* QueryJson)
+{
+	voicevox_audio_query_json_free(QueryJson);
+}
+
+/**
  * @brief 話者名や話者IDのリストを取得する
  */
 FString FVoicevoxCoreUtil::Metas()
 {
 	if (!bIsInit) return "";
-	return UTF8_TO_TCHAR(metas());
+	return UTF8_TO_TCHAR(voicevox_get_metas_json());
 }
 
 /**
@@ -158,7 +201,13 @@ TArray<float> FVoicevoxCoreUtil::GetPhonemeLength(const int64 Length, TArray<int
 {
 	TArray<float> Output;
 	Output.Init(0, Length);
-	yukarin_s_forward(Length, PhonemeList.GetData(), &SpeakerID, Output.GetData());
+	uint64 o = 0;
+	if (const VoicevoxResultCode Result = voicevox_predict_duration(Length, PhonemeList.GetData(), SpeakerID, &o, reinterpret_cast<float**>(Output.GetData())); Result != VOICEVOX_RESULT_OK)
+	{
+		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
+		const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_predict_duration Error:%s"), *LastMessage);
+		ShowVoicevoxErrorMessage(Message);
+	}
 	return Output;
 }
 
@@ -172,13 +221,13 @@ TArray<float> FVoicevoxCoreUtil::FindPitchEachMora(const int64 Length, TArray<in
 {
 	TArray<float> Output;
 	Output.Init(0, Length);
-
-	if (const bool bResult = yukarin_sa_forward(Length, VowelPhonemeList.GetData(), ConsonantPhonemeList.GetData(),
+	uint64 o = 0;
+	if (const VoicevoxResultCode Result = voicevox_predict_intonation(Length, VowelPhonemeList.GetData(), ConsonantPhonemeList.GetData(),
 	                                            StartAccentList.GetData(), EndAccentList.GetData(), StartAccentPhraseList.GetData(),
-	                                            EndAccentPhraseList.GetData(), &SpeakerID, Output.GetData()); !bResult)
+	                                            EndAccentPhraseList.GetData(), SpeakerID, &o, reinterpret_cast<float**>(Output.GetData())); Result != VOICEVOX_RESULT_OK)
 	{
-		const FString LastMessage = UTF8_TO_TCHAR(last_error_message());
-		FString Message = FString::Printf(TEXT("VOICEVOX yukarin_sa_forward Error:%s"), *LastMessage);
+		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
+		const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_predict_intonation Error:%s"), *LastMessage);
 		ShowVoicevoxErrorMessage(Message);
 	}
 	
@@ -193,10 +242,11 @@ TArray<float> FVoicevoxCoreUtil::DecodeForward(int64 Length, int64 PhonemeSize, 
 {
 	TArray<float> Output;
 	Output.Init(0, Length);
-	if (const bool bResult = decode_forward(Length, PhonemeSize, F0.GetData(), Phoneme.GetData(), &SpeakerID, Output.GetData()); !bResult)
+	uint64 o = 0;
+	if (const VoicevoxResultCode Result = voicevox_decode(Length, PhonemeSize, F0.GetData(), Phoneme.GetData(), SpeakerID, &o, reinterpret_cast<float**>(Output.GetData())); Result != VOICEVOX_RESULT_OK)
 	{
-		const FString LastMessage = UTF8_TO_TCHAR(last_error_message());
-		FString Message = FString::Printf(TEXT("VOICEVOX decode_forward Error:%s"), *LastMessage);
+		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
+		const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_decode Error:%s"), *LastMessage);
 		ShowVoicevoxErrorMessage(Message);
 	}
 	return Output;
@@ -205,7 +255,7 @@ TArray<float> FVoicevoxCoreUtil::DecodeForward(int64 Length, int64 PhonemeSize, 
 /**
  * @brief VOICEVOXから受信したエラーメッセージを表示
  */
-void FVoicevoxCoreUtil::ShowVoicevoxErrorMessage(FString& MessageFormat)
+void FVoicevoxCoreUtil::ShowVoicevoxErrorMessage(const FString& MessageFormat)
 {
 	UE_LOG(LogVoicevoxEngine, Error,  TEXT("%s"), *MessageFormat);
 	const FColor Col = FColor::Red;

@@ -16,7 +16,7 @@
 
 /**
  * @enum ESpeakerType
- * @brief Speakerを示す列挙体(Ver.0.13.3時点)
+ * @brief Speakerを示す列挙体(Ver.0.14.4時点)
  */
 UENUM(BlueprintType)
 enum class ESpeakerType : uint8
@@ -59,7 +59,30 @@ enum class ESpeakerType : uint8
 	GokiNuigurumi=28,
 	No7=29,
 	No7Announcement=30,
-	No7Yomikikase=31
+	No7Yomikikase=31,
+	Chibishikiji=42,
+	OukaMiko=43,
+	OukaMikoSecond=44,
+	OukaMikoLoli=45,
+	Sayo=46,
+	TypeT=47,
+	TypeTRakuRaku=48,
+	TypeTFear=49,
+	TypeTSecret=50,
+	BeniZakura=51,
+	WakamatsuAtsushi=52,
+	KigashimaRin=53,
+	HarukaNana=54,
+	NekotukaAru=55,
+	NekotukaAruOchitsuki=56,
+	NekotukaAruUkiUki=57,
+	NekotukaBi=58,
+	NekotukaBiOchitsuki=59,
+	NekotukaBiHitomishiri=60,
+	ChugokuUsagi=61,
+	ChugokuUsagiOdoroki=62,
+	ChugokuUsagiKowagari=63,
+	ChugokuUsagiHeroHero=64
 };
 
 //------------------------------------------------------------------------
@@ -126,7 +149,7 @@ class VOICEVOXENGINE_API FVoicevoxCoreUtil
 	 * @brief VOICEVOXから受信したエラーメッセージを表示
 	 * @param[in] MessageFormat : エラーメッセージのフォーマット
 	 */
-	static void ShowVoicevoxErrorMessage(FString& MessageFormat);
+	static void ShowVoicevoxErrorMessage(const FString& MessageFormat);
 
 public:
 	/**
@@ -175,26 +198,42 @@ public:
 	 * @brief Textデータを音声データに変換する。
 	 * @param[in] SpeakerId 話者番号
 	 * @param[in] Message 音声データに変換するtextデータ
+	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
+	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
 	 * @param[out] OutputBinarySize 音声データのサイズを出力する先のポインタ
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	static uint8* RunTextToSpeech(int64 SpeakerId, const FString& Message, int& OutputBinarySize);
+	static uint8* RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak, long& OutputBinarySize);
 
 	/**
 	 * @fn
-	 * VOICEVOX COERのtext to speech（AquesTalkライクな記法版）を実行
-	 * @brief Textデータを音声データに変換する。MessageはAquesTalkライクな記法をする必要がある。
+	 * VOICEVOX COERのvoicevox_audio_queryを実行
+	 * @brief AudioQuery を実行する。
 	 * @param[in] SpeakerId 話者番号
-	 * @param[in] Message 音声データに変換するtextデータ（要AquesTalkライクな記法）
+	 * @param[in] Message 音声データに変換するtextデータ
+	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
+	 * @return AudioQueryをjsonでフォーマットしたもの。使用が終わったらvoicevox_audio_query_json_freeで開放する必要がある
+	 * @details
+	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	static char* RunAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
+
+	/**
+	 * @fn
+	 * VOICEVOX COERのvoicevox_synthesisを実行
+	 * @brief AudioQueryを音声データに変換する。
+	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery
+	 * @param[in] SpeakerId 話者番号
+	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
 	 * @param[out] OutputBinarySize 音声データのサイズを出力する先のポインタ
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	static uint8* RunTextToSpeechFromKana(int64 SpeakerId, const FString& Message, int& OutputBinarySize);
-
+	static uint8* RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak, long& OutputBinarySize);
+	
 	/**
 	 * @fn
 	 * VOICEVOX COERのvoicevox_ttsで生成した音声データを開放
@@ -203,6 +242,14 @@ public:
 	 */
 	static void WavFree(uint8* Wav);
 
+	/**
+	 * @fn
+	 * VOICEVOX COERのjsonフォーマットされた AudioQuery データのメモリを解放する
+	 * @brief jsonフォーマットされた AudioQuery データのメモリを解放する
+	 * @param [in] QueryJson 解放する json フォーマットされた AudioQuery データ
+	 */
+	static void AudioQueryFree(char* QueryJson);
+	
 	/**
 	 * @fn
 	 * メタ情報を取得する
