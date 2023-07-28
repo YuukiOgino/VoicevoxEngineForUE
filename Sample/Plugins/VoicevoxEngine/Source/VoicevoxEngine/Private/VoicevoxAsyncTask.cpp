@@ -41,6 +41,8 @@ void UVoicevoxInitializeAsyncTask::GetMetasToString(FString& Metas)
 	Metas = FVoicevoxCoreUtil::Metas();
 }
 
+
+
 /**
  * @brief VOICEVOX COER メタ情報を取得する(Blueprint公開ノード)
  */
@@ -85,19 +87,16 @@ UVoicevoxLoadModelAsyncTask* UVoicevoxLoadModelAsyncTask::LoadModel(UObject* Wor
  */
 void UVoicevoxLoadModelAsyncTask::Activate()
 {
-	UE::Tasks::Launch(TEXT("VoicevoxCoreTask"), [&]
+	if (FVoicevoxCoreUtil::LoadModel(SpeakerId))
 	{
-		if (FVoicevoxCoreUtil::LoadModel(SpeakerId))
-		{
-			OnSuccess.Broadcast();
-		}
-		else
-		{
-			OnFail.Broadcast();
-		}
+		OnSuccess.Broadcast();
+	}
+	else
+	{
+		OnFail.Broadcast();
+	}
 		
-		SetReadyToDestroy();
-	});
+	SetReadyToDestroy();
 }
 
 /**
@@ -118,23 +117,66 @@ UVoicevoxSimplePlayTextToSpeechAsyncTask* UVoicevoxSimplePlayTextToSpeechAsyncTa
  */	
 void UVoicevoxSimplePlayTextToSpeechAsyncTask::Activate()
 {
-	UE::Tasks::Launch(TEXT("VoicevoxCoreTask"), [&]
+	long OutputBinarySize = 0;
+	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunTextToSpeech(SpeakerId, *Message, bRunKana, true, OutputBinarySize);
+		OutputWAV != nullptr)
 	{
-		long OutputBinarySize = 0;
-		if (uint8* OutputWAV = FVoicevoxCoreUtil::RunTextToSpeech(SpeakerId, *Message, bRunKana, true, OutputBinarySize);
-			OutputWAV != nullptr)
-		{
 #if PLATFORM_WINDOWS
-			PlaySound(reinterpret_cast<LPCTSTR>(OutputWAV), nullptr, SND_MEMORY);
+		PlaySound(reinterpret_cast<LPCTSTR>(OutputWAV), nullptr, SND_MEMORY);
 #endif
-			FVoicevoxCoreUtil::WavFree(OutputWAV);
-			OnSuccess.Broadcast();
-		}
-		else
-		{
-			OnFail.Broadcast();
-		}
+		FVoicevoxCoreUtil::WavFree(OutputWAV);
+		OnSuccess.Broadcast();
+	}
+	else
+	{
+		OnFail.Broadcast();
+	}
 		
-		SetReadyToDestroy();
-	});
+	SetReadyToDestroy();
+}
+
+/**
+ * @brief VOICEVOX COERで変換したAudioQuery簡易的に再生させる(Blueprint公開ノード)
+ */
+UVoicevoxSimplePlayTextToAudioQueryAsyncTask* UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQuery(UObject* WorldContextObject, ESpeakerType SpeakerType, FString Message, bool bRunKana)
+{
+	UVoicevoxSimplePlayTextToAudioQueryAsyncTask* Task = NewObject<UVoicevoxSimplePlayTextToAudioQueryAsyncTask>();
+	Task->SpeakerId = static_cast<int64>(SpeakerType);
+	Task->Message = Message;
+	Task->bRunKana = bRunKana;
+	Task->RegisterWithGameInstance(WorldContextObject);
+	return Task;
+}
+
+/**
+ * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
+ */	
+void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
+{
+	char* q = FVoicevoxCoreUtil::RunAudioQuery(SpeakerId, Message, bRunKana);
+	long OutputBinarySize = 0;
+
+	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunSynthesis(q, SpeakerId, bRunKana, OutputBinarySize); OutputWAV != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		PlaySound(reinterpret_cast<LPCTSTR>(OutputWAV), nullptr, SND_MEMORY);
+#endif
+		FVoicevoxCoreUtil::WavFree(OutputWAV);
+		OnSuccess.Broadcast();
+	}
+	else
+	{
+		OnFail.Broadcast();
+	}
+
+	FVoicevoxCoreUtil::AudioQueryFree(q);
+	SetReadyToDestroy();
+}
+
+/**
+ * @brief VOICEVOX COERで変換したAudioQueryを取得する(Blueprint公開ノード)
+ */
+void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQuery(FString& Query, ESpeakerType SpeakerType, FString Message, bool bRunKana)
+{
+	Query = UTF8_TO_TCHAR(FVoicevoxCoreUtil::RunAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana));
 }
