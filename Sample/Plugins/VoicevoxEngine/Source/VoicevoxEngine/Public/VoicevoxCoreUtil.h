@@ -16,7 +16,7 @@
 
 /**
  * @enum ESpeakerType
- * @brief Speakerを示す列挙体(Ver.0.13.3時点)
+ * @brief Speakerを示す列挙体(Ver.0.14.4時点)
  */
 UENUM(BlueprintType)
 enum class ESpeakerType : uint8
@@ -59,7 +59,30 @@ enum class ESpeakerType : uint8
 	GokiNuigurumi=28,
 	No7=29,
 	No7Announcement=30,
-	No7Yomikikase=31
+	No7Yomikikase=31,
+	Chibishikiji=42,
+	OukaMiko=43,
+	OukaMikoSecond=44,
+	OukaMikoLoli=45,
+	Sayo=46,
+	TypeT=47,
+	TypeTRakuRaku=48,
+	TypeTFear=49,
+	TypeTSecret=50,
+	BeniZakura=51,
+	WakamatsuAtsushi=52,
+	KigashimaRin=53,
+	HarukaNana=54,
+	NekotukaAru=55,
+	NekotukaAruOchitsuki=56,
+	NekotukaAruUkiUki=57,
+	NekotukaBi=58,
+	NekotukaBiOchitsuki=59,
+	NekotukaBiHitomishiri=60,
+	ChugokuUsagi=61,
+	ChugokuUsagiOdoroki=62,
+	ChugokuUsagiKowagari=63,
+	ChugokuUsagiHeroHero=64
 };
 
 //------------------------------------------------------------------------
