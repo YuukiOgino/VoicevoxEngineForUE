@@ -7,11 +7,7 @@
 
 #include "VoicevoxAsyncTask.h"
 #include "VoicevoxCoreUtil.h"
-
-#if PLATFORM_WINDOWS
-#include "Windows/WindowsHWrapper.h"
-#include <playsoundapi.h>
-#endif
+#include "Kismet/GameplayStatics.h"
 
 /**
  * @brief VOICEVOX COER 初期化(Blueprint公開ノード)
@@ -40,8 +36,6 @@ void UVoicevoxInitializeAsyncTask::GetMetasToString(FString& Metas)
 {
 	Metas = FVoicevoxCoreUtil::Metas();
 }
-
-
 
 /**
  * @brief VOICEVOX COER メタ情報を取得する(Blueprint公開ノード)
@@ -108,6 +102,7 @@ UVoicevoxSimplePlayTextToSpeechAsyncTask* UVoicevoxSimplePlayTextToSpeechAsyncTa
 	Task->SpeakerId = static_cast<int64>(SpeakerType);
 	Task->Message = Message;
 	Task->bRunKana = bRunKana;
+	Task->WorldContextObject = WorldContextObject;
 	Task->RegisterWithGameInstance(WorldContextObject);
 	return Task;
 }
@@ -121,9 +116,30 @@ void UVoicevoxSimplePlayTextToSpeechAsyncTask::Activate()
 	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunTextToSpeech(SpeakerId, *Message, bRunKana, true, OutputBinarySize);
 		OutputWAV != nullptr)
 	{
-#if PLATFORM_WINDOWS
-		PlaySound(reinterpret_cast<LPCTSTR>(OutputWAV), nullptr, SND_MEMORY);
-#endif
+		FString ErrorMessage;
+		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV, OutputBinarySize, &ErrorMessage))
+		{
+			USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
+			int32 ChannelCount = *WaveInfo.pChannels;
+			int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
+			int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
+			int32 NumFrames = NumSamples / ChannelCount;
+			
+			Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
+			Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(Sound->RawPCMDataSize));
+			FMemory::Memmove(Sound->RawPCMData, OutputWAV, OutputBinarySize);
+			
+			Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
+			Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
+			Sound->SetImportedSampleRate(*WaveInfo.pSamplesPerSec);
+			Sound->NumChannels = ChannelCount;
+			Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
+
+			if (IsValid(WorldContextObject.Get()))
+			{
+				UGameplayStatics::PlaySound2D(WorldContextObject->GetWorld(), Sound);
+			}
+		}
 		FVoicevoxCoreUtil::WavFree(OutputWAV);
 		OnSuccess.Broadcast();
 	}
@@ -144,6 +160,7 @@ UVoicevoxSimplePlayTextToAudioQueryAsyncTask* UVoicevoxSimplePlayTextToAudioQuer
 	Task->SpeakerId = static_cast<int64>(SpeakerType);
 	Task->Message = Message;
 	Task->bRunKana = bRunKana;
+	Task->WorldContextObject = WorldContextObject;
 	Task->RegisterWithGameInstance(WorldContextObject);
 	return Task;
 }
@@ -158,9 +175,30 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
 
 	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunSynthesis(q, SpeakerId, bRunKana, OutputBinarySize); OutputWAV != nullptr)
 	{
-#if PLATFORM_WINDOWS
-		PlaySound(reinterpret_cast<LPCTSTR>(OutputWAV), nullptr, SND_MEMORY);
-#endif
+		FString ErrorMessage;
+		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV, OutputBinarySize, &ErrorMessage))
+		{
+			USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
+			int32 ChannelCount = *WaveInfo.pChannels;
+			int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
+			int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
+			int32 NumFrames = NumSamples / ChannelCount;
+			
+			Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
+			Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(Sound->RawPCMDataSize));
+			FMemory::Memmove(Sound->RawPCMData, OutputWAV, OutputBinarySize);
+			
+			Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
+			Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
+			Sound->SetImportedSampleRate(*WaveInfo.pSamplesPerSec);
+			Sound->NumChannels = ChannelCount;
+			Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
+
+			if (IsValid(WorldContextObject.Get()))
+			{
+				UGameplayStatics::PlaySound2D(WorldContextObject->GetWorld(), Sound);
+			}
+		}
 		FVoicevoxCoreUtil::WavFree(OutputWAV);
 		OnSuccess.Broadcast();
 	}
@@ -189,16 +227,37 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQueryToStruct(FVoicev
 	AudioQuery = FVoicevoxCoreUtil::GetAudioQueryList(static_cast<int64>(SpeakerType), Message, bRunKana);
 }
 
-void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQueryStruct(FVoicevoxAudioQuery AudioQuery, ESpeakerType SpeakerType, bool bRunKana)
+void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQueryStruct(UObject* WorldContextObject, FVoicevoxAudioQuery AudioQuery, ESpeakerType SpeakerType, bool bRunKana)
 {
 	long OutputBinarySize = 0;
 
 	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bRunKana, OutputBinarySize); OutputWAV != nullptr)
 	{
-#if PLATFORM_WINDOWS
-		PlaySound(reinterpret_cast<LPCTSTR>(OutputWAV), nullptr, SND_MEMORY);
-#endif
+		FString ErrorMessage;
+		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV, OutputBinarySize, &ErrorMessage))
+		{
+			USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
+			int32 ChannelCount = *WaveInfo.pChannels;
+			int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
+			int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
+			int32 NumFrames = NumSamples / ChannelCount;
+			
+			Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
+			Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(Sound->RawPCMDataSize));
+			FMemory::Memmove(Sound->RawPCMData, OutputWAV, OutputBinarySize);
+			
+			Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
+			Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
+			Sound->SetImportedSampleRate(*WaveInfo.pSamplesPerSec);
+			Sound->NumChannels = ChannelCount;
+			Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
+
+			if (IsValid(WorldContextObject))
+			{
+				UGameplayStatics::PlaySound2D(WorldContextObject->GetWorld(), Sound);
+			}
+		}
 		FVoicevoxCoreUtil::WavFree(OutputWAV);
-		
 	}
 }
+

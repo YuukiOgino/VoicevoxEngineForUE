@@ -169,6 +169,8 @@ public:
 	//! AquesTalkライクな記法で実行するか
 	bool bRunKana = false;
 
+	TWeakObjectPtr<UObject> WorldContextObject;
+
 	/**
 	 * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
 	 */	
@@ -200,8 +202,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxSimplePlayTextToAudioQuery", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
 	static UVoicevoxSimplePlayTextToAudioQueryAsyncTask* SimplePlayTextToAudioQuery(UObject* WorldContextObject, ESpeakerType SpeakerType, FString Message, bool bRunKana=false);
 
-	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "SimplePlayTextToAudioQueryStruct"))
-	static void SimplePlayTextToAudioQueryStruct(FVoicevoxAudioQuery AudioQuery, ESpeakerType SpeakerType, bool bRunKana=false);
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "SimplePlayTextToAudioQueryStruct", WorldContext="WorldContextObject"))
+	static void SimplePlayTextToAudioQueryStruct(UObject* WorldContextObject, FVoicevoxAudioQuery AudioQuery, ESpeakerType SpeakerType, bool bRunKana=false);
 	
 	//! 話者番号
 	int64 SpeakerId = 0;
@@ -209,7 +211,9 @@ public:
 	FString Message = "";
 	//! AquesTalkライクな記法で実行するか
 	bool bRunKana = false;
-
+	
+	TWeakObjectPtr<UObject> WorldContextObject;
+	
 	/**
 	 * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
 	 */	
