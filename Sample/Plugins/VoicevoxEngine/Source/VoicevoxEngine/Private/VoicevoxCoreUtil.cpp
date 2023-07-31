@@ -143,9 +143,12 @@ char* FVoicevoxCoreUtil::GetAudioQuery(const int64 SpeakerId, const FString& Mes
 	return nullptr;
 }
 
+/**
+ * @brief AudioQuery を取得する。
+ */
 FVoicevoxAudioQuery FVoicevoxCoreUtil::GetAudioQueryList(const int64 SpeakerId, const FString& Message, const bool bKana)
 {
-	FVoicevoxAudioQuery AudioQuery;
+	FVoicevoxAudioQuery AudioQuery{};
 	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
 	if (bIsInit)
 	{
@@ -157,6 +160,9 @@ FVoicevoxAudioQuery FVoicevoxCoreUtil::GetAudioQueryList(const int64 SpeakerId, 
 	return AudioQuery;
 }
 
+/**
+ * @brief AudioQueryを音声データに変換する。
+ */
 uint8* FVoicevoxCoreUtil::RunSynthesis(const char* AudioQueryJson, const int64 SpeakerId, bool bEnableInterrogativeUpspeak, long& OutputBinarySize)
 {
 	// スピーカーモデルがロードされていない場合はロードを実行する
@@ -166,11 +172,11 @@ uint8* FVoicevoxCoreUtil::RunSynthesis(const char* AudioQueryJson, const int64 S
 		VoicevoxSynthesisOptions Options;
 		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
 #ifdef PLATFORM_MAC
-		uintptr_t o = 0;
+		uintptr_t OutputSize = 0;
 #else
-		uint64 o = 0;
+		uint64 OutputSize = 0;
 #endif
-		if (const VoicevoxResultCode Result = voicevox_synthesis(AudioQueryJson, SpeakerId, Options, &o, &OutputWAV);
+		if (const VoicevoxResultCode Result = voicevox_synthesis(AudioQueryJson, SpeakerId, Options, &OutputSize, &OutputWAV);
 			Result != VOICEVOX_RESULT_OK)
 		{
 			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
@@ -179,43 +185,26 @@ uint8* FVoicevoxCoreUtil::RunSynthesis(const char* AudioQueryJson, const int64 S
 			return nullptr;	
 		}
 
-		OutputBinarySize = static_cast<long>(o);
+		OutputBinarySize = static_cast<long>(OutputSize);
 		return OutputWAV;
 	}
 
 	return nullptr;
 }
 
-uint8* FVoicevoxCoreUtil::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak, long& OutputBinarySize)
+/**
+ * @brief AudioQueryを音声データに変換する。
+ */
+uint8* FVoicevoxCoreUtil::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, const int64 SpeakerId, bool bEnableInterrogativeUpspeak, long& OutputBinarySize)
 {
-	// スピーカーモデルがロードされていない場合はロードを実行する
-	if (LoadModel(SpeakerId))
-	{
-		uint8* OutputWAV = nullptr;
-		VoicevoxSynthesisOptions Options;
-		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
-#ifdef PLATFORM_MAC
-		uintptr_t o = 0;
-#else
-		uint64 o = 0;
-#endif
-		FString q;
-		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
-		FJsonObjectConverter::UStructToJsonObjectString(AudioQueryJson, q);
-		if (const VoicevoxResultCode Result = voicevox_synthesis(TCHAR_TO_UTF8(*q), SpeakerId, Options, &o, &OutputWAV);
-			Result != VOICEVOX_RESULT_OK)
-		{
-			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
-			const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
-			ShowVoicevoxErrorMessage(ErrorMessage);
-			return nullptr;	
-		}
+	FString OutputJson = "";
+	FJsonObjectConverter::UStructToJsonObjectString(AudioQueryJson, OutputJson, 0, 0, 0, nullptr, false);
 
-		OutputBinarySize = static_cast<long>(o);
-		return OutputWAV;
-	}
+	long OutputSize;
+	uint8* OutputWAV = RunSynthesis(TCHAR_TO_UTF8(*OutputJson), SpeakerId, bEnableInterrogativeUpspeak, OutputSize);
 
-	return nullptr;
+	OutputBinarySize = OutputSize;
+	return OutputWAV;
 }
 
 /**
