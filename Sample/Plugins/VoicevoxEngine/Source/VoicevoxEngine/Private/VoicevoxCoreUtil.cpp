@@ -8,7 +8,7 @@
 #include "VoicevoxCoreUtil.h"
 #include "JsonObjectConverter.h"
 
-#if defined(PLATFORM_MAC)
+#if PLATFORM_MAC
 #include "VoicevoxCore/osx/VoicevoxCore/voicevox_core.h"
 #else
 #include "VoicevoxCore/voicevox_core.h"
