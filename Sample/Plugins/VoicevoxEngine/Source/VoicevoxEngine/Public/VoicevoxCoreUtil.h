@@ -260,6 +260,12 @@ public:
 	static void Finalize();
 
 	/**
+	 * voicevoxのバージョンを取得する
+	 * @return SemVerでフォーマットされたバージョン
+	 */
+	 static FString GetVoicevoxVersion();
+	
+	/**
 	 * @fn
 	 * VOICEVOX COREのモデルをロード実行
 	 * @brief モデルをロードする。

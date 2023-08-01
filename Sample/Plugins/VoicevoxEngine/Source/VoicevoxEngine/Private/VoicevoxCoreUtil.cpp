@@ -66,6 +66,14 @@ void FVoicevoxCoreUtil::Finalize()
 }
 
 /**
+ * voicevoxのバージョンを取得する
+ */
+FString FVoicevoxCoreUtil::GetVoicevoxVersion()
+{
+	return UTF8_TO_TCHAR(voicevox_get_version());
+}
+
+/**
  * @brief  VOICEVOX COREのモデルをロード実行
  */
 bool FVoicevoxCoreUtil::LoadModel(const int64 SpeakerId)
@@ -98,13 +106,9 @@ uint8* FVoicevoxCoreUtil::RunTextToSpeech(const int64 SpeakerId, const FString& 
 		VoicevoxTtsOptions Options;
 		Options.kana = bKana;
 		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
-#ifdef PLATFORM_MAC
-		uintptr_t o = 0;
-#else
-		uint64 o = 0;
-#endif
+		uintptr_t OutPutSize = 0;
 		
-		if (const VoicevoxResultCode Result = voicevox_tts(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &o, &OutputWAV);
+		if (const VoicevoxResultCode Result = voicevox_tts(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &OutPutSize, &OutputWAV);
 			Result != VOICEVOX_RESULT_OK)
 		{
 			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
@@ -113,13 +117,16 @@ uint8* FVoicevoxCoreUtil::RunTextToSpeech(const int64 SpeakerId, const FString& 
 			return nullptr;	
 		}
 
-		OutputBinarySize = static_cast<long>(o);
+		OutputBinarySize = static_cast<long>(OutPutSize);
 		return OutputWAV;
 	}
 
 	return nullptr;
 }
 
+/**
+ * @brief AudioQuery を取得する。
+ */
 char* FVoicevoxCoreUtil::GetAudioQuery(const int64 SpeakerId, const FString& Message, const bool bKana)
 {
 	// スピーカーモデルがロードされていない場合はロードを実行する
@@ -171,12 +178,8 @@ uint8* FVoicevoxCoreUtil::RunSynthesis(const char* AudioQueryJson, const int64 S
 		uint8* OutputWAV = nullptr;
 		VoicevoxSynthesisOptions Options;
 		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
-#ifdef PLATFORM_MAC
-		uintptr_t OutputSize = 0;
-#else
-		uint64 OutputSize = 0;
-#endif
-		if (const VoicevoxResultCode Result = voicevox_synthesis(AudioQueryJson, SpeakerId, Options, &OutputSize, &OutputWAV);
+		uintptr_t OutPutSize = 0;
+		if (const VoicevoxResultCode Result = voicevox_synthesis(AudioQueryJson, SpeakerId, Options, &OutPutSize, &OutputWAV);
 			Result != VOICEVOX_RESULT_OK)
 		{
 			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
@@ -185,7 +188,7 @@ uint8* FVoicevoxCoreUtil::RunSynthesis(const char* AudioQueryJson, const int64 S
 			return nullptr;	
 		}
 
-		OutputBinarySize = static_cast<long>(OutputSize);
+		OutputBinarySize = static_cast<long>(OutPutSize);
 		return OutputWAV;
 	}
 
@@ -251,12 +254,8 @@ TArray<float> FVoicevoxCoreUtil::GetPhonemeLength(const int64 Length, TArray<int
 {
 	TArray<float> Output;
 	Output.Init(0, Length);
-#ifdef PLATFORM_MAC
-	uintptr_t o = 0;
-#else
-	uint64 o = 0;
-#endif
-	if (const VoicevoxResultCode Result = voicevox_predict_duration(Length, PhonemeList.GetData(), SpeakerID, &o, reinterpret_cast<float**>(Output.GetData())); Result != VOICEVOX_RESULT_OK)
+	uintptr_t OutPutSize = 0;
+	if (const VoicevoxResultCode Result = voicevox_predict_duration(Length, PhonemeList.GetData(), SpeakerID, &OutPutSize, reinterpret_cast<float**>(Output.GetData())); Result != VOICEVOX_RESULT_OK)
 	{
 		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
 		const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_predict_duration Error:%s"), *LastMessage);
@@ -275,14 +274,10 @@ TArray<float> FVoicevoxCoreUtil::FindPitchEachMora(const int64 Length, TArray<in
 {
 	TArray<float> Output;
 	Output.Init(0, Length);
-#ifdef PLATFORM_MAC
-	uintptr_t o = 0;
-#else
-	uint64 o = 0;
-#endif
+	uintptr_t OutPutSize = 0;
 	if (const VoicevoxResultCode Result = voicevox_predict_intonation(Length, VowelPhonemeList.GetData(), ConsonantPhonemeList.GetData(),
 	                                            StartAccentList.GetData(), EndAccentList.GetData(), StartAccentPhraseList.GetData(),
-	                                            EndAccentPhraseList.GetData(), SpeakerID, &o, reinterpret_cast<float**>(Output.GetData())); Result != VOICEVOX_RESULT_OK)
+	                                            EndAccentPhraseList.GetData(), SpeakerID, &OutPutSize, reinterpret_cast<float**>(Output.GetData())); Result != VOICEVOX_RESULT_OK)
 	{
 		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
 		const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_predict_intonation Error:%s"), *LastMessage);
@@ -295,16 +290,11 @@ TArray<float> FVoicevoxCoreUtil::FindPitchEachMora(const int64 Length, TArray<in
 /**
  * @brief フレームごとの音素と音高から、波形を求める
  */
-TArray<float> FVoicevoxCoreUtil::DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme,
-									  int64 SpeakerID)
+TArray<float> FVoicevoxCoreUtil::DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID)
 {
 	TArray<float> Output;
-#ifdef PLATFORM_MAC
-	uintptr_t o = 0;
-#else
-	uint64 o = 0;
-#endif
-	if (const VoicevoxResultCode Result = voicevox_decode(Length, PhonemeSize, F0.GetData(), Phoneme.GetData(), SpeakerID, &o, reinterpret_cast<float**>(Output.GetData())); Result != VOICEVOX_RESULT_OK)
+	uintptr_t OutPutSize = 0;
+	if (const VoicevoxResultCode Result = voicevox_decode(Length, PhonemeSize, F0.GetData(), Phoneme.GetData(), SpeakerID, &OutPutSize, reinterpret_cast<float**>(Output.GetData())); Result != VOICEVOX_RESULT_OK)
 	{
 		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
 		const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_decode Error:%s"), *LastMessage);
@@ -318,7 +308,7 @@ TArray<float> FVoicevoxCoreUtil::DecodeForward(int64 Length, int64 PhonemeSize, 
  */
 void FVoicevoxCoreUtil::ShowVoicevoxErrorMessage(const FString& MessageFormat)
 {
-	UE_LOG(LogVoicevoxEngine, Error,  TEXT("%s"), *MessageFormat);
+	UE_LOG(LogVoicevoxEngine, Error, TEXT("%s"), *MessageFormat);
 	const FColor Col = FColor::Red;
 	const FVector2D Scl = FVector2D(1.0f, 1.0f);
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, Col, *MessageFormat, true, Scl);
