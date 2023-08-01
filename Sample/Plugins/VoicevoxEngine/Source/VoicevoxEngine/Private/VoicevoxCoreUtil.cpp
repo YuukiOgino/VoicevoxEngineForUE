@@ -97,7 +97,7 @@ bool FVoicevoxCoreUtil::LoadModel(const int64 SpeakerId)
 /**
  * @brief VOICEVOX COERのtext to speechを実行
  */
-uint8* FVoicevoxCoreUtil::RunTextToSpeech(const int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak,  long& OutputBinarySize)
+uint8* FVoicevoxCoreUtil::RunTextToSpeech(const int64 SpeakerId, const FString& Message, const bool bKana, const bool bEnableInterrogativeUpspeak,  long& OutputBinarySize)
 {
 	// スピーカーモデルがロードされていない場合はロードを実行する
 	if (LoadModel(SpeakerId))
@@ -198,7 +198,7 @@ uint8* FVoicevoxCoreUtil::RunSynthesis(const char* AudioQueryJson, const int64 S
 /**
  * @brief AudioQueryを音声データに変換する。
  */
-uint8* FVoicevoxCoreUtil::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, const int64 SpeakerId, bool bEnableInterrogativeUpspeak, long& OutputBinarySize)
+uint8* FVoicevoxCoreUtil::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, const int64 SpeakerId, const bool bEnableInterrogativeUpspeak, long& OutputBinarySize)
 {
 	FString OutputJson = "";
 	FJsonObjectConverter::UStructToJsonObjectString(AudioQueryJson, OutputJson, 0, 0, 0, nullptr, false);
@@ -250,7 +250,7 @@ TArray<FVoicevoxMeta> FVoicevoxCoreUtil::MetaList()
 /** 
  * @brief 音素列から、音素ごとの長さを求める
  */
-TArray<float> FVoicevoxCoreUtil::GetPhonemeLength(const int64 Length, TArray<int64> PhonemeList, int64 SpeakerID)
+TArray<float> FVoicevoxCoreUtil::GetPhonemeLength(const int64 Length, TArray<int64> PhonemeList, const int64 SpeakerID)
 {
 	TArray<float> Output;
 	Output.Init(0, Length);
@@ -270,7 +270,7 @@ TArray<float> FVoicevoxCoreUtil::GetPhonemeLength(const int64 Length, TArray<int
 TArray<float> FVoicevoxCoreUtil::FindPitchEachMora(const int64 Length, TArray<int64> VowelPhonemeList, TArray<int64> ConsonantPhonemeList,
                                                    TArray<int64> StartAccentList, TArray<int64> EndAccentList,
                                                    TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
-                                                   int64 SpeakerID)
+                                                   const int64 SpeakerID)
 {
 	TArray<float> Output;
 	Output.Init(0, Length);
@@ -290,7 +290,7 @@ TArray<float> FVoicevoxCoreUtil::FindPitchEachMora(const int64 Length, TArray<in
 /**
  * @brief フレームごとの音素と音高から、波形を求める
  */
-TArray<float> FVoicevoxCoreUtil::DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID)
+TArray<float> FVoicevoxCoreUtil::DecodeForward(const int64 Length, const int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, const int64 SpeakerID)
 {
 	TArray<float> Output;
 	uintptr_t OutPutSize = 0;
