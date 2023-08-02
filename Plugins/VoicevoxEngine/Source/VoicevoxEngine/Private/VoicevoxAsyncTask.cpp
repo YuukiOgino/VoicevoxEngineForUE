@@ -7,11 +7,7 @@
 
 #include "VoicevoxAsyncTask.h"
 #include "VoicevoxCoreUtil.h"
-
-#if PLATFORM_WINDOWS
-#include "Windows/WindowsHWrapper.h"
-#include <playsoundapi.h>
-#endif
+#include "Kismet/GameplayStatics.h"
 
 /**
  * @brief VOICEVOX COER 初期化(Blueprint公開ノード)
@@ -85,30 +81,28 @@ UVoicevoxLoadModelAsyncTask* UVoicevoxLoadModelAsyncTask::LoadModel(UObject* Wor
  */
 void UVoicevoxLoadModelAsyncTask::Activate()
 {
-	UE::Tasks::Launch(TEXT("VoicevoxCoreTask"), [&]
+	if (FVoicevoxCoreUtil::LoadModel(SpeakerId))
 	{
-		if (FVoicevoxCoreUtil::LoadModel(SpeakerId))
-		{
-			OnSuccess.Broadcast();
-		}
-		else
-		{
-			OnFail.Broadcast();
-		}
+		OnSuccess.Broadcast();
+	}
+	else
+	{
+		OnFail.Broadcast();
+	}
 		
-		SetReadyToDestroy();
-	});
+	SetReadyToDestroy();
 }
 
 /**
  * @brief VOICEVOX COERで変換した音声データを簡易的に再生させる(Blueprint公開ノード)
  */
-UVoicevoxSimplePlayTextToSpeechAsyncTask* UVoicevoxSimplePlayTextToSpeechAsyncTask::SimplePlayTextToSpeech(UObject* WorldContextObject, ESpeakerType SpeakerType, FString Message, bool bRunKana)
+UVoicevoxSimplePlayTextToSpeechAsyncTask* UVoicevoxSimplePlayTextToSpeechAsyncTask::SimplePlayTextToSpeech(UObject* WorldContextObject, ESpeakerType SpeakerType, FString Message, const bool bRunKana)
 {
 	UVoicevoxSimplePlayTextToSpeechAsyncTask* Task = NewObject<UVoicevoxSimplePlayTextToSpeechAsyncTask>();
 	Task->SpeakerId = static_cast<int64>(SpeakerType);
 	Task->Message = Message;
 	Task->bRunKana = bRunKana;
+	Task->WorldContextObject = WorldContextObject;
 	Task->RegisterWithGameInstance(WorldContextObject);
 	return Task;
 }
@@ -118,23 +112,149 @@ UVoicevoxSimplePlayTextToSpeechAsyncTask* UVoicevoxSimplePlayTextToSpeechAsyncTa
  */	
 void UVoicevoxSimplePlayTextToSpeechAsyncTask::Activate()
 {
-	UE::Tasks::Launch(TEXT("VoicevoxCoreTask"), [&]
+	long OutputBinarySize = 0;
+	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunTextToSpeech(SpeakerId, *Message, bRunKana, true, OutputBinarySize);
+		OutputWAV != nullptr)
 	{
-		long OutputBinarySize = 0;
-		if (uint8* OutputWAV = FVoicevoxCoreUtil::RunTextToSpeech(SpeakerId, *Message, bRunKana, true, OutputBinarySize);
-			OutputWAV != nullptr)
+		FString ErrorMessage = "";
+		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV, OutputBinarySize, &ErrorMessage))
 		{
-#if PLATFORM_WINDOWS
-			PlaySound(reinterpret_cast<LPCTSTR>(OutputWAV), nullptr, SND_MEMORY);
-#endif
-			FVoicevoxCoreUtil::WavFree(OutputWAV);
-			OnSuccess.Broadcast();
+			USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
+			const int32 ChannelCount = *WaveInfo.pChannels;
+			const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
+			const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
+			const int32 NumFrames = NumSamples / ChannelCount;
+			
+			Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
+			Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
+			FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
+			
+			Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
+			Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
+			Sound->NumChannels = ChannelCount;
+			Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
+
+			if (IsValid(WorldContextObject.Get()))
+			{
+				UGameplayStatics::PlaySound2D(WorldContextObject->GetWorld(), Sound, 2.0f);
+			}
 		}
-		else
-		{
-			OnFail.Broadcast();
-		}
+		FVoicevoxCoreUtil::WavFree(OutputWAV);
+		OnSuccess.Broadcast();
+	}
+	else
+	{
+		OnFail.Broadcast();
+	}
 		
-		SetReadyToDestroy();
-	});
+	SetReadyToDestroy();
 }
+
+/**
+ * @brief VOICEVOX COERで変換したAudioQuery簡易的に再生させる(Blueprint公開ノード)
+ */
+UVoicevoxSimplePlayTextToAudioQueryAsyncTask* UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQuery(UObject* WorldContextObject, ESpeakerType SpeakerType, FString Message, const bool bRunKana)
+{
+	UVoicevoxSimplePlayTextToAudioQueryAsyncTask* Task = NewObject<UVoicevoxSimplePlayTextToAudioQueryAsyncTask>();
+	Task->SpeakerId = static_cast<int64>(SpeakerType);
+	Task->Message = Message;
+	Task->bRunKana = bRunKana;
+	Task->WorldContextObject = WorldContextObject;
+	Task->RegisterWithGameInstance(WorldContextObject);
+	return Task;
+}
+
+/**
+ * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
+ */	
+void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
+{
+	char* AudioQuery = FVoicevoxCoreUtil::GetAudioQuery(SpeakerId, Message, bRunKana);
+	long OutputBinarySize = 0;
+
+	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, SpeakerId, bRunKana, OutputBinarySize); OutputWAV != nullptr)
+	{
+		FString ErrorMessage = "";
+		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV, OutputBinarySize, &ErrorMessage))
+		{
+			USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
+			const int32 ChannelCount = *WaveInfo.pChannels;
+			const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
+			const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
+			const int32 NumFrames = NumSamples / ChannelCount;
+			
+			Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
+			Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
+			FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
+			
+			Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
+			Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
+			Sound->NumChannels = ChannelCount;
+			Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
+
+			if (IsValid(WorldContextObject.Get()))
+			{
+				UGameplayStatics::PlaySound2D(WorldContextObject->GetWorld(), Sound);
+			}
+		}
+		FVoicevoxCoreUtil::WavFree(OutputWAV);
+		OnSuccess.Broadcast();
+	}
+	else
+	{
+		OnFail.Broadcast();
+	}
+
+	FVoicevoxCoreUtil::AudioQueryFree(AudioQuery);
+	SetReadyToDestroy();
+}
+
+/**
+ * @brief VOICEVOX COERで変換したAudioQueryを取得する(Blueprint公開ノード)
+ */
+void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQuery(FString& Query, ESpeakerType SpeakerType, const FString Message, const bool bRunKana)
+{
+	Query = UTF8_TO_TCHAR(FVoicevoxCoreUtil::GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana));
+}
+
+/**
+ * @brief  VOICEVOX COERで変換したAudioQueryを取得する(Blueprint公開ノード)
+ */
+void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQueryToStruct(FVoicevoxAudioQuery& AudioQuery, ESpeakerType SpeakerType, const FString Message, const bool bRunKana)
+{
+	AudioQuery = FVoicevoxCoreUtil::GetAudioQueryList(static_cast<int64>(SpeakerType), Message, bRunKana);
+}
+
+void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQueryStruct(UObject* WorldContextObject, FVoicevoxAudioQuery AudioQuery, ESpeakerType SpeakerType, bool bRunKana)
+{
+	long OutputBinarySize = 0;
+
+	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bRunKana, OutputBinarySize); OutputWAV != nullptr)
+	{
+		FString ErrorMessage = "";
+		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV, OutputBinarySize, &ErrorMessage))
+		{
+			USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
+			const int32 ChannelCount = *WaveInfo.pChannels;
+			const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
+			const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
+			const int32 NumFrames = NumSamples / ChannelCount;
+			
+			Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
+			Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
+			FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
+			
+			Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
+			Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
+			Sound->NumChannels = ChannelCount;
+			Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
+
+			if (IsValid(WorldContextObject))
+			{
+				UGameplayStatics::PlaySound2D(WorldContextObject->GetWorld(), Sound);
+			}
+		}
+		FVoicevoxCoreUtil::WavFree(OutputWAV);
+	}
+}
+

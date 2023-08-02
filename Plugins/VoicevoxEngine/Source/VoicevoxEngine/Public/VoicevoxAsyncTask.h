@@ -83,7 +83,7 @@ public:
 	 */
     UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxMetasToString"))
     static void GetMetasToString(FString& Metas);
-
+	
 	/**
 	 * @fn
 	 *  VOICEVOX COER メタ情報を取得する(Blueprint公開ノード)
@@ -169,8 +169,78 @@ public:
 	//! AquesTalkライクな記法で実行するか
 	bool bRunKana = false;
 
+	TWeakObjectPtr<UObject> WorldContextObject;
+
 	/**
 	 * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
 	 */	
 	virtual void Activate() override;
+};
+
+//------------------------------------------------------------------------
+// UVoicevoxSimplePlayTextToSpeechAsyncTask
+//------------------------------------------------------------------------
+
+/**
+ * @class UVoicevoxSimplePlayTextToAudioQueryAsyncTask
+ * @brief BlueprintでVOICEVOX CORE APIのvoicevox_audio_queryを実行し簡易的に音声再生させるLatentノードクラス
+ */
+UCLASS()
+class VOICEVOXENGINE_API UVoicevoxSimplePlayTextToAudioQueryAsyncTask : public UVoicevoxAsyncTaskBase
+{
+	GENERATED_BODY()
+public:
+	/**
+	 * @brief VOICEVOX COERで変換したAudioQuery簡易的に再生させる(Blueprint公開ノード)
+	 * @param[in] WorldContextObject
+	 * @param[in] SpeakerType	話者番号
+	 * @param[in] Message		音声データに変換するtextデータ
+	 * @param[in] bRunKana		AquesTalkライクな記法で実行するか
+	 * @detail
+	 * 音声再生はネイティブ機能を使用しているため、UE独自のサウンドシステムは不使用。
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxSimplePlayTextToAudioQuery", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
+	static UVoicevoxSimplePlayTextToAudioQueryAsyncTask* SimplePlayTextToAudioQuery(UObject* WorldContextObject, ESpeakerType SpeakerType, FString Message, bool bRunKana=false);
+
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "SimplePlayTextToAudioQueryStruct", WorldContext="WorldContextObject"))
+	static void SimplePlayTextToAudioQueryStruct(UObject* WorldContextObject, FVoicevoxAudioQuery AudioQuery, ESpeakerType SpeakerType, bool bRunKana=false);
+	
+	//! 話者番号
+	int64 SpeakerId = 0;
+	//! 音声データに変換するtextデータ
+	FString Message = "";
+	//! AquesTalkライクな記法で実行するか
+	bool bRunKana = false;
+	
+	TWeakObjectPtr<UObject> WorldContextObject;
+	
+	/**
+	 * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
+	 */	
+	virtual void Activate() override;
+	
+	/**
+	 * @brief VOICEVOX COERで変換したAudioQueryを取得する(Blueprint公開ノード)
+	 * @param[out] Query	AudioQueryデータ
+	 * @param[in] SpeakerType	話者番号
+	 * @param[in] Message		音声データに変換するtextデータ
+	 * @param[in] bRunKana		AquesTalkライクな記法で実行するか
+	 * @detail
+	 * 返却された文字列はJSON形式
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxAudioQuery"))
+	static void GetAudioQuery(FString& Query, ESpeakerType SpeakerType, FString Message, bool bRunKana=false);
+
+	/**
+	 * @fn
+	 *  VOICEVOX COERで変換したAudioQueryを取得する(Blueprint公開ノード)
+	 * @param[out] AudioQuery	AudioQuery構造体
+	 * @param[in] SpeakerType	話者番号
+	 * @param[in] Message		音声データに変換するtextデータ
+	 * @param[in] bRunKana		AquesTalkライクな記法で実行するか
+	 * @return AudioQuery情報が格納されたjson形式の構造体
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxAudioQueryToObject"))
+	static void GetAudioQueryToStruct(FVoicevoxAudioQuery& AudioQuery, ESpeakerType SpeakerType, FString Message, bool bRunKana=false);
+	
 };

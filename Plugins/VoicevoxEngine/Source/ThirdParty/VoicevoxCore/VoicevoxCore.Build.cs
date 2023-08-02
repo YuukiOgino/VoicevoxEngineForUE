@@ -51,6 +51,30 @@ public class VoicevoxCore : ModuleRules
 			DeleteDirectory($"{ProjectDirectory}/Binaries/Win64/model");
 			DirectoryCopy(Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "model"), $"{ProjectDirectory}/Binaries/Win64/model", true);
         }
+		else if (Target.Platform == UnrealTargetPlatform.Mac)
+		{
+			// core.hはEngine側も同名のヘッダーファイルがあるため、意図的にx64フォルダまでをIncludePathに含める
+			PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "osx")));
+			
+			// Delay-load the DLL, so we can load it from the right place first
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "libvoicevox_core.dylib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "libonnxruntime.1.13.1.dylib"));
+			
+			PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "libvoicevox_core.dylib"));
+			PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "libonnxruntime.1.13.1.dylib"));
+			
+			// Ensure that the DLL is staged along with the executable
+			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Mac/libvoicevox_core.dylib", Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "libvoicevox_core.dylib"));
+			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Mac/libonnxruntime.1.13.1.dylib", Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "libonnxruntime.1.13.1.dylib"));
+			
+			// Open JTalkライブラリフォルダもコピーする
+			DeleteDirectory($"{ProjectDirectory}/Binaries/Mac/{OpenJtalkDicName}");
+			DirectoryCopy(Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", OpenJtalkDicName), $"{ProjectDirectory}/Binaries/Mac/{OpenJtalkDicName}", true);
+			
+			// modelフォルダもコピーする
+			DeleteDirectory($"{ProjectDirectory}/Binaries/Mac/model");
+			DirectoryCopy(Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "model"), $"{ProjectDirectory}/Binaries/Mac/model", true);
+		}
 		
 		PublicDefinitions.Add($"OPEN_JTALK_DIC_NAME=\"{OpenJtalkDicName}\"");
 	}
