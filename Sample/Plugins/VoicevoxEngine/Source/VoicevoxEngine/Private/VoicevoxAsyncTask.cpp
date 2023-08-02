@@ -96,7 +96,7 @@ void UVoicevoxLoadModelAsyncTask::Activate()
 /**
  * @brief VOICEVOX COERで変換した音声データを簡易的に再生させる(Blueprint公開ノード)
  */
-UVoicevoxSimplePlayTextToSpeechAsyncTask* UVoicevoxSimplePlayTextToSpeechAsyncTask::SimplePlayTextToSpeech(UObject* WorldContextObject, ESpeakerType SpeakerType, FString Message, bool bRunKana)
+UVoicevoxSimplePlayTextToSpeechAsyncTask* UVoicevoxSimplePlayTextToSpeechAsyncTask::SimplePlayTextToSpeech(UObject* WorldContextObject, ESpeakerType SpeakerType, FString Message, const bool bRunKana)
 {
 	UVoicevoxSimplePlayTextToSpeechAsyncTask* Task = NewObject<UVoicevoxSimplePlayTextToSpeechAsyncTask>();
 	Task->SpeakerId = static_cast<int64>(SpeakerType);
@@ -116,28 +116,27 @@ void UVoicevoxSimplePlayTextToSpeechAsyncTask::Activate()
 	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunTextToSpeech(SpeakerId, *Message, bRunKana, true, OutputBinarySize);
 		OutputWAV != nullptr)
 	{
-		FString ErrorMessage;
+		FString ErrorMessage = "";
 		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV, OutputBinarySize, &ErrorMessage))
 		{
 			USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
-			int32 ChannelCount = *WaveInfo.pChannels;
-			int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
-			int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
-			int32 NumFrames = NumSamples / ChannelCount;
+			const int32 ChannelCount = *WaveInfo.pChannels;
+			const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
+			const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
+			const int32 NumFrames = NumSamples / ChannelCount;
 			
 			Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
-			Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(Sound->RawPCMDataSize));
-			FMemory::Memmove(Sound->RawPCMData, OutputWAV, OutputBinarySize);
+			Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
+			FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
 			
 			Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
 			Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
-			Sound->SetImportedSampleRate(*WaveInfo.pSamplesPerSec);
 			Sound->NumChannels = ChannelCount;
 			Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
 
 			if (IsValid(WorldContextObject.Get()))
 			{
-				UGameplayStatics::PlaySound2D(WorldContextObject->GetWorld(), Sound);
+				UGameplayStatics::PlaySound2D(WorldContextObject->GetWorld(), Sound, 2.0f);
 			}
 		}
 		FVoicevoxCoreUtil::WavFree(OutputWAV);
@@ -154,7 +153,7 @@ void UVoicevoxSimplePlayTextToSpeechAsyncTask::Activate()
 /**
  * @brief VOICEVOX COERで変換したAudioQuery簡易的に再生させる(Blueprint公開ノード)
  */
-UVoicevoxSimplePlayTextToAudioQueryAsyncTask* UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQuery(UObject* WorldContextObject, ESpeakerType SpeakerType, FString Message, bool bRunKana)
+UVoicevoxSimplePlayTextToAudioQueryAsyncTask* UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQuery(UObject* WorldContextObject, ESpeakerType SpeakerType, FString Message, const bool bRunKana)
 {
 	UVoicevoxSimplePlayTextToAudioQueryAsyncTask* Task = NewObject<UVoicevoxSimplePlayTextToAudioQueryAsyncTask>();
 	Task->SpeakerId = static_cast<int64>(SpeakerType);
@@ -170,27 +169,26 @@ UVoicevoxSimplePlayTextToAudioQueryAsyncTask* UVoicevoxSimplePlayTextToAudioQuer
  */	
 void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
 {
-	char* q = FVoicevoxCoreUtil::GetAudioQuery(SpeakerId, Message, bRunKana);
+	char* AudioQuery = FVoicevoxCoreUtil::GetAudioQuery(SpeakerId, Message, bRunKana);
 	long OutputBinarySize = 0;
 
-	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunSynthesis(q, SpeakerId, bRunKana, OutputBinarySize); OutputWAV != nullptr)
+	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, SpeakerId, bRunKana, OutputBinarySize); OutputWAV != nullptr)
 	{
-		FString ErrorMessage;
+		FString ErrorMessage = "";
 		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV, OutputBinarySize, &ErrorMessage))
 		{
 			USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
-			int32 ChannelCount = *WaveInfo.pChannels;
-			int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
-			int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
-			int32 NumFrames = NumSamples / ChannelCount;
+			const int32 ChannelCount = *WaveInfo.pChannels;
+			const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
+			const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
+			const int32 NumFrames = NumSamples / ChannelCount;
 			
 			Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
-			Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(Sound->RawPCMDataSize));
-			FMemory::Memmove(Sound->RawPCMData, OutputWAV, OutputBinarySize);
+			Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
+			FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
 			
 			Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
 			Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
-			Sound->SetImportedSampleRate(*WaveInfo.pSamplesPerSec);
 			Sound->NumChannels = ChannelCount;
 			Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
 
@@ -207,14 +205,14 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
 		OnFail.Broadcast();
 	}
 
-	FVoicevoxCoreUtil::AudioQueryFree(q);
+	FVoicevoxCoreUtil::AudioQueryFree(AudioQuery);
 	SetReadyToDestroy();
 }
 
 /**
  * @brief VOICEVOX COERで変換したAudioQueryを取得する(Blueprint公開ノード)
  */
-void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQuery(FString& Query, ESpeakerType SpeakerType, FString Message, bool bRunKana)
+void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQuery(FString& Query, ESpeakerType SpeakerType, const FString Message, const bool bRunKana)
 {
 	Query = UTF8_TO_TCHAR(FVoicevoxCoreUtil::GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana));
 }
@@ -222,7 +220,7 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQuery(FString& Query,
 /**
  * @brief  VOICEVOX COERで変換したAudioQueryを取得する(Blueprint公開ノード)
  */
-void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQueryToStruct(FVoicevoxAudioQuery& AudioQuery, ESpeakerType SpeakerType, FString Message, bool bRunKana)
+void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQueryToStruct(FVoicevoxAudioQuery& AudioQuery, ESpeakerType SpeakerType, const FString Message, const bool bRunKana)
 {
 	AudioQuery = FVoicevoxCoreUtil::GetAudioQueryList(static_cast<int64>(SpeakerType), Message, bRunKana);
 }
@@ -233,22 +231,21 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQueryStr
 
 	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bRunKana, OutputBinarySize); OutputWAV != nullptr)
 	{
-		FString ErrorMessage;
+		FString ErrorMessage = "";
 		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV, OutputBinarySize, &ErrorMessage))
 		{
 			USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
-			int32 ChannelCount = *WaveInfo.pChannels;
-			int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
-			int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
-			int32 NumFrames = NumSamples / ChannelCount;
+			const int32 ChannelCount = *WaveInfo.pChannels;
+			const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
+			const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
+			const int32 NumFrames = NumSamples / ChannelCount;
 			
 			Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
-			Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(Sound->RawPCMDataSize));
-			FMemory::Memmove(Sound->RawPCMData, OutputWAV, OutputBinarySize);
+			Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
+			FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
 			
 			Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
 			Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
-			Sound->SetImportedSampleRate(*WaveInfo.pSamplesPerSec);
 			Sound->NumChannels = ChannelCount;
 			Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
 
