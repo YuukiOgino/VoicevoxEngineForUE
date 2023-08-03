@@ -8,9 +8,10 @@
 #include "VoicevoxAsyncTask.h"
 #include "VoicevoxCoreUtil.h"
 #include "Kismet/GameplayStatics.h"
+#include "Tasks/Task.h"
 
 /**
- * @brief VOICEVOX COER 初期化(Blueprint公開ノード)
+ * @brief VOICEVOX CORE 初期化(Blueprint公開ノード)
  */
 UVoicevoxInitializeAsyncTask* UVoicevoxInitializeAsyncTask::Initialize(UObject* WorldContextObject,const bool bUseGPU, const int CPUNumThreads)
 {
@@ -22,7 +23,7 @@ UVoicevoxInitializeAsyncTask* UVoicevoxInitializeAsyncTask::Initialize(UObject* 
 }
 
 /**
- * @brief VOICEVOX COER 終了処理(Blueprint公開ノード)
+ * @brief VOICEVOX CORE 終了処理(Blueprint公開ノード)
  */
 void UVoicevoxInitializeAsyncTask::Finalize()
 {
@@ -30,7 +31,7 @@ void UVoicevoxInitializeAsyncTask::Finalize()
 }
 
 /**
- * @brief VOICEVOX COER メタ情報を取得する(Blueprint公開ノード)
+ * @brief VOICEVOX CORE メタ情報を取得する(Blueprint公開ノード)
  */
 void UVoicevoxInitializeAsyncTask::GetMetasToString(FString& Metas)
 {
@@ -38,11 +39,19 @@ void UVoicevoxInitializeAsyncTask::GetMetasToString(FString& Metas)
 }
 
 /**
- * @brief VOICEVOX COER メタ情報を取得する(Blueprint公開ノード)
+ * @brief VOICEVOX CORE メタ情報を取得する(Blueprint公開ノード)
  */
 void UVoicevoxInitializeAsyncTask::GetMetasToList(TArray<FVoicevoxMeta>& Metas)
 {
 	Metas = FVoicevoxCoreUtil::MetaList();
+}
+
+/**
+ * @brief サポートデバイス情報を取得する(Blueprint公開ノード)
+ */
+void UVoicevoxInitializeAsyncTask::GetSupportedDevices(FVoicevoxSupportedDevices& SupportedDevices)
+{
+	SupportedDevices = FVoicevoxCoreUtil::GetSupportedDevices();
 }
 
 /**
@@ -94,7 +103,7 @@ void UVoicevoxLoadModelAsyncTask::Activate()
 }
 
 /**
- * @brief VOICEVOX COERで変換した音声データを簡易的に再生させる(Blueprint公開ノード)
+ * @brief VOICEVOX COREで変換した音声データを簡易的に再生させる(Blueprint公開ノード)
  */
 UVoicevoxSimplePlayTextToSpeechAsyncTask* UVoicevoxSimplePlayTextToSpeechAsyncTask::SimplePlayTextToSpeech(UObject* WorldContextObject, ESpeakerType SpeakerType, FString Message, const bool bRunKana)
 {
@@ -112,12 +121,11 @@ UVoicevoxSimplePlayTextToSpeechAsyncTask* UVoicevoxSimplePlayTextToSpeechAsyncTa
  */	
 void UVoicevoxSimplePlayTextToSpeechAsyncTask::Activate()
 {
-	long OutputBinarySize = 0;
-	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunTextToSpeech(SpeakerId, *Message, bRunKana, true, OutputBinarySize);
-		OutputWAV != nullptr)
+	if (TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunTextToSpeech(SpeakerId, *Message, bRunKana, true);
+		!OutputWAV.IsEmpty())
 	{
 		FString ErrorMessage = "";
-		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV, OutputBinarySize, &ErrorMessage))
+		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV.GetData(), OutputWAV.Num(), &ErrorMessage))
 		{
 			USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
 			const int32 ChannelCount = *WaveInfo.pChannels;
@@ -139,7 +147,6 @@ void UVoicevoxSimplePlayTextToSpeechAsyncTask::Activate()
 				UGameplayStatics::PlaySound2D(WorldContextObject->GetWorld(), Sound, 2.0f);
 			}
 		}
-		FVoicevoxCoreUtil::WavFree(OutputWAV);
 		OnSuccess.Broadcast();
 	}
 	else
@@ -151,7 +158,7 @@ void UVoicevoxSimplePlayTextToSpeechAsyncTask::Activate()
 }
 
 /**
- * @brief VOICEVOX COERで変換したAudioQuery簡易的に再生させる(Blueprint公開ノード)
+ * @brief VOICEVOX COREで変換したAudioQuery簡易的に再生させる(Blueprint公開ノード)
  */
 UVoicevoxSimplePlayTextToAudioQueryAsyncTask* UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQuery(UObject* WorldContextObject, ESpeakerType SpeakerType, FString Message, const bool bRunKana)
 {
@@ -170,12 +177,11 @@ UVoicevoxSimplePlayTextToAudioQueryAsyncTask* UVoicevoxSimplePlayTextToAudioQuer
 void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
 {
 	char* AudioQuery = FVoicevoxCoreUtil::GetAudioQuery(SpeakerId, Message, bRunKana);
-	long OutputBinarySize = 0;
 
-	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, SpeakerId, bRunKana, OutputBinarySize); OutputWAV != nullptr)
+	if (TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, SpeakerId, bRunKana); !OutputWAV.IsEmpty())
 	{
 		FString ErrorMessage = "";
-		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV, OutputBinarySize, &ErrorMessage))
+		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV.GetData(), OutputWAV.Num(), &ErrorMessage))
 		{
 			USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
 			const int32 ChannelCount = *WaveInfo.pChannels;
@@ -197,7 +203,6 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
 				UGameplayStatics::PlaySound2D(WorldContextObject->GetWorld(), Sound);
 			}
 		}
-		FVoicevoxCoreUtil::WavFree(OutputWAV);
 		OnSuccess.Broadcast();
 	}
 	else
@@ -210,7 +215,7 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
 }
 
 /**
- * @brief VOICEVOX COERで変換したAudioQueryを取得する(Blueprint公開ノード)
+ * @brief VOICEVOX CORE変換したAudioQueryを取得する(Blueprint公開ノード)
  */
 void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQuery(FString& Query, ESpeakerType SpeakerType, const FString Message, const bool bRunKana)
 {
@@ -218,7 +223,7 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQuery(FString& Query,
 }
 
 /**
- * @brief  VOICEVOX COERで変換したAudioQueryを取得する(Blueprint公開ノード)
+ * @brief  VOICEVOX COREで変換したAudioQueryを取得する(Blueprint公開ノード)
  */
 void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQueryToStruct(FVoicevoxAudioQuery& AudioQuery, ESpeakerType SpeakerType, const FString Message, const bool bRunKana)
 {
@@ -227,12 +232,10 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQueryToStruct(FVoicev
 
 void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQueryStruct(UObject* WorldContextObject, FVoicevoxAudioQuery AudioQuery, ESpeakerType SpeakerType, bool bRunKana)
 {
-	long OutputBinarySize = 0;
-
-	if (uint8* OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bRunKana, OutputBinarySize); OutputWAV != nullptr)
+	if (TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bRunKana); !OutputWAV.IsEmpty())
 	{
 		FString ErrorMessage = "";
-		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV, OutputBinarySize, &ErrorMessage))
+		if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV.GetData(), OutputWAV.Num(), &ErrorMessage))
 		{
 			USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
 			const int32 ChannelCount = *WaveInfo.pChannels;
@@ -254,7 +257,7 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQueryStr
 				UGameplayStatics::PlaySound2D(WorldContextObject->GetWorld(), Sound);
 			}
 		}
-		FVoicevoxCoreUtil::WavFree(OutputWAV);
+		
 	}
 }
 

@@ -53,7 +53,7 @@ class VOICEVOXENGINE_API UVoicevoxInitializeAsyncTask : public UVoicevoxAsyncTas
 public:
 	
 	/**
-	 * @brief VOICEVOX COER 初期化を実行。VOICEVOXのAPIを正しく実行するには先に初期化が必要(Blueprint公開ノード)
+	 * @brief VOICEVOX CORE初期化を実行。VOICEVOXのAPIを正しく実行するには先に初期化が必要(Blueprint公開ノード)
 	 * @param[in] WorldContextObject
 	 * @param[in] bUseGPU			trueならGPU用、falseならCPU用の初期化を行う
 	 * @param[in] CPUNumThreads		推論に用いるスレッド数を設定する。0の場合論理コア数の半分か、物理コア数が設定される
@@ -66,7 +66,7 @@ public:
 
 	/**
 	 * @fn
-	 * VOICEVOX COER 終了処理
+	 * VOICEVOX CORE 終了処理
 	 * @brief 終了処理を行う。以降VOICEVOXのAPIを利用するためには再度Initializeメソッドを行う必要がある。(Blueprint公開ノード)
 	 * @detail
 	 * VOICEVOXの終了処理は何度も実行可能。
@@ -77,7 +77,7 @@ public:
 	
 	/**
 	 * @fn
-	 *  VOICEVOX COER メタ情報を取得する(Blueprint公開ノード)
+	 *  VOICEVOX COREメタ情報を取得する(Blueprint公開ノード)
 	 * @brief 話者名や話者IDのリストを取得する(Blueprint公開ノード)
 	 * @return メタ情報が格納されたjson形式の文字列
 	 */
@@ -86,12 +86,19 @@ public:
 	
 	/**
 	 * @fn
-	 *  VOICEVOX COER メタ情報を取得する(Blueprint公開ノード)
+	 *  VOICEVOX COREメタ情報を取得する(Blueprint公開ノード)
 	 * @brief 話者名や話者IDのリストを取得する(Blueprint公開ノード)
 	 * @return メタ情報が格納されたjson形式の構造体
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxMetasToList"))
 	static void GetMetasToList(TArray<FVoicevoxMeta>& Metas);
+
+	/**
+	 * @brief サポートデバイス情報を取得する(Blueprint公開ノード)
+	 * @return サポートデバイス情報の構造体
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxSupportedDevices"))
+	static void GetSupportedDevices(FVoicevoxSupportedDevices& SupportedDevices);
 	
 	//! trueならGPU用、falseならCPU用の初期化を行う
 	bool bUseGPU = false;
@@ -151,7 +158,7 @@ class VOICEVOXENGINE_API UVoicevoxSimplePlayTextToSpeechAsyncTask : public UVoic
 	GENERATED_BODY()
 public:
 	/**
-	 * @brief VOICEVOX COERで変換した音声データを簡易的に再生させる(Blueprint公開ノード)
+	 * @brief VOICEVOX COREで変換した音声データを簡易的に再生させる(Blueprint公開ノード)
 	 * @param[in] WorldContextObject
 	 * @param[in] SpeakerType	話者番号
 	 * @param[in] Message		音声データに変換するtextデータ
@@ -191,7 +198,7 @@ class VOICEVOXENGINE_API UVoicevoxSimplePlayTextToAudioQueryAsyncTask : public U
 	GENERATED_BODY()
 public:
 	/**
-	 * @brief VOICEVOX COERで変換したAudioQuery簡易的に再生させる(Blueprint公開ノード)
+	 * @brief VOICEVOX COREで変換したAudioQuery簡易的に再生させる(Blueprint公開ノード)
 	 * @param[in] WorldContextObject
 	 * @param[in] SpeakerType	話者番号
 	 * @param[in] Message		音声データに変換するtextデータ
@@ -220,7 +227,7 @@ public:
 	virtual void Activate() override;
 	
 	/**
-	 * @brief VOICEVOX COERで変換したAudioQueryを取得する(Blueprint公開ノード)
+	 * @brief VOICEVOX COREで変換したAudioQueryを取得する(Blueprint公開ノード)
 	 * @param[out] Query	AudioQueryデータ
 	 * @param[in] SpeakerType	話者番号
 	 * @param[in] Message		音声データに変換するtextデータ
@@ -233,7 +240,7 @@ public:
 
 	/**
 	 * @fn
-	 *  VOICEVOX COERで変換したAudioQueryを取得する(Blueprint公開ノード)
+	 *  VOICEVOX COREで変換したAudioQueryを取得する(Blueprint公開ノード)
 	 * @param[out] AudioQuery	AudioQuery構造体
 	 * @param[in] SpeakerType	話者番号
 	 * @param[in] Message		音声データに変換するtextデータ

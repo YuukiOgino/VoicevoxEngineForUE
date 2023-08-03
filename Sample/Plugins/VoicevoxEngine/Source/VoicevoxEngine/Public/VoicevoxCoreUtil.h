@@ -133,83 +133,117 @@ struct FVoicevoxMeta
 	FString Version;
 };
 
+/**
+ * @struct FVoicevoxStyle
+ * @brief VOICEVOXのモデルスタイル情報構造体
+ */
+USTRUCT(BlueprintType)
+struct FVoicevoxSupportedDevices
+{
+	GENERATED_USTRUCT_BODY()
+
+	// CPU使用可フラグ
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	bool Cpu;
+
+	// GPU(cuda)使用可フラグ
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	bool Cuda;
+
+	// GPU(dml)使用可フラグ
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	bool Dml;
+};
+
+/**
+ * @struct FVoicevoxMora
+ * @brief VOICEVOXのモーラ情報構造体
+ */
 USTRUCT(BlueprintType)
 struct FVoicevoxMora
 {
 	GENERATED_USTRUCT_BODY()
 
 	// モデル名
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Text;
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Consonant;
 	
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Consonant_length;
 	
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Vowel;
 	
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Vowel_length;
 	
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Pitch;
 	
 };
 
+/**
+ * @struct FVoicevoxAccentPhrase
+ * @brief VOICEVOXのアクセント情報構造体
+ */
 USTRUCT(BlueprintType)
 struct FVoicevoxAccentPhrase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	TArray<FVoicevoxMora> Moras;
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	int Accent;
 	
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FVoicevoxMora Pause_mora;
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	bool Is_interrogative;
 };
 
+/**
+ * @struct FVoicevoxAudioQuery
+ * @brief VOICEVOXのAudioQuery情報構造体
+ */
 USTRUCT(BlueprintType)
 struct FVoicevoxAudioQuery
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	TArray<FVoicevoxAccentPhrase> Accent_phrases;
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Speed_scale;
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Pitch_scale;
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Intonation_scale;
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Volume_scale;
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Pre_phoneme_length;
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Post_phoneme_length;
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	int Output_sampling_rate;
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	bool Output_stereo;
 
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Kana;
 };
 
@@ -223,6 +257,7 @@ struct FVoicevoxAudioQuery
  */
 class VOICEVOXENGINE_API FVoicevoxCoreUtil
 {
+	//! 初期化処理実施済みか
 	inline static bool bIsInit = false;
 
 	/**
@@ -231,10 +266,18 @@ class VOICEVOXENGINE_API FVoicevoxCoreUtil
 	 */
 	static void ShowVoicevoxErrorMessage(const FString& MessageFormat);
 
+	/**
+	 * @fn
+	 * VOICEVOX COREのvoicevox_ttsで生成した音声データを開放
+	 * @brief voicevox_tts等で生成した音声データを開放する
+	 * @param Wav 開放する音声データのポインタ
+	 */
+	static void WavFree(uint8* Wav);
+	
 public:
 	/**
 	 * @fn
-	 * VOICEVOX COER 初期化
+	 * VOICEVOX CORE 初期化
 	 * @brief 音声合成するための初期化を行う。VOICEVOXのAPIを正しく実行するには先に初期化が必要
 	 * @param[in] bUseGPU			trueならGPU用、falseならCPU用の初期化を行う
 	 * @param[in] CPUNumThreads		推論に用いるスレッド数を設定する。0の場合論理コア数の半分か、物理コア数が設定される
@@ -251,7 +294,7 @@ public:
 
 	/**
 	 * @fn
-	 * VOICEVOX COER 終了処理
+	 * VOICEVOX CORE 終了処理
 	 * @brief 終了処理を行う。以降VOICEVOXのAPIを利用するためには再度Initializeメソッドを行う必要がある。
 	 * @detail
 	 * VOICEVOXの終了処理は何度も実行可能。
@@ -260,10 +303,28 @@ public:
 	static void Finalize();
 
 	/**
-	 * voicevoxのバージョンを取得する
+	 * @brief VOICEVOX COREのバージョンを取得する
 	 * @return SemVerでフォーマットされたバージョン
 	 */
-	 static FString GetVoicevoxVersion();
+	static FString GetVoicevoxVersion();
+
+	/**
+	 * @brief ハードウェアアクセラレーションがGPUモードか判定する
+	 * @return GPUモードならtrue、そうでないならfalse
+	 */
+	static bool IsGpuMode();
+
+	/**
+	 * @brief サポートデバイス情報をjsonで取得する
+	 * @return サポートデバイス情報のjson文字列
+	 */
+	static FString GetSupportedDevicesJson();
+
+	/**
+	 * @brief サポートデバイス情報を取得する
+	 * @return サポートデバイス情報の構造体
+	 */
+	static FVoicevoxSupportedDevices GetSupportedDevices();
 	
 	/**
 	 * @fn
@@ -280,22 +341,21 @@ public:
 	
 	/**
 	 * @fn
-	 * VOICEVOX COERのtext to speechを実行
+	 * VOICEVOX COREのtext to speechを実行
 	 * @brief Textデータを音声データに変換する。
 	 * @param[in] SpeakerId 話者番号
 	 * @param[in] Message 音声データに変換するtextデータ
 	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
-	 * @param[out] OutputBinarySize 音声データのサイズを出力する先のポインタ
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	static uint8* RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak, long& OutputBinarySize);
+	static TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak);
 
 	/**
 	 * @fn
-	 * VOICEVOX COERのvoicevox_audio_queryを取得
+	 * VOICEVOX COREのvoicevox_audio_queryを取得
 	 * @brief AudioQuery を取得する。
 	 * @param[in] SpeakerId 話者番号
 	 * @param[in] Message 音声データに変換するtextデータ
@@ -308,7 +368,7 @@ public:
 
 	/**
 	 * @fn
-	 * VOICEVOX COERのvoicevox_audio_queryを取得
+	 * VOICEVOX COREのvoicevox_audio_queryを取得
 	 * @brief AudioQuery を取得する。
 	 * @param[in] SpeakerId 話者番号
 	 * @param[in] Message 音声データに変換するtextデータ
@@ -321,43 +381,35 @@ public:
 	
 	/**
 	 * @fn
-	 * VOICEVOX COERのvoicevox_synthesisを実行
+	 * VOICEVOX COREのvoicevox_synthesisを実行
 	 * @brief AudioQueryを音声データに変換する。
 	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery
 	 * @param[in] SpeakerId 話者番号
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
-	 * @param[out] OutputBinarySize 音声データのサイズを出力する先のポインタ
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	static uint8* RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak, long& OutputBinarySize);
+	static TArray<uint8> RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
 
 	/**
 	 * @fn
-	 * VOICEVOX COERのvoicevox_synthesisを実行
+	 * VOICEVOX COREのvoicevox_synthesisを実行
 	 * @brief AudioQueryを音声データに変換する。
 	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery構造体
 	 * @param[in] SpeakerId 話者番号
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
-	 * @param[out] OutputBinarySize 音声データのサイズを出力する先のポインタ
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	static uint8* RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak, long& OutputBinarySize);
+	static TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
 	
-	/**
-	 * @fn
-	 * VOICEVOX COERのvoicevox_ttsで生成した音声データを開放
-	 * @brief voicevox_ttsで生成した音声データを開放する
-	 * @param Wav 開放する音声データのポインタ
-	 */
-	static void WavFree(uint8* Wav);
+
 
 	/**
 	 * @fn
-	 * VOICEVOX COERのjsonフォーマットされた AudioQuery データのメモリを解放する
+	 * VOICEVOX COREのjsonフォーマットされた AudioQuery データのメモリを解放する
 	 * @brief jsonフォーマットされた AudioQuery データのメモリを解放する
 	 * @param [in] QueryJson 解放する json フォーマットされた AudioQuery データ
 	 */
@@ -426,8 +478,7 @@ public:
 	 *
 	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
 	 */
-	static TArray<float> DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme,
-									  int64 SpeakerID);
+	static TArray<float> DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID);
 };
 
 DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxEngine, Log, All);
