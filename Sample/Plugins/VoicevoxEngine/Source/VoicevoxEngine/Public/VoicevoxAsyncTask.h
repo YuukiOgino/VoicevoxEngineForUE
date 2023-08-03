@@ -79,18 +79,9 @@ public:
 	 * @fn
 	 *  VOICEVOX COREメタ情報を取得する(Blueprint公開ノード)
 	 * @brief 話者名や話者IDのリストを取得する(Blueprint公開ノード)
-	 * @return メタ情報が格納されたjson形式の文字列
-	 */
-    UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxMetasToString"))
-    static void GetMetasToString(FString& Metas);
-	
-	/**
-	 * @fn
-	 *  VOICEVOX COREメタ情報を取得する(Blueprint公開ノード)
-	 * @brief 話者名や話者IDのリストを取得する(Blueprint公開ノード)
 	 * @return メタ情報が格納されたjson形式の構造体
 	 */
-	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxMetasToList"))
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxMetas"))
 	static void GetMetasToList(TArray<FVoicevoxMeta>& Metas);
 
 	/**
@@ -227,18 +218,6 @@ public:
 	virtual void Activate() override;
 	
 	/**
-	 * @brief VOICEVOX COREで変換したAudioQueryを取得する(Blueprint公開ノード)
-	 * @param[out] Query	AudioQueryデータ
-	 * @param[in] SpeakerType	話者番号
-	 * @param[in] Message		音声データに変換するtextデータ
-	 * @param[in] bRunKana		AquesTalkライクな記法で実行するか
-	 * @detail
-	 * 返却された文字列はJSON形式
-	 */
-	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxAudioQuery"))
-	static void GetAudioQuery(FString& Query, ESpeakerType SpeakerType, FString Message, bool bRunKana=false);
-
-	/**
 	 * @fn
 	 *  VOICEVOX COREで変換したAudioQueryを取得する(Blueprint公開ノード)
 	 * @param[out] AudioQuery	AudioQuery構造体
@@ -247,7 +226,7 @@ public:
 	 * @param[in] bRunKana		AquesTalkライクな記法で実行するか
 	 * @return AudioQuery情報が格納されたjson形式の構造体
 	 */
-	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxAudioQueryToObject"))
-	static void GetAudioQueryToStruct(FVoicevoxAudioQuery& AudioQuery, ESpeakerType SpeakerType, FString Message, bool bRunKana=false);
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxAudioQuery"))
+	static void GetAudioQuery(FVoicevoxAudioQuery& AudioQuery, ESpeakerType SpeakerType, FString Message, bool bRunKana=false);
 	
 };

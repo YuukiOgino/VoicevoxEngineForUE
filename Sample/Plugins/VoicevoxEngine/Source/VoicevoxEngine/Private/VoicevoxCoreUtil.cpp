@@ -192,7 +192,7 @@ FVoicevoxAudioQuery FVoicevoxCoreUtil::GetAudioQueryList(const int64 SpeakerId, 
 	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
 	if (bIsInit)
 	{
-		const auto Q = GetAudioQuery(SpeakerId, Message, bKana);
+		char* Q = GetAudioQuery(SpeakerId, Message, bKana);
 		FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(Q), &AudioQuery, 0, 0);
 		AudioQueryFree(Q);
 	}
@@ -266,14 +266,13 @@ void FVoicevoxCoreUtil::AudioQueryFree(char* QueryJson)
  */
 FString FVoicevoxCoreUtil::Metas()
 {
-	if (!bIsInit) return "";
 	return UTF8_TO_TCHAR(voicevox_get_metas_json());
 }
 
 /**
  * @brief 話者名や話者IDのリストを取得する
  */
-TArray<FVoicevoxMeta> FVoicevoxCoreUtil::MetaList()
+TArray<FVoicevoxMeta> FVoicevoxCoreUtil::GetMetaList()
 {
 	TArray<FVoicevoxMeta> List;
 	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する

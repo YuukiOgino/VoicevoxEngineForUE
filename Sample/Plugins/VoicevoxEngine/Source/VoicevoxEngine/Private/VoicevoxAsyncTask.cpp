@@ -33,17 +33,9 @@ void UVoicevoxInitializeAsyncTask::Finalize()
 /**
  * @brief VOICEVOX CORE メタ情報を取得する(Blueprint公開ノード)
  */
-void UVoicevoxInitializeAsyncTask::GetMetasToString(FString& Metas)
-{
-	Metas = FVoicevoxCoreUtil::Metas();
-}
-
-/**
- * @brief VOICEVOX CORE メタ情報を取得する(Blueprint公開ノード)
- */
 void UVoicevoxInitializeAsyncTask::GetMetasToList(TArray<FVoicevoxMeta>& Metas)
 {
-	Metas = FVoicevoxCoreUtil::MetaList();
+	Metas = FVoicevoxCoreUtil::GetMetaList();
 }
 
 /**
@@ -215,17 +207,9 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
 }
 
 /**
- * @brief VOICEVOX CORE変換したAudioQueryを取得する(Blueprint公開ノード)
- */
-void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQuery(FString& Query, ESpeakerType SpeakerType, const FString Message, const bool bRunKana)
-{
-	Query = UTF8_TO_TCHAR(FVoicevoxCoreUtil::GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana));
-}
-
-/**
  * @brief  VOICEVOX COREで変換したAudioQueryを取得する(Blueprint公開ノード)
  */
-void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQueryToStruct(FVoicevoxAudioQuery& AudioQuery, ESpeakerType SpeakerType, const FString Message, const bool bRunKana)
+void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQuery(FVoicevoxAudioQuery& AudioQuery, ESpeakerType SpeakerType, const FString Message, const bool bRunKana)
 {
 	AudioQuery = FVoicevoxCoreUtil::GetAudioQueryList(static_cast<int64>(SpeakerType), Message, bRunKana);
 }
@@ -257,7 +241,6 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQueryStr
 				UGameplayStatics::PlaySound2D(WorldContextObject->GetWorld(), Sound);
 			}
 		}
-		
 	}
 }
 

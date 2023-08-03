@@ -273,6 +273,14 @@ class VOICEVOXENGINE_API FVoicevoxCoreUtil
 	 * @param Wav 開放する音声データのポインタ
 	 */
 	static void WavFree(uint8* Wav);
+
+	/**
+	 * @fn
+	 * メタ情報を取得する
+	 * @brief 話者名や話者IDのリストを取得する
+	 * @return メタ情報が格納されたjson形式の文字列
+	 */
+	static FString Metas();
 	
 public:
 	/**
@@ -414,14 +422,6 @@ public:
 	 * @param [in] QueryJson 解放する json フォーマットされた AudioQuery データ
 	 */
 	static void AudioQueryFree(char* QueryJson);
-	
-	/**
-	 * @fn
-	 * メタ情報を取得する
-	 * @brief 話者名や話者IDのリストを取得する
-	 * @return メタ情報が格納されたjson形式の文字列
-	 */
-	static FString Metas();
 
 	/**
 	 * @fn
@@ -429,7 +429,7 @@ public:
 	 * @brief 話者名や話者IDのリストを取得する
 	 * @return メタ情報が格納されたjson形式の構造体
 	 */
-	static TArray<FVoicevoxMeta> MetaList();
+	static TArray<FVoicevoxMeta> GetMetaList();
 
 	/**
 	 * @fn
