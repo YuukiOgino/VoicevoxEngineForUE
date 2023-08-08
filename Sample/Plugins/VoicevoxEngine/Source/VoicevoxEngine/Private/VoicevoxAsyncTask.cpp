@@ -168,7 +168,7 @@ UVoicevoxSimplePlayTextToAudioQueryAsyncTask* UVoicevoxSimplePlayTextToAudioQuer
  */	
 void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
 {
-	char* AudioQuery = FVoicevoxCoreUtil::GetAudioQuery(SpeakerId, Message, bRunKana);
+	FVoicevoxAudioQuery AudioQuery = FVoicevoxCoreUtil::GetAudioQuery(SpeakerId, Message, bRunKana);
 
 	if (TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, SpeakerId, bRunKana); !OutputWAV.IsEmpty())
 	{
@@ -201,8 +201,7 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
 	{
 		OnFail.Broadcast();
 	}
-
-	FVoicevoxCoreUtil::AudioQueryFree(AudioQuery);
+	
 	SetReadyToDestroy();
 }
 
@@ -211,7 +210,7 @@ void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::Activate()
  */
 void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::GetAudioQuery(FVoicevoxAudioQuery& AudioQuery, ESpeakerType SpeakerType, const FString Message, const bool bRunKana)
 {
-	AudioQuery = FVoicevoxCoreUtil::GetAudioQueryList(static_cast<int64>(SpeakerType), Message, bRunKana);
+	AudioQuery = FVoicevoxCoreUtil::GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana);
 }
 
 void UVoicevoxSimplePlayTextToAudioQueryAsyncTask::SimplePlayTextToAudioQueryStruct(UObject* WorldContextObject, FVoicevoxAudioQuery AudioQuery, ESpeakerType SpeakerType, bool bRunKana)

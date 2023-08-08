@@ -160,41 +160,34 @@ TArray<uint8> FVoicevoxCoreUtil::RunTextToSpeech(const int64 SpeakerId, const FS
 /**
  * @brief AudioQuery を取得する。
  */
-char* FVoicevoxCoreUtil::GetAudioQuery(const int64 SpeakerId, const FString& Message, const bool bKana)
-{
-	// スピーカーモデルがロードされていない場合はロードを実行する
-	if (LoadModel(SpeakerId))
-	{
-		char* Output = nullptr;
-		VoicevoxAudioQueryOptions Options;
-		Options.kana = bKana;
-		if (const VoicevoxResultCode Result = voicevox_audio_query(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &Output);
-			Result != VOICEVOX_RESULT_OK)
-		{
-			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
-			const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
-			ShowVoicevoxErrorMessage(ErrorMessage);
-			return nullptr;	
-		}
-
-		return Output;
-	}
-
-	return nullptr;
-}
-
-/**
- * @brief AudioQuery を取得する。
- */
-FVoicevoxAudioQuery FVoicevoxCoreUtil::GetAudioQueryList(const int64 SpeakerId, const FString& Message, const bool bKana)
+FVoicevoxAudioQuery FVoicevoxCoreUtil::GetAudioQuery(const int64 SpeakerId, const FString& Message, const bool bKana)
 {
 	FVoicevoxAudioQuery AudioQuery{};
 	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
 	if (bIsInit)
 	{
-		char* Q = GetAudioQuery(SpeakerId, Message, bKana);
-		FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(Q), &AudioQuery, 0, 0);
-		AudioQueryFree(Q);
+
+		// スピーカーモデルがロードされていない場合はロードを実行する
+		if (LoadModel(SpeakerId))
+		{
+			char* Output = nullptr;
+			VoicevoxAudioQueryOptions Options;
+			Options.kana = bKana;
+			if (const VoicevoxResultCode Result = voicevox_audio_query(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &Output);
+				Result != VOICEVOX_RESULT_OK)
+			{
+				const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
+				const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
+				ShowVoicevoxErrorMessage(ErrorMessage);
+			}
+			else
+			{
+				FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(Output), &AudioQuery, 0, 0);
+				voicevox_audio_query_json_free(Output);
+			}
+		}
+		
+
 	}
 	
 	return AudioQuery;
@@ -254,22 +247,6 @@ void FVoicevoxCoreUtil::WavFree(uint8* Wav)
 }
 
 /**
- * @brief jsonフォーマットされた AudioQuery データのメモリを解放する
- */
-void FVoicevoxCoreUtil::AudioQueryFree(char* QueryJson)
-{
-	voicevox_audio_query_json_free(QueryJson);
-}
-
-/**
- * @brief 話者名や話者IDのリストを取得する
- */
-FString FVoicevoxCoreUtil::Metas()
-{
-	return UTF8_TO_TCHAR(voicevox_get_metas_json());
-}
-
-/**
  * @brief 話者名や話者IDのリストを取得する
  */
 TArray<FVoicevoxMeta> FVoicevoxCoreUtil::GetMetaList()
@@ -277,7 +254,7 @@ TArray<FVoicevoxMeta> FVoicevoxCoreUtil::GetMetaList()
 	TArray<FVoicevoxMeta> List;
 	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
 	if (!bIsInit) return List;
-	FJsonObjectConverter::JsonArrayStringToUStruct(Metas(), &List, 0, 0);
+	FJsonObjectConverter::JsonArrayStringToUStruct(UTF8_TO_TCHAR(voicevox_get_metas_json()), &List, 0, 0);
 	return List;
 }
 

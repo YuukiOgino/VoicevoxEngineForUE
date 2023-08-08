@@ -273,14 +273,6 @@ class VOICEVOXENGINE_API FVoicevoxCoreUtil
 	 * @param Wav 開放する音声データのポインタ
 	 */
 	static void WavFree(uint8* Wav);
-
-	/**
-	 * @fn
-	 * メタ情報を取得する
-	 * @brief 話者名や話者IDのリストを取得する
-	 * @return メタ情報が格納されたjson形式の文字列
-	 */
-	static FString Metas();
 	
 public:
 	/**
@@ -368,24 +360,11 @@ public:
 	 * @param[in] SpeakerId 話者番号
 	 * @param[in] Message 音声データに変換するtextデータ
 	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
-	 * @return AudioQueryをjsonでフォーマットしたもの。使用が終わったらvoicevox_audio_query_json_freeで開放する必要がある
-	 * @details
-	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
-	 */
-	static char* GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
-
-	/**
-	 * @fn
-	 * VOICEVOX COREのvoicevox_audio_queryを取得
-	 * @brief AudioQuery を取得する。
-	 * @param[in] SpeakerId 話者番号
-	 * @param[in] Message 音声データに変換するtextデータ
-	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
 	 * @return AudioQueryをjsonでフォーマット後、構造体へ変換したもの。
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	static FVoicevoxAudioQuery GetAudioQueryList(int64 SpeakerId, const FString& Message, bool bKana);
+	static FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
 	
 	/**
 	 * @fn
@@ -412,16 +391,6 @@ public:
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	static TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
-	
-
-
-	/**
-	 * @fn
-	 * VOICEVOX COREのjsonフォーマットされた AudioQuery データのメモリを解放する
-	 * @brief jsonフォーマットされた AudioQuery データのメモリを解放する
-	 * @param [in] QueryJson 解放する json フォーマットされた AudioQuery データ
-	 */
-	static void AudioQueryFree(char* QueryJson);
 
 	/**
 	 * @fn
