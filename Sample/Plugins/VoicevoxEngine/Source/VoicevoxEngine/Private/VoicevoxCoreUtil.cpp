@@ -9,9 +9,9 @@
 #include "JsonObjectConverter.h"
 
 #if PLATFORM_MAC
-#include "VoicevoxCore/osx/VoicevoxCore/voicevox_core.h"
+#include "VoicevoxCore/osx/voicevox_core.h"
 #else
-#include "VoicevoxCore/voicevox_core.h"
+#include "voicevox_core.h"
 #endif
 
 DEFINE_LOG_CATEGORY(LogVoicevoxEngine);
@@ -22,8 +22,6 @@ DEFINE_LOG_CATEGORY(LogVoicevoxEngine);
 bool FVoicevoxCoreUtil::Initialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
 {
 
-
-	
 #if PLATFORM_WINDOWS
 	const FString PlatformFolderName = TEXT("Win64");
 #elif PLATFORM_MAC
@@ -181,8 +179,6 @@ FVoicevoxAudioQuery FVoicevoxCoreUtil::GetAudioQuery(const int64 SpeakerId, cons
 				voicevox_audio_query_json_free(Output);
 			}
 		}
-		
-
 	}
 	
 	return AudioQuery;

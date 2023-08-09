@@ -52,10 +52,10 @@ SourceArt/**/*.tga
 # Binary Files
 Binaries/*
 Plugins/*/Binaries/*
-Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/VoicevoxCore/*
-!Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/VoicevoxCore/README.md
-Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/osx/VoicevoxCore/*
-!Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/osx/VoicevoxCore/README.md
+Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/*
+!Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/README.md
+Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/osx/*
+!Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/osx/README.md
 
 # Builds
 Build/*
