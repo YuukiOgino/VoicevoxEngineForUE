@@ -31,25 +31,44 @@ public class VoicevoxCore : ModuleRules
 			PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "x64")));
 			
 			// Add the import library
-			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "voicevox_core.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "x64", "voicevox_core.lib"));
 
 			// Delay-load the DLL, so we can load it from the right place first
 			PublicDelayLoadDLLs.Add("voicevox_core.dll");
 			PublicDelayLoadDLLs.Add("onnxruntime.dll");
-			PublicDelayLoadDLLs.Add("onnxruntime_providers_shared.dll");
 
 			// Ensure that the DLL is staged along with the executable
-			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Win64/voicevox_core.dll", Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "voicevox_core.dll"));
-			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Win64/onnxruntime.dll", Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "onnxruntime.dll"));
-			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Win64/onnxruntime_providers_shared.dll", Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "onnxruntime_providers_shared.dll"));
+			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Win64/voicevox_core.dll", Path.Combine(ModuleDirectory, "x64", "voicevox_core.dll"));
+			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Win64/onnxruntime.dll", Path.Combine(ModuleDirectory, "x64", "onnxruntime.dll"));
+			
+			var providersSharedPath = Path.Combine(ModuleDirectory, "x64", "onnxruntime_providers_shared.dll");
+			if (File.Exists(providersSharedPath))
+			{
+				PublicDelayLoadDLLs.Add("onnxruntime_providers_shared.dll");
+				RuntimeDependencies.Add("$(ProjectDir)/Binaries/Win64/onnxruntime_providers_shared.dll", providersSharedPath);
+			}
+            
+			var cudaPath = Path.Combine(ModuleDirectory, "x64", "onnxruntime_providers_cuda.dll");
+			if (File.Exists(cudaPath))
+			{
+				PublicDelayLoadDLLs.Add("onnxruntime_providers_cuda.dll");
+				RuntimeDependencies.Add("$(ProjectDir)/Binaries/Win64/onnxruntime_providers_cuda.dll", cudaPath);
+			}
+			
+			var tensorrtPath = Path.Combine(ModuleDirectory, "x64", "onnxruntime_providers_tensorrt.dll");
+			if (File.Exists(tensorrtPath))
+			{
+				PublicDelayLoadDLLs.Add("onnxruntime_providers_tensorrt.dll");
+				RuntimeDependencies.Add("$(ProjectDir)/Binaries/Win64/onnxruntime_providers_tensorrt.dll", tensorrtPath);
+			}
 			
 			// Open JTalkライブラリフォルダもコピーする
 			DeleteDirectory($"{ProjectDirectory}/Binaries/Win64/{OpenJtalkDicName}");
-			DirectoryCopy(Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", OpenJtalkDicName), $"{ProjectDirectory}/Binaries/Win64/{OpenJtalkDicName}", true);
+			DirectoryCopy(Path.Combine(ModuleDirectory, "x64", OpenJtalkDicName), $"{ProjectDirectory}/Binaries/Win64/{OpenJtalkDicName}", true);
 			
 			// modelフォルダもコピーする
 			DeleteDirectory($"{ProjectDirectory}/Binaries/Win64/model");
-			DirectoryCopy(Path.Combine(ModuleDirectory, "x64", "VoicevoxCore", "model"), $"{ProjectDirectory}/Binaries/Win64/model", true);
+			DirectoryCopy(Path.Combine(ModuleDirectory, "x64", "model"), $"{ProjectDirectory}/Binaries/Win64/model", true);
         }
 		else if (Target.Platform == UnrealTargetPlatform.Mac)
 		{
@@ -57,23 +76,23 @@ public class VoicevoxCore : ModuleRules
 			PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "osx")));
 			
 			// Delay-load the DLL, so we can load it from the right place first
-			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "libvoicevox_core.dylib"));
-			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "libonnxruntime.1.13.1.dylib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "osx", "libvoicevox_core.dylib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "osx", "libonnxruntime.1.13.1.dylib"));
 			
-			PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "libvoicevox_core.dylib"));
-			PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "libonnxruntime.1.13.1.dylib"));
+			PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, "osx", "libvoicevox_core.dylib"));
+			PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, "osx", "libonnxruntime.1.13.1.dylib"));
 			
 			// Ensure that the DLL is staged along with the executable
-			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Mac/libvoicevox_core.dylib", Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "libvoicevox_core.dylib"));
-			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Mac/libonnxruntime.1.13.1.dylib", Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "libonnxruntime.1.13.1.dylib"));
+			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Mac/libvoicevox_core.dylib", Path.Combine(ModuleDirectory, "osx", "libvoicevox_core.dylib"));
+			RuntimeDependencies.Add("$(ProjectDir)/Binaries/Mac/libonnxruntime.1.13.1.dylib", Path.Combine(ModuleDirectory, "osx", "libonnxruntime.1.13.1.dylib"));
 			
 			// Open JTalkライブラリフォルダもコピーする
 			DeleteDirectory($"{ProjectDirectory}/Binaries/Mac/{OpenJtalkDicName}");
-			DirectoryCopy(Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", OpenJtalkDicName), $"{ProjectDirectory}/Binaries/Mac/{OpenJtalkDicName}", true);
+			DirectoryCopy(Path.Combine(ModuleDirectory, "osx", OpenJtalkDicName), $"{ProjectDirectory}/Binaries/Mac/{OpenJtalkDicName}", true);
 			
 			// modelフォルダもコピーする
 			DeleteDirectory($"{ProjectDirectory}/Binaries/Mac/model");
-			DirectoryCopy(Path.Combine(ModuleDirectory, "osx", "VoicevoxCore", "model"), $"{ProjectDirectory}/Binaries/Mac/model", true);
+			DirectoryCopy(Path.Combine(ModuleDirectory, "osx", "model"), $"{ProjectDirectory}/Binaries/Mac/model", true);
 		}
 		
 		PublicDefinitions.Add($"OPEN_JTALK_DIC_NAME=\"{OpenJtalkDicName}\"");
