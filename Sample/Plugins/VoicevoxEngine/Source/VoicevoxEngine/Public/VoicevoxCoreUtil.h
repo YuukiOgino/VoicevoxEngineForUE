@@ -313,13 +313,7 @@ public:
 	 * @return GPUモードならtrue、そうでないならfalse
 	 */
 	static bool IsGpuMode();
-
-	/**
-	 * @brief サポートデバイス情報をjsonで取得する
-	 * @return サポートデバイス情報のjson文字列
-	 */
-	static FString GetSupportedDevicesJson();
-
+	
 	/**
 	 * @brief サポートデバイス情報を取得する
 	 * @return サポートデバイス情報の構造体

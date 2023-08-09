@@ -85,14 +85,6 @@ bool FVoicevoxCoreUtil::IsGpuMode()
 }
 
 /**
- * @brief サポートデバイス情報をjsonで取得する
- */
-FString FVoicevoxCoreUtil::GetSupportedDevicesJson()
-{
-	return UTF8_TO_TCHAR(voicevox_get_supported_devices_json());
-}
-
-/**
  * @brief サポートデバイス情報を取得する
  */
 FVoicevoxSupportedDevices FVoicevoxCoreUtil::GetSupportedDevices()
@@ -100,7 +92,7 @@ FVoicevoxSupportedDevices FVoicevoxCoreUtil::GetSupportedDevices()
 	FVoicevoxSupportedDevices Devices = {};
 	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
 	if (!bIsInit) return Devices;
-	FJsonObjectConverter::JsonObjectStringToUStruct(GetSupportedDevicesJson(), &Devices, 0, 0);
+	FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(voicevox_get_supported_devices_json()), &Devices, 0, 0);
 	return Devices;
 }
 

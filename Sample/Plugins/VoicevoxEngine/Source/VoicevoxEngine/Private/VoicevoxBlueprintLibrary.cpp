@@ -32,6 +32,22 @@ FVoicevoxSupportedDevices UVoicevoxBlueprintLibrary::GetSupportedDevices()
 }
 
 /**
+ * @brief VOICEVOX COREのバージョン情報を取得する
+ */
+FString UVoicevoxBlueprintLibrary::GetVoicevoxCoreVersion()
+{
+	return FVoicevoxCoreUtil::GetVoicevoxVersion();
+}
+
+/**
+ * @brief ハードウェアアクセラレーションがGPUモードか判定する
+ */
+bool UVoicevoxBlueprintLibrary::IsVoicevoxGpuMode()
+{
+	return FVoicevoxCoreUtil::IsGpuMode();
+}
+
+/**
  * @brief VOICEVOX COREで変換した音声データを元にSoundWaveを生成(Blueprint公開ノード)
  */
 USoundWave* UVoicevoxBlueprintLibrary::TextToSpeechOutput(ESpeakerType SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)

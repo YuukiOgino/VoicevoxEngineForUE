@@ -37,15 +37,29 @@ public:
 	 * @brief 話者名や話者IDのリストを取得する(Blueprint公開ノード)
 	 * @return メタ情報が格納されたjson形式の構造体
 	 */
-	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxMetas"))
+	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxMetas"))
 	static UPARAM(DisplayName="Metas") TArray<FVoicevoxMeta> GetMetasToList();
 
 	/**
 	 * @brief サポートデバイス情報を取得する(Blueprint公開ノード)
 	 * @return サポートデバイス情報の構造体
 	 */
-	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxSupportedDevices"))
+	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxSupportedDevices"))
 	static UPARAM(DisplayName="SupportedDevices") FVoicevoxSupportedDevices GetSupportedDevices();
+
+	/**
+	 * @brief VOICEVOX COREのバージョン情報を取得する
+	 * @return VOICEVOX COREのバージョン情報
+	 */
+	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxVersion"))
+	static UPARAM(DisplayName="VoicevoxCoreVersion") FString GetVoicevoxCoreVersion();
+
+	/**
+	 * @brief ハードウェアアクセラレーションがGPUモードか判定する
+	 * @return GPUモードならtrue、そうでないならfalse
+	 */
+	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "IsVoicevoxGpuMode"))
+	static UPARAM(DisplayName="GPU Mode") bool IsVoicevoxGpuMode();
 	
 	/**
 	 * @brief VOICEVOX COREで変換した音声データを元にSoundWaveを生成(Blueprint公開ノード)
