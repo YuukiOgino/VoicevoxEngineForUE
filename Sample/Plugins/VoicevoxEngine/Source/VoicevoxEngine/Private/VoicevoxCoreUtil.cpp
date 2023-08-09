@@ -21,6 +21,9 @@ DEFINE_LOG_CATEGORY(LogVoicevoxEngine);
  */
 bool FVoicevoxCoreUtil::Initialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
 {
+
+
+	
 #if PLATFORM_WINDOWS
 	const FString PlatformFolderName = TEXT("Win64");
 #elif PLATFORM_MAC
