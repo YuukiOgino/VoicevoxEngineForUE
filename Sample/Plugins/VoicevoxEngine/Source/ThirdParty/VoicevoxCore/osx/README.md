@@ -1,7 +1,9 @@
 # VOICEVOX CORE、Open JTalkをここに配置してください。
 
-※格納例
-![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/104377/33be4503-896f-3d38-d27c-0ce3cab73ea4.png)
+※格納例<br/>
+
+<img width="770" alt="スクリーンショット 2023-08-09 20 49 37" src="https://github.com/YuukiOgino/VoicevoxEngineForUE/assets/10606646/07e3ec11-4ff2-4ba2-9ff2-508b0fe5c696">
+
 
 以下が格納されていれば動作するはずです。
 
