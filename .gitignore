@@ -52,8 +52,6 @@ SourceArt/**/*.tga
 # Binary Files
 Binaries/*
 Plugins/*/Binaries/*
-Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/VoicevoxCore/*
-!Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/VoicevoxCore/README.md
 Plugins/*/Intermediate/*
 Plugins/Developer/*
 Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Private/*
