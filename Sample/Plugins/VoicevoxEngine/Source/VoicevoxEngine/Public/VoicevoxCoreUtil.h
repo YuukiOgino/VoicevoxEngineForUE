@@ -219,22 +219,22 @@ struct FVoicevoxAudioQuery
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	TArray<FVoicevoxAccentPhrase> Accent_phrases;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "0.5", ClampMax = "2.0", UIMin = "0.5", UIMax = "2.0"))
 	float Speed_scale;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "-0.15", ClampMax = "0.15", UIMin = "-0.15", UIMax = "0.15"))
 	float Pitch_scale;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "0", ClampMax = "2.0", UIMin = "0", UIMax = "2.0"))
 	float Intonation_scale;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "0", ClampMax = "2.0", UIMin = "0", UIMax = "2.0"))
 	float Volume_scale;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine",  meta = (ClampMin = "0", ClampMax = "1.5", UIMin = "0", UIMax = "1.5"))
 	float Pre_phoneme_length;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "0", ClampMax = "1.5", UIMin = "0", UIMax = "1.5"))
 	float Post_phoneme_length;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
