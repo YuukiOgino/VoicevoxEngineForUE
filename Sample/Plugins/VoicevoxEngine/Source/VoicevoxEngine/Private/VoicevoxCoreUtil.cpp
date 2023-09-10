@@ -251,11 +251,29 @@ void FVoicevoxCoreUtil::WavFree(uint8* Wav)
 TArray<FVoicevoxMeta> FVoicevoxCoreUtil::GetMetaList()
 {
 	TArray<FVoicevoxMeta> List;
-	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
-	if (!bIsInit) return List;
 	FJsonObjectConverter::JsonArrayStringToUStruct(UTF8_TO_TCHAR(voicevox_get_metas_json()), &List, 0, 0);
 	return List;
 }
+
+/**
+ * @brief 指定したSpeakerIDの名前を取得する
+ */
+FString FVoicevoxCoreUtil::GetMetaName(const int64 SpeakerID)
+{
+	for (TArray<FVoicevoxMeta> List = GetMetaList(); auto [Name, Styles, Speaker_uuid, Version] : List)
+	{
+		for (const auto Style :Styles)
+		{
+			if (Style.Id == SpeakerID)
+			{
+				return FString::Printf(TEXT("%s(%s)"), *Name, *Style.Name);
+			}
+		}
+	}
+	
+	return TEXT("");
+}
+ 
 
 /** 
  * @brief 音素列から、音素ごとの長さを求める

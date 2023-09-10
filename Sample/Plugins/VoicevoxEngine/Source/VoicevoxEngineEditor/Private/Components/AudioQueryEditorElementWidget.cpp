@@ -1,6 +1,6 @@
 // Copyright Yuuki Ogino. All Rights Reserved
 
-#include "AudioQueryEditorElementWidget.h"
+#include "Components/AudioQueryEditorElementWidget.h"
 #include "Kismet/KismetTextLibrary.h"
 
 /**

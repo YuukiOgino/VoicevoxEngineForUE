@@ -409,6 +409,14 @@ public:
 
 	/**
 	 * @fn
+	 * メタ情報から指定したSpeakerIDの名前を取得する
+	 * @brief 指定したSpeakerIDの名前を取得する
+	 * @return 指定したSpeakerIDの名前
+	 */
+	static FString GetMetaName(int64 SpeakerID);
+	
+	/**
+	 * @fn
 	 * 音素ごとの長さを求める
 	 * @brief 音素列から、音素ごとの長さを求める
 	 * @param[in] Length 音素列の長さ
