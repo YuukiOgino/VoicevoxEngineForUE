@@ -10,6 +10,9 @@ public class VoicevoxEngineEditor : ModuleRules
             new string[]
             {
                 "Core",
+                "Blutility",
+                "UMG",
+                "UMGEditor"
             }
         );
 

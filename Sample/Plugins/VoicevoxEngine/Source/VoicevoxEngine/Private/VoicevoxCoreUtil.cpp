@@ -16,6 +16,14 @@
 
 DEFINE_LOG_CATEGORY(LogVoicevoxEngine);
 
+void FVoicevoxAudioQuery::AddStructReferencedObjects(FReferenceCollector& Collector) const
+{
+	if (const UScriptStruct* Struct = StaticStruct(); Struct != nullptr && Pointer != nullptr)
+	{
+		Collector.AddReferencedObjects(Struct, Pointer);
+	}
+}
+
 /**
  * @brief VOICEVOX CORE 初期化
  */

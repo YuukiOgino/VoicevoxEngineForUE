@@ -216,6 +216,8 @@ struct FVoicevoxAudioQuery
 {
 	GENERATED_USTRUCT_BODY()
 
+	FVoicevoxAudioQuery* Pointer = nullptr;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	TArray<FVoicevoxAccentPhrase> Accent_phrases;
 
@@ -245,6 +247,17 @@ struct FVoicevoxAudioQuery
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Kana;
+
+	void AddStructReferencedObjects(FReferenceCollector& Collector) const;
+};
+
+template<>
+struct TStructOpsTypeTraits<FVoicevoxAudioQuery> : TStructOpsTypeTraitsBase2<FVoicevoxAudioQuery>
+{
+	enum
+	{
+		WithAddStructReferencedObjects = true,
+	 };
 };
 
 //------------------------------------------------------------------------
