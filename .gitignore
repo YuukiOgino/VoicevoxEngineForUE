@@ -91,5 +91,9 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+DerivedData/*
+
+# Mac
+*.DS_Store
 
 *.code-workspace
