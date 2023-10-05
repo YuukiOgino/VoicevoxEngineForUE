@@ -91,5 +91,6 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+Sample/DerivedDataCache/*
 
 *.code-workspace
