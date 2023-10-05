@@ -79,14 +79,8 @@ Plugins\VoicevoxEngine\Source\ThirdParty\VoicevoxCore\x64\VoicevoxCore
 - COREのAPIを非同期で行った場合、特にRunTextToSpeechからの戻りを待たずにプレイ終了したり、続けてRunTextToSpeechを実行するとクラッシュします。
   - この部分はどうしようか、現在模索中です。
 
-- パッケージングを行うとOpen JTalkフォルダとmodelフォルダのコピーが失敗します。
-  - お手数ですが、パッケージング済みのフォルダにmodelフォルダ、open_jtalk_dic_utf_8-1.11フォルダを手動でコピーしてください。
-![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/104377/23f5f42c-a281-399f-fb57-5b6ad2b1aa74.png)
-
-以下にコピーしてもらえれば動作します。
-```
-【パッケージング出力フォルダ名】\Windows\【プロジェクト名】\Binaries\Win64
-```
+- パッケージングを行うとOpen JTalkフォルダとmodelフォルダのコピーが失敗します。（解決済）
+  - 修正しました。（v0.3）
 
 - GPUモードに対応したCOREライブラリでGPUに切り替えるとエラー、もしくはクラッシュする（解決済）
   - VOICEVOX CORE 0.14.4にアップデートしたところ発生しなくなりました。
@@ -105,6 +99,8 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 
 # 更新履歴
 
+- 2023/🔟/06
+  - 0.3 パッケージングでOpen JTalkフォルダとmodelフォルダのコピーが失敗する原因を修正。修正により、MacでXCodeのプロジェクトが正常に生成できるようになりました。
 - 2023/08/10
   - 0.2 VOICEVOX CORE 0.14.4対応。Mac対応。一部APIの破壊的変更を実施。
 - 2022/12/01
