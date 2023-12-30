@@ -22,6 +22,7 @@ void UAudioCellWidget::NativeConstruct()
 
 	if (DeleteButton)
 	{
+		// 一つだけなら削除ボタンは不要のため非表示（２つ以上表示する予定があれば判定を入れるかも）
 		DeleteButton->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
