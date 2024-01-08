@@ -13,7 +13,7 @@ void FVoicevoxEngineEditorModule::StartupModule()
 		auto& AssetTools = ModuleMgr.LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
 		const auto AssetCategoryBit = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("Voicevox")), LOCTEXT("Voicevox", "AudioQueary"));
 		const auto Actions = MakeShareable(new FVoicevoxQueryTypeActions(AssetCategoryBit));
-		AssetTools.RegisterAssetTypeActions( Actions );
+		AssetTools.RegisterAssetTypeActions(Actions);
 	}
 }
 
