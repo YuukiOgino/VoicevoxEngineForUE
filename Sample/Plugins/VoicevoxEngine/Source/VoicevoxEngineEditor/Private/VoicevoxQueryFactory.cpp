@@ -12,7 +12,7 @@ UVoicevoxQueryFactory::UVoicevoxQueryFactory():Super()
 	SupportedClass = UVoicevoxQuery::StaticClass();
 	bEditorImport = true;
 	bText = true;
-	Formats.Add(TEXT("Voicevox AudioQueary"));
+	Formats.Add(TEXT("json; AudioQueary"));
 }
 
 UObject* UVoicevoxQueryFactory::FactoryCreateNew(UClass* InClass, UObject* InParent,

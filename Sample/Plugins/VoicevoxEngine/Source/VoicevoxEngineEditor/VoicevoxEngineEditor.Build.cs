@@ -24,7 +24,9 @@ public class VoicevoxEngineEditor : ModuleRules
                 "CoreUObject",
                 "Engine",
                 "Slate",
-                "SlateCore"
+                "SlateCore",
+                "Json",
+                "JsonUtilities"                
             }
         );
     }
