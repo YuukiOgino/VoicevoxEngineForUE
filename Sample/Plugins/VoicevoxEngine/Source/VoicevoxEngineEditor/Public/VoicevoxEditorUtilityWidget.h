@@ -26,6 +26,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SaveAudioQuearyAssets"))
 	void SaveAudioQueryAssets();
+
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SaveSoundWaveAssets"))
+	void SaveSoundWaveAssets(ESpeakerType SpeakerType, bool bEnableInterrogativeUpspeak = true);
 	
 	/**
 	* アセットの保存を実行します
@@ -35,8 +38,6 @@ public:
 	* @param [in]  bPromptToSave       trueの場合はアセットの保存確認を求められます。falseの場合は全て保存されます。
 	*/
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "ExecuteSaveAssets"))
-	void ExecuteSaveAssets(const TArray<UObject*>&  InTargets,
-								  bool                     bCheckDirty = true,
-								  bool                     bPromptToSave = false);
+	void ExecuteSaveAssets(const TArray<UObject*>& InTargets, bool bCheckDirty = true, bool bPromptToSave = false);
 	
 };

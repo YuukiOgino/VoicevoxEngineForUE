@@ -7,6 +7,8 @@
 
 #include "VoicevoxBlueprintLibrary.h"
 
+#include "AudioDevice.h"
+
 /**
  * @brief VOICEVOX CORE 終了処理(Blueprint公開ノード)
  */
@@ -99,12 +101,30 @@ USoundWave* UVoicevoxBlueprintLibrary::AudioQueryOutput(const FVoicevoxAudioQuer
 /**
  * @brief 生成した音声データからUSoundWaveを作成
  */
-USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData)
+USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData, UObject* InParent, const FName Name)
 {
 	FString ErrorMessage = "";
+	
 	if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(PCMData.GetData(), PCMData.Num(), &ErrorMessage))
 	{
-		USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
+		USoundWave* Sound;
+		if (InParent != nullptr)
+		{
+			constexpr EObjectFlags Flags = RF_Public | RF_Standalone;
+			Sound = NewObject<USoundWave>(InParent, Name, Flags);
+			Sound->AddToRoot();
+		}
+		else
+		{
+			Sound = NewObject<USoundWave>(USoundWave::StaticClass());
+		}
+		
+		if (FAudioDeviceHandle AudioDevice = GEngine->GetMainAudioDevice())
+		{
+			const FName RuntimeFormat = AudioDevice->GetRuntimeFormat(Sound);
+			Sound->InitAudioResource(RuntimeFormat);
+		}
+		
 		const int32 ChannelCount = *WaveInfo.pChannels;
 		const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
 		const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
@@ -113,11 +133,35 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData)
 		Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
 		Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
 		FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
-			
+
+		Sound->RawData.Lock(LOCK_READ_WRITE);
+		void* LockedData = Sound->RawData.Realloc(WaveInfo.SampleDataSize);
+		FMemory::Memcpy(LockedData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
+		Sound->RawData.Unlock();
+
+		//Sound->AssetImportData;
+		Sound->CuePoints.Reset(WaveInfo.WaveCues.Num());
+		for (FWaveCue& WaveCue : WaveInfo.WaveCues)
+		{
+			FSoundWaveCuePoint NewCuePoint;
+			NewCuePoint.CuePointID = static_cast<int32>(WaveCue.CuePointID);
+			NewCuePoint.FrameLength = static_cast<int32>(WaveCue.SampleLength);
+			NewCuePoint.FramePosition = static_cast<int32>(WaveCue.Position);
+			NewCuePoint.Label = WaveCue.Label;
+			Sound->CuePoints.Add(NewCuePoint);
+		}
+		
 		Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
 		Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
 		Sound->NumChannels = ChannelCount;
 		Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
+		Sound->SoundGroup = SOUNDGROUP_Default;
+		Sound->InvalidateCompressedData();
+		
+		Sound->EnsureZerothChunkIsLoaded();
+		Sound->PostEditChange();
+		Sound->SetRedrawThumbnail(true);
+		
 		return Sound;
 	}
 

@@ -3,13 +3,13 @@
 
 FVoicevoxQueryTypeActions::FVoicevoxQueryTypeActions():
 	Name(FText::FromString(TEXT("Voicevox AudioQuery"))),
-	AssetCategoryBit( EAssetTypeCategories::Misc )
+	AssetCategoryBit(EAssetTypeCategories::Misc)
 {
 }
 
 FVoicevoxQueryTypeActions::FVoicevoxQueryTypeActions(EAssetTypeCategories::Type AssetCategoryBit):
 	Name(FText::FromString(TEXT("Voicevox AudioQuery"))),
-	AssetCategoryBit( AssetCategoryBit )
+	AssetCategoryBit(AssetCategoryBit)
 {
 }
 
@@ -33,7 +33,7 @@ uint32 FVoicevoxQueryTypeActions::GetCategories()
 	return AssetCategoryBit;
 }
 
-void FVoicevoxQueryTypeActions::OpenAssetEditor(const TArray<UObject*> & InObjects, TSharedPtr<IToolkitHost> EditWithinLevelEditor)
+void FVoicevoxQueryTypeActions::OpenAssetEditor(const TArray<UObject*>& InObjects, TSharedPtr<IToolkitHost> EditWithinLevelEditor)
 {
 	for(int i = 0; i < InObjects.Num(); ++i)
 	{
