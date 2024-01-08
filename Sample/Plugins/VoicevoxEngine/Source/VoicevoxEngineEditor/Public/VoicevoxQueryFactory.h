@@ -8,6 +8,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VoicevoxCoreUtil.h"
 #include "Factories/Factory.h"
 #include "VoicevoxQueryFactory.generated.h"
 
@@ -20,6 +21,10 @@ class VOICEVOXENGINEEDITOR_API UVoicevoxQueryFactory : public UFactory
 {
 	GENERATED_BODY()
 public:
+
+	//! 保存用の一時データ。エラーが起きるためポインタにしているが、基本参照渡し
+	FVoicevoxAudioQuery* AudioQueryPtr = nullptr;
+	
 	UVoicevoxQueryFactory();
 
 	virtual UObject* FactoryCreateNew(UClass* InClass, UObject* InParent,

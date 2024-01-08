@@ -21,6 +21,12 @@ public:
 	UPROPERTY(Category=VOICEVOX, VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
 	FVoicevoxAudioQuery EditorAudioQueryPtr;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "IsSetEditorAudioQuery"))
+	bool IsSetEditorAudioQuery(); 
+	
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SaveAudioQuearyAssets"))
+	void SaveAudioQueryAssets();
+	
 	/**
 	* アセットの保存を実行します
 	*

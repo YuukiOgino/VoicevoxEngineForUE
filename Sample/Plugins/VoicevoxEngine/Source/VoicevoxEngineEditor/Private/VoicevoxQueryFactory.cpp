@@ -17,10 +17,20 @@ UVoicevoxQueryFactory::UVoicevoxQueryFactory():Super()
 
 UObject* UVoicevoxQueryFactory::FactoryCreateNew(UClass* InClass, UObject* InParent,
                                                     FName InName,  EObjectFlags Flags,
-											 UObject* Context, FFeedbackContext* Warn )
+													UObject* Context, FFeedbackContext* Warn)
 {
+	if (AudioQueryPtr != nullptr)
+	{
+		UVoicevoxQuery* NewAudioQueryAsset = NewObject<UVoicevoxQuery>(InParent, InClass, InName, Flags, Context);
+		NewAudioQueryAsset->VoicevoxAudioQuery = *AudioQueryPtr;
+		AudioQueryPtr = nullptr;
+		return NewAudioQueryAsset;
+	}
+	else
+	{
+		return NewObject<UVoicevoxQuery>(InParent, InClass, InName, Flags, Context);
+	}
 	
-	return NewObject<UVoicevoxQuery>(InParent, InClass, InName, Flags, Context);
 }
 
 UObject* UVoicevoxQueryFactory::FactoryCreateText(UClass* InClass, UObject* InParent, const FName InName,
