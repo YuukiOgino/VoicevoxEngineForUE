@@ -7,8 +7,6 @@
 
 #include "VoicevoxBlueprintLibrary.h"
 
-#include "AudioDevice.h"
-
 /**
  * @brief VOICEVOX CORE 終了処理(Blueprint公開ノード)
  */
@@ -112,25 +110,17 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData, UO
 		{
 			constexpr EObjectFlags Flags = RF_Public | RF_Standalone;
 			Sound = NewObject<USoundWave>(InParent, Name, Flags);
-			Sound->AddToRoot();
 		}
 		else
 		{
 			Sound = NewObject<USoundWave>(USoundWave::StaticClass());
 		}
 		
-		if (FAudioDeviceHandle AudioDevice = GEngine->GetMainAudioDevice())
-		{
-			const FName RuntimeFormat = AudioDevice->GetRuntimeFormat(Sound);
-			Sound->InitAudioResource(RuntimeFormat);
-		}
-		
 		const int32 ChannelCount = *WaveInfo.pChannels;
 		const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
 		const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
 		const int32 NumFrames = NumSamples / ChannelCount;
-
-		Sound->InvalidateCompressedData();
+		
 		Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
 		Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
 		FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
@@ -139,29 +129,12 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData, UO
 		void* LockedData = Sound->RawData.Realloc(PCMData.Num());
 		FMemory::Memcpy(LockedData, PCMData.GetData(), PCMData.Num());
 		Sound->RawData.Unlock();
-
-		//Sound->AssetImportData;
-		Sound->CuePoints.Reset(WaveInfo.WaveCues.Num());
-		for (FWaveCue& WaveCue : WaveInfo.WaveCues)
-		{
-			FSoundWaveCuePoint NewCuePoint;
-			NewCuePoint.CuePointID = static_cast<int32>(WaveCue.CuePointID);
-			NewCuePoint.FrameLength = static_cast<int32>(WaveCue.SampleLength);
-			NewCuePoint.FramePosition = static_cast<int32>(WaveCue.Position);
-			NewCuePoint.Label = WaveCue.Label;
-			Sound->CuePoints.Add(NewCuePoint);
-		}
 		
 		Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
 		Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
 		Sound->NumChannels = ChannelCount;
 		Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
 		Sound->SoundGroup = SOUNDGROUP_Default;
-		
-		
-		Sound->EnsureZerothChunkIsLoaded();
-		Sound->PostEditChange();
-		Sound->SetRedrawThumbnail(true);
 		
 		return Sound;
 	}
