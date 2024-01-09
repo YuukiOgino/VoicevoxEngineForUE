@@ -16,7 +16,7 @@
 
 /**
  * @enum ESpeakerType
- * @brief Speakerを示す列挙体(Ver.0.14.4時点)
+ * @brief Speakerを示す列挙体(Ver.0.14.5時点)
  */
 UENUM(BlueprintType)
 enum class ESpeakerType : uint8
@@ -36,6 +36,7 @@ enum class ESpeakerType : uint8
 	Tsumugi=8,
 	Hau=10,
 	Ritsu=9,
+	RitsuQueen=65,
 	Kurono=11,
 	Kotarou=12,
 	KotarouWai=32,
@@ -50,6 +51,7 @@ enum class ESpeakerType : uint8
 	SoraSexy=17,
 	SoraSasayaki=19,
 	MochikoSan=20,
+	MochikoSanSexy=66,
 	Kenzaki=21,
 	WhiteCul=23,
 	WhiteCulTanoshi=24,
@@ -82,7 +84,15 @@ enum class ESpeakerType : uint8
 	ChugokuUsagi=61,
 	ChugokuUsagiOdoroki=62,
 	ChugokuUsagiKowagari=63,
-	ChugokuUsagiHeroHero=64
+	ChugokuUsagiHeroHero=64,
+	KuritaMaron=67,
+	AieruTan=68,
+	ManbetsuHanamaru=69,
+	ManbetsuHanamaruGenki=70,
+	ManbetsuHanamaruSasayaki=71,
+	ManbetsuHanamaruBurikkko=72,
+	ManbetsuHanamaruBoy=73,
+	KotoyomiNia=74,
 };
 
 //------------------------------------------------------------------------
