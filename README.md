@@ -27,11 +27,11 @@ VOICEVOX COREのReadMEに従って、最低限CPUモードの動作に必要な�
 
 [VOICEVOX COREライブラリ](https://github.com/VOICEVOX/voicevox_core)を取得、適当なフォルダに展開してください。<br/>
 
-※v0.2は[VOICEVOX CORE 0.14.4](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.4)を元に開発しました。
+※v0.4は[VOICEVOX CORE 0.14.5](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.5)を元に開発しました。
 
 次に[Open JTalk から配布されている辞書ファイル](https://sourceforge.net/projects/open-jtalk/files/Dictionary/open_jtalk_dic-1.11/open_jtalk_dic_utf_8-1.11.tar.gz/download?use_mirror=jaist) をダウンロードして、上記コアライブラリを展開したディレクトリに展開してください。
 
-VOICEVOX CORE 0.14.4はONNX Runtimeが含まれているため、別途ダウンロードする必要はありません。<br/>
+VOICEVOX CORE 0.14.5はONNX Runtimeが含まれているため、別途ダウンロードする必要はありません。<br/>
 ※MacはONNX Runtimeは不要です。
 
 <details>
@@ -83,7 +83,7 @@ Plugins\VoicevoxEngine\Source\ThirdParty\VoicevoxCore\x64\VoicevoxCore
   - 修正しました。（v0.3）
 
 - GPUモードに対応したCOREライブラリでGPUに切り替えるとエラー、もしくはクラッシュする（解決済）
-  - VOICEVOX CORE 0.14.4にアップデートしたところ発生しなくなりました。
+  - VOICEVOX CORE 0.14.4以上にアップデートしたところ発生しなくなりました。
 
 # 利用規約
 VOICEVOX Engine for UE5の利用規約は[VOICEVOXのホームページに記載された利用規約](https://voicevox.hiroshiba.jp/term)を継承するため、利用前に必ず一読してください。<br/>
@@ -99,6 +99,8 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 
 # 更新履歴
 
+- 2023/10/06
+  - 0.4 VOICEVOX CORE 0.14.5対応。(新規モデルデータ追加対応)
 - 2023/10/06
   - 0.3 パッケージングでOpen JTalkフォルダとmodelフォルダのコピーが失敗する原因を修正。修正により、MacでXCodeのプロジェクトが正常に生成できるようになりました。
 - 2023/08/10
