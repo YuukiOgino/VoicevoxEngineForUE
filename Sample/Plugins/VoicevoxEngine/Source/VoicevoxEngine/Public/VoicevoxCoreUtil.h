@@ -177,25 +177,29 @@ struct FVoicevoxMora
 {
 	GENERATED_USTRUCT_BODY()
 
-	// モデル名
+	// カナ文字（１～２文字）
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Text;
 
+	// 子音
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Consonant;
-	
+
+	// 子音長さ
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Consonant_length;
-	
+
+	// 母音
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Vowel;
-	
+
+	// 母音長さ
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Vowel_length;
-	
+
+	// イントネーション
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Pitch;
-	
 };
 
 /**
@@ -207,15 +211,19 @@ struct FVoicevoxAccentPhrase
 {
 	GENERATED_USTRUCT_BODY()
 
+	// モーラ情報リスト
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	TArray<FVoicevoxMora> Moras;
 
+	// アクセント場所
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	int Accent;
-	
+
+	// 句読点モーラ情報（カナで句読点が存在する場合、無音時間が格納）
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FVoicevoxMora Pause_mora;
 
+	// 疑問文か
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	bool Is_interrogative;
 };
@@ -229,33 +237,43 @@ struct FVoicevoxAudioQuery
 {
 	GENERATED_USTRUCT_BODY()
 
+	// アクセントリスト
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	TArray<FVoicevoxAccentPhrase> Accent_phrases;
 
+	// 話速
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Speed_scale;
 
+	// 音高
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Pitch_scale;
 
+	// 抑揚
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Intonation_scale;
 
+	// 音量
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Volume_scale;
 
+	// 開始無音
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Pre_phoneme_length;
 
+	// 終了無音
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Post_phoneme_length;
 
+	// 出力サンプリングレート
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	int Output_sampling_rate;
 
+	// 出力時にステレオにするか
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	bool Output_stereo;
 
+	// カナ（AquesTalkライクな記法）
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Kana;
 };
