@@ -129,14 +129,15 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData, UO
 		const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
 		const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
 		const int32 NumFrames = NumSamples / ChannelCount;
-			
+
+		Sound->InvalidateCompressedData();
 		Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
 		Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
 		FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
 
 		Sound->RawData.Lock(LOCK_READ_WRITE);
-		void* LockedData = Sound->RawData.Realloc(WaveInfo.SampleDataSize);
-		FMemory::Memcpy(LockedData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
+		void* LockedData = Sound->RawData.Realloc(PCMData.Num());
+		FMemory::Memcpy(LockedData, PCMData.GetData(), PCMData.Num());
 		Sound->RawData.Unlock();
 
 		//Sound->AssetImportData;
@@ -156,7 +157,7 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData, UO
 		Sound->NumChannels = ChannelCount;
 		Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
 		Sound->SoundGroup = SOUNDGROUP_Default;
-		Sound->InvalidateCompressedData();
+		
 		
 		Sound->EnsureZerothChunkIsLoaded();
 		Sound->PostEditChange();
