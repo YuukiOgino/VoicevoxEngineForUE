@@ -15,11 +15,14 @@
  * @classs UVoicevoxQuery
  * @brief Voicevoxで生成されるクエリ情報を保存するためのクラス
  */
-UCLASS()
+UCLASS(HideCategories=Object, BlueprintType, EditInlineNew)
 class VOICEVOXENGINE_API UVoicevoxQuery : public UObject
 {
 	GENERATED_BODY()
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FVoicevoxAudioQuery VoicevoxAudioQuery;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	ESpeakerType SpeakerType = ESpeakerType::Zundamon;
 };

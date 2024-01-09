@@ -18,10 +18,11 @@ bool UVoicevoxEditorUtilityWidget::IsSetEditorAudioQuery()
     return !EditorAudioQueryPtr.Kana.IsEmpty();
 }
 
-void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets()
+void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(ESpeakerType SpeakerType)
 {
     UVoicevoxQueryFactory* Factory = NewObject<UVoicevoxQueryFactory>();
     Factory->AudioQueryPtr = &EditorAudioQueryPtr;
+    Factory->SpeakerType = SpeakerType;
     const FString AssetName = TEXT("SampleAudioQuery");
     const FString AssetPath = TEXT("/Game");
     const FString PackageName = AssetPath + TEXT("/") + AssetName;

@@ -25,7 +25,7 @@ public:
 	bool IsSetEditorAudioQuery(); 
 	
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SaveAudioQuearyAssets"))
-	void SaveAudioQueryAssets();
+	void SaveAudioQueryAssets(ESpeakerType SpeakerType);
 
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SaveSoundWaveAssets"))
 	void SaveSoundWaveAssets(ESpeakerType SpeakerType, bool bEnableInterrogativeUpspeak = true);

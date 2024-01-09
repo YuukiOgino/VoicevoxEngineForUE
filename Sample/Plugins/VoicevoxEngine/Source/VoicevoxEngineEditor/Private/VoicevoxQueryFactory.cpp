@@ -23,6 +23,7 @@ UObject* UVoicevoxQueryFactory::FactoryCreateNew(UClass* InClass, UObject* InPar
 	{
 		UVoicevoxQuery* NewAudioQueryAsset = NewObject<UVoicevoxQuery>(InParent, InClass, InName, Flags, Context);
 		NewAudioQueryAsset->VoicevoxAudioQuery = *AudioQueryPtr;
+		NewAudioQueryAsset->SpeakerType = SpeakerType;
 		AudioQueryPtr = nullptr;
 		return NewAudioQueryAsset;
 	}
@@ -42,5 +43,7 @@ UObject* UVoicevoxQueryFactory::FactoryCreateText(UClass* InClass, UObject* InPa
  
 	UVoicevoxQuery* NewAudioQueryAsset = NewObject<UVoicevoxQuery>(InParent, InClass, InName, Flags);
 	NewAudioQueryAsset->VoicevoxAudioQuery = AudioQuery;
+	// インポートしたJSONにモデルデータは含まれていないので、仮でずんだもんを入れる。
+	NewAudioQueryAsset->SpeakerType = ESpeakerType::Zundamon;
 	return NewAudioQueryAsset;
 }
