@@ -110,4 +110,12 @@ public:
 	 * @return 合成音声を格納したUSoundWave
 	 */
 	static USoundWave* CreateSoundWave(TArray<uint8> PCMData);
+
+	/**
+	 * @brief VOICEVOX COREで取得したAudioQuery元にLipSyncに必要な情報を取得(Blueprint公開ノード)
+	 * @param[in] AudioQuery						AudioQuery構造体
+	 * @return AudioQuery情報を元にLipSyncに必要な情報
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxLipSyncList"))
+	static UPARAM(DisplayName="LipSyncList") TArray<FVoicevoxLipSync> GetLipSyncList(FVoicevoxAudioQuery AudioQuery);
 };

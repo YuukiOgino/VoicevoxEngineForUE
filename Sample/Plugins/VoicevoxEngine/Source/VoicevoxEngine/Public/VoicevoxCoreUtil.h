@@ -98,6 +98,21 @@ enum class ESpeakerType : uint8
 	KotoyomiNia=74					UMETA(DisplayName = "琴詠ニア",						ToolTip = "74:琴詠ニア"),
 };
 
+/**
+ * @enum ELipSyncVowelType
+ * @brief リップシンク用の母音を示す列挙体
+ */
+UENUM(BlueprintType)
+enum class ELipSyncVowelType : uint8
+{
+	A	UMETA(DisplayName = "母音:あ",	ToolTip = "母音:あ（a）"),
+	I	UMETA(DisplayName = "母音:い",	ToolTip = "母音:い（i）"),
+	U	UMETA(DisplayName = "母音:う",	ToolTip = "母音:う（u）"),
+	E	UMETA(DisplayName = "母音:え",	ToolTip = "母音:え（e）"),
+	O	UMETA(DisplayName = "母音:お",	ToolTip = "母音:お（o）"),
+	Non	UMETA(DisplayName = "無音",		ToolTip = "無音（句読点の待機時間）"),
+};
+
 //------------------------------------------------------------------------
 // struct
 //------------------------------------------------------------------------
@@ -276,6 +291,24 @@ struct FVoicevoxAudioQuery
 	// カナ（AquesTalkライクな記法）
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Kana;
+};
+
+/**
+ * @struct FVoicevoxAudioQuery
+ * @brief VOICEVOXのAudioQueryからリップシンクに必要な情報をまとめた構造体
+ */
+USTRUCT(BlueprintType)
+struct FVoicevoxLipSync
+{
+	GENERATED_USTRUCT_BODY()
+
+	// 母音
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	ELipSyncVowelType VowelType;
+	
+	// 長さ
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	float Length;	
 };
 
 //------------------------------------------------------------------------
