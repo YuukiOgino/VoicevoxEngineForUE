@@ -21,81 +21,96 @@
 UENUM(BlueprintType)
 enum class ESpeakerType : uint8
 {
-	Metan=2,
-	MetanAmaAma=0,
-	MetanTsunTsun=6,
-	MetanSexy=4,
-	MetanSasayaki=36,
-	MetanHisoHiso=37,
-	Zundamon=3,
-	ZundamonAmaAma=1,
-	ZundamonTsunTsun=7,
-	ZundamonSexy=5,
-	ZundamonSasayaki=22,
-	ZundamonHisoHiso=38,
-	Tsumugi=8,
-	Hau=10,
-	Ritsu=9,
-	RitsuQueen=65,
-	Kurono=11,
-	KuronoYorokobi=39,
-	KuronoTsungire=40,
-	KuronoKanashimi=41,
-	Kotarou=12,
-	KotarouWai=32,
-	KotarouBikuBiku=33,
-	KotarouOko=34,
-	KotarouBien=35,
-	Ryusei=13,
-	Himari=14,
-	Sora=16,
-	SoraAmaAma=15,
-	SoraTsunTsun=18,
-	SoraSexy=17,
-	SoraSasayaki=19,
-	MochikoSan=20,
-	MochikoSanSexy=66,
-	Kenzaki=21,
-	WhiteCul=23,
-	WhiteCulTanoshi=24,
-	WhiteCulKanashi=25,
-	WhiteCulBien=26,
-	Goki=27,
-	GokiNuigurumi=28,
-	No7=29,
-	No7Announcement=30,
-	No7Yomikikase=31,
-	Chibishikiji=42,
-	OukaMiko=43,
-	OukaMikoSecond=44,
-	OukaMikoLoli=45,
-	Sayo=46,
-	TypeT=47,
-	TypeTRakuRaku=48,
-	TypeTFear=49,
-	TypeTSecret=50,
-	BeniZakura=51,
-	WakamatsuAtsushi=52,
-	KigashimaRin=53,
-	HarukaNana=54,
-	NekotukaAru=55,
-	NekotukaAruOchitsuki=56,
-	NekotukaAruUkiUki=57,
-	NekotukaBi=58,
-	NekotukaBiOchitsuki=59,
-	NekotukaBiHitomishiri=60,
-	ChugokuUsagi=61,
-	ChugokuUsagiOdoroki=62,
-	ChugokuUsagiKowagari=63,
-	ChugokuUsagiHeroHero=64,
-	KuritaMaron=67,
-	AieruTan=68,
-	ManbetsuHanamaru=69,
-	ManbetsuHanamaruGenki=70,
-	ManbetsuHanamaruSasayaki=71,
-	ManbetsuHanamaruBurikkko=72,
-	ManbetsuHanamaruBoy=73,
-	KotoyomiNia=74,
+	Metan=2							UMETA(DisplayName = "四国めたん(ノーマル)",			ToolTip = "02:四国めたん(ノーマル)"),
+	MetanAmaAma=0					UMETA(DisplayName = "四国めたん(あまあま)",			ToolTip = "00:四国めたん(あまあま)"),
+	MetanTsunTsun=6					UMETA(DisplayName = "四国めたん(ツンツン)",			ToolTip = "06:四国めたん(ツンツン)"),
+	MetanSexy=4						UMETA(DisplayName = "四国めたん(セクシー)",			ToolTip = "04:四国めたん(セクシー)"),
+	MetanSasayaki=36				UMETA(DisplayName = "四国めたん(ささやき)",			ToolTip = "36:四国めたん(ささやき)"),
+	MetanHisoHiso=37				UMETA(DisplayName = "四国めたん(ヒソヒソ)",			ToolTip = "37:四国めたん(ヒソヒソ)"),
+	Zundamon=3						UMETA(DisplayName = "ずんだもん(ノーマル)",			ToolTip = "03:ずんだもん(ノーマル)"),
+	ZundamonAmaAma=1				UMETA(DisplayName = "ずんだもん(あまあま)",			ToolTip = "01:ずんだもん(あまあま)"),
+	ZundamonTsunTsun=7				UMETA(DisplayName = "ずんだもん(ツンツン)",			ToolTip = "07:ずんだもん(ツンツン)"),
+	ZundamonSexy=5					UMETA(DisplayName = "ずんだもん(セクシー)",			ToolTip = "05:ずんだもん(セクシー)"),
+	ZundamonSasayaki=22				UMETA(DisplayName = "ずんだもん(ささやき)",			ToolTip = "22:ずんだもん(ささやき)"),
+	ZundamonHisoHiso=38				UMETA(DisplayName = "ずんだもん(ヒソヒソ)",			ToolTip = "38:ずんだもん(ヒソヒソ)"),
+	Tsumugi=8						UMETA(DisplayName = "春日部つむぎ",					ToolTip = "08:春日部つむぎ"),
+	Hau=10							UMETA(DisplayName = "雨晴はう",						ToolTip = "10:雨晴はう"),
+	Ritsu=9							UMETA(DisplayName = "波音リツ(ノーマル)",				ToolTip = "09:波音リツ(ノーマル)"),
+	RitsuQueen=65					UMETA(DisplayName = "波音リツ(クイーン)",				ToolTip = "65:波音リツ(クイーン)"),
+	Kurono=11						UMETA(DisplayName = "玄野武宏(ノーマル)",				ToolTip = "11:玄野武宏(ノーマル)"),
+	KuronoYorokobi=39				UMETA(DisplayName = "玄野武宏(喜び)",					ToolTip = "39:玄野武宏(喜び)"),
+	KuronoTsungire=40				UMETA(DisplayName = "玄野武宏(ツンギレ)",				ToolTip = "40:玄野武宏(ツンギレ)"),
+	KuronoKanashimi=41				UMETA(DisplayName = "玄野武宏(悲しみ)",				ToolTip = "41:玄野武宏(悲しみ)"),
+	Kotarou=12						UMETA(DisplayName = "白上虎太郎(ふつう)",				ToolTip = "12:白上虎太郎(ふつう)"),
+	KotarouWai=32					UMETA(DisplayName = "白上虎太郎(わーい)",				ToolTip = "32:白上虎太郎(わーい)"),
+	KotarouBikuBiku=33				UMETA(DisplayName = "白上虎太郎(びくびく)",			ToolTip = "33:白上虎太郎(びくびく)"),
+	KotarouOko=34					UMETA(DisplayName = "白上虎太郎(おこ)",				ToolTip = "34:白上虎太郎(おこ)"),
+	KotarouBien=35					UMETA(DisplayName = "白上虎太郎(びえーん)",			ToolTip = "35:白上虎太郎(びえーん)"),
+	Ryusei=13						UMETA(DisplayName = "青山龍星",						ToolTip = "13:青山龍星"),
+	Himari=14						UMETA(DisplayName = "冥鳴ひまり",						ToolTip = "14:冥鳴ひまり"),
+	Sora=16							UMETA(DisplayName = "九州そら(ノーマル)",				ToolTip = "16:九州そら(ノーマル)"),
+	SoraAmaAma=15					UMETA(DisplayName = "九州そら(あまあま)",				ToolTip = "15:九州そら(あまあま)"),
+	SoraTsunTsun=18					UMETA(DisplayName = "九州そら(ツンツン)",				ToolTip = "18:九州そら(ツンツン)"),
+	SoraSexy=17						UMETA(DisplayName = "九州そら(セクシー)",				ToolTip = "17:九州そら(セクシー)"),
+	SoraSasayaki=19					UMETA(DisplayName = "九州そら(ささやき)",				ToolTip = "19:九州そら(ささやき)"),
+	MochikoSan=20					UMETA(DisplayName = "もち子さん(ノーマル)",			ToolTip = "20:もち子さん(ノーマル)"),
+	MochikoSanSexy=66				UMETA(DisplayName = "もち子さん(セクシー／あん子)",		ToolTip = "66:もち子さん(セクシー／あん子)"),
+	Kenzaki=21						UMETA(DisplayName = "剣崎雌雄",						ToolTip = "21:剣崎雌雄"),
+	WhiteCul=23						UMETA(DisplayName = "WhiteCUL(ノーマル)",			ToolTip = "23:WhiteCUL(ノーマル)"),
+	WhiteCulTanoshi=24				UMETA(DisplayName = "WhiteCUL(たのしい)",			ToolTip = "24:WhiteCUL(たのしい)"),
+	WhiteCulKanashi=25				UMETA(DisplayName = "WhiteCUL(かなしい)",			ToolTip = "25:WhiteCUL(かなしい)"),
+	WhiteCulBien=26					UMETA(DisplayName = "WhiteCUL(びえーん)",			ToolTip = "26:WhiteCUL(びえーん)"),
+	Goki=27							UMETA(DisplayName = "後鬼(人間ver.)",				ToolTip = "27:後鬼(人間ver.ル)"),
+	GokiNuigurumi=28				UMETA(DisplayName = "後鬼(ぬいぐるみver.)",			ToolTip = "28:後鬼(ぬいぐるみver.)"),
+	No7=29							UMETA(DisplayName = "No.7(ノーマル)",				ToolTip = "29:No.7(ノーマル)"),
+	No7Announcement=30				UMETA(DisplayName = "No.7(アナウンス)",				ToolTip = "30:No.7(アナウンス)"),
+	No7Yomikikase=31				UMETA(DisplayName = "No.7(読み聞かせ)",				ToolTip = "31:No.7(読み聞かせ)"),
+	Chibishikiji=42					UMETA(DisplayName = "ちび式じい",						ToolTip = "42:ちび式じい"),
+	OukaMiko=43						UMETA(DisplayName = "櫻歌ミコ(ノーマル)",				ToolTip = "43:櫻歌ミコ(ノーマル)"),
+	OukaMikoSecond=44				UMETA(DisplayName = "櫻歌ミコ(第二形態)",				ToolTip = "44:櫻歌ミコ(第二形態)"),
+	OukaMikoLoli=45					UMETA(DisplayName = "櫻歌ミコ(ロリ)",					ToolTip = "45:櫻歌ミコ(ロリ)"),
+	Sayo=46							UMETA(DisplayName = "小夜/SAYO",						ToolTip = "46:小夜/SAYO"),
+	TypeT=47						UMETA(DisplayName = "ナースロボ＿タイプＴ(ノーマル)",	ToolTip = "47:ナースロボ＿タイプＴ(ノーマル)"),
+	TypeTRakuRaku=48				UMETA(DisplayName = "ナースロボ＿タイプＴ(楽々)",		ToolTip = "48:ナースロボ＿タイプＴ(楽々)"),
+	TypeTFear=49					UMETA(DisplayName = "ナースロボ＿タイプＴ(恐怖)",		ToolTip = "49:ナースロボ＿タイプＴ(恐怖)"),
+	TypeTSecret=50					UMETA(DisplayName = "ナースロボ＿タイプＴ(内緒話)",		ToolTip = "50:ナースロボ＿タイプＴ(内緒話)"),
+	BeniZakura=51					UMETA(DisplayName = "†聖騎士 紅桜†",					ToolTip = "51:†聖騎士 紅桜†"),
+	WakamatsuAtsushi=52				UMETA(DisplayName = "雀松朱司",						ToolTip = "52:雀松朱司"),
+	KigashimaRin=53					UMETA(DisplayName = "麒ヶ島宗麟",						ToolTip = "53:麒ヶ島宗麟"),
+	HarukaNana=54					UMETA(DisplayName = "春歌ナナ",						ToolTip = "54:春歌ナナ"),
+	NekotukaAru=55					UMETA(DisplayName = "猫使アル(ノーマル)",				ToolTip = "55:猫使アル(ノーマル)"),
+	NekotukaAruOchitsuki=56			UMETA(DisplayName = "猫使アル(おちつき)",				ToolTip = "56:猫使アル(おちつき)"),
+	NekotukaAruUkiUki=57			UMETA(DisplayName = "猫使アル(うきうき)",				ToolTip = "57:猫使アル(うきうき)"),
+	NekotukaBi=58					UMETA(DisplayName = "猫使ビィ(ノーマル)",				ToolTip = "58:猫使ビィ(ノーマル)"),
+	NekotukaBiOchitsuki=59			UMETA(DisplayName = "猫使ビィ(おちつき)",				ToolTip = "59:猫使ビィ(おちつき)"),
+	NekotukaBiHitomishiri=60		UMETA(DisplayName = "猫使ビィ(人見知り)",				ToolTip = "60:猫使ビィ(人見知り)"),
+	ChugokuUsagi=61					UMETA(DisplayName = "中国うさぎ(ノーマル)",			ToolTip = "61:中国うさぎ(ノーマル)"),
+	ChugokuUsagiOdoroki=62			UMETA(DisplayName = "中国うさぎ(おどろき)",			ToolTip = "62:中国うさぎ(おどろき)"),
+	ChugokuUsagiKowagari=63			UMETA(DisplayName = "中国うさぎ(こわがり)",			ToolTip = "63:中国うさぎ(こわがり)"),
+	ChugokuUsagiHeroHero=64			UMETA(DisplayName = "中国うさぎ(へろへろ)",			ToolTip = "64:中国うさぎ(へろへろ)"),
+	KuritaMaron=67					UMETA(DisplayName = "栗田まろん",						ToolTip = "67:栗田まろん"),
+	AieruTan=68						UMETA(DisplayName = "あいえるたん",					ToolTip = "68:あいえるたん"),
+	ManbetsuHanamaru=69				UMETA(DisplayName = "満別花丸(ノーマル)",				ToolTip = "69:満別花丸(ノーマル)"),
+	ManbetsuHanamaruGenki=70		UMETA(DisplayName = "満別花丸(元気)",					ToolTip = "70:満別花丸(元気)"),
+	ManbetsuHanamaruSasayaki=71		UMETA(DisplayName = "満別花丸(ささやき)",				ToolTip = "71:満別花丸(ささやき)"),
+	ManbetsuHanamaruBurikkko=72		UMETA(DisplayName = "満別花丸(ぶりっ子)",				ToolTip = "72:満別花丸(ぶりっ子)"),
+	ManbetsuHanamaruBoy=73			UMETA(DisplayName = "満別花丸(ボーイ)",				ToolTip = "73:満別花丸(ボーイ)"),
+	KotoyomiNia=74					UMETA(DisplayName = "琴詠ニア",						ToolTip = "74:琴詠ニア"),
+};
+
+/**
+ * @enum ELipSyncVowelType
+ * @brief リップシンク用の母音を示す列挙体
+ */
+UENUM(BlueprintType)
+enum class ELipSyncVowelType : uint8
+{
+	A	UMETA(DisplayName = "母音:あ",	ToolTip = "母音:あ（a）"),
+	I	UMETA(DisplayName = "母音:い",	ToolTip = "母音:い（i）"),
+	U	UMETA(DisplayName = "母音:う",	ToolTip = "母音:う（u）"),
+	E	UMETA(DisplayName = "母音:え",	ToolTip = "母音:え（e）"),
+	O	UMETA(DisplayName = "母音:お",	ToolTip = "母音:お（o）"),
+	Non	UMETA(DisplayName = "無音",		ToolTip = "無音（句読点の待機時間）"),
 };
 
 //------------------------------------------------------------------------
@@ -177,25 +192,29 @@ struct FVoicevoxMora
 {
 	GENERATED_USTRUCT_BODY()
 
-	// モデル名
+	// カナ文字（１～２文字）
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Text;
 
+	// 子音
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Consonant;
-	
+
+	// 子音長さ
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Consonant_length;
-	
+
+	// 母音
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Vowel;
-	
+
+	// 母音長さ
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Vowel_length;
-	
+
+	// イントネーション
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Pitch;
-	
 };
 
 /**
@@ -207,15 +226,19 @@ struct FVoicevoxAccentPhrase
 {
 	GENERATED_USTRUCT_BODY()
 
+	// モーラ情報リスト
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	TArray<FVoicevoxMora> Moras;
 
+	// アクセント場所
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	int Accent;
-	
+
+	// 句読点モーラ情報（カナで句読点が存在する場合、無音時間が格納）
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FVoicevoxMora Pause_mora;
 
+	// 疑問文か
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	bool Is_interrogative;
 };
@@ -229,35 +252,63 @@ struct FVoicevoxAudioQuery
 {
 	GENERATED_USTRUCT_BODY()
 
+	// アクセントリスト
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	TArray<FVoicevoxAccentPhrase> Accent_phrases;
 
+	// 話速
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Speed_scale;
 
+	// 音高
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Pitch_scale;
 
+	// 抑揚
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Intonation_scale;
 
+	// 音量
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Volume_scale;
 
+	// 開始無音
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Pre_phoneme_length;
 
+	// 終了無音
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Post_phoneme_length;
 
+	// 出力サンプリングレート
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	int Output_sampling_rate;
 
+	// 出力時にステレオにするか
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	bool Output_stereo;
 
+	// カナ（AquesTalkライクな記法）
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Kana;
+};
+
+/**
+ * @struct FVoicevoxAudioQuery
+ * @brief VOICEVOXのAudioQueryからリップシンクに必要な情報をまとめた構造体
+ */
+USTRUCT(BlueprintType)
+struct FVoicevoxLipSync
+{
+	GENERATED_USTRUCT_BODY()
+
+	// 母音
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	ELipSyncVowelType VowelType;
+	
+	// 長さ
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	float Length;	
 };
 
 //------------------------------------------------------------------------

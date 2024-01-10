@@ -6,9 +6,7 @@
  */
 
 #include "VoicevoxAsyncTask.h"
-#include "VoicevoxBlueprintLibrary.h"
 #include "VoicevoxCoreUtil.h"
-#include "Kismet/GameplayStatics.h"
 #include "Tasks/Task.h"
 
 //------------------------------------------------------------------------
