@@ -11,7 +11,7 @@ class AActor;
 class UEditorPerProjectUserSettings;
 
 /**
- * 
+ * @class UVoicevoxEditorUtilityWidget
  */
 UCLASS()
 class VOICEVOXENGINEEDITOR_API UVoicevoxEditorUtilityWidget : public UEditorUtilityWidget

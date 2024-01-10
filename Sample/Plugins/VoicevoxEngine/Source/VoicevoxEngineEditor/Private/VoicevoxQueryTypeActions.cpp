@@ -1,3 +1,5 @@
+// Copyright Yuuki Ogino. All Rights Reserved
+
 #include "VoicevoxQueryTypeActions.h"
 #include "VoicevoxQuery.h"
 
