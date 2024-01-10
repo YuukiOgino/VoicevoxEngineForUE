@@ -125,7 +125,7 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData)
 }
 
 /**
- * @brief VOICEVOX COREで取得したAudioQuery元にLipSyncに必要な情報を取得(Blueprint公開ノード)
+ * @brief VOICEVOX COREで取得したAudioQuery元に、中品質なLipSyncに必要なデータリストを取得(Blueprint公開ノード)
  */
 TArray<FVoicevoxLipSync> UVoicevoxBlueprintLibrary::GetLipSyncList(FVoicevoxAudioQuery AudioQuery)
 {
