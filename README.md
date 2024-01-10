@@ -27,7 +27,7 @@ VOICEVOX COREのReadMEに従って、最低限CPUモードの動作に必要な�
 
 [VOICEVOX COREライブラリ](https://github.com/VOICEVOX/voicevox_core)を取得、適当なフォルダに展開してください。<br/>
 
-※v0.4は[VOICEVOX CORE 0.14.5](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.5)を元に開発しました。
+※v0.5は[VOICEVOX CORE 0.14.5](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.5)を元に開発しました。
 
 次に[Open JTalk から配布されている辞書ファイル](https://sourceforge.net/projects/open-jtalk/files/Dictionary/open_jtalk_dic-1.11/open_jtalk_dic_utf_8-1.11.tar.gz/download?use_mirror=jaist) をダウンロードして、上記コアライブラリを展開したディレクトリに展開してください。
 
@@ -36,6 +36,7 @@ VOICEVOX CORE 0.14.5はONNX Runtimeが含まれているため、別途ダウン
 
 <details>
 <summary>v0.1の場合</summary>
+  
   v0.1は[VOICEVOX CORE 0.13.2](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.13.2)を元に開発しました。
   
   v0.1で使用するVOICEVOX CORE 0.13.2はONNX Runtimeが同梱されていません。<br/>
@@ -59,16 +60,23 @@ Plugins\VoicevoxEngine\Source\ThirdParty\VoicevoxCore\x64
 Plugins\VoicevoxEngine\Source\ThirdParty\VoicevoxCore\osx
 ```
 
+<br/>
+※格納例（v0.2以降）<br/>
+
+![image](https://github.com/YuukiOgino/VoicevoxEngineForUE/assets/10606646/f1642b28-a431-4b68-96c7-f36c08cab38b)
+
 <details>
 <summary>v0.1の場合</summary>
-Plugins\VoicevoxEngine\Source\ThirdParty\VoicevoxCore\x64\VoicevoxCore
+
+```
+Plugins\VoicevoxEngine\Source\ThirdParty\VoicevoxCore\x64\VoicevoxCore  
+```    
+※格納例（v0.1）  
+  
+![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/104377/33be4503-896f-3d38-d27c-0ce3cab73ea4.png)
 </details> 
 
-
-※格納例
-![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/104377/33be4503-896f-3d38-d27c-0ce3cab73ea4.png)
-
-上記COREライブラリ展開済みのPluginフォルダを、プロジェクトフォルダに配置後、uprojectファイルを右クリックして『Generate Visual Studio project files』を選択し、sln作成をしてください。<br/>
+上記COREライブラリ展開済みのPluginフォルダを、プロジェクトフォルダに配置後、uprojectファイルを右クリックして『**Generate Visual Studio project files**』を選択し、sln作成をしてください。<br/>
 あとはuprojectを起動してビルドが通れば成功です。
 
 # 各クラスについて
@@ -79,10 +87,10 @@ Plugins\VoicevoxEngine\Source\ThirdParty\VoicevoxCore\x64\VoicevoxCore
 - COREのAPIを非同期で行った場合、特にRunTextToSpeechからの戻りを待たずにプレイ終了したり、続けてRunTextToSpeechを実行するとクラッシュします。
   - この部分はどうしようか、現在模索中です。
 
-- パッケージングを行うとOpen JTalkフォルダとmodelフォルダのコピーが失敗します。（解決済）
+- ~~パッケージングを行うとOpen JTalkフォルダとmodelフォルダのコピーが失敗します。~~（解決済）
   - 修正しました。（v0.3）
 
-- GPUモードに対応したCOREライブラリでGPUに切り替えるとエラー、もしくはクラッシュする（解決済）
+- ~~GPUモードに対応したCOREライブラリでGPUに切り替えるとエラー、もしくはクラッシュする~~（解決済）
   - VOICEVOX CORE 0.14.4以上にアップデートしたところ発生しなくなりました。
 
 # 利用規約
@@ -99,7 +107,9 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 
 # 更新履歴
 
-- 2023/10/06
+- 2024/01/10
+  - 0.5 一部Enumのエディタ表示名を日本語化。中品質のリップシンクが可能なデータリストを取得する関数を追加。
+- 2024/01/09
   - 0.4 VOICEVOX CORE 0.14.5対応。(新規モデルデータ追加対応)
 - 2023/10/06
   - 0.3 パッケージングでOpen JTalkフォルダとmodelフォルダのコピーが失敗する原因を修正。修正により、MacでXCodeのプロジェクトが正常に生成できるようになりました。
