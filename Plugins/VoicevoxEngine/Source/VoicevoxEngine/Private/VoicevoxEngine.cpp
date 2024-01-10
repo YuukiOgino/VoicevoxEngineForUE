@@ -6,7 +6,6 @@
  */
 
 #include "VoicevoxEngine.h"
-#include "Core.h"
 #include "Modules/ModuleManager.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxEngineModule"

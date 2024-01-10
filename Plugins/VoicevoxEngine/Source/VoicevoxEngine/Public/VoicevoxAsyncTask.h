@@ -2,7 +2,7 @@
 
 /**
  * @headerfile VoicevoxAsyncTask.h
- * @brief  VOICEVOX COREのAPIへ接続するBlueprint公開ノードをまとめたヘッダーファイル
+ * @brief  VOICEVOX COREのAPIへ接続するBlueprint公開ノード（要Latentノード）をまとめたヘッダーファイル
  * @author Yuuki Ogino
  */
 

@@ -123,3 +123,39 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData)
 
 	return nullptr;
 }
+
+/**
+ * @brief VOICEVOX COREで取得したAudioQuery元に、中品質なLipSyncに必要なデータリストを取得(Blueprint公開ノード)
+ */
+TArray<FVoicevoxLipSync> UVoicevoxBlueprintLibrary::GetLipSyncList(FVoicevoxAudioQuery AudioQuery)
+{
+	TArray<FVoicevoxLipSync> List;
+	List.Empty();
+
+	TMap<FString, ELipSyncVowelType> FruitMap =
+	{
+		{TEXT("a"), ELipSyncVowelType::A},
+		{TEXT("i"), ELipSyncVowelType::I},
+		{TEXT("u"), ELipSyncVowelType::U},
+		{TEXT("e"), ELipSyncVowelType::E},
+		{TEXT("o"), ELipSyncVowelType::O},
+		{TEXT("cl"), ELipSyncVowelType::U},
+		{TEXT("N"), ELipSyncVowelType::Non},
+		{TEXT("pau"), ELipSyncVowelType::Non},
+	};
+	
+	for (auto [Moras, Accent, Pause_mora, Is_interrogative] : AudioQuery.Accent_phrases)
+	{
+		for (auto [Text, Consonant, Consonant_length, Vowel, Vowel_length, Pitch] : Moras)
+		{
+			List.Add({FruitMap[Vowel], Vowel_length + Consonant_length});
+		}
+
+		if (Pause_mora.Vowel.Equals(TEXT("pau"), ESearchCase::IgnoreCase))
+		{
+			List.Add({ELipSyncVowelType::Non, Pause_mora.Vowel_length});
+		}
+	}
+	
+	return List;
+}

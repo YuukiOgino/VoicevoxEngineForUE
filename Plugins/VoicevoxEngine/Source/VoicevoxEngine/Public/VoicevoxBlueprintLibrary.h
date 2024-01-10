@@ -1,5 +1,11 @@
 ﻿// Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @headerfile VoicevoxBlueprintLibrary.h
+ * @brief  VOICEVOX COREのAPIへ接続するBlueprint公開ノードをまとめたヘッダーファイル
+ * @author Yuuki Ogino
+ */
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -110,4 +116,12 @@ public:
 	 * @return 合成音声を格納したUSoundWave
 	 */
 	static USoundWave* CreateSoundWave(TArray<uint8> PCMData);
+
+	/**
+	 * @brief VOICEVOX COREで取得したAudioQuery元に、中品質なLipSyncに必要なデータリストを取得(Blueprint公開ノード)
+	 * @param[in] AudioQuery AudioQuery構造体
+	 * @return AudioQuery情報を元に生成した、中品質のLipSyncに必要なデータリスト
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxLipSyncList"))
+	static UPARAM(DisplayName="LipSyncList") TArray<FVoicevoxLipSync> GetLipSyncList(FVoicevoxAudioQuery AudioQuery);
 };
