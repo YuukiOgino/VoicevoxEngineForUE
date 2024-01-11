@@ -24,7 +24,7 @@ bool UVoicevoxEditorUtilityWidget::IsSetEditorAudioQuery()
     return !EditorAudioQueryPtr.Kana.IsEmpty();
 }
 
-void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(int64 SpeakerType, FString Text)
+void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(const int64 SpeakerType, FString Text)
 {
     UVoicevoxQueryFactory* Factory = NewObject<UVoicevoxQueryFactory>();
     Factory->AudioQueryPtr = &EditorAudioQueryPtr;
