@@ -4,10 +4,9 @@
 
 #include "AssetToolsModule.h"
 #include "VoicevoxBlueprintLibrary.h"
-#include "VoicevoxQuery.h"
 #include "VoicevoxQueryFactory.h"
+#include "VoicevoxSoundWaveFactory.h"
 #include "AssetRegistry/AssetRegistryModule.h"
-#include "Sound/SoundWave.h"
 
 #if WITH_EDITOR
 #include "FileHelpers.h"
@@ -40,18 +39,24 @@ void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(ESpeakerType SpeakerType
     Factory->RemoveFromRoot();
 }
 
-void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(ESpeakerType SpeakerType, const bool bEnableInterrogativeUpspeak)
+void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(const ESpeakerType SpeakerType, const bool bEnableInterrogativeUpspeak) const
 {
-    // Todo エディタα板はGameフォルダ直下固定、仮のファイル名で保存する（ファイルセーブだとコンテンツフォルダ外に保存が可能なため、別の手段が無いかβ版までに調査）
-    const FString AssetName = TEXT("NewVoice");
-    const FString AssetPath = TEXT("/Game");
-    const FString PackageName = AssetPath + TEXT("/") + AssetName;
-    UPackage* AssetPackage = CreatePackage(*PackageName);
     if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(EditorAudioQueryPtr, static_cast<int64>(SpeakerType), bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
     {
-        UObject* CreatedAsset = UVoicevoxBlueprintLibrary::CreateSoundWave(OutputWAV, AssetPackage, FName(*AssetName));
-        FAssetRegistryModule::AssetCreated(CreatedAsset);
-        AssetPackage->MarkPackageDirty();
+        UVoicevoxSoundWaveFactory* Factory = NewObject<UVoicevoxSoundWaveFactory>();
+        Factory->OutputWAV = OutputWAV;
+        Factory->AddToRoot();
+    
+        const FAssetToolsModule& AssetToolsModule = FAssetToolsModule::GetModule();
+        if (UObject* CreatedAsset = AssetToolsModule.Get().CreateAssetWithDialog(Factory->GetSupportedClass(), Factory); CreatedAsset != nullptr)
+        {
+            FAssetRegistryModule::AssetCreated(CreatedAsset);
+            if (const bool IsMark = CreatedAsset->MarkPackageDirty(); !IsMark)
+            {
+                UE_LOG(LogVoicevoxEditor, Log, TEXT("MarkPackageDirty Error:Create SoundWave Asset"));
+            }
+        }
+        Factory->RemoveFromRoot();
     }
 }
 

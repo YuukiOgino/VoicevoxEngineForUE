@@ -28,7 +28,7 @@ public:
 	void SaveAudioQueryAssets(ESpeakerType SpeakerType);
 
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SaveSoundWaveAssets"))
-	void SaveSoundWaveAssets(ESpeakerType SpeakerType, bool bEnableInterrogativeUpspeak = true);
+	void SaveSoundWaveAssets(ESpeakerType SpeakerType, bool bEnableInterrogativeUpspeak = true) const;
 	
 	/**
 	* アセットの保存を実行します
