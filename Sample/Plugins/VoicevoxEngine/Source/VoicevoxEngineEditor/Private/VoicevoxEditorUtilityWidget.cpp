@@ -24,11 +24,11 @@ bool UVoicevoxEditorUtilityWidget::IsSetEditorAudioQuery()
     return !EditorAudioQueryPtr.Kana.IsEmpty();
 }
 
-void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(ESpeakerType SpeakerType)
+void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(EVoicevoxSpeakerType SpeakerType)
 {
     UVoicevoxQueryFactory* Factory = NewObject<UVoicevoxQueryFactory>();
     Factory->AudioQueryPtr = &EditorAudioQueryPtr;
-    Factory->SpeakerType = SpeakerType;
+    Factory->SpeakerType = static_cast<int64>(SpeakerType);
     Factory->AddToRoot();
     
     const FAssetToolsModule& AssetToolsModule = FAssetToolsModule::GetModule();
@@ -43,7 +43,7 @@ void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(ESpeakerType SpeakerType
     Factory->RemoveFromRoot();
 }
 
-void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(const ESpeakerType SpeakerType, const bool bEnableInterrogativeUpspeak) const
+void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(const EVoicevoxSpeakerType SpeakerType, const bool bEnableInterrogativeUpspeak) const
 {
     if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(EditorAudioQueryPtr, static_cast<int64>(SpeakerType), bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
     {

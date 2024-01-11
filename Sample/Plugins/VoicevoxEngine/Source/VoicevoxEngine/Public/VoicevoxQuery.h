@@ -8,7 +8,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "VoicevoxCoreUtil.h"
+#include "VoicevoxUEDefined.h"
 #include "VoicevoxQuery.generated.h"
 
 /**
@@ -24,5 +24,5 @@ public:
 	FVoicevoxAudioQuery VoicevoxAudioQuery;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	ESpeakerType SpeakerType = ESpeakerType::Zundamon;
+	int64 SpeakerType = 3;
 };

@@ -7,6 +7,7 @@
  */
 
 #pragma once
+
 #include "AssetTypeActions_Base.h"
 
 class FVoicevoxQueryTypeActions : public FAssetTypeActions_Base

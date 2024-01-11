@@ -19,7 +19,7 @@ class VOICEVOXENGINEEDITOR_API USpeakerElementWidget : public UUserWidget
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = true));
-	ESpeakerType Speaker;
+	EVoicevoxSpeakerType Speaker;
 	
 protected:
 

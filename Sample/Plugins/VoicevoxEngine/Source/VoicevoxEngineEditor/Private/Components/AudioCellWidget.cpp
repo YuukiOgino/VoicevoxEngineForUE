@@ -2,7 +2,7 @@
 
 #include "Components/AudioCellWidget.h"
 
-void UAudioCellWidget::SetSpeakerType(const ESpeakerType SpeakerType)
+void UAudioCellWidget::SetSpeakerType(const EVoicevoxSpeakerType SpeakerType)
 {
 	Speaker = SpeakerType;
 	EditorAudioQuery = FVoicevoxCoreUtil::GetAudioQuery(static_cast<int64>(Speaker), AudioEditableText->GetText().ToString(), false);

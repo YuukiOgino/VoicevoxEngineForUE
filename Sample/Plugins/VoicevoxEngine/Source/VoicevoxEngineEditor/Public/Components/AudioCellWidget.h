@@ -20,7 +20,7 @@ class VOICEVOXENGINEEDITOR_API UAudioCellWidget : public UUserWidget
 	GENERATED_BODY()
 
 	UPROPERTY();
-	ESpeakerType Speaker;
+	EVoicevoxSpeakerType Speaker;
 	
 public:
 
@@ -33,7 +33,7 @@ public:
 	FVoicevoxAudioQuery EditorAudioQuery;
 
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SetSpeakerType"))
-	void SetSpeakerType(ESpeakerType SpeakerType);
+	void SetSpeakerType(EVoicevoxSpeakerType SpeakerType);
 	
 protected:
 

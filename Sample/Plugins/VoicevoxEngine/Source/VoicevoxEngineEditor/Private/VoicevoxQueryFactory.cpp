@@ -6,7 +6,7 @@
 #include "JsonObjectConverter.h"
 #include "VoicevoxQuery.h"
 
-UVoicevoxQueryFactory::UVoicevoxQueryFactory():Super()
+UVoicevoxQueryFactory::UVoicevoxQueryFactory(): Super(), SpeakerType(3)
 {
 	bCreateNew = true;
 	SupportedClass = UVoicevoxQuery::StaticClass();
@@ -16,8 +16,8 @@ UVoicevoxQueryFactory::UVoicevoxQueryFactory():Super()
 }
 
 UObject* UVoicevoxQueryFactory::FactoryCreateNew(UClass* InClass, UObject* InParent,
-                                                    FName InName,  EObjectFlags Flags,
-													UObject* Context, FFeedbackContext* Warn)
+                                                 FName InName,  EObjectFlags Flags,
+                                                 UObject* Context, FFeedbackContext* Warn)
 {
 	if (AudioQueryPtr != nullptr)
 	{
@@ -44,6 +44,6 @@ UObject* UVoicevoxQueryFactory::FactoryCreateText(UClass* InClass, UObject* InPa
 	UVoicevoxQuery* NewAudioQueryAsset = NewObject<UVoicevoxQuery>(InParent, InClass, InName, Flags);
 	NewAudioQueryAsset->VoicevoxAudioQuery = AudioQuery;
 	// インポートしたJSONにモデルデータは含まれていないので、仮でずんだもんを入れる。
-	NewAudioQueryAsset->SpeakerType = ESpeakerType::Zundamon;
+	NewAudioQueryAsset->SpeakerType = 3;
 	return NewAudioQueryAsset;
 }

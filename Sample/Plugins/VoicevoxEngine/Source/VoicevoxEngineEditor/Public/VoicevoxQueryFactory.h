@@ -25,7 +25,7 @@ public:
 	//! 保存用の一時データ。エラーが起きるためポインタにしているが、基本参照渡し
 	FVoicevoxAudioQuery* AudioQueryPtr = nullptr;
 
-	ESpeakerType SpeakerType;
+	int64 SpeakerType;
 	
 	UVoicevoxQueryFactory();
 

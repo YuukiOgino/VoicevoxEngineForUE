@@ -97,7 +97,7 @@ public:
 	 * 必ずしも話者とモデルが1:1対応しているわけではない。
 	 */	
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxLoadModel", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
-	static UVoicevoxLoadModelAsyncTask* LoadModel(UObject* WorldContextObject, ESpeakerType SpeakerType);
+	static UVoicevoxLoadModelAsyncTask* LoadModel(UObject* WorldContextObject, EVoicevoxSpeakerType SpeakerType);
 
 	//! 話者番号
 	int64 SpeakerId = 0;
