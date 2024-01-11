@@ -23,7 +23,9 @@ void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(ESpeakerType SpeakerType
     UVoicevoxQueryFactory* Factory = NewObject<UVoicevoxQueryFactory>();
     Factory->AudioQueryPtr = &EditorAudioQueryPtr;
     Factory->SpeakerType = SpeakerType;
-    const FString AssetName = TEXT("SampleAudioQuery");
+    
+    // Todo エディタα板はGameフォルダ直下固定、仮のファイル名で保存する（ファイルセーブだとコンテンツフォルダ外に保存が可能なため、別の手段が無いかβ版までに調査）
+    const FString AssetName = TEXT("NewAudioQuery");
     const FString AssetPath = TEXT("/Game");
     const FString PackageName = AssetPath + TEXT("/") + AssetName;
     UPackage* AssetPackage = CreatePackage(*PackageName);
@@ -38,7 +40,8 @@ void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(ESpeakerType SpeakerType
 
 void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(ESpeakerType SpeakerType, const bool bEnableInterrogativeUpspeak)
 {
-    const FString AssetName = TEXT("SampleAudioVoicevox");
+    // Todo エディタα板はGameフォルダ直下固定、仮のファイル名で保存する（ファイルセーブだとコンテンツフォルダ外に保存が可能なため、別の手段が無いかβ版までに調査）
+    const FString AssetName = TEXT("NewVoice");
     const FString AssetPath = TEXT("/Game");
     const FString PackageName = AssetPath + TEXT("/") + AssetName;
     UPackage* AssetPackage = CreatePackage(*PackageName);
