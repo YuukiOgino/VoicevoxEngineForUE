@@ -2,6 +2,7 @@
 
 #include "VoicevoxEditorUtilityWidget.h"
 
+#include "AssetToolsModule.h"
 #include "VoicevoxBlueprintLibrary.h"
 #include "VoicevoxQuery.h"
 #include "VoicevoxQueryFactory.h"
@@ -11,6 +12,8 @@
 #if WITH_EDITOR
 #include "FileHelpers.h"
 #endif // WITH_EDITOR
+
+DEFINE_LOG_CATEGORY(LogVoicevoxEditor);
 
 bool UVoicevoxEditorUtilityWidget::IsSetEditorAudioQuery()
 {
@@ -23,19 +26,18 @@ void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(ESpeakerType SpeakerType
     UVoicevoxQueryFactory* Factory = NewObject<UVoicevoxQueryFactory>();
     Factory->AudioQueryPtr = &EditorAudioQueryPtr;
     Factory->SpeakerType = SpeakerType;
+    Factory->AddToRoot();
     
-    // Todo エディタα板はGameフォルダ直下固定、仮のファイル名で保存する（ファイルセーブだとコンテンツフォルダ外に保存が可能なため、別の手段が無いかβ版までに調査）
-    const FString AssetName = TEXT("NewAudioQuery");
-    const FString AssetPath = TEXT("/Game");
-    const FString PackageName = AssetPath + TEXT("/") + AssetName;
-    UPackage* AssetPackage = CreatePackage(*PackageName);
-    constexpr EObjectFlags Flags = RF_Public | RF_Standalone;
-
-    if (UObject* CreatedAsset = Factory->FactoryCreateNew(UVoicevoxQuery::StaticClass(), AssetPackage, FName(*AssetName), Flags, nullptr, GWarn))
+    const FAssetToolsModule& AssetToolsModule = FAssetToolsModule::GetModule();
+    if (UObject* CreatedAsset = AssetToolsModule.Get().CreateAssetWithDialog(Factory->GetSupportedClass(), Factory); CreatedAsset != nullptr)
     {
         FAssetRegistryModule::AssetCreated(CreatedAsset);
-        AssetPackage->MarkPackageDirty();
+        if (const bool IsMark = CreatedAsset->MarkPackageDirty(); !IsMark)
+        {
+            UE_LOG(LogVoicevoxEditor, Log, TEXT("MarkPackageDirty Error:Create AudioQuery Asset"));
+        }
     }
+    Factory->RemoveFromRoot();
 }
 
 void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(ESpeakerType SpeakerType, const bool bEnableInterrogativeUpspeak)

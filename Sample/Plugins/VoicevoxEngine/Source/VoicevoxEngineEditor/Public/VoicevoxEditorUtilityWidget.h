@@ -41,3 +41,5 @@ public:
 	void ExecuteSaveAssets(const TArray<UObject*>& InTargets, bool bCheckDirty = true, bool bPromptToSave = false);
 	
 };
+
+DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxEditor, Log, All);
