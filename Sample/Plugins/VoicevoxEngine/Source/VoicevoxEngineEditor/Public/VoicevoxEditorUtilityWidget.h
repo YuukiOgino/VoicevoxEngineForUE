@@ -10,6 +10,9 @@
 class AActor;
 class UEditorPerProjectUserSettings;
 
+DECLARE_DELEGATE_OneParam(FOnAudioQueryPickingChosen, const TArray<FAssetData>&);
+DECLARE_DELEGATE(FOnAudioQueryPickingCancelled);
+
 /**
  * @class UVoicevoxEditorUtilityWidget
  */
@@ -29,6 +32,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SaveSoundWaveAssets"))
 	void SaveSoundWaveAssets(ESpeakerType SpeakerType, bool bEnableInterrogativeUpspeak = true) const;
+
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "LoadAudioQuearyAssets"))
+	void LoadAudioQueryAssets();
 	
 	/**
 	* アセットの保存を実行します
