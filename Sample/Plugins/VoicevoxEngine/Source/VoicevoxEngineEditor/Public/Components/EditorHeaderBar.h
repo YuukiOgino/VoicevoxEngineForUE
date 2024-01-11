@@ -20,8 +20,7 @@ class VOICEVOXENGINEEDITOR_API UEditorHeaderBar : public UUserWidget
 	GENERATED_BODY()
 
 public:
-
-
+	
 	UPROPERTY(BlueprintAssignable, Category="VOICEVOX Editor")
 	FAudioQuerySaveDelegate OnAudioQuerySave;
 

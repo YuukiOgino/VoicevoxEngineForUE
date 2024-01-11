@@ -17,7 +17,7 @@ class FVoicevoxQueryTypeActions : public FAssetTypeActions_Base
 public:
 
 	FVoicevoxQueryTypeActions();
-	FVoicevoxQueryTypeActions(EAssetTypeCategories::Type AssetCategoryBit);
+	explicit FVoicevoxQueryTypeActions(EAssetTypeCategories::Type AssetCategoryBit);
 	
 	virtual FText GetName() const override;
 	virtual UClass* GetSupportedClass() const override;

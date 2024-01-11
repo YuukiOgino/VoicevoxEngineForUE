@@ -19,8 +19,9 @@ class VOICEVOXENGINEEDITOR_API UAudioCellWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+	//! 編集中のSperkerId
 	UPROPERTY();
-	EVoicevoxSpeakerType Speaker;
+	int64 Speaker;
 	
 public:
 
@@ -33,7 +34,7 @@ public:
 	FVoicevoxAudioQuery EditorAudioQuery;
 
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SetSpeakerType"))
-	void SetSpeakerType(EVoicevoxSpeakerType SpeakerType);
+	void SetSpeakerType(int64 SpeakerType);
 	
 protected:
 
