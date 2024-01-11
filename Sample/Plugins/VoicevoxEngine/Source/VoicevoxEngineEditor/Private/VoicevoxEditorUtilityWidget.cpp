@@ -70,19 +70,16 @@ void UVoicevoxEditorUtilityWidget::LoadAudioQueryAssets()
     {
         static void OnAudioQuerySelected(const TArray<FAssetData>& SelectedAssets, FOnAudioQueryPickingChosen OnAudioQueryPickingChosenDelegate)
         {
-            if ( SelectedAssets.Num() > 0 )
+            if (SelectedAssets.Num() > 0)
             {
                 const FAssetData& FirstAssetData = SelectedAssets[0];
                 FString FilesystemPath = FPackageName::LongPackageNameToFilename(FirstAssetData.PackagePath.ToString() + TEXT("/"));;
-
-                // Remove the slash if needed
-                if ( FilesystemPath.EndsWith(TEXT("/"), ESearchCase::CaseSensitive) )
+                if (FilesystemPath.EndsWith(TEXT("/"), ESearchCase::CaseSensitive))
                 {
                     FilesystemPath.LeftChopInline(1, false);
                 }
 
                 FEditorDirectories::Get().SetLastDirectory(ELastDirectory::GENERIC_OPEN, FilesystemPath);
-
                 OnAudioQueryPickingChosenDelegate.ExecuteIfBound(SelectedAssets);
             }
         }
