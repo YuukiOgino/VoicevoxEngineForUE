@@ -28,10 +28,10 @@ public:
 	bool IsSetEditorAudioQuery(); 
 	
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SaveAudioQuearyAssets"))
-	void SaveAudioQueryAssets(EVoicevoxSpeakerType SpeakerType);
+	void SaveAudioQueryAssets(int64 SpeakerType, FString Text);
 
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SaveSoundWaveAssets"))
-	void SaveSoundWaveAssets(EVoicevoxSpeakerType SpeakerType, bool bEnableInterrogativeUpspeak = true) const;
+	void SaveSoundWaveAssets(int64 SpeakerType, bool bEnableInterrogativeUpspeak = true) const;
 
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "LoadAudioQuearyAssets"))
 	void LoadAudioQueryAssets();

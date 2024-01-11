@@ -1,8 +1,7 @@
 // Copyright Yuuki Ogino. All Rights Reserved
 
 
-#include "VoicevoxQueryFactory.h"
-
+#include "Factories/VoicevoxQueryFactory.h"
 #include "JsonObjectConverter.h"
 #include "VoicevoxQuery.h"
 
@@ -24,6 +23,7 @@ UObject* UVoicevoxQueryFactory::FactoryCreateNew(UClass* InClass, UObject* InPar
 		UVoicevoxQuery* NewAudioQueryAsset = NewObject<UVoicevoxQuery>(InParent, InClass, InName, Flags, Context);
 		NewAudioQueryAsset->VoicevoxAudioQuery = *AudioQueryPtr;
 		NewAudioQueryAsset->SpeakerType = SpeakerType;
+		NewAudioQueryAsset->Text = Text;
 		AudioQueryPtr = nullptr;
 		return NewAudioQueryAsset;
 	}
@@ -45,5 +45,6 @@ UObject* UVoicevoxQueryFactory::FactoryCreateText(UClass* InClass, UObject* InPa
 	NewAudioQueryAsset->VoicevoxAudioQuery = AudioQuery;
 	// インポートしたJSONにモデルデータは含まれていないので、仮でずんだもんを入れる。
 	NewAudioQueryAsset->SpeakerType = 3;
+	NewAudioQueryAsset->Text.Empty();
 	return NewAudioQueryAsset;
 }

@@ -25,4 +25,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	int64 SpeakerType = 3;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Text;
 };

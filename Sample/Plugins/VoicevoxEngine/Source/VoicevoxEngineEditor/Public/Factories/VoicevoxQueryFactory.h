@@ -26,6 +26,8 @@ public:
 	FVoicevoxAudioQuery* AudioQueryPtr = nullptr;
 
 	int64 SpeakerType;
+
+	FString Text;
 	
 	UVoicevoxQueryFactory();
 

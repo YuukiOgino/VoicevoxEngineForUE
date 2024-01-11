@@ -8,8 +8,8 @@
 #include "IContentBrowserSingleton.h"
 #include "VoicevoxBlueprintLibrary.h"
 #include "VoicevoxQuery.h"
-#include "VoicevoxQueryFactory.h"
-#include "VoicevoxSoundWaveFactory.h"
+#include "Factories/VoicevoxQueryFactory.h"
+#include "Factories/VoicevoxSoundWaveFactory.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 
 #if WITH_EDITOR
@@ -24,11 +24,12 @@ bool UVoicevoxEditorUtilityWidget::IsSetEditorAudioQuery()
     return !EditorAudioQueryPtr.Kana.IsEmpty();
 }
 
-void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(EVoicevoxSpeakerType SpeakerType)
+void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(int64 SpeakerType, FString Text)
 {
     UVoicevoxQueryFactory* Factory = NewObject<UVoicevoxQueryFactory>();
     Factory->AudioQueryPtr = &EditorAudioQueryPtr;
-    Factory->SpeakerType = static_cast<int64>(SpeakerType);
+    Factory->SpeakerType = SpeakerType;
+    Factory->Text = Text;
     Factory->AddToRoot();
     
     const FAssetToolsModule& AssetToolsModule = FAssetToolsModule::GetModule();
@@ -43,9 +44,9 @@ void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(EVoicevoxSpeakerType Spe
     Factory->RemoveFromRoot();
 }
 
-void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(const EVoicevoxSpeakerType SpeakerType, const bool bEnableInterrogativeUpspeak) const
+void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(const int64 SpeakerType, const bool bEnableInterrogativeUpspeak) const
 {
-    if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(EditorAudioQueryPtr, static_cast<int64>(SpeakerType), bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+    if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(EditorAudioQueryPtr, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
     {
         UVoicevoxSoundWaveFactory* Factory = NewObject<UVoicevoxSoundWaveFactory>();
         Factory->OutputWAV = OutputWAV;

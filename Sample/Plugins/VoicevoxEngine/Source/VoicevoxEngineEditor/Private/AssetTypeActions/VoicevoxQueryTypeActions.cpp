@@ -1,6 +1,6 @@
 // Copyright Yuuki Ogino. All Rights Reserved
 
-#include "VoicevoxQueryTypeActions.h"
+#include "AssetTypeActions/VoicevoxQueryTypeActions.h"
 #include "VoicevoxQuery.h"
 
 FVoicevoxQueryTypeActions::FVoicevoxQueryTypeActions():

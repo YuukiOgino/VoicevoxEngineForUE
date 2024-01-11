@@ -2,7 +2,7 @@
 
 #include "VoicevoxEngineEditor.h"
 #include "AssetToolsModule.h"
-#include "VoicevoxQueryTypeActions.h"
+#include "AssetTypeActions/VoicevoxQueryTypeActions.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxEngineEditorModule"
 
