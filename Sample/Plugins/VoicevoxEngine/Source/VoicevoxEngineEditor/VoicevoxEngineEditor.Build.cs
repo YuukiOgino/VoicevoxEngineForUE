@@ -25,6 +25,7 @@ public class VoicevoxEngineEditor : ModuleRules
                 "Engine",
                 "Slate",
                 "SlateCore",
+                "DesktopPlatform",
                 "Json",
                 "JsonUtilities"                
             }
