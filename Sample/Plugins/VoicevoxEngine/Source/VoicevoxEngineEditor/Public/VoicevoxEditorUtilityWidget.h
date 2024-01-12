@@ -38,6 +38,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SaveSoundWaveAssets"))
 	void SaveSoundWaveAssets(int64 SpeakerType, bool bEnableInterrogativeUpspeak = true) const;
 
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SaveWavFile"))
+	void SaveWavFile(int64 SpeakerType, bool bEnableInterrogativeUpspeak = true) const;
+	
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "LoadAudioQuearyAssets"))
 	void LoadAudioQueryAssets();
 

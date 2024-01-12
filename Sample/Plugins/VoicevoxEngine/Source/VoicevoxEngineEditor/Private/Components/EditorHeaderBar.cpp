@@ -21,6 +21,11 @@ void UEditorHeaderBar::NativeConstruct()
 	{
 		SoundWaveSaveButton->OnClicked.AddDynamic(this, &UEditorHeaderBar::OnSoundWaveSaveButtonClick);
 	}
+	
+	if (WavSaveButton)
+	{
+		WavSaveButton->OnClicked.AddDynamic(this, &UEditorHeaderBar::OnWaveFileSaveButtonClick);
+	}
 }
 
 void UEditorHeaderBar::OnAudioQuerySaveButtonClick()
@@ -36,4 +41,9 @@ void UEditorHeaderBar::OnAudioQueryLoadButtonClick()
 void UEditorHeaderBar::OnSoundWaveSaveButtonClick()
 {
 	OnSoundWaveSave.Broadcast();
+}
+
+void UEditorHeaderBar::OnWaveFileSaveButtonClick()
+{
+	OnWavFileSave.Broadcast();
 }

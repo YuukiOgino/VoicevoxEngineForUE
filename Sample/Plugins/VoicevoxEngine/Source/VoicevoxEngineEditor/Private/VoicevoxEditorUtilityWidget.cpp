@@ -4,7 +4,9 @@
 
 #include "AssetToolsModule.h"
 #include "ContentBrowserModule.h"
+#include "DesktopPlatformModule.h"
 #include "IContentBrowserSingleton.h"
+#include "IDesktopPlatform.h"
 #include "VoicevoxBlueprintLibrary.h"
 #include "Factories/VoicevoxQueryFactory.h"
 #include "Factories/VoicevoxSoundWaveFactory.h"
@@ -57,6 +59,40 @@ void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(const int64 SpeakerType, 
             }
         }
         Factory->RemoveFromRoot();
+    }
+}
+
+void UVoicevoxEditorUtilityWidget::SaveWavFile(const int64 SpeakerType, const bool bEnableInterrogativeUpspeak) const
+{
+    if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(EditorAudioQueryPtr, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+    {
+        if (IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get())
+        {
+            TArray<FString> Filenames;
+            if(const bool bSaved = DesktopPlatform->SaveFileDialog(
+                FSlateApplication::Get().FindBestParentWindowHandleForDialogs(nullptr),
+                TEXT("Save Wave File"),
+                TEXT(""),
+                TEXT(""),
+                TEXT( "Wave file|*.wav" ),
+                EFileDialogFlags::None,
+                Filenames
+            ); bSaved && Filenames.Num() > 0)
+            {
+                IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+
+                if (IFileHandle* FileHandle = PlatformFile.OpenWrite(*Filenames[0]))
+                {
+                    if (!FileHandle->Write(OutputWAV.GetData(), OutputWAV.Num()))
+                    {
+                        delete FileHandle;
+                        return;
+                    }
+                    
+                    delete FileHandle;
+                }
+            }
+        }
     }
 }
 
