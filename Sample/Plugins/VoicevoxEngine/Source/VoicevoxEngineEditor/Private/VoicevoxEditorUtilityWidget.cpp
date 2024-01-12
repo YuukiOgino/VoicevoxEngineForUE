@@ -80,16 +80,14 @@ void UVoicevoxEditorUtilityWidget::SaveWavFile(const int64 SpeakerType, const bo
             ); bSaved && Filenames.Num() > 0)
             {
                 IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
-
-                if (IFileHandle* FileHandle = PlatformFile.OpenWrite(*Filenames[0]))
+                TUniquePtr<IFileHandle> FileHandle;
+                FileHandle.Reset(PlatformFile.OpenWrite(*Filenames[0]));
+                if (FileHandle)
                 {
                     if (!FileHandle->Write(OutputWAV.GetData(), OutputWAV.Num()))
                     {
-                        delete FileHandle;
-                        return;
+                        UE_LOG(LogVoicevoxEditor, Error, TEXT("Error:Can,t Save to Wave File"));
                     }
-                    
-                    delete FileHandle;
                 }
             }
         }
