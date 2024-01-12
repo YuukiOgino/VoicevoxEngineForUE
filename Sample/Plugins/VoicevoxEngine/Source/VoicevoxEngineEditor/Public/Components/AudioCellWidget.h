@@ -57,6 +57,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
 	UButton* DeleteButton;
 
+	//! 音源再生ボタン
+	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
+	UButton* PlayButton;
+	
 	/**
 	 * @brief NativeConstruct override
 	 */

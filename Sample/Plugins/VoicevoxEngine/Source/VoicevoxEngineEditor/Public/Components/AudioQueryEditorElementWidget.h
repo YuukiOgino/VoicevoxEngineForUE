@@ -55,7 +55,7 @@ public:
 	 * @breif 編集したいAudioQueryを参照でセット
 	 * @param [in] Param : VOICEVOX COREから生成したAudioQuery
 	 */
-	UFUNCTION( BlueprintCallable )
+	UFUNCTION(BlueprintCallable)
 	void SetEditAudioQuery( UPARAM(ref) FVoicevoxAudioQuery& Param);
 	
 protected:
