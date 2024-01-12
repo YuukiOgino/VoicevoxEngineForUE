@@ -35,6 +35,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "LoadAudioQuearyAssets"))
 	void LoadAudioQueryAssets();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnLoadAudioQuery();
 	
 	/**
 	* アセットの保存を実行します

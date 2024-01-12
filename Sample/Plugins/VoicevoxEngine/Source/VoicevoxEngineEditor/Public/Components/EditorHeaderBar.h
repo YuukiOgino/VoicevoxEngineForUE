@@ -7,10 +7,6 @@
 #include "Components/Button.h"
 #include "EditorHeaderBar.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAudioQuerySaveDelegate);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAudioQueryLoadDelegate);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSoundWaveSaveDelegate);
-
 /**
  * @class UEditorHeaderBar
  */
@@ -20,6 +16,10 @@ class VOICEVOXENGINEEDITOR_API UEditorHeaderBar : public UUserWidget
 	GENERATED_BODY()
 
 public:
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAudioQuerySaveDelegate);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAudioQueryLoadDelegate);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSoundWaveSaveDelegate);
 	
 	UPROPERTY(BlueprintAssignable, Category="VOICEVOX Editor")
 	FAudioQuerySaveDelegate OnAudioQuerySave;

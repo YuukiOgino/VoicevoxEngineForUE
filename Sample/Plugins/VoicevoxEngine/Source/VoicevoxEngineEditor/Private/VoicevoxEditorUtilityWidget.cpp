@@ -4,7 +4,6 @@
 
 #include "AssetToolsModule.h"
 #include "ContentBrowserModule.h"
-#include "EditorDirectories.h"
 #include "IContentBrowserSingleton.h"
 #include "VoicevoxBlueprintLibrary.h"
 #include "VoicevoxQuery.h"
@@ -67,30 +66,6 @@ void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(const int64 SpeakerType, 
 
 void UVoicevoxEditorUtilityWidget::LoadAudioQueryAssets()
 {
-    struct FLocal
-    {
-        static void OnAudioQuerySelected(const TArray<FAssetData>& SelectedAssets, FOnAudioQueryPickingChosen OnAudioQueryPickingChosenDelegate)
-        {
-            if (SelectedAssets.Num() > 0)
-            {
-                const FAssetData& FirstAssetData = SelectedAssets[0];
-                FString FilesystemPath = FPackageName::LongPackageNameToFilename(FirstAssetData.PackagePath.ToString() + TEXT("/"));;
-                if (FilesystemPath.EndsWith(TEXT("/"), ESearchCase::CaseSensitive))
-                {
-                    FilesystemPath.LeftChopInline(1, false);
-                }
-
-                FEditorDirectories::Get().SetLastDirectory(ELastDirectory::GENERIC_OPEN, FilesystemPath);
-                OnAudioQueryPickingChosenDelegate.ExecuteIfBound(SelectedAssets);
-            }
-        }
-
-        static void OnDialogCancelled(FOnAudioQueryPickingCancelled OnAudioQueryPickingCancelledDelegate)
-        {
-            OnAudioQueryPickingCancelledDelegate.ExecuteIfBound();
-        }
-    };
-    
     FOpenAssetDialogConfig OpenAssetDialogConfig;
     OpenAssetDialogConfig.DialogTitleOverride = FText::FromString(TEXT("Open Voicevox Audio Query"));
     OpenAssetDialogConfig.DefaultPath = "/Game";
@@ -98,22 +73,30 @@ void UVoicevoxEditorUtilityWidget::LoadAudioQueryAssets()
     OpenAssetDialogConfig.bAllowMultipleSelection = true;
 
     const FOnAudioQueryPickingChosen AudioQueryChosenDelegate =
-        FOnAudioQueryPickingChosen::CreateLambda([&](const TArray<FAssetData>& List)
+        FOnAudioQueryPickingChosen::CreateWeakLambda(this,[&](const TArray<FAssetData>& SelectedAssets)
         {
-            
+            if (SelectedAssets.Num() > 0)
+            {
+                const FAssetData& FirstAssetData = SelectedAssets[0];
+                UObject* Obj = FirstAssetData.GetAsset();
+               if(const UVoicevoxQuery* Query = Cast<UVoicevoxQuery>(Obj))
+               {
+                   EditorAudioQueryPtr = Query->VoicevoxAudioQuery;
+                   OnLoadAudioQuery();
+               }
+            }
         });
     const FOnAudioQueryPickingCancelled AudioQueryPickingCancelledDelegate =
-        FOnAudioQueryPickingCancelled::CreateLambda([&]
+        FOnAudioQueryPickingCancelled::CreateWeakLambda(this,[&]
         {
             
         });
     
     const FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
     ContentBrowserModule.Get().CreateOpenAssetDialog(OpenAssetDialogConfig,
-                                                     FOnAssetsChosenForOpen::CreateStatic(&FLocal::OnAudioQuerySelected, AudioQueryChosenDelegate),
-                                                     FOnAssetDialogCancelled::CreateStatic(&FLocal::OnDialogCancelled, AudioQueryPickingCancelledDelegate));
+                                                     AudioQueryChosenDelegate,
+                                                     AudioQueryPickingCancelledDelegate);
 }
-
 
 void UVoicevoxEditorUtilityWidget::ExecuteSaveAssets(const TArray<UObject*>& InTargets, const bool bCheckDirty, const bool bPromptToSave)
 {
