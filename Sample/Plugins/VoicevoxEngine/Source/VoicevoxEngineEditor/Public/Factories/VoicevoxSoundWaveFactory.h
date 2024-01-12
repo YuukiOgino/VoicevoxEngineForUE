@@ -6,6 +6,10 @@
 #include "Factories/Factory.h"
 #include "VoicevoxSoundWaveFactory.generated.h"
 
+//------------------------------------------------------------------------
+// class
+//------------------------------------------------------------------------
+
 /**
 * @class UVoicevoxSoundWaveFactory
  * @brief Voicevoxから生成した音声データを元にSoundWaveを生成する生成クラス

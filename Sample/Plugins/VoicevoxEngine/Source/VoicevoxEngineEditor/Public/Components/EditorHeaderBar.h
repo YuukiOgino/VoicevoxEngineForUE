@@ -1,11 +1,20 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @headerfile EditorHeaderBar.h
+ * @brief  VOICEVOX編集エディターのヘッダーバーをまとめたヘッダーファイル
+ * @author Yuuki Ogino
+ */
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
 #include "EditorHeaderBar.generated.h"
+
+//------------------------------------------------------------------------
+// class
+//------------------------------------------------------------------------
 
 /**
  * @class UEditorHeaderBar

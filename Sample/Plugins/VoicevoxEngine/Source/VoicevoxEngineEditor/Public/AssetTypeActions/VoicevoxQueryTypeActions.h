@@ -10,8 +10,13 @@
 
 #include "AssetTypeActions_Base.h"
 
+//------------------------------------------------------------------------
+// class
+//------------------------------------------------------------------------
+
 /**
  * @class FVoicevoxQueryTypeActions
+ * @brief Voicevox関連のデータアセットをエディターから生成するためのアクションクラス
  */
 class FVoicevoxQueryTypeActions : public FAssetTypeActions_Base
 {

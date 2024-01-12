@@ -7,6 +7,10 @@
 #include "Components/AudioQueryEditorElementWidget.h"
 #include "AudioQueryEditorWidget.generated.h"
 
+//------------------------------------------------------------------------
+// class
+//------------------------------------------------------------------------
+
 /**
  * @class UAudioQueryEditorWidget
  * @brief AudioQueryパラメータリスト編集ウィジェットクラス

@@ -14,6 +14,10 @@ class UEditorPerProjectUserSettings;
 DECLARE_DELEGATE_OneParam(FOnAudioQueryPickingChosen, const TArray<FAssetData>&);
 DECLARE_DELEGATE(FOnAudioQueryPickingCancelled);
 
+//------------------------------------------------------------------------
+// class
+//------------------------------------------------------------------------
+
 /**
  * @class UVoicevoxEditorUtilityWidget
  */

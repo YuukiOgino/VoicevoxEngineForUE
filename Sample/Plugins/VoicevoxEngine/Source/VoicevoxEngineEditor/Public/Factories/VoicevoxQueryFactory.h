@@ -12,6 +12,10 @@
 #include "VoicevoxQuery.h"
 #include "VoicevoxQueryFactory.generated.h"
 
+//------------------------------------------------------------------------
+// class
+//------------------------------------------------------------------------
+
 /**
  * @class UVoicevoxQueryFactory
  * @brief VOicevox AudioQueryデータ生成クラス

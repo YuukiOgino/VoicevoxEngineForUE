@@ -1,5 +1,11 @@
 // Copyright Yuuki Ogino. All Rights Reserved
 
+/**
+ * @headerfile AudioQueryEditorElementWidget.h
+ * @brief  AudioQueryのパラメータ値編集エレメントウィジェッタヘッダーファイル
+ * @author Yuuki Ogino
+ */
+
 #pragma once
 
 #include "CoreMinimal.h"

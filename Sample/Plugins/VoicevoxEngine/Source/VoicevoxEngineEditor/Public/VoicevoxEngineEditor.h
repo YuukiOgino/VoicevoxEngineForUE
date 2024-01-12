@@ -10,6 +10,10 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
+//------------------------------------------------------------------------
+// class
+//------------------------------------------------------------------------
+
 /**
  * @class FVoicevoxEngineEditorModule
  * @brief VoicevoxEngine Editoモジュール

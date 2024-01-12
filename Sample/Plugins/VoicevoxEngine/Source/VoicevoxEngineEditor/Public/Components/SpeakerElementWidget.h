@@ -12,6 +12,10 @@
 #include "Components/TextBlock.h"
 #include "SpeakerElementWidget.generated.h"
 
+//------------------------------------------------------------------------
+// class
+//------------------------------------------------------------------------
+
 /**
  * @class USpeakerElementWidget
  * @brief スピーカー選択コンボボックスラベルエレメントクラス

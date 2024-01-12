@@ -1,5 +1,10 @@
 // Copyright Yuuki Ogino. All Rights Reserved
 
+/**
+ * @headerfile AudioCellWidget.h
+ * @brief  合成音声テキスト編集ウィジェットヘッダーファイル
+ * @author Yuuki Ogino
+ */
 #pragma once
 
 #include "CoreMinimal.h"
@@ -9,6 +14,10 @@
 #include "Components/ComboBoxKey.h"
 #include "Components/EditableText.h"
 #include "AudioCellWidget.generated.h"
+
+//------------------------------------------------------------------------
+// class
+//------------------------------------------------------------------------
 
 /**
  * @class UAudioCellWidget
@@ -31,7 +40,7 @@ public:
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEditableAudioQueryChangedEvent, const FVoicevoxAudioQuery&, AudioQuery);
 
-	//! 
+	//! AudioQuery変更デリゲート
 	UPROPERTY(BlueprintAssignable, Category="VOICEVOX Editor Event", meta=(DisplayName="OnAudioQueryChanged"))
 	FOnEditableAudioQueryChangedEvent OnAudioQueryChanged;
 
