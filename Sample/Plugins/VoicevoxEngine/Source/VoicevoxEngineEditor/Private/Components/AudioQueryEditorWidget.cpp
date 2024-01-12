@@ -39,7 +39,7 @@ void UAudioQueryEditorWidget::NativeConstruct()
 /**
  * @breif 編集したいAudioQueryを参照でセット
  */
-void UAudioQueryEditorWidget::SetEditAudioQuery(FVoicevoxAudioQuery& Param) const
+void UAudioQueryEditorWidget::SetEditAudioQuery(FVoicevoxAudioQuery& Param)
 {
 	SpeedScale->SetEditAudioQuery(Param);
 	PitchScale->SetEditAudioQuery(Param);
