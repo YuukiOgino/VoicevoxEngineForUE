@@ -2,11 +2,28 @@
 
 #include "Components/AudioCellWidget.h"
 
+#include "Kismet/KismetStringLibrary.h"
+
 void UAudioCellWidget::SetSpeakerType(const int64 SpeakerType)
 {
 	Speaker = SpeakerType;
-	EditorAudioQuery = FVoicevoxCoreUtil::GetAudioQuery(Speaker, AudioEditableText->GetText().ToString(), false);
-	OnAudioQueryChanged.Broadcast(EditorAudioQuery);
+	if (!IsLoadData)
+	{
+		EditorAudioQuery = FVoicevoxCoreUtil::GetAudioQuery(Speaker, AudioEditableText->GetText().ToString(), false);
+		OnAudioQueryChanged.Broadcast(EditorAudioQuery);
+	}
+	else
+	{
+		IsLoadData = false;	
+	}
+}
+
+void UAudioCellWidget::SetLoadData(const int64 SpeakerType, const FString& Text, const FVoicevoxAudioQuery AudioQuery)
+{
+	IsLoadData = true;
+	SpeakerComboBox->SetSelectedOption(UKismetStringLibrary::Conv_StringToName(UKismetStringLibrary::Conv_Int64ToString(SpeakerType)));
+	AudioEditableText->SetText(FText::FromString(Text));
+	EditorAudioQuery = AudioQuery;
 }
 
 /**
@@ -29,6 +46,6 @@ void UAudioCellWidget::NativeConstruct()
 
 void UAudioCellWidget::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	EditorAudioQuery = FVoicevoxCoreUtil::GetAudioQuery(static_cast<int64>(Speaker), Text.ToString(), false);
+	EditorAudioQuery = FVoicevoxCoreUtil::GetAudioQuery(Speaker, Text.ToString(), false);
 	OnAudioQueryChanged.Broadcast(EditorAudioQuery);
 }

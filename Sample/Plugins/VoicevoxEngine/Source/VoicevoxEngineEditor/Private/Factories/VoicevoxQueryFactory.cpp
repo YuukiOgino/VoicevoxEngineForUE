@@ -3,9 +3,8 @@
 
 #include "Factories/VoicevoxQueryFactory.h"
 #include "JsonObjectConverter.h"
-#include "VoicevoxQuery.h"
 
-UVoicevoxQueryFactory::UVoicevoxQueryFactory(): Super(), SpeakerType(3)
+UVoicevoxQueryFactory::UVoicevoxQueryFactory(): Super()
 {
 	bCreateNew = true;
 	SupportedClass = UVoicevoxQuery::StaticClass();
@@ -18,13 +17,13 @@ UObject* UVoicevoxQueryFactory::FactoryCreateNew(UClass* InClass, UObject* InPar
                                                  FName InName,  EObjectFlags Flags,
                                                  UObject* Context, FFeedbackContext* Warn)
 {
-	if (AudioQueryPtr != nullptr)
+	if (EditAudioQuery != nullptr)
 	{
 		UVoicevoxQuery* NewAudioQueryAsset = NewObject<UVoicevoxQuery>(InParent, InClass, InName, Flags, Context);
-		NewAudioQueryAsset->VoicevoxAudioQuery = *AudioQueryPtr;
-		NewAudioQueryAsset->SpeakerType = SpeakerType;
-		NewAudioQueryAsset->Text = Text;
-		AudioQueryPtr = nullptr;
+		NewAudioQueryAsset->VoicevoxAudioQuery = EditAudioQuery->VoicevoxAudioQuery;
+		NewAudioQueryAsset->SpeakerType = EditAudioQuery->SpeakerType;
+		NewAudioQueryAsset->Text = EditAudioQuery->Text;
+		EditAudioQuery = nullptr;
 		return NewAudioQueryAsset;
 	}
 	else

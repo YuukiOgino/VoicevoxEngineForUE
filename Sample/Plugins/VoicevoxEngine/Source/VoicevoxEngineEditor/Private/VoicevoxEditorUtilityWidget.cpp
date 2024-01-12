@@ -10,10 +10,6 @@
 #include "Factories/VoicevoxSoundWaveFactory.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 
-#if WITH_EDITOR
-#include "FileHelpers.h"
-#endif // WITH_EDITOR
-
 DEFINE_LOG_CATEGORY(LogVoicevoxEditor);
 
 bool UVoicevoxEditorUtilityWidget::IsSetEditorAudioQuery()
@@ -25,9 +21,10 @@ bool UVoicevoxEditorUtilityWidget::IsSetEditorAudioQuery()
 void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(const int64 SpeakerType, FString Text)
 {
     UVoicevoxQueryFactory* Factory = NewObject<UVoicevoxQueryFactory>();
-    Factory->AudioQueryPtr = &EditorAudioQueryPtr;
-    Factory->SpeakerType = SpeakerType;
-    Factory->Text = Text;
+    Factory->EditAudioQuery = NewObject<UVoicevoxQuery>();
+    Factory->EditAudioQuery->VoicevoxAudioQuery = EditorAudioQueryPtr;
+    Factory->EditAudioQuery->SpeakerType = SpeakerType;
+    Factory->EditAudioQuery->Text = Text;
     Factory->AddToRoot();
     
     const FAssetToolsModule& AssetToolsModule = FAssetToolsModule::GetModule();
@@ -81,43 +78,18 @@ void UVoicevoxEditorUtilityWidget::LoadAudioQueryAssets()
                if(const UVoicevoxQuery* Query = Cast<UVoicevoxQuery>(Obj))
                {
                    EditorAudioQueryPtr = Query->VoicevoxAudioQuery;
-                   OnLoadAudioQuery();
+                   OnLoadAudioQuery(Query->SpeakerType, Query->Text);
                }
             }
         });
     const FOnAudioQueryPickingCancelled AudioQueryPickingCancelledDelegate =
         FOnAudioQueryPickingCancelled::CreateWeakLambda(this,[&]
         {
-            
+            UE_LOG(LogVoicevoxEditor, Log, TEXT("Asset Loader:Load Cancel"));
         });
     
     const FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
     ContentBrowserModule.Get().CreateOpenAssetDialog(OpenAssetDialogConfig,
                                                      AudioQueryChosenDelegate,
                                                      AudioQueryPickingCancelledDelegate);
-}
-
-void UVoicevoxEditorUtilityWidget::ExecuteSaveAssets(const TArray<UObject*>& InTargets, const bool bCheckDirty, const bool bPromptToSave)
-{
-    TArray<UPackage*> PackagesToSave;
-    for (const UObject* Obj : InTargets)
-    {
-        if (IsValid(Obj))
-        {
-            if (Obj->HasAnyFlags(RF_Transient))
-            {
-                continue;
-            }
-
-            if (UPackage* Package = Obj->GetOutermost(); IsValid(Package))
-            {
-                PackagesToSave.Add(Package);
-            }
-        }
-    }
-
-    if (PackagesToSave.Num() > 0)
-    {
-        FEditorFileUtils::PromptForCheckoutAndSave(PackagesToSave, bCheckDirty, bPromptToSave);
-    }
 }

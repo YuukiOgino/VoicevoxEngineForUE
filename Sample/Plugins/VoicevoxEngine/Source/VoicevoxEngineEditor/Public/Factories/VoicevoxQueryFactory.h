@@ -8,8 +8,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "VoicevoxCoreUtil.h"
 #include "Factories/Factory.h"
+#include "VoicevoxQuery.h"
 #include "VoicevoxQueryFactory.generated.h"
 
 /**
@@ -23,11 +23,7 @@ class VOICEVOXENGINEEDITOR_API UVoicevoxQueryFactory : public UFactory
 public:
 
 	//! 保存用の一時データ。エラーが起きるためポインタにしているが、基本参照渡し
-	FVoicevoxAudioQuery* AudioQueryPtr = nullptr;
-
-	int64 SpeakerType;
-
-	FString Text;
+	TObjectPtr<UVoicevoxQuery> EditAudioQuery = nullptr;
 	
 	UVoicevoxQueryFactory();
 

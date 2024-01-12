@@ -24,9 +24,6 @@ class VOICEVOXENGINEEDITOR_API UVoicevoxEditorUtilityWidget : public UEditorUtil
 public:
 	UPROPERTY(Category=VOICEVOX, VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
 	FVoicevoxAudioQuery EditorAudioQueryPtr;
-
-	UPROPERTY(Category=VOICEVOX, VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UVoicevoxQuery> EditAudioQuery = nullptr;
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "IsSetEditorAudioQuery"))
 	bool IsSetEditorAudioQuery(); 
@@ -41,18 +38,7 @@ public:
 	void LoadAudioQueryAssets();
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnLoadAudioQuery();
-	
-	/**
-	* アセットの保存を実行します
-	*
-	* @param [in]  InTargets           対象アセット
-	* @param [in]  bCheckDirty         trueの場合は変更(Dirty)アセットのみが保存されます
-	* @param [in]  bPromptToSave       trueの場合はアセットの保存確認を求められます。falseの場合は全て保存されます。
-	*/
-	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "ExecuteSaveAssets"))
-	void ExecuteSaveAssets(const TArray<UObject*>& InTargets, bool bCheckDirty = true, bool bPromptToSave = false);
-	
+	void OnLoadAudioQuery(int64 SpeakerType, const FString& Text);
 };
 
 DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxEditor, Log, All);

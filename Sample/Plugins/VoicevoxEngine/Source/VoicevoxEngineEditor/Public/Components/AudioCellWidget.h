@@ -22,6 +22,10 @@ class VOICEVOXENGINEEDITOR_API UAudioCellWidget : public UUserWidget
 	//! 編集中のSperkerId
 	UPROPERTY();
 	int64 Speaker;
+
+	//! ロードデータ更新のための変更フラグ
+	UPROPERTY();
+	bool IsLoadData;
 	
 public:
 
@@ -35,6 +39,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SetSpeakerType"))
 	void SetSpeakerType(int64 SpeakerType);
+
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SetLoadData"))
+	void SetLoadData(int64 SpeakerType, const FString& Text, FVoicevoxAudioQuery AudioQuery);
 	
 protected:
 
