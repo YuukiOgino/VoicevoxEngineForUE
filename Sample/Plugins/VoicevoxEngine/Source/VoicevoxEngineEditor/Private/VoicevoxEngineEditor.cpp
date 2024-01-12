@@ -11,7 +11,7 @@ void FVoicevoxEngineEditorModule::StartupModule()
 	if (const auto& ModuleMgr = FModuleManager::Get(); ModuleMgr.IsModuleLoaded("AssetTools"))
 	{
 		auto& AssetTools = ModuleMgr.LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
-		const auto AssetCategoryBit = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("Voicevox")), LOCTEXT("Voicevox", "AudioQueary"));
+		const auto AssetCategoryBit = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("VOICEVOX")), FText::FromString(TEXT("VOICEVOX")));
 		const auto Actions = MakeShareable(new FVoicevoxQueryTypeActions(AssetCategoryBit));
 		AssetTools.RegisterAssetTypeActions(Actions);
 	}

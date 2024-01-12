@@ -9,6 +9,7 @@
 
 /**
  * @class UAudioQueryEditorWidget
+ * @brief AudioQueryパラメータリスト編集ウィジェットクラス
  */
 UCLASS()
 class VOICEVOXENGINEEDITOR_API UAudioQueryEditorWidget : public UUserWidget
@@ -20,31 +21,31 @@ public:
 	 * @param [in] Param : VOICEVOX COREから生成したAudioQuery
 	 */
 	UFUNCTION(BlueprintCallable)
-	void SetEditAudioQuery(UPARAM(ref) FVoicevoxAudioQuery& Param);
+	void SetEditAudioQuery(UPARAM(ref) FVoicevoxAudioQuery& Param) const;
 	
 protected:
 
-	//! 
+	//! 話速編集エレメント
 	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
 	UAudioQueryEditorElementWidget* SpeedScale;
 
-	//! 
+	//! 音高編集エレメント
 	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
 	UAudioQueryEditorElementWidget* PitchScale;
 
-	//! 
+	//! 抑揚編集エレメント
 	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
 	UAudioQueryEditorElementWidget* IntonationScale;
 
-	//! 
+	//! 音量編集エレメント
 	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
 	UAudioQueryEditorElementWidget* VolumeScale;
 
-	//! 
+	//! 開始無音編集エレメント
 	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
 	UAudioQueryEditorElementWidget* PrePhonemeLength;
 
-	//! 
+	//! 終了無音編集エレメント
 	UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
 	UAudioQueryEditorElementWidget* PostPhonemeLength;
 

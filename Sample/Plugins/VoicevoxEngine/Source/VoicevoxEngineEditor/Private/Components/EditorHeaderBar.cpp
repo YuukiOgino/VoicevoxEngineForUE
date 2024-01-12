@@ -1,6 +1,5 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
-
 #include "Components/EditorHeaderBar.h"
 
 /**
