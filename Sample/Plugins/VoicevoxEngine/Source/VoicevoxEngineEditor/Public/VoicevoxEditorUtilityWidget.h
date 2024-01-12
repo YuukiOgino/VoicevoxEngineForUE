@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "EditorUtilityWidget.h"
 #include "VoicevoxCoreUtil.h"
+#include "VoicevoxQuery.h"
 #include "VoicevoxEditorUtilityWidget.generated.h"
 
 class AActor;
@@ -24,6 +25,9 @@ public:
 	UPROPERTY(Category=VOICEVOX, VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
 	FVoicevoxAudioQuery EditorAudioQueryPtr;
 
+	UPROPERTY(Category=VOICEVOX, VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UVoicevoxQuery> EditAudioQuery = nullptr;
+	
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "IsSetEditorAudioQuery"))
 	bool IsSetEditorAudioQuery(); 
 	

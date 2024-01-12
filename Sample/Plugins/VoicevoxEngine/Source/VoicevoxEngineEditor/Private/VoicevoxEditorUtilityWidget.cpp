@@ -6,7 +6,6 @@
 #include "ContentBrowserModule.h"
 #include "IContentBrowserSingleton.h"
 #include "VoicevoxBlueprintLibrary.h"
-#include "VoicevoxQuery.h"
 #include "Factories/VoicevoxQueryFactory.h"
 #include "Factories/VoicevoxSoundWaveFactory.h"
 #include "AssetRegistry/AssetRegistryModule.h"
