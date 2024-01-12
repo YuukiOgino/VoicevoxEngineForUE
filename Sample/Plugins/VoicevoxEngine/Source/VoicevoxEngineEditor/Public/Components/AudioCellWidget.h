@@ -33,15 +33,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="VOICEVOX Editor Event", meta=(DisplayName="OnAudioQueryChanged"))
 	FOnEditableAudioQueryChangedEvent OnAudioQueryChanged;
-	
-	UPROPERTY(Category=VOICEVOX, VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
-	FVoicevoxAudioQuery EditorAudioQuery;
 
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SetSpeakerType"))
 	void SetSpeakerType(int64 SpeakerType);
 
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SetLoadData"))
-	void SetLoadData(int64 SpeakerType, const FString& Text, FVoicevoxAudioQuery AudioQuery);
+	void SetLoadData(int64 SpeakerType, const FString& Text);
 	
 protected:
 

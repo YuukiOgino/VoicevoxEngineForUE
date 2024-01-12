@@ -15,12 +15,12 @@ void UAudioQueryEditorWidget::NativeConstruct()
 
 	if (PitchScale)
 	{
-		PitchScale->ParamType = EEditParamType::SpeedScale;
+		PitchScale->ParamType = EEditParamType::PitchScale;
 	}
 
 	if (IntonationScale)
 	{
-		IntonationScale->ParamType = EEditParamType::PitchScale;
+		IntonationScale->ParamType = EEditParamType::IntonationScale;
 	}
 	if (VolumeScale)
 	{
