@@ -3,14 +3,22 @@
 #include "Factories/VoicevoxSoundWaveFactory.h"
 #include "Sound/SoundWave.h"
 
+DEFINE_LOG_CATEGORY(LogVoicevoxSoundWaveFactory);
+
+/**
+ * @brief コンストラクタ
+ */
 UVoicevoxSoundWaveFactory::UVoicevoxSoundWaveFactory(): Super()
 {
 	bCreateNew = true;
 	SupportedClass = USoundWave::StaticClass();
 }
 
+/**
+ * @brief FactoryCreateNew override
+ */
 UObject* UVoicevoxSoundWaveFactory::FactoryCreateNew(UClass* InClass, UObject* InParent,
-                                                     FName InName, EObjectFlags Flags,
+                                                     const FName InName, const EObjectFlags Flags,
                                                      UObject* Context, FFeedbackContext* Warn)
 {
 	FString ErrorMessage = "";
@@ -40,6 +48,7 @@ UObject* UVoicevoxSoundWaveFactory::FactoryCreateNew(UClass* InClass, UObject* I
 
 		return Sound;
 	}
-
+	
+	UE_LOG(LogVoicevoxSoundWaveFactory, Error, TEXT("SoundWave Factory Error: %s"), *ErrorMessage);
 	return nullptr;
 }

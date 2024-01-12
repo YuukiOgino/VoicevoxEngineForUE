@@ -8,7 +8,7 @@
 
 /**
 * @class UVoicevoxSoundWaveFactory
- * @brief VOicevoxから生成した音声データを元にSoundWaveを生成する生成クラス
+ * @brief Voicevoxから生成した音声データを元にSoundWaveを生成する生成クラス
  */
 UCLASS()
 class VOICEVOXENGINEEDITOR_API UVoicevoxSoundWaveFactory : public UFactory
@@ -16,12 +16,21 @@ class VOICEVOXENGINEEDITOR_API UVoicevoxSoundWaveFactory : public UFactory
 	GENERATED_BODY()
 public:
 
+	//! Wavデータ
 	TArray<uint8> OutputWAV;
-	
+
+	/**
+	 * @brief コンストラクタ
+	 */
 	UVoicevoxSoundWaveFactory();
 
+	/**
+	 * @brief FactoryCreateNew override
+	 */
 	virtual UObject* FactoryCreateNew(UClass* InClass, UObject* InParent,
 									  FName InName, EObjectFlags Flags,
 									  UObject* Context, FFeedbackContext* Warn) override;
 
 };
+
+DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxSoundWaveFactory, Log, All);

@@ -4,6 +4,9 @@
 #include "Factories/VoicevoxQueryFactory.h"
 #include "JsonObjectConverter.h"
 
+/**
+ * @brief コンストラクタ
+ */
 UVoicevoxQueryFactory::UVoicevoxQueryFactory(): Super()
 {
 	bCreateNew = true;
@@ -26,11 +29,8 @@ UObject* UVoicevoxQueryFactory::FactoryCreateNew(UClass* InClass, UObject* InPar
 		EditAudioQuery = nullptr;
 		return NewAudioQueryAsset;
 	}
-	else
-	{
-		return NewObject<UVoicevoxQuery>(InParent, InClass, InName, Flags, Context);
-	}
 	
+	return NewObject<UVoicevoxQuery>(InParent, InClass, InName, Flags, Context);
 }
 
 UObject* UVoicevoxQueryFactory::FactoryCreateText(UClass* InClass, UObject* InParent, const FName InName,

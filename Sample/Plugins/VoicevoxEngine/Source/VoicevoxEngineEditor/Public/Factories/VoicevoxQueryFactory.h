@@ -22,15 +22,25 @@ class VOICEVOXENGINEEDITOR_API UVoicevoxQueryFactory : public UFactory
 	GENERATED_BODY()
 public:
 
-	//! 保存用の一時データ。エラーが起きるためポインタにしているが、基本参照渡し
+	//! 保存用の一時データ。
+	UPROPERTY()
 	TObjectPtr<UVoicevoxQuery> EditAudioQuery = nullptr;
-	
+
+	/**
+	 * @brief コンストラクタ
+	 */
 	UVoicevoxQueryFactory();
 
+	/**
+	 * @brief FactoryCreateNew override
+	 */	
 	virtual UObject* FactoryCreateNew(UClass* InClass, UObject* InParent,
 	                                  FName InName, EObjectFlags Flags,
 	                                  UObject* Context, FFeedbackContext* Warn) override;
 
+	/**
+	 * @brief FactoryCreateText override
+	 */	
 	virtual UObject* FactoryCreateText(UClass* InClass, UObject* InParent,
 	                                   FName InName, EObjectFlags Flags,
 	                                   UObject* Context, const TCHAR* Type, const TCHAR*& Buffer,

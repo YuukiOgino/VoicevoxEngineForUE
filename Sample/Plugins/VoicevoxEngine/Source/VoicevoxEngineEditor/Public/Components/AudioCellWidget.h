@@ -12,7 +12,7 @@
 
 /**
  * @class UAudioCellWidget
- * @brief 音編集ウィジェット
+ * @brief 合成音声テキスト編集ウィジェット
  */
 UCLASS()
 class VOICEVOXENGINEEDITOR_API UAudioCellWidget : public UUserWidget
@@ -31,12 +31,22 @@ public:
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEditableAudioQueryChangedEvent, const FVoicevoxAudioQuery&, AudioQuery);
 
+	//! 
 	UPROPERTY(BlueprintAssignable, Category="VOICEVOX Editor Event", meta=(DisplayName="OnAudioQueryChanged"))
 	FOnEditableAudioQueryChangedEvent OnAudioQueryChanged;
 
+	/**
+	 * @brief SpeakerTypeをセットする
+	 * @param [in] SpeakerType 
+	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SetSpeakerType"))
 	void SetSpeakerType(int64 SpeakerType);
 
+	/**
+	 * @brief アセットからロードしたデータをセットする
+	 * @param [in] SpeakerType 
+	 * @param [in] Text 
+	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SetLoadData"))
 	void SetLoadData(int64 SpeakerType, const FString& Text);
 	
@@ -65,8 +75,8 @@ protected:
 	
 	/**
 	 * @brief テキストの値が編集された際に呼ばれるデリゲート関数
-	 * @param Text
-	 * @param CommitMethod
+	 * @param [in] Text
+	 * @param [in] CommitMethod
 	 */
 	UFUNCTION()
 	void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);

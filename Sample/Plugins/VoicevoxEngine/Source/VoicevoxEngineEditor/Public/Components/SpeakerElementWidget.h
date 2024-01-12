@@ -1,15 +1,20 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @headerfile SpeakerElementWidget.h
+ * @brief  スピーカー選択コンボボックスのラベル項目ヘッダーファイル
+ * @author Yuuki Ogino
+ */
 #pragma once
 
 #include "CoreMinimal.h"
-#include "VoicevoxCoreUtil.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "SpeakerElementWidget.generated.h"
 
 /**
  * @class USpeakerElementWidget
+ * @brief スピーカー選択コンボボックスラベルエレメントクラス
  */
 UCLASS()
 class VOICEVOXENGINEEDITOR_API USpeakerElementWidget : public UUserWidget
@@ -18,8 +23,9 @@ class VOICEVOXENGINEEDITOR_API USpeakerElementWidget : public UUserWidget
 
 public:
 
+	//! スピーカータイプID
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = true));
-	EVoicevoxSpeakerType Speaker;
+	int64 Speaker;
 	
 protected:
 

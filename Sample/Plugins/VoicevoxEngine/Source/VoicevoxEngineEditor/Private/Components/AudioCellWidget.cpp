@@ -32,7 +32,7 @@ void UAudioCellWidget::NativeConstruct()
 
 	if (AudioEditableText)
 	{
-		AudioEditableText->OnTextCommitted.AddDynamic(this, &UAudioCellWidget::OnTextCommitted);
+		AudioEditableText->OnTextCommitted.AddUniqueDynamic(this, &UAudioCellWidget::OnTextCommitted);
 	}
 
 	if (DeleteButton)
