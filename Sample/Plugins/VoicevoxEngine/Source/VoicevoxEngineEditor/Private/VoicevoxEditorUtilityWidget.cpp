@@ -99,7 +99,11 @@ void UVoicevoxEditorUtilityWidget::LoadAudioQueryAssets()
     FOpenAssetDialogConfig OpenAssetDialogConfig;
     OpenAssetDialogConfig.DialogTitleOverride = FText::FromString(TEXT("Open Voicevox Audio Query"));
     OpenAssetDialogConfig.DefaultPath = "/Game";
+#if (ENGINE_MINOR_VERSION == 0)
     OpenAssetDialogConfig.AssetClassNames.Add(UVoicevoxQuery::StaticClass()->GetFName());
+#else
+    OpenAssetDialogConfig.AssetClassNames.Add(UVoicevoxQuery::StaticClass()->GetClassPathName());
+#endif
     OpenAssetDialogConfig.bAllowMultipleSelection = true;
 
     const FOnAudioQueryPickingChosen AudioQueryChosenDelegate =

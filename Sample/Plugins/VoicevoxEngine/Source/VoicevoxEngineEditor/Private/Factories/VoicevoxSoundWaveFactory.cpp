@@ -35,11 +35,16 @@ UObject* UVoicevoxSoundWaveFactory::FactoryCreateNew(UClass* InClass, UObject* I
 		Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
 		FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
 
+#if (ENGINE_MINOR_VERSION == 0)
 		Sound->RawData.Lock(LOCK_READ_WRITE);
 		void* LockedData = Sound->RawData.Realloc(OutputWAV.Num());
 		FMemory::Memcpy(LockedData, OutputWAV.GetData(), OutputWAV.Num());
 		Sound->RawData.Unlock();
-	
+#else
+		const FSharedBuffer UpdatedBuffer = FSharedBuffer::Clone(OutputWAV.GetData(), OutputWAV.Num());
+		Sound->RawData.UpdatePayload(UpdatedBuffer);
+#endif
+		
 		Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
 		Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
 		Sound->NumChannels = ChannelCount;
