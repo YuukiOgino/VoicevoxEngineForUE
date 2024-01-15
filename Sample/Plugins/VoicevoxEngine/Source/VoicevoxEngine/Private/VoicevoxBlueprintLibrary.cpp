@@ -1,4 +1,4 @@
-﻿// Copyright Yuuki Ogino. All Rights Reserved.
+// Copyright Yuuki Ogino. All Rights Reserved.
 
 /**
  * @brief  VOICEVOX COREのAPIへ接続するBlueprint公開ノードをまとめたCPPファイル
@@ -124,16 +124,6 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData, UO
 		Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
 		Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
 		FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
-
-#if (ENGINE_MINOR_VERSION == 0)
-		Sound->RawData.Lock(LOCK_READ_WRITE);
-		void* LockedData = Sound->RawData.Realloc(PCMData.Num());
-		FMemory::Memcpy(LockedData, PCMData.GetData(), PCMData.Num());
-		Sound->RawData.Unlock();
-#else
-		const FSharedBuffer UpdatedBuffer = FSharedBuffer::Clone(PCMData.GetData(), PCMData.Num());
-		Sound->RawData.UpdatePayload(UpdatedBuffer);
-#endif
 		
 		Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
 		Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
