@@ -113,11 +113,9 @@ public:
 	/**
 	 * @brief 生成した音声データからUSoundWaveを作成
 	 * @param[in] PCMData  音声データ
-	 * @param[in] InParent
-	 * @param[in] Name
 	 * @return 合成音声を格納したUSoundWave
 	 */
-	static USoundWave* CreateSoundWave(TArray<uint8> PCMData, UObject* InParent = nullptr, FName Name = NAME_None);
+	static USoundWave* CreateSoundWave(TArray<uint8> PCMData);
 
 	/**
 	 * @brief VOICEVOX COREで取得したAudioQuery元に、中品質なLipSyncに必要なデータリストを取得(Blueprint公開ノード)

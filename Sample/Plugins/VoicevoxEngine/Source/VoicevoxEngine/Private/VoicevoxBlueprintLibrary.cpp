@@ -99,23 +99,13 @@ USoundWave* UVoicevoxBlueprintLibrary::AudioQueryOutput(const FVoicevoxAudioQuer
 /**
  * @brief 生成した音声データからUSoundWaveを作成
  */
-USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData, UObject* InParent, const FName Name)
+USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData)
 {
 	FString ErrorMessage = "";
 	
 	if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(PCMData.GetData(), PCMData.Num(), &ErrorMessage))
 	{
-		USoundWave* Sound;
-		if (InParent != nullptr)
-		{
-			constexpr EObjectFlags Flags = RF_Public | RF_Standalone;
-			Sound = NewObject<USoundWave>(InParent, Name, Flags);
-		}
-		else
-		{
-			Sound = NewObject<USoundWave>(USoundWave::StaticClass());
-		}
-		
+		USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
 		const int32 ChannelCount = *WaveInfo.pChannels;
 		const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
 		const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
