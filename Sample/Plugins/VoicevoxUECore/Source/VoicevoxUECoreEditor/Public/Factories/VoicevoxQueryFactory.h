@@ -21,7 +21,7 @@
  * @brief VOicevox AudioQueryデータ生成クラス
  */
 UCLASS()
-class VOICEVOXENGINEEDITOR_API UVoicevoxQueryFactory : public UFactory
+class VOICEVOXUECOREEDITOR_API UVoicevoxQueryFactory : public UFactory
 {
 	GENERATED_BODY()
 public:

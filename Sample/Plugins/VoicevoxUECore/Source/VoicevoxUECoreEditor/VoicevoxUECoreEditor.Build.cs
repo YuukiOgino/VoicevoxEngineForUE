@@ -1,8 +1,8 @@
 ﻿using UnrealBuildTool;
 
-public class VoicevoxEngineEditor : ModuleRules
+public class VoicevoxUECoreEditor : ModuleRules
 {
-    public VoicevoxEngineEditor(ReadOnlyTargetRules Target) : base(Target)
+    public VoicevoxUECoreEditor(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -10,18 +10,16 @@ public class VoicevoxEngineEditor : ModuleRules
             new string[]
             {
                 "Core",
-                "Blutility",
                 "UMG",
-                "UMGEditor"
+                "UMGEditor",
+                "VoicevoxUECore",
+                "Blutility",
             }
         );
 
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
-                "VoicevoxUECore",
-                "VoicevoxUECoreEditor",
-                "VoicevoxEngine",
                 "UnrealEd",
                 "CoreUObject",
                 "Engine",

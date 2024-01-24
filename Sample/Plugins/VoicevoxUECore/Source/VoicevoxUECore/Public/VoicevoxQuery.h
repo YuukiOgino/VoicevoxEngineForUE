@@ -16,16 +16,16 @@
  * @brief Voicevoxで生成されるクエリ情報を保存するためのクラス
  */
 UCLASS(HideCategories=Object, BlueprintType, EditInlineNew)
-class VOICEVOXENGINE_API UVoicevoxQuery : public UObject
+class VOICEVOXUECORE_API UVoicevoxQuery : public UObject
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX CORE")
 	FVoicevoxAudioQuery VoicevoxAudioQuery;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX CORE")
 	int64 SpeakerType = 3;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX CORE")
 	FString Text;
 };

@@ -15,7 +15,7 @@
  * @brief Voicevoxから生成した音声データを元にSoundWaveを生成する生成クラス
  */
 UCLASS()
-class VOICEVOXENGINEEDITOR_API UVoicevoxSoundWaveFactory : public UFactory
+class VOICEVOXUECOREEDITOR_API UVoicevoxSoundWaveFactory : public UFactory
 {
 	GENERATED_BODY()
 public:

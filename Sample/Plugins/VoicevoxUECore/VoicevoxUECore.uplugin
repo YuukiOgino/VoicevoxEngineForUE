@@ -1,9 +1,9 @@
 {
 	"FileVersion": 3,
-	"Version": 5,
-	"VersionName": "0.5",
-	"FriendlyName": "VoicevoxEngine",
-	"Description": "Voicevox Engine for UnrealEngine",
+	"Version": 1,
+	"VersionName": "0.1",
+	"FriendlyName": "VoicevoxCoreUE",
+	"Description": "Voicevox Core for UnrealEngine",
 	"Category": "TextToSpeech",
 	"CreatedBy": "YuukiOgino",
 	"CreatedByURL": "https://twitter.com/YuukiOgino",
@@ -16,28 +16,22 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "VoicevoxEngine",
+			"Name": "VoicevoxUECore",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
+			"LoadingPhase": "PreLoadingScreen",
 			"PlatformAllowList": [
 				"Win64",
 				"Mac"
 			]
 		},
 		{
-			"Name": "VoicevoxEngineEditor",
+			"Name": "VoicevoxUECoreEditor",
 			"Type": "Editor",
-			"LoadingPhase": "Default",
+			"LoadingPhase": "PreLoadingScreen",
 			"PlatformAllowList": [
 				"Win64",
 				"Mac"
 			]
-		}
-	],
-	"Plugins": [
-		{
-			"Name": "VoicevoxUECore",
-			"Enabled": true
 		}
 	]
 }

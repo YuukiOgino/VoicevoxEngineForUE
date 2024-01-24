@@ -28,6 +28,7 @@ public class VoicevoxEngine : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new[]
 			{
+				"VoicevoxUECore",
 				"CoreUObject",
 				"Json",
 				"JsonUtilities"
