@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "0.1",
-	"FriendlyName": "VoicevoxCoreUE",
+	"FriendlyName": "VoicevoxUECore",
 	"Description": "Voicevox Core for UnrealEngine",
 	"Category": "TextToSpeech",
 	"CreatedBy": "YuukiOgino",
