@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "VoicevoxUEDefined.h"
 #include "VoicevoxCoreUtil.generated.h"
 
 //------------------------------------------------------------------------
@@ -15,11 +16,11 @@
 //------------------------------------------------------------------------
 
 /**
- * @enum ESpeakerType
+ * @enum EVoicevoxSpeakerType
  * @brief Speakerを示す列挙体(Ver.0.14.5時点)
  */
 UENUM(BlueprintType)
-enum class ESpeakerType : uint8
+enum class EVoicevoxSpeakerType : uint8
 {
 	Metan=2							UMETA(DisplayName = "四国めたん(ノーマル)",			ToolTip = "02:四国めたん(ノーマル)"),
 	MetanAmaAma=0					UMETA(DisplayName = "四国めたん(あまあま)",			ToolTip = "00:四国めたん(あまあま)"),
@@ -33,6 +34,8 @@ enum class ESpeakerType : uint8
 	ZundamonSexy=5					UMETA(DisplayName = "ずんだもん(セクシー)",			ToolTip = "05:ずんだもん(セクシー)"),
 	ZundamonSasayaki=22				UMETA(DisplayName = "ずんだもん(ささやき)",			ToolTip = "22:ずんだもん(ささやき)"),
 	ZundamonHisoHiso=38				UMETA(DisplayName = "ずんだもん(ヒソヒソ)",			ToolTip = "38:ずんだもん(ヒソヒソ)"),
+	ZundamonHerohero=75				UMETA(DisplayName = "ずんだもん(ヘロヘロ)",			ToolTip = "22:ずんだもん(ヘロヘロ)"),
+	ZundamonNamidame=76				UMETA(DisplayName = "ずんだもん(なみだめ)",			ToolTip = "38:ずんだもん(なみだめ)"),
 	Tsumugi=8						UMETA(DisplayName = "春日部つむぎ",					ToolTip = "08:春日部つむぎ"),
 	Hau=10							UMETA(DisplayName = "雨晴はう",						ToolTip = "10:雨晴はう"),
 	Ritsu=9							UMETA(DisplayName = "波音リツ(ノーマル)",				ToolTip = "09:波音リツ(ノーマル)"),
@@ -47,6 +50,12 @@ enum class ESpeakerType : uint8
 	KotarouOko=34					UMETA(DisplayName = "白上虎太郎(おこ)",				ToolTip = "34:白上虎太郎(おこ)"),
 	KotarouBien=35					UMETA(DisplayName = "白上虎太郎(びえーん)",			ToolTip = "35:白上虎太郎(びえーん)"),
 	Ryusei=13						UMETA(DisplayName = "青山龍星",						ToolTip = "13:青山龍星"),
+	RyuseiNekketsu=81				UMETA(DisplayName = "青山龍星(熱血)",					ToolTip = "13:青山龍星(熱血)"),
+	RyuseiHukigen=82				UMETA(DisplayName = "青山龍星(不機嫌)",				ToolTip = "13:青山龍星(不機嫌)"),
+	RyuseiYorokobi=83				UMETA(DisplayName = "青山龍星(喜び)",					ToolTip = "13:青山龍星(喜び)"),
+	RyuseiShittori=84				UMETA(DisplayName = "青山龍星(しっとり)",				ToolTip = "13:青山龍星(しっとり)"),
+	RyuseiKanashimi=85				UMETA(DisplayName = "青山龍星(かなしみ)",				ToolTip = "13:青山龍星(かなしみ)"),
+	RyuseiSasayaki=86				UMETA(DisplayName = "青山龍星(囁き)",					ToolTip = "13:青山龍星(囁き)"),
 	Himari=14						UMETA(DisplayName = "冥鳴ひまり",						ToolTip = "14:冥鳴ひまり"),
 	Sora=16							UMETA(DisplayName = "九州そら(ノーマル)",				ToolTip = "16:九州そら(ノーマル)"),
 	SoraAmaAma=15					UMETA(DisplayName = "九州そら(あまあま)",				ToolTip = "15:九州そら(あまあま)"),
@@ -55,6 +64,10 @@ enum class ESpeakerType : uint8
 	SoraSasayaki=19					UMETA(DisplayName = "九州そら(ささやき)",				ToolTip = "19:九州そら(ささやき)"),
 	MochikoSan=20					UMETA(DisplayName = "もち子さん(ノーマル)",			ToolTip = "20:もち子さん(ノーマル)"),
 	MochikoSanSexy=66				UMETA(DisplayName = "もち子さん(セクシー／あん子)",		ToolTip = "66:もち子さん(セクシー／あん子)"),
+	MochikoSanNaki=77				UMETA(DisplayName = "もち子さん(泣き)",				ToolTip = "66:もち子さん(泣き)"),
+	MochikoSanIkari=78				UMETA(DisplayName = "もち子さん(怒り)",				ToolTip = "66:もち子さん(怒り)"),
+	MochikoSanYorokobi=79			UMETA(DisplayName = "もち子さん(喜び)",				ToolTip = "66:もち子さん(喜び)"),
+	MochikoSanNonbiri=80			UMETA(DisplayName = "もち子さん(のんびり)",			ToolTip = "66:もち子さん(のんびり)"),
 	Kenzaki=21						UMETA(DisplayName = "剣崎雌雄",						ToolTip = "21:剣崎雌雄"),
 	WhiteCul=23						UMETA(DisplayName = "WhiteCUL(ノーマル)",			ToolTip = "23:WhiteCUL(ノーマル)"),
 	WhiteCulTanoshi=24				UMETA(DisplayName = "WhiteCUL(たのしい)",			ToolTip = "24:WhiteCUL(たのしい)"),
@@ -96,219 +109,6 @@ enum class ESpeakerType : uint8
 	ManbetsuHanamaruBurikkko=72		UMETA(DisplayName = "満別花丸(ぶりっ子)",				ToolTip = "72:満別花丸(ぶりっ子)"),
 	ManbetsuHanamaruBoy=73			UMETA(DisplayName = "満別花丸(ボーイ)",				ToolTip = "73:満別花丸(ボーイ)"),
 	KotoyomiNia=74					UMETA(DisplayName = "琴詠ニア",						ToolTip = "74:琴詠ニア"),
-};
-
-/**
- * @enum ELipSyncVowelType
- * @brief リップシンク用の母音を示す列挙体
- */
-UENUM(BlueprintType)
-enum class ELipSyncVowelType : uint8
-{
-	A	UMETA(DisplayName = "母音:あ",	ToolTip = "母音:あ（a）"),
-	I	UMETA(DisplayName = "母音:い",	ToolTip = "母音:い（i）"),
-	U	UMETA(DisplayName = "母音:う",	ToolTip = "母音:う（u）"),
-	E	UMETA(DisplayName = "母音:え",	ToolTip = "母音:え（e）"),
-	O	UMETA(DisplayName = "母音:お",	ToolTip = "母音:お（o）"),
-	Non	UMETA(DisplayName = "無音",		ToolTip = "無音（句読点の待機時間）"),
-};
-
-//------------------------------------------------------------------------
-// struct
-//------------------------------------------------------------------------
-
-/**
- * @struct FVoicevoxStyle
- * @brief VOICEVOXのモデルスタイル情報構造体
- */
-USTRUCT(BlueprintType)
-struct FVoicevoxStyle
-{
-	GENERATED_USTRUCT_BODY()
-
-	// スタイル名
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
-	FString Name;
-
-	// スピーカーID
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
-	int64 Id;
-};
-
-/**
- * @struct FVoicevoxMeta
- * @brief VOICEVOXのメタ情報構造体
- */
-USTRUCT(BlueprintType)
-struct FVoicevoxMeta
-{
-	GENERATED_USTRUCT_BODY()
-
-	// モデル名
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
-	FString Name;
-
-	// スタイル情報リスト
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
-	TArray<FVoicevoxStyle> Styles;
-
-	// スピーカーユニークID
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
-	FString Speaker_uuid;
-
-	// バージョン情報
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
-	FString Version;
-};
-
-/**
- * @struct FVoicevoxStyle
- * @brief VOICEVOXのモデルスタイル情報構造体
- */
-USTRUCT(BlueprintType)
-struct FVoicevoxSupportedDevices
-{
-	GENERATED_USTRUCT_BODY()
-
-	// CPU使用可フラグ
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
-	bool Cpu;
-
-	// GPU(cuda)使用可フラグ
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
-	bool Cuda;
-
-	// GPU(dml)使用可フラグ
-	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
-	bool Dml;
-};
-
-/**
- * @struct FVoicevoxMora
- * @brief VOICEVOXのモーラ情報構造体
- */
-USTRUCT(BlueprintType)
-struct FVoicevoxMora
-{
-	GENERATED_USTRUCT_BODY()
-
-	// カナ文字（１～２文字）
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	FString Text;
-
-	// 子音
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	FString Consonant;
-
-	// 子音長さ
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Consonant_length;
-
-	// 母音
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	FString Vowel;
-
-	// 母音長さ
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Vowel_length;
-
-	// イントネーション
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Pitch;
-};
-
-/**
- * @struct FVoicevoxAccentPhrase
- * @brief VOICEVOXのアクセント情報構造体
- */
-USTRUCT(BlueprintType)
-struct FVoicevoxAccentPhrase
-{
-	GENERATED_USTRUCT_BODY()
-
-	// モーラ情報リスト
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	TArray<FVoicevoxMora> Moras;
-
-	// アクセント場所
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	int Accent;
-
-	// 句読点モーラ情報（カナで句読点が存在する場合、無音時間が格納）
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	FVoicevoxMora Pause_mora;
-
-	// 疑問文か
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	bool Is_interrogative;
-};
-
-/**
- * @struct FVoicevoxAudioQuery
- * @brief VOICEVOXのAudioQuery情報構造体
- */
-USTRUCT(BlueprintType)
-struct FVoicevoxAudioQuery
-{
-	GENERATED_USTRUCT_BODY()
-
-	// アクセントリスト
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	TArray<FVoicevoxAccentPhrase> Accent_phrases;
-
-	// 話速
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Speed_scale;
-
-	// 音高
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Pitch_scale;
-
-	// 抑揚
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Intonation_scale;
-
-	// 音量
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Volume_scale;
-
-	// 開始無音
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Pre_phoneme_length;
-
-	// 終了無音
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Post_phoneme_length;
-
-	// 出力サンプリングレート
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	int Output_sampling_rate;
-
-	// 出力時にステレオにするか
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	bool Output_stereo;
-
-	// カナ（AquesTalkライクな記法）
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	FString Kana;
-};
-
-/**
- * @struct FVoicevoxAudioQuery
- * @brief VOICEVOXのAudioQueryからリップシンクに必要な情報をまとめた構造体
- */
-USTRUCT(BlueprintType)
-struct FVoicevoxLipSync
-{
-	GENERATED_USTRUCT_BODY()
-
-	// 母音
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	ELipSyncVowelType VowelType;
-	
-	// 長さ
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Length;	
 };
 
 //------------------------------------------------------------------------
@@ -458,6 +258,14 @@ public:
 	 */
 	static TArray<FVoicevoxMeta> GetMetaList();
 
+	/**
+	 * @fn
+	 * メタ情報から指定したSpeakerIDの名前を取得する
+	 * @brief 指定したSpeakerIDの名前を取得する
+	 * @return 指定したSpeakerIDの名前
+	 */
+	static FString GetMetaName(int64 SpeakerID);
+	
 	/**
 	 * @fn
 	 * 音素ごとの長さを求める

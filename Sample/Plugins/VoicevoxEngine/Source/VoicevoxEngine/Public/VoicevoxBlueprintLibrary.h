@@ -76,7 +76,7 @@ public:
 	 * @return TextToSpeechで作成された音楽データが格納されたUSoundWave
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxTextToSpeechOutput"))
-	static UPARAM(DisplayName="Sound") USoundWave* TextToSpeechOutput(ESpeakerType SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
+	static UPARAM(DisplayName="Sound") USoundWave* TextToSpeechOutput(EVoicevoxSpeakerType SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
 	
 	/**
 	 * @brief 入力したテキストをVOICEVOX COREでAudioQueryに変換後、SoundWaveを生成(Blueprint公開ノード)
@@ -87,7 +87,7 @@ public:
 	 * @return AudioQuery情報を元に作成された音楽データが格納されたUSoundWave
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxToTextAudioQueryOutput"))
-	static UPARAM(DisplayName="Sound") USoundWave* TextToAudioQueryOutput(ESpeakerType SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
+	static UPARAM(DisplayName="Sound") USoundWave* TextToAudioQueryOutput(EVoicevoxSpeakerType SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
 	
 	/**
 	 * @fn
@@ -98,7 +98,7 @@ public:
 	 * @return AudioQuery情報が格納されたjson形式の構造体
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxAudioQuery"))
-	static UPARAM(DisplayName="AudioQuery") FVoicevoxAudioQuery GetAudioQuery(ESpeakerType SpeakerType, FString Message, bool bRunKana = false);
+	static UPARAM(DisplayName="AudioQuery") FVoicevoxAudioQuery GetAudioQuery(EVoicevoxSpeakerType SpeakerType, FString Message, bool bRunKana = false);
 
 	/**
 	 * @brief VOICEVOX COREで取得したAudioQuery元にSoundWaveを作成(Blueprint公開ノード)
@@ -108,7 +108,7 @@ public:
 	 * @return AudioQuery情報を元に作成された音楽データが格納されたUSoundWave
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxAudioQueryOutput"))
-	static UPARAM(DisplayName="Sound") USoundWave* AudioQueryOutput(FVoicevoxAudioQuery AudioQuery, ESpeakerType SpeakerType, bool bEnableInterrogativeUpspeak = true);
+	static UPARAM(DisplayName="Sound") USoundWave* AudioQueryOutput(FVoicevoxAudioQuery AudioQuery, EVoicevoxSpeakerType SpeakerType, bool bEnableInterrogativeUpspeak = true);
 
 	/**
 	 * @brief 生成した音声データからUSoundWaveを作成
