@@ -27,11 +27,11 @@ VOICEVOX COREのReadMEに従って、最低限CPUモードの動作に必要な�
 
 [VOICEVOX COREライブラリ](https://github.com/VOICEVOX/voicevox_core)を取得、適当なフォルダに展開してください。<br/>
 
-※v0.5は[VOICEVOX CORE 0.14.5](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.5)を元に開発しました。
+※v0.5は[VOICEVOX CORE 0.14.6](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.6)を元に開発しました。
 
 次に[Open JTalk から配布されている辞書ファイル](https://sourceforge.net/projects/open-jtalk/files/Dictionary/open_jtalk_dic-1.11/open_jtalk_dic_utf_8-1.11.tar.gz/download?use_mirror=jaist) をダウンロードして、上記コアライブラリを展開したディレクトリに展開してください。
 
-VOICEVOX CORE 0.14.5はONNX Runtimeが含まれているため、別途ダウンロードする必要はありません。<br/>
+VOICEVOX CORE 0.14.6はONNX Runtimeが含まれているため、別途ダウンロードする必要はありません。<br/>
 ※MacはONNX Runtimeは不要です。
 
 <details>
@@ -107,6 +107,8 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 
 # 更新履歴
 
+- 2024/08/11
+  - 0.6 VOICEVOX CORE 0.14.6対応。(新規モデルデータ追加対応) 不具合修正。簡易的なエディタ機能実装
 - 2024/01/10
   - 0.5 一部Enumのエディタ表示名を日本語化。中品質のリップシンクが可能なデータリストを取得する関数を追加。
 - 2024/01/09
