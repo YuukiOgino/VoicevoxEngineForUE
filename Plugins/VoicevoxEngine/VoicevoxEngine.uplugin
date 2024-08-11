@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 5,
-	"VersionName": "0.5",
+	"Version": 6,
+	"VersionName": "0.6",
 	"FriendlyName": "VoicevoxEngine",
 	"Description": "Voicevox Engine for UnrealEngine",
 	"Category": "TextToSpeech",
@@ -10,7 +10,7 @@
 	"DocsURL": "https://github.com/YuukiOgino/VoicevoxEngineForUE#readme",
 	"MarketplaceURL": "",
 	"SupportURL": "https://github.com/YuukiOgino/VoicevoxEngineForUE/issues",
-	"CanContainContent": false,
+	"CanContainContent": true,
 	"IsBetaVersion": true,
 	"IsExperimentalVersion": false,
 	"Installed": false,
@@ -18,6 +18,15 @@
 		{
 			"Name": "VoicevoxEngine",
 			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64",
+				"Mac"
+			]
+		},
+		{
+			"Name": "VoicevoxEngineEditor",
+			"Type": "Editor",
 			"LoadingPhase": "Default",
 			"PlatformAllowList": [
 				"Win64",

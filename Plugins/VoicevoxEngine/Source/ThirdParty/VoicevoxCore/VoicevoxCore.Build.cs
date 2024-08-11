@@ -77,10 +77,6 @@ public class VoicevoxCore : ModuleRules
 			// core.hはEngine側も同名のヘッダーファイルがあるため、意図的にx64フォルダまでをIncludePathに含める
 			PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, platformName)));
 			
-			// Delay-load the DLL, so we can load it from the right place first
-			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "libvoicevox_core.dylib"));
-			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "libonnxruntime.1.13.1.dylib"));
-			
 			PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, platformName, "libvoicevox_core.dylib"));
 			PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, platformName, "libonnxruntime.1.13.1.dylib"));
 			
