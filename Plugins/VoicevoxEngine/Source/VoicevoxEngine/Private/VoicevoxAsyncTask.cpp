@@ -6,7 +6,6 @@
  */
 
 #include "VoicevoxAsyncTask.h"
-#include "VoicevoxCoreUtil.h"
 #include "Tasks/Task.h"
 
 //------------------------------------------------------------------------
@@ -52,7 +51,7 @@ void UVoicevoxInitializeAsyncTask::Activate()
 /**
  * @brief VOICEVOX COREのモデルをロード実行
  */	
-UVoicevoxLoadModelAsyncTask* UVoicevoxLoadModelAsyncTask::LoadModel(UObject* WorldContextObject, ESpeakerType SpeakerType)
+UVoicevoxLoadModelAsyncTask* UVoicevoxLoadModelAsyncTask::LoadModel(UObject* WorldContextObject, EVoicevoxSpeakerType SpeakerType)
 {
 	UVoicevoxLoadModelAsyncTask* Task = NewObject<UVoicevoxLoadModelAsyncTask>();
 	Task->SpeakerId = static_cast<int64>(SpeakerType);
