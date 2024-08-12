@@ -9,9 +9,11 @@ public class VoicevoxEngineSampleEditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 #if UE_5_4_OR_LATER
-		bOverrideBuildEnvironment = true;
-#endif
+		DefaultBuildSettings = BuildSettingsVersion.Latest;
+		IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
+#else
 		DefaultBuildSettings = BuildSettingsVersion.V2;
+#endif
 		ExtraModuleNames.AddRange( new string[] { "VoicevoxEngineSample" } );
 	}
 }

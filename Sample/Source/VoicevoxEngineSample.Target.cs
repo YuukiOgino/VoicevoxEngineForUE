@@ -8,7 +8,12 @@ public class VoicevoxEngineSampleTarget : TargetRules
 	public VoicevoxEngineSampleTarget( TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
+#if UE_5_4_OR_LATER
+		DefaultBuildSettings = BuildSettingsVersion.Latest;
+		IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
+#else
 		DefaultBuildSettings = BuildSettingsVersion.V2;
+#endif
 		ExtraModuleNames.AddRange( new string[] { "VoicevoxEngineSample" } );
 	}
 }
