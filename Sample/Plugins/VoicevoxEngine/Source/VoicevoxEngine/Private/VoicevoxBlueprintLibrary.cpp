@@ -5,8 +5,8 @@
  * @author Yuuki Ogino
  */
 
-#include <Sound/SoundWaveProcedural.h>
 #include "VoicevoxBlueprintLibrary.h"
+#include <Sound/SoundWaveProcedural.h>
 
 /**
  * @brief VOICEVOX CORE 終了処理(Blueprint公開ノード)
