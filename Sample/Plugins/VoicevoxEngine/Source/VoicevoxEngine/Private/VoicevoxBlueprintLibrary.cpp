@@ -5,6 +5,7 @@
  * @author Yuuki Ogino
  */
 
+#include <Sound/SoundWaveProcedural.h>
 #include "VoicevoxBlueprintLibrary.h"
 
 /**
@@ -105,15 +106,16 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData)
 	
 	if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(PCMData.GetData(), PCMData.Num(), &ErrorMessage))
 	{
-		USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
+		USoundWaveProcedural* Sound = NewObject<USoundWaveProcedural>(USoundWaveProcedural::StaticClass());
 		const int32 ChannelCount = *WaveInfo.pChannels;
 		const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
 		const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
 		const int32 NumFrames = NumSamples / ChannelCount;
 		
 		Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
-		Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
-		FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
+		Sound->QueueAudio(WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
+		//Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
+		//FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
 		
 		Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
 		Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
