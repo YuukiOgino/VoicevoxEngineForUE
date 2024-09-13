@@ -1,7 +1,10 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
 #include "Factories/VoicevoxSoundWaveFactory.h"
+
+#include "AudioCompressionSettingsUtils.h"
 #include "Sound/SoundWave.h"
+#include "SoundFileIO/SoundFileIO.h"
 
 DEFINE_LOG_CATEGORY(LogVoicevoxSoundWaveFactory);
 
@@ -25,31 +28,46 @@ UObject* UVoicevoxSoundWaveFactory::FactoryCreateNew(UClass* InClass, UObject* I
 	if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV.GetData(), OutputWAV.Num(), &ErrorMessage))
 	{
 		USoundWave* Sound = NewObject<USoundWave>(InParent, InClass, InName, Flags, Context);
-	
+		
 		const int32 ChannelCount = *WaveInfo.pChannels;
-		const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
-		const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
+		const int32 NumSamples = Audio::SoundFileUtils::GetNumSamples(OutputWAV);
 		const int32 NumFrames = NumSamples / ChannelCount;
-	
-		Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
-		Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
-		FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
-
+		
 #if (ENGINE_MINOR_VERSION == 0)
 		Sound->RawData.Lock(LOCK_READ_WRITE);
 		void* LockedData = Sound->RawData.Realloc(OutputWAV.Num());
 		FMemory::Memcpy(LockedData, OutputWAV.GetData(), OutputWAV.Num());
 		Sound->RawData.Unlock();
 #else
+		Sound->InvalidateCompressedData(true, false);
 		const FSharedBuffer UpdatedBuffer = FSharedBuffer::Clone(OutputWAV.GetData(), OutputWAV.Num());
 		Sound->RawData.UpdatePayload(UpdatedBuffer);
 #endif
 		
+		Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
+		Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
+		FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
+		
 		Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
+		Sound->SetImportedSampleRate(*WaveInfo.pSamplesPerSec);
 		Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
 		Sound->NumChannels = ChannelCount;
 		Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
 		Sound->SoundGroup = SOUNDGROUP_Default;
+		
+		Sound->SetTimecodeInfo(FSoundWaveTimecodeInfo{});
+
+		const bool bRebuildStreamingChunks = FPlatformCompressionUtilities::IsCurrentPlatformUsingStreamCaching();
+		Sound->InvalidateCompressedData(true, bRebuildStreamingChunks);
+
+		if (bRebuildStreamingChunks && Sound->IsStreaming(nullptr))
+		{
+			Sound->LoadZerothChunk();
+		}
+		GEditor->GetEditorSubsystem<UImportSubsystem>()->BroadcastAssetPostImport(this, Sound);
+		
+		Sound->PostImport();
+		Sound->SetRedrawThumbnail(true);
 
 		return Sound;
 	}

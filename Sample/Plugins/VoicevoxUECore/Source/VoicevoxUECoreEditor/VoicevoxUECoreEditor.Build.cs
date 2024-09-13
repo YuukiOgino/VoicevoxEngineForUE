@@ -26,6 +26,7 @@ public class VoicevoxUECoreEditor : ModuleRules
                 "Slate",
                 "SlateCore",
                 "DesktopPlatform",
+                "AudioMixer",
                 "Json",
                 "JsonUtilities"                
             }
