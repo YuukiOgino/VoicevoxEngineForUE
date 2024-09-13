@@ -21,15 +21,15 @@ public class VoicevoxEngine : ModuleRules
 			{
 				"Core",
 				"Engine",
-				"VoicevoxCore"
 			});
 			
 		
 		PrivateDependencyModuleNames.AddRange(
 			new[]
 			{
-				"VoicevoxUECore",
 				"CoreUObject",
+				"VoicevoxUECore",
+                "VoicevoxNativeCore", //　参照用のEngineSybsystemが完成したら消す
 				"Json",
 				"JsonUtilities"
 			});

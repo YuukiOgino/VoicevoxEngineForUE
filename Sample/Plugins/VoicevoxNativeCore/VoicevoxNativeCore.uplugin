@@ -1,0 +1,28 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1",
+	"FriendlyName": "VoicevoxNativeCore",
+	"Description": "Voicevox Engine for UnrealEngine",
+	"Category": "TextToSpeech",
+	"CreatedBy": "YuukiOgino",
+	"CreatedByURL": "https://twitter.com/YuukiOgino",
+	"DocsURL": "https://github.com/YuukiOgino/VoicevoxEngineForUE#readme",
+	"MarketplaceURL": "",
+	"SupportURL": "https://github.com/YuukiOgino/VoicevoxEngineForUE/issues",
+	"CanContainContent": false,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "VoicevoxNativeCore",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64",
+				"Mac"
+			]
+		}
+	]
+}

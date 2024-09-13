@@ -119,7 +119,7 @@ enum class EVoicevoxSpeakerType : uint8
  * @class FVoicevoxCoreUtil
  * @brief VOICEVOX COREのAPIを呼び出すUtilクラス
  */
-class VOICEVOXENGINE_API FVoicevoxCoreUtil
+class VOICEVOXNATIVECORE_API FVoicevoxCoreUtil
 {
 	//! 初期化処理実施済みか
 	inline static bool bIsInit = false;

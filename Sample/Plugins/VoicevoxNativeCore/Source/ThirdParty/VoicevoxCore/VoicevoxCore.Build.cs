@@ -92,33 +92,6 @@ public class VoicevoxCore : ModuleRules
 		
 		PublicDefinitions.Add($"OPEN_JTALK_DIC_NAME=\"{OpenJtalkDicName}\"");
 	}
-	
-	/// <summary>
-	/// プロジェクトディレクトリ名を取得
-	/// </summary>
-	private static string ProjectDirectory
-	{
-		get
-		{
-			foreach (var CommandLineArg in Environment.GetCommandLineArgs())
-			{
-				var NameAndValues = new List<string>(CommandLineArg.Split('=', StringSplitOptions.RemoveEmptyEntries));
-				if (NameAndValues.Count < 2)
-				{
-					continue;
-				}
-				if (NameAndValues[0] != "-Project")
-				{
-					continue;
-				}
-				NameAndValues.RemoveAt(0);
-				var UProjectFilePath = string.Join("", NameAndValues.ToArray());
-				return Path.GetDirectoryName(UProjectFilePath);
-			}
-
-			return null;
-		}
-	}
 
 	/// <summary>
 	/// 指定したディレクトリをRuntimeDependenciesに登録

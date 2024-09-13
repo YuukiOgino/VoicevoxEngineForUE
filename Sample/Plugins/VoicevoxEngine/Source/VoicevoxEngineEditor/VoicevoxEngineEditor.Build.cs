@@ -21,6 +21,7 @@ public class VoicevoxEngineEditor : ModuleRules
             {
                 "VoicevoxUECore",
                 "VoicevoxUECoreEditor",
+                "VoicevoxNativeCore", //　参照用のEngineSybsystemが完成したら消す
                 "VoicevoxEngine",
                 "UnrealEd",
                 "CoreUObject",
