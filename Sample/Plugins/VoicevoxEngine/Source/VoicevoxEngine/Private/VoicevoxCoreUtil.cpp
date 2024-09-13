@@ -7,12 +7,7 @@
 
 #include "VoicevoxCoreUtil.h"
 #include "JsonObjectConverter.h"
-
-#if PLATFORM_MAC
-#include "VoicevoxCore/osx/voicevox_core.h"
-#else
 #include "voicevox_core.h"
-#endif
 
 DEFINE_LOG_CATEGORY(LogVoicevoxEngine);
 
