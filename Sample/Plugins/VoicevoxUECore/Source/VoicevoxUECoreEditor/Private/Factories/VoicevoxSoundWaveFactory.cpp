@@ -4,7 +4,7 @@
 
 #include "AudioCompressionSettingsUtils.h"
 #include "Sound/SoundWave.h"
-#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION > 2)
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION > 3)
 #include "SoundFileIO/SoundFileIO.h"
 #endif
 
@@ -32,7 +32,7 @@ UObject* UVoicevoxSoundWaveFactory::FactoryCreateNew(UClass* InClass, UObject* I
 		USoundWave* Sound = NewObject<USoundWave>(InParent, InClass, InName, Flags, Context);
 		
 		const int32 ChannelCount = *WaveInfo.pChannels;
-#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION > 2)
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION > 3)
 		const int32 NumSamples = Audio::SoundFileUtils::GetNumSamples(OutputWAV);
 #else
 		const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
