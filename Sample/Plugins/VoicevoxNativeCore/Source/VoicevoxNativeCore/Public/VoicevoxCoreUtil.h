@@ -166,6 +166,14 @@ class VOICEVOXNATIVECORE_API FVoicevoxCoreUtil
 	 * 実行せずにexitしても大抵の場合問題ないが、CUDAを利用している場合は終了処理を実行しておかないと例外が起こることがある。
 	 */
 	static void Finalize();
+
+	/**
+	 * @fn
+	 * メタ情報を取得する
+	 * @brief 話者名や話者IDのリストを取得する
+	 * @return メタ情報が格納されたjson形式の構造体
+	 */
+	static TArray<FVoicevoxMeta> GetMetaList();
 	
 public:
 	
@@ -252,14 +260,6 @@ public:
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	static TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
-
-	/**
-	 * @fn
-	 * メタ情報を取得する
-	 * @brief 話者名や話者IDのリストを取得する
-	 * @return メタ情報が格納されたjson形式の構造体
-	 */
-	static TArray<FVoicevoxMeta> GetMetaList();
 
 	/**
 	 * @fn

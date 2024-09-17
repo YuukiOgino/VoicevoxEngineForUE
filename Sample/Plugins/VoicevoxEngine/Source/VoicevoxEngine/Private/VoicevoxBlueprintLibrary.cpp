@@ -23,7 +23,7 @@ void UVoicevoxBlueprintLibrary::Finalize()
  */
 TArray<FVoicevoxMeta> UVoicevoxBlueprintLibrary::GetMetasToList()
 {
-	return FVoicevoxCoreUtil::GetMetaList();
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetMetaList();
 }
 
 /**
