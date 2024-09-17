@@ -121,6 +121,8 @@ enum class EVoicevoxSpeakerType : uint8
  */
 class VOICEVOXNATIVECORE_API FVoicevoxCoreUtil
 {
+	friend class FVoicevoxNativeCoreModule;
+	
 	//! 初期化処理実施済みか
 	inline static bool bIsInit = false;
 
@@ -137,8 +139,7 @@ class VOICEVOXNATIVECORE_API FVoicevoxCoreUtil
 	 * @param Wav 開放する音声データのポインタ
 	 */
 	static void WavFree(uint8* Wav);
-	
-public:
+
 	/**
 	 * @fn
 	 * VOICEVOX CORE 初期化
@@ -165,7 +166,9 @@ public:
 	 * 実行せずにexitしても大抵の場合問題ないが、CUDAを利用している場合は終了処理を実行しておかないと例外が起こることがある。
 	 */
 	static void Finalize();
-
+	
+public:
+	
 	/**
 	 * @brief VOICEVOX COREのバージョンを取得する
 	 * @return SemVerでフォーマットされたバージョン

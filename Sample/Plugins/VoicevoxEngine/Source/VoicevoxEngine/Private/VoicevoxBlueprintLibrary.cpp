@@ -8,12 +8,14 @@
 #include "VoicevoxBlueprintLibrary.h"
 #include <Sound/SoundWaveProcedural.h>
 
+#include "Subsystems/VoicevoxCoreSubsystem.h"
+
 /**
  * @brief VOICEVOX CORE 終了処理(Blueprint公開ノード)
  */
 void UVoicevoxBlueprintLibrary::Finalize()
 {
-	FVoicevoxCoreUtil::Finalize();
+	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Finalize();
 }
 
 /**

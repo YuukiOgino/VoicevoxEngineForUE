@@ -2,15 +2,20 @@
 
 #pragma once
 
-#include "Subsystems/VoicevoxCoreSubsystem.h"
 #include "Modules/ModuleManager.h"
 
-class FVoicevoxNativeCoreModule : public IModuleInterface
+class FVoicevoxNativeCoreModule final : public IModuleInterface
 {
-	friend class UVoicevoxCoreSubsystem;
 public:
-	
+
+	/**
+	 * @brief StartupModule
+	 */
 	virtual void StartupModule() override;
+
+	/**
+	 * @brief ShutdownModule
+	 */	
 	virtual void ShutdownModule() override;
 	
 };

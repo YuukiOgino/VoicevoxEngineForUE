@@ -6,6 +6,7 @@
  */
 
 #include "VoicevoxAsyncTask.h"
+#include "Subsystems/VoicevoxCoreSubsystem.h"
 #include "Tasks/Task.h"
 
 //------------------------------------------------------------------------
@@ -31,16 +32,20 @@ void UVoicevoxInitializeAsyncTask::Activate()
 {
 	UE::Tasks::Launch(TEXT("VoicevoxCoreTask"), [&]
 	{
-		if (FVoicevoxCoreUtil::Initialize(bUseGPU, CPUNumThreads, false))
+		const FVoicevoxCoreCompleteDelegate InitializeCompleteEvent = FVoicevoxCoreCompleteDelegate::CreateLambda([&](const bool bIsSuccess)
 		{
-			OnSuccess.Broadcast();
-		}
-		else
-		{
-			OnFail.Broadcast();
-		}
-		
-		SetReadyToDestroy();
+			if (bIsSuccess)
+			{
+				OnSuccess.Broadcast();
+			}
+			else
+			{
+				OnFail.Broadcast();
+			}
+			SetReadyToDestroy();
+		});
+		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetOnInitializeCompleteDelegate(InitializeCompleteEvent);
+		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Initialize(bUseGPU, CPUNumThreads, false);
 	});
 }
 
