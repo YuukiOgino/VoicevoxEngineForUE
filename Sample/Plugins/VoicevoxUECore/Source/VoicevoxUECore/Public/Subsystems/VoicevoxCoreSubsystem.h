@@ -43,6 +43,10 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 	int InitializeCoreCompleteNum = 0;
 
 	TArray<FVoicevoxMeta> MetaList;
+
+	TMap<FString, FVoicevoxSupportedDevices> SupportedDevicesMap;
+	
+	TMap<FString, FString> VoicevoxCoreVersionMap;
 	
 	//--------------------------------
 	// Delegate
@@ -185,4 +189,7 @@ public:
 	 * @brief 各VOICEVOX COREの話者名や話者IDのリストを取得する
 	 */
 	void AddMetaList(TArray<FVoicevoxMeta> List);
+
+	void AddSupportedDevices(const FString& CoreName, FVoicevoxSupportedDevices SupportedDevices);
+	void AddVoicevoCoreVersion(const FString& CoreName, const FString& Version);
 };

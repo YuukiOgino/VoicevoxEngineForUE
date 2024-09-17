@@ -27,5 +27,7 @@ public class VoicevoxNativeCore : ModuleRules
 				"Json",
 				"JsonUtilities"
 			});
+		
+		PrivateDefinitions.Add($"VOICEVOX_CORE_NAME=\"CORE\"");
 	}
 }

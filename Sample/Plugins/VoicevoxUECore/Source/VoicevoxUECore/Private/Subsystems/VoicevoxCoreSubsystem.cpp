@@ -36,6 +36,7 @@ void UVoicevoxCoreSubsystem::Initialize(const bool bUseGPU, const int CPUNumThre
 {
 	InitializeCoreCompleteNum = 0;
 	MetaList.Empty();
+	SupportedDevicesMap.Empty();
 	OnInitialize.Broadcast(bUseGPU, CPUNumThreads, bLoadAllModels);
 }
 
@@ -162,4 +163,14 @@ void UVoicevoxCoreSubsystem::AddMetaList(TArray<FVoicevoxMeta> List)
 	{
 		MetaList.Emplace(Element);
 	}
+}
+
+void UVoicevoxCoreSubsystem::AddSupportedDevices(const FString& CoreName, const FVoicevoxSupportedDevices SupportedDevices)
+{
+	SupportedDevicesMap.Add(CoreName, SupportedDevices);
+}
+
+void UVoicevoxCoreSubsystem::AddVoicevoCoreVersion(const FString& CoreName, const FString& Version)
+{
+	VoicevoxCoreVersionMap.Add(CoreName, Version);
 }

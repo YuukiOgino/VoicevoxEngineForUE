@@ -227,3 +227,24 @@ struct FVoicevoxLipSync
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	float Length;	
 };
+
+/**
+ * @struct FVoicevoxCoreProperty
+ * @brief VOICEVOXのプロパティ情報をまとめた構造体
+ */
+USTRUCT(BlueprintType)
+struct FVoicevoxCoreProperty
+{
+	GENERATED_USTRUCT_BODY()
+
+	// VOICEVOX CORE バージョン
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Version;
+
+	// サポートデバイス情報
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FVoicevoxSupportedDevices SupportedDevices;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	bool IsGpuMode;
+};

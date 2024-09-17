@@ -21,6 +21,8 @@ void FVoicevoxNativeCoreModule::StartupModule()
 				if (bResult)
 				{
 					GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->AddMetaList(FVoicevoxCoreUtil::GetMetaList());
+					GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->AddSupportedDevices(VOICEVOX_CORE_NAME, FVoicevoxCoreUtil::GetSupportedDevices());
+					GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->AddVoicevoCoreVersion(VOICEVOX_CORE_NAME, FVoicevoxCoreUtil::GetVoicevoxVersion());
 				}
 				GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetInitializeResult(bResult);
 			});
