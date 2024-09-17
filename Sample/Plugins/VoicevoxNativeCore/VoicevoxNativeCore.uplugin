@@ -18,11 +18,17 @@
 		{
 			"Name": "VoicevoxNativeCore",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
+			"LoadingPhase": "PreDefault",
 			"PlatformAllowList": [
 				"Win64",
 				"Mac"
 			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "VoicevoxUECore",
+			"Enabled": true
 		}
 	]
 }
