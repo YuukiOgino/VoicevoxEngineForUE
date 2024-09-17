@@ -9,6 +9,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VoicevoxUEDefined.h"
 #include "Subsystems/EngineSubsystem.h"
 #include "VoicevoxCoreSubsystem.generated.h"
 
@@ -41,6 +42,8 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 	//! 初期化完了したVOICEVOX COREの数
 	int InitializeCoreCompleteNum = 0;
 
+	TArray<FVoicevoxMeta> MetaList;
+	
 	//--------------------------------
 	// Delegate
 	//--------------------------------
@@ -163,4 +166,23 @@ public:
 	 * この関数が呼ばれると内部の初期化完了カウンターが減少するため、VOICEVOX COREの初期化処理以外では呼ばないでください。
 	 */
 	void SetFinalizeResult(bool bIsSuccess);
+
+	//--------------------------------
+	// VOICEVOX CORE Meta関連
+	//--------------------------------
+	
+	/**
+	 * @fn
+	 * メタ情報を取得する
+	 * @brief 話者名や話者IDのリストを取得する
+	 * @return メタ情報が格納されたjson形式の構造体
+	 */
+	TArray<FVoicevoxMeta> GetMetaList();
+
+	/**
+	 * @fn
+	 * 各VOICEVOX COREのメタ情報を格納する
+	 * @brief 各VOICEVOX COREの話者名や話者IDのリストを取得する
+	 */
+	void AddMetaList(TArray<FVoicevoxMeta> List);
 };

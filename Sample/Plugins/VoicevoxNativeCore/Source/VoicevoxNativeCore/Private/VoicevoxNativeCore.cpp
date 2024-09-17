@@ -17,7 +17,12 @@ void FVoicevoxNativeCoreModule::StartupModule()
 		const FVoicevoxCoreInitializeDelegate InitializeEvent =
 			FVoicevoxCoreInitializeDelegate::CreateLambda([](const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
 			{
-				GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetInitializeResult(FVoicevoxCoreUtil::Initialize(bUseGPU, CPUNumThreads, bLoadAllModels));
+				const bool bResult = FVoicevoxCoreUtil::Initialize(bUseGPU, CPUNumThreads, bLoadAllModels);
+				if (bResult)
+				{
+					GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->AddMetaList(FVoicevoxCoreUtil::GetMetaList());
+				}
+				GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetInitializeResult(bResult);
 			});
 		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetOnInitializeDelegate(InitializeEvent);
 

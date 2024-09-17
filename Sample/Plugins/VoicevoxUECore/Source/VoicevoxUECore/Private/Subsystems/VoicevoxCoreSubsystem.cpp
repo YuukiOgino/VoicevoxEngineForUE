@@ -35,6 +35,7 @@ void UVoicevoxCoreSubsystem::Deinitialize()
 void UVoicevoxCoreSubsystem::Initialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
 {
 	InitializeCoreCompleteNum = 0;
+	MetaList.Empty();
 	OnInitialize.Broadcast(bUseGPU, CPUNumThreads, bLoadAllModels);
 }
 
@@ -136,9 +137,29 @@ void UVoicevoxCoreSubsystem::SetFinalizeResult(const bool bIsSuccess)
 	--InitializeCoreCompleteNum;
 	if (InitializeCoreCompleteNum == 0)
 	{
+		MetaList.Empty();
 		if (!OnFinalizeComplete.ExecuteIfBound(true))
 		{
 			UE_LOG(LogTemp, Display, TEXT("OnFinalizeComplete Not Execute!!"));
 		}
+	}
+}
+
+/**
+ * @brief 話者名や話者IDのリストを取得する
+ */
+TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetMetaList()
+{
+	return MetaList;
+}
+
+/**
+ * @brief 話者名や話者IDのリストを追加する
+ */
+void UVoicevoxCoreSubsystem::AddMetaList(TArray<FVoicevoxMeta> List) 
+{
+	for (auto Element : List)
+	{
+		MetaList.Emplace(Element);
 	}
 }
