@@ -43,25 +43,42 @@ public class VoicevoxCore : ModuleRules
 			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/voicevox_core.dll", Path.Combine(ModuleDirectory, platformName, "voicevox_core.dll"));
 			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/onnxruntime.dll", Path.Combine(ModuleDirectory, platformName, "onnxruntime.dll"));
 			
-			var ProvidersSharedPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_shared.dll");
-			if (File.Exists(ProvidersSharedPath))
+			// onnxruntimeのCUDE関連DLLが存在する場合は必要なDLL一式すべてコピーする
+			var cudaPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_cuda.dll");
+			if (File.Exists(cudaPath))
 			{
-				PublicDelayLoadDLLs.Add("onnxruntime_providers_shared.dll");
-				RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/onnxruntime_providers_shared.dll", ProvidersSharedPath);
-			}
-            
-			var CudaPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_cuda.dll");
-			if (File.Exists(CudaPath))
-			{
-				PublicDelayLoadDLLs.Add("onnxruntime_providers_cuda.dll");
-				RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/onnxruntime_providers_cuda.dll", CudaPath);
+				var cudaDllList = new[]
+				{
+					"onnxruntime_providers_cuda.dll",
+					"onnxruntime_providers_shared.dll",
+					"onnxruntime_providers_tensorrt.dll",
+					"cublas64_11.dll",
+					"cublasLt64_11.dll",
+					"cudart64_110.dll",
+					"cudnn_adv_infer64_8.dll",
+					"cudnn_cnn_infer64_8.dll",
+					"cudnn_ops_infer64_8.dll",
+					"cudnn64_8.dll",
+					"cufft64_10.dll",
+					"curand64_10.dll"
+				};
+				foreach (var variable in cudaDllList)
+				{
+					var path = Path.Combine(ModuleDirectory, platformName, variable);
+					if (File.Exists(path))
+					{
+						PublicDelayLoadDLLs.Add(variable);
+						RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/{variable}", path);
+					}
+				}
 			}
 			
-			var TensorrtPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_tensorrt.dll");
-			if (File.Exists(TensorrtPath))
+			// DirectML.dllが存在する場合はコピーする
+			var directMlPath = Path.Combine(ModuleDirectory, platformName, "DirectML.dll");
+			if (File.Exists(directMlPath))
 			{
-				PublicDelayLoadDLLs.Add("onnxruntime_providers_tensorrt.dll");
-				RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/onnxruntime_providers_tensorrt.dll", TensorrtPath);
+				PublicDelayLoadDLLs.Add("DirectML.dll");
+				RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/DirectML.dll", directMlPath);
 			}
 			
 			// Open JTalkライブラリフォルダもコピーする
