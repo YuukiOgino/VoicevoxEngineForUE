@@ -187,6 +187,10 @@ public:
 	 * @fn
 	 * 各VOICEVOX COREの設定情報を内部メモリに加える
 	 * @brief 各VOICEVOX COREの話者名や話者IDのリスト、サポートデバイス、バージョン情報を各変数へ追加
+	 * @param [in]CoreName
+	 * @param [in]List
+	 * @param [in]SupportedDevices
+	 * @param [in]Version
 	 */
 	void AddVoicevoxConfigData(const FString& CoreName, TArray<FVoicevoxMeta> List, FVoicevoxSupportedDevices SupportedDevices, const FString& Version);
 	
