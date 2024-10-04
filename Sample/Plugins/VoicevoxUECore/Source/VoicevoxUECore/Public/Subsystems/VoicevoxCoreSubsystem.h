@@ -185,11 +185,9 @@ public:
 
 	/**
 	 * @fn
-	 * 各VOICEVOX COREのメタ情報を格納する
-	 * @brief 各VOICEVOX COREの話者名や話者IDのリストを取得する
+	 * 各VOICEVOX COREの設定情報を内部メモリに加える
+	 * @brief 各VOICEVOX COREの話者名や話者IDのリスト、サポートデバイス、バージョン情報を各変数へ追加
 	 */
-	void AddMetaList(TArray<FVoicevoxMeta> List);
-
-	void AddSupportedDevices(const FString& CoreName, FVoicevoxSupportedDevices SupportedDevices);
-	void AddVoicevoCoreVersion(const FString& CoreName, const FString& Version);
+	void AddVoicevoxConfigData(const FString& CoreName, TArray<FVoicevoxMeta> List, FVoicevoxSupportedDevices SupportedDevices, const FString& Version);
+	
 };

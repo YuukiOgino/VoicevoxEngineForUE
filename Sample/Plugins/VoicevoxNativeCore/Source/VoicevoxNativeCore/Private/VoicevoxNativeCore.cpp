@@ -20,9 +20,11 @@ void FVoicevoxNativeCoreModule::StartupModule()
 				const bool bResult = FVoicevoxCoreUtil::Initialize(bUseGPU, CPUNumThreads, bLoadAllModels);
 				if (bResult)
 				{
-					GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->AddMetaList(FVoicevoxCoreUtil::GetMetaList());
-					GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->AddSupportedDevices(VOICEVOX_CORE_NAME, FVoicevoxCoreUtil::GetSupportedDevices());
-					GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->AddVoicevoCoreVersion(VOICEVOX_CORE_NAME, FVoicevoxCoreUtil::GetVoicevoxVersion());
+					GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->AddVoicevoxConfigData(
+						VOICEVOX_CORE_NAME,
+						FVoicevoxCoreUtil::GetMetaList(),
+						FVoicevoxCoreUtil::GetSupportedDevices(),
+						FVoicevoxCoreUtil::GetVoicevoxVersion());
 				}
 				GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetInitializeResult(bResult);
 			});

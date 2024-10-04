@@ -37,6 +37,7 @@ void UVoicevoxCoreSubsystem::Initialize(const bool bUseGPU, const int CPUNumThre
 	InitializeCoreCompleteNum = 0;
 	MetaList.Empty();
 	SupportedDevicesMap.Empty();
+	VoicevoxCoreVersionMap.Empty();
 	OnInitialize.Broadcast(bUseGPU, CPUNumThreads, bLoadAllModels);
 }
 
@@ -155,22 +156,14 @@ TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetMetaList()
 }
 
 /**
- * @brief 話者名や話者IDのリストを追加する
+ * @brief 各VOICEVOX COREの話者名や話者IDのリスト、サポートデバイス、バージョン情報を各変数へ追加
  */
-void UVoicevoxCoreSubsystem::AddMetaList(TArray<FVoicevoxMeta> List) 
+void UVoicevoxCoreSubsystem::AddVoicevoxConfigData(const FString& CoreName, TArray<FVoicevoxMeta> List, FVoicevoxSupportedDevices SupportedDevices, const FString& Version)
 {
 	for (auto Element : List)
 	{
 		MetaList.Emplace(Element);
 	}
-}
-
-void UVoicevoxCoreSubsystem::AddSupportedDevices(const FString& CoreName, const FVoicevoxSupportedDevices SupportedDevices)
-{
 	SupportedDevicesMap.Add(CoreName, SupportedDevices);
-}
-
-void UVoicevoxCoreSubsystem::AddVoicevoCoreVersion(const FString& CoreName, const FString& Version)
-{
 	VoicevoxCoreVersionMap.Add(CoreName, Version);
 }
