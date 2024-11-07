@@ -3,6 +3,8 @@
 
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 
+#include "VoicevoxNativeObject.h"
+
 //--------------------------------
 // override
 //--------------------------------
@@ -13,6 +15,9 @@
 void UVoicevoxCoreSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+
+	const UClass* NativeClass = UVoicevoxNativeObject::StaticClass();
+	NativeInstance = NewObject<UVoicevoxNativeObject>(this, NativeClass);
 }
 
 /**
@@ -23,6 +28,13 @@ void UVoicevoxCoreSubsystem::Deinitialize()
 	Super::Deinitialize();
 	OnInitialize.RemoveAll(this);
 	OnInitializeComplete.Unbind();
+
+	NativeInstance->Shutdown();
+}
+
+void UVoicevoxCoreSubsystem::NativeInitialize() const
+{
+	NativeInstance->Init();
 }
 
 //--------------------------------

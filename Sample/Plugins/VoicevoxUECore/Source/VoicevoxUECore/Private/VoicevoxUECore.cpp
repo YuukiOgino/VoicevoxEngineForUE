@@ -7,6 +7,8 @@
 
 #include "VoicevoxUECore.h"
 
+#include "VoicevoxNativeObject.h"
+
 #define LOCTEXT_NAMESPACE "FVoicevoxUECoreModule"
 
 /**
@@ -14,6 +16,7 @@
  */
 void FVoicevoxUECoreModule::StartupModule()
 {
+ 
 }
 
 /**

@@ -14,7 +14,7 @@ public class VoicevoxNativeCore : ModuleRules
 			new string[]
 			{
 				"Core",
-				"Engine"
+				"Engine",
 			});
 			
 		

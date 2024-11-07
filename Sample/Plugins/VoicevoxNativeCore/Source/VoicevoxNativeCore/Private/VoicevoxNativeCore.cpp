@@ -14,6 +14,8 @@ void FVoicevoxNativeCoreModule::StartupModule()
 {
 	FCoreDelegates::OnAllModuleLoadingPhasesComplete.AddLambda([]
 	{
+		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->NativeInitialize();
+		
 		const FVoicevoxCoreInitializeDelegate InitializeEvent =
 			FVoicevoxCoreInitializeDelegate::CreateLambda([](const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
 			{

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VoicevoxNativeObject.h"
 #include "VoicevoxUEDefined.h"
 #include "Subsystems/EngineSubsystem.h"
 #include "VoicevoxCoreSubsystem.generated.h"
@@ -47,6 +48,9 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 	TMap<FString, FVoicevoxSupportedDevices> SupportedDevicesMap;
 	
 	TMap<FString, FString> VoicevoxCoreVersionMap;
+
+	UPROPERTY()
+	TObjectPtr<UVoicevoxNativeObject> NativeInstance;
 	
 	//--------------------------------
 	// Delegate
@@ -63,7 +67,6 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 
 	//! 終了処理完了通知デリゲート
 	TVoicevoxCoreDelegate<void(bool)> OnFinalizeComplete;
-	
 public:
 
 	//--------------------------------
@@ -80,6 +83,8 @@ public:
 	 */
 	virtual void Deinitialize() override;
 
+	void NativeInitialize() const;
+	
 	//--------------------------------
 	// VOICEVOX CORE Initialize関連
 	//--------------------------------
