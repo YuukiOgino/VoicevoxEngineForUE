@@ -2,8 +2,6 @@
 
 #include "VoicevoxNativeCore.h"
 #include "Modules/ModuleManager.h"
-#include "Subsystems/VoicevoxCoreSubsystem.h"
-#include "VoicevoxCoreUtil.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxNativeCoreModule"
 
@@ -12,32 +10,6 @@
  */
 void FVoicevoxNativeCoreModule::StartupModule()
 {
-	FCoreDelegates::OnAllModuleLoadingPhasesComplete.AddLambda([]
-	{
-		const FVoicevoxCoreInitializeDelegate InitializeEvent =
-			FVoicevoxCoreInitializeDelegate::CreateLambda([](const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
-			{
-				const bool bResult = FVoicevoxCoreUtil::Initialize(bUseGPU, CPUNumThreads, bLoadAllModels);
-				if (bResult)
-				{
-					GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->AddVoicevoxConfigData(
-						VOICEVOX_CORE_NAME,
-						FVoicevoxCoreUtil::GetMetaList(),
-						FVoicevoxCoreUtil::GetSupportedDevices(),
-						FVoicevoxCoreUtil::GetVoicevoxVersion());
-				}
-				GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetInitializeResult(bResult);
-			});
-		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetOnInitializeDelegate(InitializeEvent);
-
-		const TVoicevoxCoreDelegate<void()> FinalizeEvent =
-			TVoicevoxCoreDelegate<void()>::CreateLambda([]
-			{
-				FVoicevoxCoreUtil::Finalize();
-				GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetFinalizeResult(true);
-			});
-		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetOnFinalizeDelegate(FinalizeEvent);
-	});
 }
 
 /**

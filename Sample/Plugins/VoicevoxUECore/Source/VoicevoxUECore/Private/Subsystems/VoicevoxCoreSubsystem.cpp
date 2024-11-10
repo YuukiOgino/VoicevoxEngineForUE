@@ -26,7 +26,6 @@ void UVoicevoxCoreSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 void UVoicevoxCoreSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
-	OnInitialize.RemoveAll(this);
 	OnInitializeComplete.Unbind();
 
 	NativeInstance->Shutdown();
@@ -46,22 +45,12 @@ void UVoicevoxCoreSubsystem::NativeInitialize() const
  */
 void UVoicevoxCoreSubsystem::Initialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
 {
-	/*InitializeCoreCompleteNum = 0;
 	MetaList.Empty();
 	SupportedDevicesMap.Empty();
 	VoicevoxCoreVersionMap.Empty();
-	OnInitialize.Broadcast(bUseGPU, CPUNumThreads, bLoadAllModels);*/
-
+	CoreNameList.Empty();
+	
 	NativeInstance->CoreInitialize(bUseGPU, CPUNumThreads, bLoadAllModels);
-}
-
-/**
- * @brief VOICEVOX CORE初期化実行のデリゲート関数登録
- */
-void UVoicevoxCoreSubsystem::SetOnInitializeDelegate(const FVoicevoxCoreInitializeDelegate& OpenDelegate)
-{
-	OnInitialize.Add(OpenDelegate);
-	++LoadCoreNum;
 }
 
 /**
@@ -69,6 +58,8 @@ void UVoicevoxCoreSubsystem::SetOnInitializeDelegate(const FVoicevoxCoreInitiali
  */
 void UVoicevoxCoreSubsystem::SetInitializeResult(const bool bIsSuccess)
 {
+	bIsInitialized = bIsSuccess;
+	
 	if (!bIsSuccess)
 	{
 		if (!OnInitializeComplete.ExecuteIfBound(false))
@@ -79,13 +70,9 @@ void UVoicevoxCoreSubsystem::SetInitializeResult(const bool bIsSuccess)
 		return;
 	}
 
-	++InitializeCoreCompleteNum;
-	if (LoadCoreNum == InitializeCoreCompleteNum)
+	if (!OnInitializeComplete.ExecuteIfBound(true))
 	{
-		if (!OnInitializeComplete.ExecuteIfBound(true))
-		{
-			UE_LOG(LogTemp, Error, TEXT("OnInitializeComplete Not Execute!!"));
-		}
+		UE_LOG(LogTemp, Error, TEXT("OnInitializeComplete Not Execute!!"));
 	}
 	
 }
@@ -95,7 +82,7 @@ void UVoicevoxCoreSubsystem::SetInitializeResult(const bool bIsSuccess)
  */
 bool UVoicevoxCoreSubsystem::GetIsInitialize() const
 {
-	return LoadCoreNum == InitializeCoreCompleteNum;	
+	return bIsInitialized;	
 }
 
 /**
@@ -116,16 +103,9 @@ void UVoicevoxCoreSubsystem::SetOnInitializeCompleteDelegate(const FVoicevoxCore
  */
 void UVoicevoxCoreSubsystem::Finalize() const
 {
-	OnFinalize.Broadcast();
+	NativeInstance->Finalize();
 }
 
-/**
- * @brief VOICEVOX CORE終了処理実行のデリゲート関数登録
- */
-void UVoicevoxCoreSubsystem::SetOnFinalizeDelegate(const TVoicevoxCoreDelegate<void()>& OpenDelegate)
-{
-	OnFinalize.Add(OpenDelegate);
-}
 /**
  * @brief VOICEVOX CORE終了処理完了のデリゲート関数登録
  */
@@ -150,16 +130,82 @@ void UVoicevoxCoreSubsystem::SetFinalizeResult(const bool bIsSuccess)
 		return;
 	}
 
-	--InitializeCoreCompleteNum;
-	if (InitializeCoreCompleteNum == 0)
+	MetaList.Empty();
+	SupportedDevicesMap.Empty();
+	VoicevoxCoreVersionMap.Empty();
+	CoreNameList.Empty();
+	
+	if (!OnFinalizeComplete.ExecuteIfBound(true))
 	{
-		MetaList.Empty();
-		if (!OnFinalizeComplete.ExecuteIfBound(true))
-		{
-			UE_LOG(LogTemp, Display, TEXT("OnFinalizeComplete Not Execute!!"));
-		}
+		UE_LOG(LogTemp, Display, TEXT("OnFinalizeComplete Not Execute!!"));
 	}
 }
+
+/**
+ * @fn
+ * VOICEVOX COREのモデルをロード実行
+ * @brief モデルをロードする。
+ * @param SpeakerId 話者番号
+ * @detail
+ * 必ずしも話者とモデルが1:1対応しているわけではない。
+ *
+ * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
+ */
+void UVoicevoxCoreSubsystem::LoadModel(const int64 SpeakerId) const
+{
+	NativeInstance->LoadModel(SpeakerId);
+}
+
+
+/**
+ * @brief VOICEVOX COREモデル読み込み処理完了のデリゲート関数登録
+ */
+void UVoicevoxCoreSubsystem::SetOnLoadModelCompleteDelegate(const FVoicevoxCoreCompleteDelegate& OpenDelegate)
+{
+	if (OnLodeModelComplete.IsBound()) OnLodeModelComplete.Unbind();
+	OnLodeModelComplete = OpenDelegate;
+}
+
+/**
+ * @brief VOICEVOX COREモデル読み込みの結果をセット
+ * @param[in] bIsSuccess		モデル読み込み処理が成功したか
+ * @detail
+ * VOICEVOXのモデル読み込み処理のリザルトをセットする。NativeCoreプラグインで使用する。
+ */
+void UVoicevoxCoreSubsystem::SetLodeModelResult(const bool bIsSuccess) const
+{
+	if (!bIsSuccess)
+	{
+		if (!OnLodeModelComplete.ExecuteIfBound(false))
+		{
+			UE_LOG(LogTemp, Display, TEXT("OnModelLodeComplete Not Execute!!"));
+		}
+
+		return;
+	}
+
+	if (!OnLodeModelComplete.ExecuteIfBound(true))
+	{
+		UE_LOG(LogTemp, Display, TEXT("OnModelLodeComplete Not Execute!!"));
+	}
+}
+
+/**
+ * @fn
+ * VOICEVOX COREのvoicevox_audio_queryを取得
+ * @brief AudioQuery を取得する。
+ * @param[in] SpeakerId 話者番号
+ * @param[in] Message 音声データに変換するtextデータ
+ * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
+ * @return AudioQueryをjsonでフォーマット後、構造体へ変換したもの。
+ * @details
+ * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
+ */
+FVoicevoxAudioQuery UVoicevoxCoreSubsystem::GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana) const
+{
+	return NativeInstance->GetAudioQuery(SpeakerId, Message, bKana);
+}
+	
 
 /**
  * @brief 話者名や話者IDのリストを取得する
@@ -170,14 +216,72 @@ TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetMetaList()
 }
 
 /**
+ * @brief 指定したSpeakerIDの名前を取得する
+ */
+FString UVoicevoxCoreSubsystem::GetMetaName(const int64 SpeakerID)
+{
+	TArray<FVoicevoxMeta> List = GetMetaList();
+	for  (auto [Name, Styles, Speaker_uuid, Version] : List)
+	{
+		for (const auto Style :Styles)
+		{
+			if (Style.Id == SpeakerID)
+			{
+				return FString::Printf(TEXT("%s(%s)"), *Name, *Style.Name);
+			}
+		}
+	}
+	
+	return TEXT("");
+}
+
+/**
+ * @brief VOICEVOX COREのバージョンを取得する
+ * @return SemVerでフォーマットされたバージョン
+ */
+FString UVoicevoxCoreSubsystem::GetVoicevoxVersion(const FString& CoreName)
+{
+	return VoicevoxCoreVersionMap[CoreName];
+}
+
+/**
+ * @brief ハードウェアアクセラレーションがGPUモードか判定する
+ * @return GPUモードならtrue、そうでないならfalse
+ */
+bool UVoicevoxCoreSubsystem::IsGpuMode(const FString& CoreName)
+{
+	return IsGpuModeMap[CoreName];
+}
+	
+/**
+ * @brief サポートデバイス情報を取得する
+ * @return サポートデバイス情報の構造体
+ */
+FVoicevoxSupportedDevices UVoicevoxCoreSubsystem::GetSupportedDevices(const FString& CoreName)
+{
+	return SupportedDevicesMap[CoreName];
+}
+
+/**
  * @brief 各VOICEVOX COREの話者名や話者IDのリスト、サポートデバイス、バージョン情報を各変数へ追加
  */
-void UVoicevoxCoreSubsystem::AddVoicevoxConfigData(const FString& CoreName, TArray<FVoicevoxMeta> List, FVoicevoxSupportedDevices SupportedDevices, const FString& Version)
+void UVoicevoxCoreSubsystem::AddVoicevoxConfigData(const FString& CoreName, TArray<FVoicevoxMeta> List, FVoicevoxSupportedDevices SupportedDevices, const FString& Version, const bool bIsGpuMode)
 {
 	for (auto Element : List)
 	{
 		MetaList.Emplace(Element);
 	}
+	CoreNameList.Add(CoreName);
 	SupportedDevicesMap.Add(CoreName, SupportedDevices);
 	VoicevoxCoreVersionMap.Add(CoreName, Version);
+	IsGpuModeMap.Add(CoreName, bIsGpuMode);
+}
+
+/**
+ * @brief 初期化済みのネイティブコア名を取得
+ * @return 初期化済みのネイティブコア名のリスト
+ */
+TArray<FString> UVoicevoxCoreSubsystem::GetCoreNameList()
+{
+	return CoreNameList;
 }

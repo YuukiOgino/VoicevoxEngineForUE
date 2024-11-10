@@ -69,14 +69,19 @@ UVoicevoxLoadModelAsyncTask* UVoicevoxLoadModelAsyncTask::LoadModel(UObject* Wor
  */
 void UVoicevoxLoadModelAsyncTask::Activate()
 {
-	if (FVoicevoxCoreUtil::LoadModel(SpeakerId))
+	const FVoicevoxCoreCompleteDelegate LoadModelCompleteEvent = FVoicevoxCoreCompleteDelegate::CreateLambda([&](const bool bIsSuccess)
 	{
-		OnSuccess.Broadcast();
-	}
-	else
-	{
-		OnFail.Broadcast();
-	}
-		
-	SetReadyToDestroy();
+		if (bIsSuccess)
+		{
+			OnSuccess.Broadcast();
+		}
+		else
+		{
+			OnFail.Broadcast();
+		}
+		SetReadyToDestroy();
+	});
+
+	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetOnLoadModelCompleteDelegate(LoadModelCompleteEvent);
+	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->LoadModel(SpeakerId);
 }

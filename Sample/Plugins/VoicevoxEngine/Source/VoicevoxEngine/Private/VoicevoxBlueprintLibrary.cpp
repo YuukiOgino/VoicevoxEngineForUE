@@ -19,6 +19,14 @@ void UVoicevoxBlueprintLibrary::Finalize()
 }
 
 /**
+ * @brief 初期化済みのVOICEVOX CORE名のリスト取得
+ */
+TArray<FString> UVoicevoxBlueprintLibrary::GetCoreNameList()
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetCoreNameList();
+}
+
+/**
  * @brief VOICEVOX CORE メタ情報を取得する(Blueprint公開ノード)
  */
 TArray<FVoicevoxMeta> UVoicevoxBlueprintLibrary::GetMetasToList()
@@ -29,25 +37,25 @@ TArray<FVoicevoxMeta> UVoicevoxBlueprintLibrary::GetMetasToList()
 /**
  * @brief サポートデバイス情報を取得する(Blueprint公開ノード)
  */
-FVoicevoxSupportedDevices UVoicevoxBlueprintLibrary::GetSupportedDevices()
+FVoicevoxSupportedDevices UVoicevoxBlueprintLibrary::GetSupportedDevices(const FString& CoreName)
 {
-	return FVoicevoxCoreUtil::GetSupportedDevices();
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetSupportedDevices(CoreName);
 }
 
 /**
  * @brief VOICEVOX COREのバージョン情報を取得する
  */
-FString UVoicevoxBlueprintLibrary::GetVoicevoxCoreVersion()
+FString UVoicevoxBlueprintLibrary::GetVoicevoxCoreVersion(const FString& CoreName)
 {
-	return FVoicevoxCoreUtil::GetVoicevoxVersion();
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetVoicevoxVersion(CoreName);
 }
 
 /**
  * @brief ハードウェアアクセラレーションがGPUモードか判定する
  */
-bool UVoicevoxBlueprintLibrary::IsVoicevoxGpuMode()
+bool UVoicevoxBlueprintLibrary::IsVoicevoxGpuMode(const FString& CoreName)
 {
-	return FVoicevoxCoreUtil::IsGpuMode();
+	return  GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->IsGpuMode(CoreName);
 }
 
 /**
@@ -69,7 +77,7 @@ USoundWave* UVoicevoxBlueprintLibrary::TextToSpeechOutput(EVoicevoxSpeakerType S
  */
 USoundWave* UVoicevoxBlueprintLibrary::TextToAudioQueryOutput(EVoicevoxSpeakerType SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
 {
-	const FVoicevoxAudioQuery AudioQuery = FVoicevoxCoreUtil::GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana);
+	const FVoicevoxAudioQuery AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana);
 
 	if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
 	{
@@ -83,7 +91,7 @@ USoundWave* UVoicevoxBlueprintLibrary::TextToAudioQueryOutput(EVoicevoxSpeakerTy
  */
 FVoicevoxAudioQuery UVoicevoxBlueprintLibrary::GetAudioQuery(EVoicevoxSpeakerType SpeakerType, const FString Message, const bool bRunKana)
 {
-	return FVoicevoxCoreUtil::GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana);
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana);
 }
 
 /**

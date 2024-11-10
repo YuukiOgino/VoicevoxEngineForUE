@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "EditorUtilityWidget.h"
-#include "VoicevoxCoreUtil.h"
 #include "VoicevoxQuery.h"
 #include "VoicevoxEditorUtilityWidget.generated.h"
 

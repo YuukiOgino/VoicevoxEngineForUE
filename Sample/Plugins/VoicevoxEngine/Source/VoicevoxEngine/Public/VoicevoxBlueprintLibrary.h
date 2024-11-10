@@ -36,6 +36,15 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxFinalize"))
 	static void Finalize();
+
+	/**
+	 * @fn
+	 *  初期化済みのVOICEVOX CORE名のリスト取得(Blueprint公開ノード)
+	 * @brief 初期化済みのVOICEVOX CORE名のリスト取得
+	 * @return 初期化済みのVOICEVOX CORE名のリスト
+	 */
+	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxCoreNameList"))
+	static UPARAM(DisplayName="CoreNameList") TArray<FString> GetCoreNameList();
 	
 	/**
 	 * @fn
@@ -51,21 +60,21 @@ public:
 	 * @return サポートデバイス情報の構造体
 	 */
 	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxSupportedDevices"))
-	static UPARAM(DisplayName="SupportedDevices") FVoicevoxSupportedDevices GetSupportedDevices();
+	static UPARAM(DisplayName="SupportedDevices") FVoicevoxSupportedDevices GetSupportedDevices(const FString& CoreName);
 
 	/**
 	 * @brief VOICEVOX COREのバージョン情報を取得する
 	 * @return VOICEVOX COREのバージョン情報
 	 */
 	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxVersion"))
-	static UPARAM(DisplayName="VoicevoxCoreVersion") FString GetVoicevoxCoreVersion();
+	static UPARAM(DisplayName="VoicevoxCoreVersion") FString GetVoicevoxCoreVersion(const FString& CoreName);
 
 	/**
 	 * @brief ハードウェアアクセラレーションがGPUモードか判定する
 	 * @return GPUモードならtrue、そうでないならfalse
 	 */
 	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "IsVoicevoxGpuMode"))
-	static UPARAM(DisplayName="GPU Mode") bool IsVoicevoxGpuMode();
+	static UPARAM(DisplayName="GPU Mode") bool IsVoicevoxGpuMode(const FString& CoreName);
 	
 	/**
 	 * @brief VOICEVOX COREで変換した音声データを元にSoundWaveを生成(Blueprint公開ノード)

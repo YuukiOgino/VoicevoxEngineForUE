@@ -174,8 +174,14 @@ class VOICEVOXNATIVECORE_API FVoicevoxCoreUtil
 	 * @return メタ情報が格納されたjson形式の構造体
 	 */
 	static TArray<FVoicevoxMeta> GetMetaList();
-	
-public:
+
+	/**
+	 * @fn
+	 * メタ情報から指定したSpeakerIDの名前を取得する
+	 * @brief 指定したSpeakerIDの名前を取得する
+	 * @return 指定したSpeakerIDの名前
+	 */
+	static FString GetMetaName(int64 SpeakerID);
 	
 	/**
 	 * @brief VOICEVOX COREのバージョンを取得する
@@ -207,6 +213,21 @@ public:
 	 * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	static bool LoadModel(int64 SpeakerId);
+
+	/**
+	 * @fn
+	 * VOICEVOX COREのvoicevox_audio_queryを取得
+	 * @brief AudioQuery を取得する。
+	 * @param[in] SpeakerId 話者番号
+	 * @param[in] Message 音声データに変換するtextデータ
+	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
+	 * @return AudioQueryをjsonでフォーマット後、構造体へ変換したもの。
+	 * @details
+	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	static FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
+
+public:
 	
 	/**
 	 * @fn
@@ -222,19 +243,6 @@ public:
 	 */
 	static TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak);
 
-	/**
-	 * @fn
-	 * VOICEVOX COREのvoicevox_audio_queryを取得
-	 * @brief AudioQuery を取得する。
-	 * @param[in] SpeakerId 話者番号
-	 * @param[in] Message 音声データに変換するtextデータ
-	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
-	 * @return AudioQueryをjsonでフォーマット後、構造体へ変換したもの。
-	 * @details
-	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
-	 */
-	static FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
-	
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_synthesisを実行
@@ -260,14 +268,6 @@ public:
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	static TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
-
-	/**
-	 * @fn
-	 * メタ情報から指定したSpeakerIDの名前を取得する
-	 * @brief 指定したSpeakerIDの名前を取得する
-	 * @return 指定したSpeakerIDの名前
-	 */
-	static FString GetMetaName(int64 SpeakerID);
 	
 	/**
 	 * @fn

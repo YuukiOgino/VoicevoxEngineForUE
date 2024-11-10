@@ -20,9 +20,9 @@ using TVoicevoxCoreDelegate = TDelegate<T...>;
 template <typename ...T>
 using TVoicevoxCoreMulticastDelegate = TMulticastDelegate<T...>;
 
-using FVoicevoxCoreInitializeDelegate = TVoicevoxCoreDelegate<void(bool, int, bool)>;
-
 using FVoicevoxCoreCompleteDelegate = TVoicevoxCoreDelegate<void(bool)>;
+
+class UVoicevoxNativeObject;
 
 /**
  * @class UVoicevoxCoreSubsystem
@@ -34,39 +34,89 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 	GENERATED_BODY()
 
 	//--------------------------------
-	// Variable
+	// friend class
 	//--------------------------------
 	
-	//! ロードしたVOICEVOX COREの数
-	int LoadCoreNum = 0;
+	friend class UVoicevoxNativeObject;
+	
+	//--------------------------------
+	// Variable
+	//--------------------------------
 
-	//! 初期化完了したVOICEVOX COREの数
-	int InitializeCoreCompleteNum = 0;
+	UPROPERTY()
+	TArray<FString> CoreNameList;
 
+	UPROPERTY()
 	TArray<FVoicevoxMeta> MetaList;
 
+	UPROPERTY()
 	TMap<FString, FVoicevoxSupportedDevices> SupportedDevicesMap;
-	
+
+	UPROPERTY()
 	TMap<FString, FString> VoicevoxCoreVersionMap;
 
 	UPROPERTY()
+	TMap<FString, bool> IsGpuModeMap;
+	
+	UPROPERTY()
 	TObjectPtr<UVoicevoxNativeObject> NativeInstance;
+
+	UPROPERTY()
+	bool bIsInitialized = false;
 	
 	//--------------------------------
 	// Delegate
 	//--------------------------------
-	
-	//! 初期化処理実行デリゲート
-	TVoicevoxCoreMulticastDelegate<void(bool, int, bool)> OnInitialize;
 
 	//! 初期化処理完了通知デリゲート
 	TVoicevoxCoreDelegate<void(bool)> OnInitializeComplete;
 
-	//! 終了処理実行デリゲート
-	TVoicevoxCoreMulticastDelegate<void()> OnFinalize;
-
 	//! 終了処理完了通知デリゲート
 	TVoicevoxCoreDelegate<void(bool)> OnFinalizeComplete;
+
+	//! モデル読み込み処理完了通知デリゲート
+	TVoicevoxCoreDelegate<void(bool)> OnLodeModelComplete;
+
+	//--------------------------------
+	// Function
+	//--------------------------------
+	
+	/**
+	 * @brief 音声合成するための初期化処理の結果をセット
+	 * @param[in] bIsSuccess		初期化が成功したか
+	 * @detail
+	 * VOICEVOXの初期化処理のリザルトをセットする。NativeCoreプラグインで使用する。
+	 */
+	void SetInitializeResult(bool bIsSuccess);
+
+	/**
+	 * @brief VOICEVOX CORE終了処理の結果をセット
+	 * @param[in] bIsSuccess		終了処理が成功したか
+	 * @detail
+	 * VOICEVOXの終了処理のリザルトをセットする。NativeCoreプラグインで使用する。
+	 */
+	void SetFinalizeResult(bool bIsSuccess);
+
+	/**
+	 * @brief VOICEVOX COREモデル読み込みの結果をセット
+	 * @param[in] bIsSuccess		モデル読み込み処理が成功したか
+	 * @detail
+	 * VOICEVOXのモデル読み込み処理のリザルトをセットする。NativeCoreプラグインで使用する。
+	 */
+	void SetLodeModelResult(bool bIsSuccess) const;
+	
+	/**
+	 * @fn
+	 * 各VOICEVOX COREの設定情報を内部メモリに加える
+	 * @brief 各VOICEVOX COREの話者名や話者IDのリスト、サポートデバイス、バージョン情報、GPUモード状態を各変数へ追加
+	 * @param [in]CoreName
+	 * @param [in]List
+	 * @param [in]SupportedDevices
+	 * @param [in]Version
+	 * @param [in]bIsGpuMode
+	 */
+	void AddVoicevoxConfigData(const FString& CoreName, TArray<FVoicevoxMeta> List, FVoicevoxSupportedDevices SupportedDevices, const FString& Version, const bool bIsGpuMode);
+	
 public:
 
 	//--------------------------------
@@ -83,6 +133,10 @@ public:
 	 */
 	virtual void Deinitialize() override;
 
+	//--------------------------------
+	// 初期化
+	//--------------------------------
+	
 	void NativeInitialize() const;
 	
 	//--------------------------------
@@ -106,28 +160,10 @@ public:
     void Initialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false);
 
 	/**
-	 * @brief 音声合成するための初期化処理の結果をセット
-	 * @param[in] bIsSuccess		初期化が成功したか
-	 * @detail
-	 * VOICEVOXの初期化処理のリザルトをセットする。NativeCoreプラグインで使用する。
-	 * この関数が呼ばれると内部の初期化完了カウンターが増加するため、VOICEVOX COREの初期化処理以外では呼ばないでください。
-	 */
-	void SetInitializeResult(bool bIsSuccess);
-
-	/**
 	 * @brief 全てのVOICEVOX CORE 初期化が完了しているか
 	 * @return 全て初期化済みであればtrue、何かしらのCOREの初期化が失敗したらfalse
 	 */
 	bool GetIsInitialize() const;
-	
-	/**
-	 * @brief VOICEVOX CORE初期化実行のデリゲート関数登録
-	 * @param OpenDelegate 初期化処理を実行するデリゲート
-	 * @detail
-	 * 複数のVOICEVOX COREを初期化処理を実行するデリゲートをSubsystemへ登録する
-	 * この関数が呼ばれると初期化すべきCOREの数が増えるため、VoicevoxNaitveCore系プラグインでStartupModule内で使用してください。
-	 */
-	void SetOnInitializeDelegate(const FVoicevoxCoreInitializeDelegate& OpenDelegate);
 
 	/**
 	 * @brief VOICEVOX CORE初期化完了のデリゲート関数登録
@@ -152,14 +188,6 @@ public:
 	void Finalize() const;
 
 	/**
-	 * @brief VOICEVOX CORE終了処理実行のデリゲート関数登録
-	 * @param OpenDelegate 終了処理を実行するデリゲート
-	 * @detail
-	 * 複数のVOICEVOX COREを終了処理を実行するデリゲートをSubsystemへ登録する
-	 */
-	void SetOnFinalizeDelegate(const TVoicevoxCoreDelegate<void()>& OpenDelegate);
-
-	/**
 	 * @brief VOICEVOX CORE終了処理完了のデリゲート関数登録
 	 * @param OpenDelegate 終了完了を通知するデリゲート
 	 * @detail
@@ -167,15 +195,43 @@ public:
 	 */
 	void SetOnFinalizeCompleteDelegate(const FVoicevoxCoreCompleteDelegate& OpenDelegate);
 
-	/**
-	 * @brief VOICEVOX CORE終了処理の結果をセット
-	 * @param[in] bIsSuccess		終了処理が成功したか
-	 * @detail
-	 * VOICEVOXの終了処理のリザルトをセットする。NativeCoreプラグインで使用する。
-	 * この関数が呼ばれると内部の初期化完了カウンターが減少するため、VOICEVOX COREの初期化処理以外では呼ばないでください。
-	 */
-	void SetFinalizeResult(bool bIsSuccess);
+	//--------------------------------
+	// VOICEVOX CORE LoadModel関連
+	//--------------------------------
 
+	/**
+	 * @fn
+	 * VOICEVOX COREのモデルをロード実行
+	 * @brief モデルをロードする。
+	 * @param SpeakerId 話者番号
+	 * @detail
+	 * 必ずしも話者とモデルが1:1対応しているわけではない。
+	 *
+	 * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	 void LoadModel(int64 SpeakerId) const;
+
+	/**
+	 * @brief VOICEVOX COREモデルロード処理完了のデリゲート関数登録
+	 * @param OpenDelegate モデルロード完了を通知するデリゲート
+	 * @detail
+	 * VOICEVOX COREのモデルロード処理完了を通知するデリゲートをSubsystemへ登録する
+	 */
+	void SetOnLoadModelCompleteDelegate(const FVoicevoxCoreCompleteDelegate& OpenDelegate);
+
+	/**
+	 * @fn
+	 * VOICEVOX COREのvoicevox_audio_queryを取得
+	 * @brief AudioQuery を取得する。
+	 * @param[in] SpeakerId 話者番号
+	 * @param[in] Message 音声データに変換するtextデータ
+	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
+	 * @return AudioQueryをjsonでフォーマット後、構造体へ変換したもの。
+	 * @details
+	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana) const;
+	
 	//--------------------------------
 	// VOICEVOX CORE Meta関連
 	//--------------------------------
@@ -190,13 +246,46 @@ public:
 
 	/**
 	 * @fn
-	 * 各VOICEVOX COREの設定情報を内部メモリに加える
-	 * @brief 各VOICEVOX COREの話者名や話者IDのリスト、サポートデバイス、バージョン情報を各変数へ追加
-	 * @param [in]CoreName
-	 * @param [in]List
-	 * @param [in]SupportedDevices
-	 * @param [in]Version
+	 * メタ情報から指定したSpeakerIDの名前を取得する
+	 * @brief 指定したSpeakerIDの名前を取得する
+	 * @return 指定したSpeakerIDの名前
 	 */
-	void AddVoicevoxConfigData(const FString& CoreName, TArray<FVoicevoxMeta> List, FVoicevoxSupportedDevices SupportedDevices, const FString& Version);
+	FString GetMetaName(int64 SpeakerID);
+	
+	//--------------------------------
+	// VOICEVOX CORE Version関連
+	//--------------------------------
+	
+	/**
+	 * @brief VOICEVOX COREのバージョンを取得する
+	 * @return SemVerでフォーマットされたバージョン
+	 */
+	 FString GetVoicevoxVersion(const FString& CoreName);
+
+	//--------------------------------
+	// VOICEVOX CORE GpuMode関連
+	//--------------------------------
+	
+	/**
+	 * @brief ハードウェアアクセラレーションがGPUモードか判定する
+	 * @return GPUモードならtrue、そうでないならfalse
+	 */
+	bool IsGpuMode(const FString& CoreName);
+
+	//--------------------------------
+	// VOICEVOX CORE SupportedDevices関連
+	//--------------------------------
+	
+	/**
+	 * @brief サポートデバイス情報を取得する
+	 * @return サポートデバイス情報の構造体
+	 */
+	FVoicevoxSupportedDevices GetSupportedDevices(const FString& CoreName);
+
+	/**
+	 * @brief 初期化済みのネイティブコア名を取得
+	 * @return 初期化済みのネイティブコア名のリスト
+	 */
+	TArray<FString> GetCoreNameList();
 	
 };
