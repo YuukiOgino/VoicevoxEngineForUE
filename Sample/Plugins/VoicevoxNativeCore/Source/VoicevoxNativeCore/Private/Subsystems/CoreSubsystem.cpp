@@ -284,3 +284,79 @@ bool UCoreSubsystem::IsGpuMode()
 {
 	return voicevox_is_gpu_mode();
 }
+
+/** 
+ * @brief 音素列から、音素ごとの長さを求める
+ */
+TArray<float> UCoreSubsystem::GetPhonemeLength(const int64 Length, TArray<int64> PhonemeList, const int64 SpeakerID)
+{
+	TArray<float> Output;
+	uintptr_t OutPutSize = 0;
+	float* OutputPredictDurationData = nullptr;
+	if (const VoicevoxResultCode Result = voicevox_predict_duration(Length, PhonemeList.GetData(), SpeakerID, &OutPutSize, &OutputPredictDurationData); Result != VOICEVOX_RESULT_OK)
+	{
+		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
+		const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_predict_duration Error:%s"), *LastMessage);
+		ShowVoicevoxErrorMessage(Message);
+	}
+	else
+	{
+		Output.Init(0, OutPutSize);
+		FMemory::Memcpy(Output.GetData(), OutputPredictDurationData, OutPutSize);
+		voicevox_predict_duration_data_free(OutputPredictDurationData);
+	}
+	return Output;
+}
+
+/**
+ * @brief モーラごとの音素列とアクセント情報から、モーラごとの音高を求める
+ */
+TArray<float> UCoreSubsystem::FindPitchEachMora(const int64 Length, TArray<int64> VowelPhonemeList, TArray<int64> ConsonantPhonemeList,
+                                                   TArray<int64> StartAccentList, TArray<int64> EndAccentList,
+                                                   TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
+                                                   const int64 SpeakerID)
+{
+	TArray<float> Output;
+	uintptr_t OutPutSize = 0;
+	float* OutputPredictIntonationData = nullptr;
+	if (const VoicevoxResultCode Result = voicevox_predict_intonation(Length, VowelPhonemeList.GetData(), ConsonantPhonemeList.GetData(),
+	                                            StartAccentList.GetData(), EndAccentList.GetData(), StartAccentPhraseList.GetData(),
+	                                            EndAccentPhraseList.GetData(), SpeakerID, &OutPutSize, &OutputPredictIntonationData); Result != VOICEVOX_RESULT_OK)
+	{
+		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
+		const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_predict_intonation Error:%s"), *LastMessage);
+		ShowVoicevoxErrorMessage(Message);
+	}
+	else
+	{
+		Output.Init(0, OutPutSize);
+		FMemory::Memcpy(Output.GetData(), OutputPredictIntonationData, OutPutSize);
+		voicevox_predict_intonation_data_free(OutputPredictIntonationData);
+	}
+	
+	return Output;
+}
+
+/**
+ * @brief フレームごとの音素と音高から、波形を求める
+ */
+TArray<float> UCoreSubsystem::DecodeForward(const int64 Length, const int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, const int64 SpeakerID)
+{
+	TArray<float> Output;
+	uintptr_t OutPutSize = 0;
+	float* OutputDecodeData = nullptr; 
+	if (const VoicevoxResultCode Result = voicevox_decode(Length, PhonemeSize, F0.GetData(), Phoneme.GetData(), SpeakerID, &OutPutSize, &OutputDecodeData); Result != VOICEVOX_RESULT_OK)
+	{
+		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
+		const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_decode Error:%s"), *LastMessage);
+		ShowVoicevoxErrorMessage(Message);
+	}
+	else
+	{
+		Output.Init(0, OutPutSize);
+		FMemory::Memcpy(Output.GetData(), OutputDecodeData, OutPutSize);
+		voicevox_decode_data_free(OutputDecodeData);
+	}
+	
+	return Output;
+}

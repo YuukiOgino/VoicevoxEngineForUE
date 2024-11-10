@@ -9,7 +9,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "VoicevoxCoreUtil.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "VoicevoxAsyncTask.generated.h"
 
@@ -97,7 +96,7 @@ public:
 	 * 必ずしも話者とモデルが1:1対応しているわけではない。
 	 */	
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxLoadModel", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
-	static UVoicevoxLoadModelAsyncTask* LoadModel(UObject* WorldContextObject, EVoicevoxSpeakerType SpeakerType);
+	static UVoicevoxLoadModelAsyncTask* LoadModel(UObject* WorldContextObject, int SpeakerType);
 
 	//! 話者番号
 	int64 SpeakerId = 0;

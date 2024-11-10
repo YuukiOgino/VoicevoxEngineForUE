@@ -327,5 +327,54 @@ public:
 	 * @return 初期化済みのネイティブコア名のリスト
 	 */
 	TArray<FString> GetCoreNameList();
+
+	/**
+	 * @fn
+	 * 音素ごとの長さを求める
+	 * @brief 音素列から、音素ごとの長さを求める
+	 * @param[in] Length 音素列の長さ
+	 * @param[in] PhonemeList 音素列
+	 * @param[in] SpeakerID 話者番号
+	 * @return 音素ごとの長さ
+	 *
+	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
+	 */
+	TArray<float> GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID) const;
+
+	/**
+	 * @fn
+	 * モーラごとの音高を求める
+	 * @brief モーラごとの音素列とアクセント情報から、モーラごとの音高を求める
+	 * @param[in] Length モーラ列の長さ
+	 * @param[in] VowelPhonemeList 母音の音素列
+	 * @param[in] ConsonantPhonemeList 子音の音素列
+	 * @param[in] StartAccentList アクセントの開始位置
+	 * @param[in] EndAccentList アクセントの終了位置
+	 * @param[in] StartAccentPhraseList アクセント句の開始位置
+	 * @param[in] EndAccentPhraseList アクセント句の終了位置
+	 * @param[in] SpeakerID 話者番号
+	 * @return モーラごとの音高
+	 *
+	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
+	 */
+	TArray<float> FindPitchEachMora(int64 Length, TArray<int64> VowelPhonemeList, TArray<int64> ConsonantPhonemeList,
+											  TArray<int64> StartAccentList, TArray<int64> EndAccentList,
+											  TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
+											  int64 SpeakerID) const;
+	
+	/**
+	 * @fn
+	 * 波形を求める
+	 * @brief フレームごとの音素と音高から、波形を求める
+	 * @param[in] Length フレームの長さ
+	 * @param[in] PhonemeSize 音素の種類数
+	 * @param[in] F0 フレームごとの音高
+	 * @param[in] Phoneme フレームごとの音素
+	 * @param[in] SpeakerID 話者番号
+	 * @return 音声波形
+	 *
+	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
+	 */
+	TArray<float> DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID) const;
 	
 };

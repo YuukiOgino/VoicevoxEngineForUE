@@ -61,9 +61,9 @@ bool UVoicevoxBlueprintLibrary::IsVoicevoxGpuMode(const FString& CoreName)
 /**
  * @brief VOICEVOX COREで変換した音声データを元にSoundWaveを生成(Blueprint公開ノード)
  */
-USoundWave* UVoicevoxBlueprintLibrary::TextToSpeechOutput(EVoicevoxSpeakerType SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
+USoundWave* UVoicevoxBlueprintLibrary::TextToSpeechOutput(int SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
 {
-	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunTextToSpeech(static_cast<int64>(SpeakerType), Message, bRunKana, bEnableInterrogativeUpspeak);
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunTextToSpeech(SpeakerType, Message, bRunKana, bEnableInterrogativeUpspeak);
 		!OutputWAV.IsEmpty())
 	{
 		return CreateSoundWave(OutputWAV);
@@ -75,11 +75,11 @@ USoundWave* UVoicevoxBlueprintLibrary::TextToSpeechOutput(EVoicevoxSpeakerType S
 /**
  * @brief 入力したテキストをVOICEVOX COREでAudioQueryに変換後、SoundWaveを生成(Blueprint公開ノード)
  */
-USoundWave* UVoicevoxBlueprintLibrary::TextToAudioQueryOutput(EVoicevoxSpeakerType SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
+USoundWave* UVoicevoxBlueprintLibrary::TextToAudioQueryOutput(int SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
 {
-	const FVoicevoxAudioQuery AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana);
+	const FVoicevoxAudioQuery AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerType, Message, bRunKana);
 
-	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(AudioQuery, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
 	{
 		return CreateSoundWave(OutputWAV);
 	}
@@ -89,17 +89,17 @@ USoundWave* UVoicevoxBlueprintLibrary::TextToAudioQueryOutput(EVoicevoxSpeakerTy
 /**
  * @brief  VOICEVOX COREで変換したAudioQueryを取得する(Blueprint公開ノード)
  */
-FVoicevoxAudioQuery UVoicevoxBlueprintLibrary::GetAudioQuery(EVoicevoxSpeakerType SpeakerType, const FString Message, const bool bRunKana)
+FVoicevoxAudioQuery UVoicevoxBlueprintLibrary::GetAudioQuery(int SpeakerType, const FString Message, const bool bRunKana)
 {
-	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana);
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerType, Message, bRunKana);
 }
 
 /**
  * @brief VOICEVOX COREで取得したAudioQuery元にSoundWaveを作成(Blueprint公開ノード)
  */
-USoundWave* UVoicevoxBlueprintLibrary::AudioQueryOutput(const FVoicevoxAudioQuery AudioQuery, EVoicevoxSpeakerType SpeakerType, bool bEnableInterrogativeUpspeak)
+USoundWave* UVoicevoxBlueprintLibrary::AudioQueryOutput(const FVoicevoxAudioQuery AudioQuery, int SpeakerType, bool bEnableInterrogativeUpspeak)
 {
-	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(AudioQuery, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
 	{
 		return CreateSoundWave(OutputWAV);
 	}

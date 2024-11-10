@@ -56,7 +56,7 @@ void UVoicevoxInitializeAsyncTask::Activate()
 /**
  * @brief VOICEVOX COREのモデルをロード実行
  */	
-UVoicevoxLoadModelAsyncTask* UVoicevoxLoadModelAsyncTask::LoadModel(UObject* WorldContextObject, EVoicevoxSpeakerType SpeakerType)
+UVoicevoxLoadModelAsyncTask* UVoicevoxLoadModelAsyncTask::LoadModel(UObject* WorldContextObject, int SpeakerType)
 {
 	UVoicevoxLoadModelAsyncTask* Task = NewObject<UVoicevoxLoadModelAsyncTask>();
 	Task->SpeakerId = static_cast<int64>(SpeakerType);
