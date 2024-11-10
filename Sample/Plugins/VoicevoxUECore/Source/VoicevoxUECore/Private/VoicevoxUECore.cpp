@@ -6,8 +6,7 @@
  */
 
 #include "VoicevoxUECore.h"
-
-#include "VoicevoxNativeObject.h"
+#include "Subsystems/VoicevoxCoreSubsystem.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxUECoreModule"
 
@@ -16,7 +15,10 @@
  */
 void FVoicevoxUECoreModule::StartupModule()
 {
- 
+    FCoreDelegates::OnAllModuleLoadingPhasesComplete.AddLambda([]
+    {
+			    GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->NativeInitialize();
+    });
 }
 
 /**

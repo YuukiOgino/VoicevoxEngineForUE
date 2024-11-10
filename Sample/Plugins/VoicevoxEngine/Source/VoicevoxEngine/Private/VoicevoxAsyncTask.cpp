@@ -30,7 +30,7 @@ UVoicevoxInitializeAsyncTask* UVoicevoxInitializeAsyncTask::Initialize(UObject* 
  */
 void UVoicevoxInitializeAsyncTask::Activate()
 {
-	UE::Tasks::Launch(TEXT("VoicevoxCoreTask"), [&]
+	UE::Tasks::Launch<>(TEXT("VoicevoxCoreTask"), [&]
 	{
 		const FVoicevoxCoreCompleteDelegate InitializeCompleteEvent = FVoicevoxCoreCompleteDelegate::CreateLambda([&](const bool bIsSuccess)
 		{

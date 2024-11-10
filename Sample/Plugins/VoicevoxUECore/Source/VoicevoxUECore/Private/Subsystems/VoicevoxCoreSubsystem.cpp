@@ -46,11 +46,13 @@ void UVoicevoxCoreSubsystem::NativeInitialize() const
  */
 void UVoicevoxCoreSubsystem::Initialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
 {
-	InitializeCoreCompleteNum = 0;
+	/*InitializeCoreCompleteNum = 0;
 	MetaList.Empty();
 	SupportedDevicesMap.Empty();
 	VoicevoxCoreVersionMap.Empty();
-	OnInitialize.Broadcast(bUseGPU, CPUNumThreads, bLoadAllModels);
+	OnInitialize.Broadcast(bUseGPU, CPUNumThreads, bLoadAllModels);*/
+
+	NativeInstance->CoreInitialize(bUseGPU, CPUNumThreads, bLoadAllModels);
 }
 
 /**

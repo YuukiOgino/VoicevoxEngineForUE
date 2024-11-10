@@ -15,4 +15,6 @@ class UVoicevoxNativeCoreSubsystem : public USubsystem
 	GENERATED_BODY()
 public:
 	VOICEVOXUECORE_API UVoicevoxNativeCoreSubsystem();
+
+	virtual bool CoreInitialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false) { return false; }
 };
