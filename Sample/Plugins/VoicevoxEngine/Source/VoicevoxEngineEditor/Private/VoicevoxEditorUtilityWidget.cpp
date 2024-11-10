@@ -11,6 +11,7 @@
 #include "Factories/VoicevoxQueryFactory.h"
 #include "Factories/VoicevoxSoundWaveFactory.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Subsystems/VoicevoxCoreSubsystem.h"
 
 DEFINE_LOG_CATEGORY(LogVoicevoxEditor);
 
@@ -43,7 +44,7 @@ void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(const int64 SpeakerType,
 
 void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(const int64 SpeakerType, const bool bEnableInterrogativeUpspeak) const
 {
-    if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(EditorAudioQueryPtr, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+    if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(EditorAudioQueryPtr, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
     {
         UVoicevoxSoundWaveFactory* Factory = NewObject<UVoicevoxSoundWaveFactory>();
         Factory->OutputWAV = OutputWAV;
@@ -64,7 +65,7 @@ void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(const int64 SpeakerType, 
 
 void UVoicevoxEditorUtilityWidget::SaveWavFile(const int64 SpeakerType, const bool bEnableInterrogativeUpspeak) const
 {
-    if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(EditorAudioQueryPtr, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+    if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(EditorAudioQueryPtr, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
     {
         if (IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get())
         {

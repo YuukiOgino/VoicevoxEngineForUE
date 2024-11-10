@@ -143,6 +143,97 @@ FVoicevoxAudioQuery UCoreSubsystem::GetAudioQuery(int64 SpeakerId, const FString
 }
 
 /**
+ * @brief VOICEVOX COREのtext to speechを実行
+ */
+TArray<uint8> UCoreSubsystem::RunTextToSpeech(const int64 SpeakerId, const FString& Message, const bool bKana, const bool bEnableInterrogativeUpspeak)
+{
+	TArray<uint8> PCMData;
+	PCMData.Empty();
+	
+	// スピーカーモデルがロードされていない場合はロードを実行する
+	if (LoadModel(SpeakerId))
+	{
+		uint8* OutputWAV = nullptr;
+		VoicevoxTtsOptions Options;
+		Options.kana = bKana;
+		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
+		uintptr_t OutPutSize = 0;
+		
+		if (const VoicevoxResultCode Result = voicevox_tts(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &OutPutSize, &OutputWAV);
+			Result != VOICEVOX_RESULT_OK)
+		{
+			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
+			const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
+			ShowVoicevoxErrorMessage(ErrorMessage);
+		}
+		else
+		{
+			PCMData.Init(0, OutPutSize);
+			FMemory::Memcpy(PCMData.GetData(), OutputWAV, OutPutSize);
+			WavFree(OutputWAV);
+		}
+	}
+
+	return PCMData;
+}
+
+/**
+ * @brief AudioQueryを音声データに変換する。
+ */
+TArray<uint8> UCoreSubsystem::RunSynthesis(const char* AudioQueryJson, const int64 SpeakerId, bool bEnableInterrogativeUpspeak)
+{
+	TArray<uint8> PCMData;
+	PCMData.Empty();
+	
+	// スピーカーモデルがロードされていない場合はロードを実行する
+	if (LoadModel(SpeakerId))
+	{
+		uint8* OutputWAV = nullptr;
+		VoicevoxSynthesisOptions Options;
+		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
+		uintptr_t OutPutSize = 0;
+		if (const VoicevoxResultCode Result = voicevox_synthesis(AudioQueryJson, SpeakerId, Options, &OutPutSize, &OutputWAV);
+			Result != VOICEVOX_RESULT_OK)
+		{
+			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
+			const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
+			ShowVoicevoxErrorMessage(ErrorMessage);
+		}
+		else
+		{
+			PCMData.Init(0, OutPutSize);
+			FMemory::Memcpy(PCMData.GetData(), OutputWAV, OutPutSize);
+			WavFree(OutputWAV);
+		}
+	}
+
+	return PCMData;
+}
+
+/**
+ * @brief AudioQueryを音声データに変換する。
+ */
+TArray<uint8> UCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, const int64 SpeakerId, const bool bEnableInterrogativeUpspeak)
+{
+	FString OutputJson = "";
+	FJsonObjectConverter::UStructToJsonObjectString(AudioQueryJson, OutputJson, 0, 0, 0, nullptr, false);
+	
+	TArray<uint8> OutputWAV = RunSynthesis(TCHAR_TO_UTF8(*OutputJson), SpeakerId, bEnableInterrogativeUpspeak);
+	return OutputWAV;
+}
+
+/**
+ * @fn
+ * VOICEVOX COREのvoicevox_ttsで生成した音声データを開放
+ * @brief voicevox_tts等で生成した音声データを開放する
+ * @param Wav 開放する音声データのポインタ
+ */
+void UCoreSubsystem::WavFree(uint8* Wav)
+{
+	voicevox_wav_free(Wav);
+}
+
+/**
  * @brief VOICEVOX COREの名前取得
  */
 FString UCoreSubsystem::GetVoicevoxCoreName()

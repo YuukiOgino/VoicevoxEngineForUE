@@ -231,6 +231,46 @@ public:
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana) const;
+
+	/**
+	 * @fn
+	 * VOICEVOX COREのtext to speechを実行
+	 * @brief Textデータを音声データに変換する。
+	 * @param[in] SpeakerId 話者番号
+	 * @param[in] Message 音声データに変換するtextデータ
+	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
+	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
+	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
+	 * @details
+	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak) const;
+
+	/**
+	 * @fn
+	 * VOICEVOX COREのvoicevox_synthesisを実行
+	 * @brief AudioQueryを音声データに変換する。
+	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery
+	 * @param[in] SpeakerId 話者番号
+	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
+	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
+	 * @details
+	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	TArray<uint8> RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) const;
+
+	/**
+	 * @fn
+	 * VOICEVOX COREのvoicevox_synthesisを実行
+	 * @brief AudioQueryを音声データに変換する。
+	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery構造体
+	 * @param[in] SpeakerId 話者番号
+	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
+	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
+	 * @details
+	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) const;
 	
 	//--------------------------------
 	// VOICEVOX CORE Meta関連

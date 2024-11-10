@@ -55,7 +55,7 @@ FString UVoicevoxBlueprintLibrary::GetVoicevoxCoreVersion(const FString& CoreNam
  */
 bool UVoicevoxBlueprintLibrary::IsVoicevoxGpuMode(const FString& CoreName)
 {
-	return  GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->IsGpuMode(CoreName);
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->IsGpuMode(CoreName);
 }
 
 /**
@@ -63,7 +63,7 @@ bool UVoicevoxBlueprintLibrary::IsVoicevoxGpuMode(const FString& CoreName)
  */
 USoundWave* UVoicevoxBlueprintLibrary::TextToSpeechOutput(EVoicevoxSpeakerType SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
 {
-	if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunTextToSpeech(static_cast<int64>(SpeakerType), Message, bRunKana, bEnableInterrogativeUpspeak);
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunTextToSpeech(static_cast<int64>(SpeakerType), Message, bRunKana, bEnableInterrogativeUpspeak);
 		!OutputWAV.IsEmpty())
 	{
 		return CreateSoundWave(OutputWAV);
@@ -79,7 +79,7 @@ USoundWave* UVoicevoxBlueprintLibrary::TextToAudioQueryOutput(EVoicevoxSpeakerTy
 {
 	const FVoicevoxAudioQuery AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana);
 
-	if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
 	{
 		return CreateSoundWave(OutputWAV);
 	}
@@ -99,7 +99,7 @@ FVoicevoxAudioQuery UVoicevoxBlueprintLibrary::GetAudioQuery(EVoicevoxSpeakerTyp
  */
 USoundWave* UVoicevoxBlueprintLibrary::AudioQueryOutput(const FVoicevoxAudioQuery AudioQuery, EVoicevoxSpeakerType SpeakerType, bool bEnableInterrogativeUpspeak)
 {
-	if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
 	{
 		return CreateSoundWave(OutputWAV);
 	}

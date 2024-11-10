@@ -156,7 +156,6 @@ void UVoicevoxCoreSubsystem::LoadModel(const int64 SpeakerId) const
 	NativeInstance->LoadModel(SpeakerId);
 }
 
-
 /**
  * @brief VOICEVOX COREモデル読み込み処理完了のデリゲート関数登録
  */
@@ -205,7 +204,30 @@ FVoicevoxAudioQuery UVoicevoxCoreSubsystem::GetAudioQuery(int64 SpeakerId, const
 {
 	return NativeInstance->GetAudioQuery(SpeakerId, Message, bKana);
 }
-	
+
+/**
+ * @brief VOICEVOX COREのtext to speechを実行
+ */
+TArray<uint8> UVoicevoxCoreSubsystem::RunTextToSpeech(const int64 SpeakerId, const FString& Message, const bool bKana, const bool bEnableInterrogativeUpspeak) const
+{
+	return NativeInstance->RunTextToSpeech(SpeakerId, Message, bKana, bEnableInterrogativeUpspeak);
+}
+
+/**
+ * @brief AudioQueryを音声データに変換する。
+ */
+TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const char* AudioQueryJson, const int64 SpeakerId, bool bEnableInterrogativeUpspeak) const
+{
+	return NativeInstance->RunSynthesis(AudioQueryJson, SpeakerId,  bEnableInterrogativeUpspeak);
+}
+
+/**
+ * @brief AudioQueryを音声データに変換する。
+ */
+TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, const int64 SpeakerId, const bool bEnableInterrogativeUpspeak) const
+{
+	return NativeInstance->RunSynthesis(AudioQueryJson, SpeakerId,  bEnableInterrogativeUpspeak);
+}
 
 /**
  * @brief 話者名や話者IDのリストを取得する

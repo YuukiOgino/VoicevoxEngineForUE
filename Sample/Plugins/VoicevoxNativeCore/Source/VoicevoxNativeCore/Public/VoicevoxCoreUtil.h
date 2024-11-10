@@ -227,8 +227,6 @@ class VOICEVOXNATIVECORE_API FVoicevoxCoreUtil
 	 */
 	static FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
 
-public:
-	
 	/**
 	 * @fn
 	 * VOICEVOX COREのtext to speechを実行
@@ -268,6 +266,8 @@ public:
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	static TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
+	
+public:
 	
 	/**
 	 * @fn
