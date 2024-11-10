@@ -8,7 +8,6 @@ public class VoicevoxNativeCore : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		CppStandard = CppStandardVersion.Latest;
-			
 		
 		PublicDependencyModuleNames.AddRange(
 			new string[]
