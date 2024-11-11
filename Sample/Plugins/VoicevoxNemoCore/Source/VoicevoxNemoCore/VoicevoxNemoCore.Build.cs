@@ -20,6 +20,7 @@ public class VoicevoxNemoCore : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
+				"Projects",
 				"CoreUObject",
 				"VoicevoxNativeNemoCore",
 				"VoicevoxUECore",　// 不要になるかも？

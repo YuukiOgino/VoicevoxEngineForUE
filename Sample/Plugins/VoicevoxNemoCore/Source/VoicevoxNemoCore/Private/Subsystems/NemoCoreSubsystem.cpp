@@ -2,7 +2,8 @@
 
 #include "Subsystems/NemoCoreSubsystem.h"
 #include "JsonObjectConverter.h"
-#include "voicevox_core.h"
+#include "voicevox_nemo_core.h"
+#include "Interfaces/IPluginManager.h"
 
 UNemoCoreSubsystem::UNemoCoreSubsystem()
 {
@@ -249,9 +250,30 @@ FString UNemoCoreSubsystem::GetVoicevoxCoreName()
  */
 TArray<FVoicevoxMeta> UNemoCoreSubsystem::GetMetaList()
 {
-	TArray<FVoicevoxMeta> List;
-	FJsonObjectConverter::JsonArrayStringToUStruct(UTF8_TO_TCHAR(voicevox_get_metas_json()), &List, 0, 0);
-	return List;
+	const FString BaseDir = IPluginManager::Get().FindPlugin("VoicevoxNemoCore")->GetBaseDir();
+	const FString DllName = FPaths::Combine(*BaseDir, TEXT("Binaries/ThirdParty/Nemo/Win64/voicevox_nemo_core.dll"));
+	const FString FuncName = "voicevox_get_metas_json"; // 関数名
+	typedef const char*(*DLL_Function)();
+	
+	// DLLを読み込み、ポインタを取得
+	if (const auto DLLPtr = FPlatformProcess::GetDllHandle(*DllName); DLLPtr != nullptr)
+	{
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(DLLPtr, *FuncName));
+		if (!FuncPtr)
+		{
+			const FString Message = TEXT("VOICEVOX voicevox_get_metas_json Function Error");
+			ShowVoicevoxErrorMessage(Message);
+			return TArray<FVoicevoxMeta>();
+		}
+		TArray<FVoicevoxMeta> List;
+		const char* Metas = FuncPtr();
+		FJsonObjectConverter::JsonArrayStringToUStruct(UTF8_TO_TCHAR(Metas), &List, 0, 0);
+		return List;
+	}
+	
+	const FString Message = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+	ShowVoicevoxErrorMessage(Message);
+	return TArray<FVoicevoxMeta>();
 }
 
 /**
