@@ -24,6 +24,9 @@ protected:
 	//! 初期化処理実施済みか
 	bool bIsInit = false;
 
+	//! VOICEVOX COREライブラリハンドル
+	void* CoreLibraryHandle = nullptr;
+	
 	//--------------------------------
 	// Function
 	//--------------------------------
@@ -45,7 +48,7 @@ protected:
 public:
 	
 	VOICEVOXUECORE_API UVoicevoxNativeCoreSubsystem();
-
+	
 	//--------------------------------
 	// VOICEVOX CORE Initialize関連
 	//--------------------------------

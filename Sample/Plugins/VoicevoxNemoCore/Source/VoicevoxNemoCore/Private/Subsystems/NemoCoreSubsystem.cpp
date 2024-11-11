@@ -2,11 +2,44 @@
 
 #include "Subsystems/NemoCoreSubsystem.h"
 #include "JsonObjectConverter.h"
-#include "voicevox_nemo_core.h"
+#include <voicevox_core.h>
 #include "Interfaces/IPluginManager.h"
 
 UNemoCoreSubsystem::UNemoCoreSubsystem()
 {
+}
+
+//--------------------------------
+// override
+//--------------------------------
+	
+/**
+ * @brief Initialize
+ */
+void UNemoCoreSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+
+	const FString BaseDir = IPluginManager::Get().FindPlugin("VoicevoxNemoCore")->GetBaseDir();
+	const FString DllName = FPaths::Combine(*BaseDir, TEXT("Binaries/ThirdParty/Nemo/Win64/voicevox_core.dll"));
+	
+	// DLLを読み込み、ポインタを取得
+	if (CoreLibraryHandle = FPlatformProcess::GetDllHandle(*DllName); CoreLibraryHandle == nullptr)
+	{
+		const FString Message = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+		ShowVoicevoxErrorMessage(Message);
+	}
+}
+
+/**
+ * @brief Deinitialize
+ */
+void UNemoCoreSubsystem::Deinitialize()
+{
+	Super::Deinitialize();
+
+	FPlatformProcess::FreeDllHandle(CoreLibraryHandle);
+	CoreLibraryHandle = nullptr;
 }
 
 /**
@@ -28,25 +61,53 @@ bool UNemoCoreSubsystem::CoreInitialize(const bool bUseGPU, const int CPUNumThre
 		ShowVoicevoxErrorMessage(ErrorMessage);
 		return false;
 	}
-
-	const FString JtalkPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, OPEN_JTALK_DIC_NAME));
-
-	VoicevoxInitializeOptions Option;
-	Option.acceleration_mode = bUseGPU ? VOICEVOX_ACCELERATION_MODE_GPU : VOICEVOX_ACCELERATION_MODE_CPU;
-	Option.cpu_num_threads = CPUNumThreads;
-	Option.load_all_models = bLoadAllModels;
-	Option.open_jtalk_dict_dir = TCHAR_TO_UTF8(*JtalkPath);
-
-	if (const VoicevoxResultCode Result = voicevox_initialize(Option); Result != VOICEVOX_RESULT_OK)
+	
+	const FString FuncName = "voicevox_initialize"; 
+	const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
+	typedef const VoicevoxResultCode(*DLL_Function)(VoicevoxInitializeOptions Option);
+	typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
+	
+	if (CoreLibraryHandle != nullptr)
 	{
-		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
-		const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX Initialize Error:%s"), *LastMessage);
-		ShowVoicevoxErrorMessage(ErrorMessage);
-		return false;
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+		const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+		if (!FuncPtr)
+		{
+			const FString Message = TEXT("VOICEVOX voicevox_initialize Function Error");
+			ShowVoicevoxErrorMessage(Message);
+			return false;
+		}
+
+		const FString JtalkPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, OPEN_JTALK_DIC_NAME));
+
+		VoicevoxInitializeOptions Option;
+		Option.acceleration_mode = bUseGPU ? VOICEVOX_ACCELERATION_MODE_GPU : VOICEVOX_ACCELERATION_MODE_CPU;
+		Option.cpu_num_threads = CPUNumThreads;
+		Option.load_all_models = bLoadAllModels;
+		Option.open_jtalk_dict_dir = TCHAR_TO_UTF8(*JtalkPath);
+
+		if (const VoicevoxResultCode Result = FuncPtr(Option); Result != VOICEVOX_RESULT_OK)
+		{
+			if (!ErrorFuncPtr)
+			{
+				const FString Message = TEXT("VOICEVOX voicevox_error_result_to_message Function Error");
+				ShowVoicevoxErrorMessage(Message);
+				return false;
+			}
+			const FString LastMessage = UTF8_TO_TCHAR(ErrorFuncPtr(Result));
+			const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX Initialize Error:%s"), *LastMessage);
+			ShowVoicevoxErrorMessage(ErrorMessage);
+			return false;
+		}
+
+		bIsInit = true;
+		return true;
 	}
 
-	bIsInit = true;
-	return true;
+	const FString Message = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+	ShowVoicevoxErrorMessage(Message);
+	return false;
+
 }
 
 /**
@@ -54,8 +115,26 @@ bool UNemoCoreSubsystem::CoreInitialize(const bool bUseGPU, const int CPUNumThre
  */
 void UNemoCoreSubsystem::Finalize()
 {
-	voicevox_finalize();
-	bIsInit = false;
+	if (CoreLibraryHandle != nullptr)
+	{
+		const FString FuncName = "voicevox_finalize"; 
+		typedef const void(*DLL_Function)();
+
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+		if (!FuncPtr)
+		{
+			const FString Message = TEXT("VOICEVOX voicevox_finalize Function Error");
+			ShowVoicevoxErrorMessage(Message);
+			return;
+		}
+	
+		FuncPtr();
+		bIsInit = false;
+		return;
+	}
+
+	const FString Message = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+	ShowVoicevoxErrorMessage(Message);
 }
 
 /**
@@ -63,28 +142,52 @@ void UNemoCoreSubsystem::Finalize()
  */
 bool UNemoCoreSubsystem::LoadModel(const int64 SpeakerId)
 {
-	// 重い処理のため、スピーカーモデルがロードされていない場合のみロードを実行する
-	if (!voicevox_is_model_loaded(SpeakerId))
+	if (CoreLibraryHandle != nullptr)
 	{
-		if (const VoicevoxResultCode Result = voicevox_load_model(SpeakerId); Result != VOICEVOX_RESULT_OK)
+		const FString FuncName = "voicevox_load_model"; 
+		const FString CheckFuncName = "voicevox_is_model_loaded"; 
+		const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
+		typedef const VoicevoxResultCode(*DLL_Function)(uint32_t SpeakerId);
+		typedef const bool(*DLL_CheckFunction)(uint32_t SpeakerId);
+		typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
+
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+		const auto CheckFuncPtr = static_cast<DLL_CheckFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *CheckFuncName));
+		const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+		if (!FuncPtr || !CheckFuncPtr)
 		{
-			const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
-			const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX voicevox_load_model Error:%s"), *LastMessage);
-			ShowVoicevoxErrorMessage(ErrorMessage);
+			const FString Message = TEXT("VOICEVOX voicevox_load_model Function Error");
+			ShowVoicevoxErrorMessage(Message);
 			return false;
+		}
+		
+		// 重い処理のため、スピーカーモデルがロードされていない場合のみロードを実行する
+		if (!CheckFuncPtr(SpeakerId))
+		{
+			if (const VoicevoxResultCode Result = FuncPtr(SpeakerId); Result != VOICEVOX_RESULT_OK)
+			{
+				if (!ErrorFuncPtr)
+				{
+					const FString Message = TEXT("VOICEVOX voicevox_error_result_to_message Function Error");
+					ShowVoicevoxErrorMessage(Message);
+					return false;
+				}
+				const FString LastMessage = UTF8_TO_TCHAR(ErrorFuncPtr(Result));
+				const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX voicevox_load_model Error:%s"), *LastMessage);
+				ShowVoicevoxErrorMessage(ErrorMessage);
+				return false;
+			}
+			return true;
 		}
 		return true;
 	}
-	
-	return true;
+	const FString Message = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+	ShowVoicevoxErrorMessage(Message);
+	return false;
 }
 
 /**
- * @fn
- * VOICEVOX COREに該当のスピーカーモデルが存在するか
  * @brief 使用するCOREにスピーカーモデルが存在するか
- * @param SpeakerId 話者番号
- * @return 存在したらtrue、無い場合はfalse
  */
 bool UNemoCoreSubsystem::IsModel(const int64 SpeakerId)
 {
@@ -122,24 +225,56 @@ FVoicevoxAudioQuery UNemoCoreSubsystem::GetAudioQuery(int64 SpeakerId, const FSt
 		// スピーカーモデルがロードされていない場合はロードを実行する
 		if (LoadModel(SpeakerId))
 		{
-			char* Output = nullptr;
-			VoicevoxAudioQueryOptions Options;
-			Options.kana = bKana;
-			if (const VoicevoxResultCode Result = voicevox_audio_query(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &Output);
-				Result != VOICEVOX_RESULT_OK)
+			if (CoreLibraryHandle != nullptr)
 			{
-				const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
-				const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
-				ShowVoicevoxErrorMessage(ErrorMessage);
+				const FString FuncName = "voicevox_audio_query"; 
+				const FString FreeFuncName = "voicevox_audio_query_json_free"; 
+				const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
+				typedef const VoicevoxResultCode(*DLL_Function)(const char *Text, uint32_t Speaker_ID, VoicevoxAudioQueryOptions Options, char **Output_Audio_Query_JSON);
+				typedef const void(*DLL_FreeFunction)(char *Audio_Query_JSON);
+				typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
+				
+				const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+				const auto FreeFuncPtr = static_cast<DLL_FreeFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName));
+				const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+				if (!FuncPtr || !FreeFuncPtr)
+				{
+					const FString ErrorMessage = TEXT("VOICEVOX voicevox_audio_query Function Error");
+					ShowVoicevoxErrorMessage(ErrorMessage);
+					return AudioQuery;
+				}
+
+				char* Output = nullptr;
+				VoicevoxAudioQueryOptions Options;
+				Options.kana = bKana;
+				if (const VoicevoxResultCode Result = FuncPtr(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &Output);
+					Result != VOICEVOX_RESULT_OK)
+				{
+					if (!ErrorFuncPtr)
+					{
+						const FString ErrorMessage = TEXT("VOICEVOX voicevox_error_result_to_message Function Error");
+						ShowVoicevoxErrorMessage(ErrorMessage);
+					}
+					else
+					{
+						const FString ResultMessage = UTF8_TO_TCHAR(ErrorFuncPtr(Result));
+						const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
+						ShowVoicevoxErrorMessage(ErrorMessage);
+					}
+				}
+				else
+				{
+					FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(Output), &AudioQuery, 0, 0);
+					FreeFuncPtr(Output);
+				}
 			}
 			else
 			{
-				FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(Output), &AudioQuery, 0, 0);
-				voicevox_audio_query_json_free(Output);
+				const FString ErrorMessage = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+				ShowVoicevoxErrorMessage(ErrorMessage);
 			}
 		}
 	}
-	
 	return AudioQuery;
 }
 
@@ -154,25 +289,60 @@ TArray<uint8> UNemoCoreSubsystem::RunTextToSpeech(const int64 SpeakerId, const F
 	// スピーカーモデルがロードされていない場合はロードを実行する
 	if (LoadModel(SpeakerId))
 	{
-		uint8* OutputWAV = nullptr;
-		VoicevoxTtsOptions Options;
-		Options.kana = bKana;
-		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
-		uintptr_t OutPutSize = 0;
-		
-		if (const VoicevoxResultCode Result = voicevox_tts(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &OutPutSize, &OutputWAV);
-			Result != VOICEVOX_RESULT_OK)
+		if (CoreLibraryHandle != nullptr)
 		{
-			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
-			const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
-			ShowVoicevoxErrorMessage(ErrorMessage);
+			const FString FuncName = "voicevox_tts"; 
+			const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
+			typedef const VoicevoxResultCode(*DLL_Function)(const char *text,
+								uint32_t speaker_id,
+								VoicevoxTtsOptions options,
+								uintptr_t *output_wav_length,
+								uint8_t **output_wav);
+			typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
+
+			const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+			const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+			if (!FuncPtr)
+			{
+				const FString ErrorMessage = TEXT("VOICEVOX voicevox_tts Function Error");
+				ShowVoicevoxErrorMessage(ErrorMessage);
+				return PCMData;
+			}
+
+			uint8* OutputWAV = nullptr;
+			VoicevoxTtsOptions Options;
+			Options.kana = bKana;
+			Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
+			uintptr_t OutPutSize = 0;
+		
+			if (const VoicevoxResultCode Result = FuncPtr(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &OutPutSize, &OutputWAV);
+				Result != VOICEVOX_RESULT_OK)
+			{
+				if (!ErrorFuncPtr)
+				{
+					const FString ErrorMessage = TEXT("VOICEVOX voicevox_error_result_to_message Function Error");
+					ShowVoicevoxErrorMessage(ErrorMessage);
+				}
+				else
+				{
+					const FString ResultMessage = UTF8_TO_TCHAR(ErrorFuncPtr(Result));
+					const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
+					ShowVoicevoxErrorMessage(ErrorMessage);
+				}
+			}
+			else
+			{
+				PCMData.Init(0, OutPutSize);
+				FMemory::Memcpy(PCMData.GetData(), OutputWAV, OutPutSize);
+				WavFree(OutputWAV);
+			}
 		}
 		else
 		{
-			PCMData.Init(0, OutPutSize);
-			FMemory::Memcpy(PCMData.GetData(), OutputWAV, OutPutSize);
-			WavFree(OutputWAV);
+			const FString ErrorMessage = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+			ShowVoicevoxErrorMessage(ErrorMessage);
 		}
+
 	}
 
 	return PCMData;
@@ -189,22 +359,56 @@ TArray<uint8> UNemoCoreSubsystem::RunSynthesis(const char* AudioQueryJson, const
 	// スピーカーモデルがロードされていない場合はロードを実行する
 	if (LoadModel(SpeakerId))
 	{
-		uint8* OutputWAV = nullptr;
-		VoicevoxSynthesisOptions Options;
-		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
-		uintptr_t OutPutSize = 0;
-		if (const VoicevoxResultCode Result = voicevox_synthesis(AudioQueryJson, SpeakerId, Options, &OutPutSize, &OutputWAV);
-			Result != VOICEVOX_RESULT_OK)
+		if (CoreLibraryHandle != nullptr)
 		{
-			const FString ResultMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
-			const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
-			ShowVoicevoxErrorMessage(ErrorMessage);
+			const FString FuncName = "voicevox_synthesis"; 
+			const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
+			typedef const VoicevoxResultCode(*DLL_Function)(const char *audio_query_json,
+									  uint32_t speaker_id,
+									  VoicevoxSynthesisOptions options,
+									  uintptr_t *output_wav_length,
+									  uint8_t **output_wav);
+			typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
+
+			const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+			const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+			if (!FuncPtr)
+			{
+				const FString ErrorMessage = TEXT("VOICEVOX voicevox_synthesis Function Error");
+				ShowVoicevoxErrorMessage(ErrorMessage);
+				return PCMData;
+			}
+
+			uint8* OutputWAV = nullptr;
+			VoicevoxSynthesisOptions Options;
+			Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
+			uintptr_t OutPutSize = 0;
+			if (const VoicevoxResultCode Result = FuncPtr(AudioQueryJson, SpeakerId, Options, &OutPutSize, &OutputWAV);
+				Result != VOICEVOX_RESULT_OK)
+			{
+				if (!ErrorFuncPtr)
+				{
+					const FString ErrorMessage = TEXT("VOICEVOX voicevox_error_result_to_message Function Error");
+					ShowVoicevoxErrorMessage(ErrorMessage);
+				}
+				else
+				{
+					const FString ResultMessage = UTF8_TO_TCHAR(ErrorFuncPtr(Result));
+					const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX TTS Error:%s"), *ResultMessage);
+					ShowVoicevoxErrorMessage(ErrorMessage);
+				}
+			}
+			else
+			{
+				PCMData.Init(0, OutPutSize);
+				FMemory::Memcpy(PCMData.GetData(), OutputWAV, OutPutSize);
+				WavFree(OutputWAV);
+			}
 		}
 		else
 		{
-			PCMData.Init(0, OutPutSize);
-			FMemory::Memcpy(PCMData.GetData(), OutputWAV, OutPutSize);
-			WavFree(OutputWAV);
+			const FString ErrorMessage = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+			ShowVoicevoxErrorMessage(ErrorMessage);
 		}
 	}
 
@@ -231,7 +435,20 @@ TArray<uint8> UNemoCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQ
  */
 void UNemoCoreSubsystem::WavFree(uint8* Wav)
 {
-	voicevox_wav_free(Wav);
+	const FString FuncName = "voicevox_wav_free"; 
+	typedef const void(*DLL_Function)(uint8_t* WAV);
+	if (CoreLibraryHandle != nullptr)
+	{
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+		if (!FuncPtr)
+		{
+			const FString Message = TEXT("VOICEVOX voicevox_wav_free Function Error");
+			ShowVoicevoxErrorMessage(Message);
+			return;
+		}
+		
+		FuncPtr(Wav);
+	}
 }
 
 /**
@@ -250,15 +467,13 @@ FString UNemoCoreSubsystem::GetVoicevoxCoreName()
  */
 TArray<FVoicevoxMeta> UNemoCoreSubsystem::GetMetaList()
 {
-	const FString BaseDir = IPluginManager::Get().FindPlugin("VoicevoxNemoCore")->GetBaseDir();
-	const FString DllName = FPaths::Combine(*BaseDir, TEXT("Binaries/ThirdParty/Nemo/Win64/voicevox_nemo_core.dll"));
-	const FString FuncName = "voicevox_get_metas_json"; // 関数名
+	const FString FuncName = "voicevox_get_metas_json"; 
 	typedef const char*(*DLL_Function)();
 	
 	// DLLを読み込み、ポインタを取得
-	if (const auto DLLPtr = FPlatformProcess::GetDllHandle(*DllName); DLLPtr != nullptr)
+	if (CoreLibraryHandle != nullptr)
 	{
-		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(DLLPtr, *FuncName));
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 		if (!FuncPtr)
 		{
 			const FString Message = TEXT("VOICEVOX voicevox_get_metas_json Function Error");
@@ -285,7 +500,27 @@ FVoicevoxSupportedDevices UNemoCoreSubsystem::GetSupportedDevices()
 	FVoicevoxSupportedDevices Devices = {};
 	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
 	if (!bIsInit) return Devices;
-	FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(voicevox_get_supported_devices_json()), &Devices, 0, 0);
+
+	const FString FuncName = "voicevox_get_supported_devices_json"; 
+	typedef const char*(*DLL_Function)();
+	
+	// DLLを読み込み、ポインタを取得
+	if (CoreLibraryHandle != nullptr)
+	{
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+		if (!FuncPtr)
+		{
+			const FString Message = TEXT("VOICEVOX voicevox_get_supported_devices_json Function Error");
+			ShowVoicevoxErrorMessage(Message);
+			return Devices;
+		}
+		
+		FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(FuncPtr()), &Devices, 0, 0);
+		return Devices;
+	}
+	
+	const FString Message = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+	ShowVoicevoxErrorMessage(Message);
 	return Devices;
 }
 
@@ -295,7 +530,25 @@ FVoicevoxSupportedDevices UNemoCoreSubsystem::GetSupportedDevices()
  */
 FString UNemoCoreSubsystem::GetVoicevoxVersion()
 {
-	return UTF8_TO_TCHAR(voicevox_get_version());
+	const FString FuncName = "voicevox_get_version"; 
+	typedef const char*(*DLL_Function)();
+	
+	// DLLを読み込み、ポインタを取得
+	if (CoreLibraryHandle != nullptr)
+	{
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+		if (!FuncPtr)
+		{
+			const FString Message = TEXT("VOICEVOX voicevox_get_version Function Error");
+			ShowVoicevoxErrorMessage(Message);
+			return FString();
+		}
+		return UTF8_TO_TCHAR(FuncPtr());
+	}
+
+	const FString Message = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+	ShowVoicevoxErrorMessage(Message);
+	return FString();
 }
 
 /**
@@ -304,7 +557,25 @@ FString UNemoCoreSubsystem::GetVoicevoxVersion()
  */
 bool UNemoCoreSubsystem::IsGpuMode()
 {
-	return voicevox_is_gpu_mode();
+	const FString FuncName = "voicevox_is_gpu_mode"; 
+	typedef bool(*DLL_Function)();
+	
+	// DLLを読み込み、ポインタを取得
+	if (CoreLibraryHandle != nullptr)
+	{
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+		if (!FuncPtr)
+		{
+			const FString Message = TEXT("VOICEVOX voicevox_is_gpu_mode Function Error");
+			ShowVoicevoxErrorMessage(Message);
+			return false;
+		}
+		return FuncPtr();
+	}
+	
+	const FString Message = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+	ShowVoicevoxErrorMessage(Message);
+	return false;
 }
 
 /** 
@@ -313,20 +584,60 @@ bool UNemoCoreSubsystem::IsGpuMode()
 TArray<float> UNemoCoreSubsystem::GetPhonemeLength(const int64 Length, TArray<int64> PhonemeList, const int64 SpeakerID)
 {
 	TArray<float> Output;
+	Output.Empty();
 	uintptr_t OutPutSize = 0;
 	float* OutputPredictDurationData = nullptr;
-	if (const VoicevoxResultCode Result = voicevox_predict_duration(Length, PhonemeList.GetData(), SpeakerID, &OutPutSize, &OutputPredictDurationData); Result != VOICEVOX_RESULT_OK)
+	
+	if (CoreLibraryHandle != nullptr)
 	{
-		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
-		const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_predict_duration Error:%s"), *LastMessage);
-		ShowVoicevoxErrorMessage(Message);
+		const FString FuncName = "voicevox_predict_duration"; 
+		const FString FreeFuncName = "voicevox_predict_duration_data_free"; 
+		const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
+		typedef const VoicevoxResultCode(*DLL_Function)(uintptr_t length,
+											 int64_t *phoneme_vector,
+											 uint32_t speaker_id,
+											 uintptr_t *output_predict_duration_data_length,
+											 float **output_predict_duration_data);
+		typedef const void(*DLL_FreeFunction)(float *predict_duration_data);
+		typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
+
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+		const auto FreeFuncPtr = static_cast<DLL_FreeFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName));
+		const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+		if (!FuncPtr || !FreeFuncPtr)
+		{
+			const FString ErrorMessage = TEXT("VOICEVOX voicevox_predict_duration Function Error");
+			ShowVoicevoxErrorMessage(ErrorMessage);
+			return Output;
+		}
+		
+		if (const VoicevoxResultCode Result = FuncPtr(Length, PhonemeList.GetData(), SpeakerID, &OutPutSize, &OutputPredictDurationData); Result != VOICEVOX_RESULT_OK)
+		{
+			if (!ErrorFuncPtr)
+			{
+				const FString ErrorMessage = TEXT("VOICEVOX voicevox_error_result_to_message Function Error");
+				ShowVoicevoxErrorMessage(ErrorMessage);
+			}
+			else
+			{
+				const FString LastMessage = UTF8_TO_TCHAR(ErrorFuncPtr(Result));
+				const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_predict_duration Error:%s"), *LastMessage);
+				ShowVoicevoxErrorMessage(Message);
+			}
+		}
+		else
+		{
+			Output.Init(0, OutPutSize);
+			FMemory::Memcpy(Output.GetData(), OutputPredictDurationData, OutPutSize);
+			FreeFuncPtr(OutputPredictDurationData);
+		}
 	}
 	else
 	{
-		Output.Init(0, OutPutSize);
-		FMemory::Memcpy(Output.GetData(), OutputPredictDurationData, OutPutSize);
-		voicevox_predict_duration_data_free(OutputPredictDurationData);
+		const FString Message = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+		ShowVoicevoxErrorMessage(Message);
 	}
+
 	return Output;
 }
 
@@ -338,22 +649,66 @@ TArray<float> UNemoCoreSubsystem::FindPitchEachMora(const int64 Length, TArray<i
                                                    TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
                                                    const int64 SpeakerID)
 {
+
+	
 	TArray<float> Output;
 	uintptr_t OutPutSize = 0;
 	float* OutputPredictIntonationData = nullptr;
-	if (const VoicevoxResultCode Result = voicevox_predict_intonation(Length, VowelPhonemeList.GetData(), ConsonantPhonemeList.GetData(),
-	                                            StartAccentList.GetData(), EndAccentList.GetData(), StartAccentPhraseList.GetData(),
-	                                            EndAccentPhraseList.GetData(), SpeakerID, &OutPutSize, &OutputPredictIntonationData); Result != VOICEVOX_RESULT_OK)
+	if (CoreLibraryHandle != nullptr)
 	{
-		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
-		const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_predict_intonation Error:%s"), *LastMessage);
-		ShowVoicevoxErrorMessage(Message);
+		const FString FuncName = "voicevox_predict_intonation"; 
+		const FString FreeFuncName = "voicevox_predict_intonation_data_free"; 
+		const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
+		typedef const VoicevoxResultCode(*DLL_Function)(uintptr_t length,
+											   int64_t *vowel_phoneme_vector,
+											   int64_t *consonant_phoneme_vector,
+											   int64_t *start_accent_vector,
+											   int64_t *end_accent_vector,
+											   int64_t *start_accent_phrase_vector,
+											   int64_t *end_accent_phrase_vector,
+											   uint32_t speaker_id,
+											   uintptr_t *output_predict_intonation_data_length,
+											   float **output_predict_intonation_data);
+		typedef const void(*DLL_FreeFunction)(float *predict_duration_data);
+		typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
+
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+		const auto FreeFuncPtr = static_cast<DLL_FreeFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName));
+		const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+		if (!FuncPtr || !FreeFuncPtr)
+		{
+			const FString ErrorMessage = TEXT("VOICEVOX voicevox_predict_intonation Function Error");
+			ShowVoicevoxErrorMessage(ErrorMessage);
+			return Output;
+		}
+
+		if (const VoicevoxResultCode Result = FuncPtr(Length, VowelPhonemeList.GetData(), ConsonantPhonemeList.GetData(),
+											StartAccentList.GetData(), EndAccentList.GetData(), StartAccentPhraseList.GetData(),
+											EndAccentPhraseList.GetData(), SpeakerID, &OutPutSize, &OutputPredictIntonationData); Result != VOICEVOX_RESULT_OK)
+		{
+			if (!ErrorFuncPtr)
+			{
+				const FString ErrorMessage = TEXT("VOICEVOX voicevox_error_result_to_message Function Error");
+				ShowVoicevoxErrorMessage(ErrorMessage);
+			}
+			else
+			{
+				const FString LastMessage = UTF8_TO_TCHAR(ErrorFuncPtr(Result));
+				const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_predict_intonation Error:%s"), *LastMessage);
+				ShowVoicevoxErrorMessage(Message);
+			}
+		}
+		else
+		{
+			Output.Init(0, OutPutSize);
+			FMemory::Memcpy(Output.GetData(), OutputPredictIntonationData, OutPutSize);
+			FreeFuncPtr(OutputPredictIntonationData);
+		}
 	}
 	else
 	{
-		Output.Init(0, OutPutSize);
-		FMemory::Memcpy(Output.GetData(), OutputPredictIntonationData, OutPutSize);
-		voicevox_predict_intonation_data_free(OutputPredictIntonationData);
+		const FString Message = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+		ShowVoicevoxErrorMessage(Message);
 	}
 	
 	return Output;
@@ -366,18 +721,56 @@ TArray<float> UNemoCoreSubsystem::DecodeForward(const int64 Length, const int64 
 {
 	TArray<float> Output;
 	uintptr_t OutPutSize = 0;
-	float* OutputDecodeData = nullptr; 
-	if (const VoicevoxResultCode Result = voicevox_decode(Length, PhonemeSize, F0.GetData(), Phoneme.GetData(), SpeakerID, &OutPutSize, &OutputDecodeData); Result != VOICEVOX_RESULT_OK)
+	float* OutputDecodeData = nullptr;
+	if (CoreLibraryHandle != nullptr)
 	{
-		const FString LastMessage = UTF8_TO_TCHAR(voicevox_error_result_to_message(Result));
-		const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_decode Error:%s"), *LastMessage);
-		ShowVoicevoxErrorMessage(Message);
+		const FString FuncName = "voicevox_decode"; 
+		const FString FreeFuncName = "voicevox_decode_data_free"; 
+		const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
+		typedef const VoicevoxResultCode(*DLL_Function)(uintptr_t length,
+								   uintptr_t phoneme_size,
+								   float *f0,
+								   float *phoneme_vector,
+								   uint32_t speaker_id,
+								   uintptr_t *output_decode_data_length,
+								   float **output_decode_data);
+		typedef const void(*DLL_FreeFunction)(float* vdecode_data);
+		typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
+
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+		const auto FreeFuncPtr = static_cast<DLL_FreeFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName));
+		const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+		if (!FuncPtr || !FreeFuncPtr)
+		{
+			const FString ErrorMessage = TEXT("VOICEVOX voicevox_decode Function Error");
+			ShowVoicevoxErrorMessage(ErrorMessage);
+			return Output;
+		}
+
+		if (const VoicevoxResultCode Result = FuncPtr(Length, PhonemeSize, F0.GetData(), Phoneme.GetData(), SpeakerID, &OutPutSize, &OutputDecodeData); Result != VOICEVOX_RESULT_OK)
+		{
+			if (!ErrorFuncPtr)
+			{
+				const FString ErrorMessage = TEXT("VOICEVOX voicevox_error_result_to_message Function Error");
+				ShowVoicevoxErrorMessage(ErrorMessage);
+			}
+			else
+			{
+				const FString LastMessage = UTF8_TO_TCHAR(ErrorFuncPtr(Result));
+				const FString Message = FString::Printf(TEXT("VOICEVOX voicevox_decode Error:%s"), *LastMessage);
+				ShowVoicevoxErrorMessage(Message);
+			}
+		}
+		else
+		{
+			Output.Init(0, OutPutSize);
+			FMemory::Memcpy(Output.GetData(), OutputDecodeData, OutPutSize);
+			FreeFuncPtr(OutputDecodeData);
+		}
 	}
 	else
 	{
-		Output.Init(0, OutPutSize);
-		FMemory::Memcpy(Output.GetData(), OutputDecodeData, OutPutSize);
-		voicevox_decode_data_free(OutputDecodeData);
+		
 	}
 	
 	return Output;

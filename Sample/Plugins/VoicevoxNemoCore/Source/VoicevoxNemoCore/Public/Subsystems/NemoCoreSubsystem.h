@@ -25,6 +25,20 @@ public:
 	
 	VOICEVOXNEMOCORE_API UNemoCoreSubsystem();
 
+	//--------------------------------
+	// override
+	//--------------------------------
+	
+	/**
+	 * @brief Initialize
+	 */
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+
+	/**
+	 * @brief Deinitialize
+	 */
+	virtual void Deinitialize() override;
+	
 	/**
 	 * @fn
 	 * VOICEVOX CORE 初期化

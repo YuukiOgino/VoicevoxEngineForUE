@@ -111,7 +111,7 @@ public class VoicevoxNativeNemoCore : ModuleRules
 	/// <exception cref="DirectoryNotFoundException"></exception>
 	private void AddRuntimeDependenciesDirectory(string SourceDirName, string Platform, string BinPlatform,  bool CopySubDirs)
 	{
-		var Info = new DirectoryInfo(Path.Combine(ModuleDirectory, Platform, "Nemo", SourceDirName));
+		var Info = new DirectoryInfo(Path.Combine(ModuleDirectory, Platform, SourceDirName));
 		if (!Info.Exists)
 		{
 			throw new DirectoryNotFoundException($"The specified directory cannot be found: {SourceDirName}");
