@@ -775,7 +775,8 @@ TArray<float> UNemoCoreSubsystem::DecodeForward(const int64 Length, const int64 
 	}
 	else
 	{
-		
+		const FString Message = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
+		ShowVoicevoxErrorMessage(Message);
 	}
 	
 	return Output;

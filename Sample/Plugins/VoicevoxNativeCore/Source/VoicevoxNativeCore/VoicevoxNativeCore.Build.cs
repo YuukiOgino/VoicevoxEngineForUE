@@ -20,9 +20,10 @@ public class VoicevoxNativeCore : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
+				"Projects",
 				"CoreUObject",
 				"VoicevoxCore",
-				"VoicevoxUECore",　// 不要になるかも？
+				"VoicevoxUECore",
 				"Json",
 				"JsonUtilities"
 			});

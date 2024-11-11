@@ -23,7 +23,7 @@ public class VoicevoxNemoCore : ModuleRules
 				"Projects",
 				"CoreUObject",
 				"VoicevoxNativeNemoCore",
-				"VoicevoxUECore",　// 不要になるかも？
+				"VoicevoxUECore",　
 				"Json",
 				"JsonUtilities"
 			});

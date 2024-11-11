@@ -28,6 +28,7 @@ public class VoicevoxCore : ModuleRules
 		{
 			const string platformName = "x64";
 			const string binPlatformName = "Win64";
+			const string thirdPartyName = "VoicevoxCore";
 			
 			// core.hはEngine側も同名のヘッダーファイルがあるため、意図的にx64フォルダまでをIncludePathに含める
 			PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, platformName)));
@@ -40,14 +41,14 @@ public class VoicevoxCore : ModuleRules
 			PublicDelayLoadDLLs.Add("onnxruntime.dll");
 
 			// Ensure that the DLL is staged along with the executable
-			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/voicevox_core.dll", Path.Combine(ModuleDirectory, platformName, "voicevox_core.dll"));
-			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/onnxruntime.dll", Path.Combine(ModuleDirectory, platformName, "onnxruntime.dll"));
+			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/Voicevox_core.dll", Path.Combine(ModuleDirectory, platformName, "voicevox_core.dll"));
+			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/onnxruntime.dll", Path.Combine(ModuleDirectory, platformName, "onnxruntime.dll"));
 			
 			// onnxruntimeのCUDE関連DLLが存在する場合は必要なDLL一式すべてコピーする
-			var cudaPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_cuda.dll");
-			if (File.Exists(cudaPath))
+			var CudaPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_cuda.dll");
+			if (File.Exists(CudaPath))
 			{
-				var cudaDllList = new[]
+				var CudaDllList = new[]
 				{
 					"onnxruntime_providers_cuda.dll",
 					"onnxruntime_providers_shared.dll",
@@ -62,34 +63,33 @@ public class VoicevoxCore : ModuleRules
 					"cufft64_10.dll",
 					"curand64_10.dll"
 				};
-				foreach (var variable in cudaDllList)
+				foreach (var Variable in CudaDllList)
 				{
-					var path = Path.Combine(ModuleDirectory, platformName, variable);
-					if (File.Exists(path))
-					{
-						PublicDelayLoadDLLs.Add(variable);
-						RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/{variable}", path);
-					}
+					var CudaLibPath = Path.Combine(ModuleDirectory, platformName, Variable);
+					if (!File.Exists(CudaLibPath)) continue;
+					PublicDelayLoadDLLs.Add(Variable);
+					RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/{Variable}", CudaLibPath);
 				}
 			}
 			
 			// DirectML.dllが存在する場合はコピーする
-			var directMlPath = Path.Combine(ModuleDirectory, platformName, "DirectML.dll");
-			if (File.Exists(directMlPath))
+			var DirectMlPath = Path.Combine(ModuleDirectory, platformName, "DirectML.dll");
+			if (File.Exists(DirectMlPath))
 			{
 				PublicDelayLoadDLLs.Add("DirectML.dll");
-				RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/DirectML.dll", directMlPath);
+				RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/DirectML.dll", DirectMlPath);
 			}
 			
 			// Open JTalkライブラリフォルダもコピーする
 			AddRuntimeDependenciesDirectory(OpenJtalkDicName, platformName, binPlatformName, true);
 			// modelフォルダもコピーする
-			AddRuntimeDependenciesDirectory("model", platformName, binPlatformName, true);
+			AddRuntimeDependenciesThirdPartyDirectory("model", platformName, binPlatformName, true);
         }
 		else if (Target.Platform == UnrealTargetPlatform.Mac)
 		{
 			const string platformName = "osx";
 			const string binPlatformName = "Mac";
+			const string thirdPartyName = "VoicevoxCoreNemo";
 			
 			// core.hはEngine側も同名のヘッダーファイルがあるため、意図的にx64フォルダまでをIncludePathに含める
 			PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, platformName)));
@@ -104,7 +104,7 @@ public class VoicevoxCore : ModuleRules
 			// Open JTalkライブラリフォルダもコピーする
 			AddRuntimeDependenciesDirectory(OpenJtalkDicName, platformName, binPlatformName, true);
 			// modelフォルダもコピーする
-			AddRuntimeDependenciesDirectory("model", platformName, binPlatformName, true);
+			AddRuntimeDependenciesThirdPartyDirectory("model", platformName, binPlatformName, true);
 		}
 		
 		PublicDefinitions.Add($"OPEN_JTALK_DIC_NAME=\"{OpenJtalkDicName}\"");
@@ -132,6 +132,39 @@ public class VoicevoxCore : ModuleRules
 		foreach (var F in Files)
 		{
 			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{BinPlatform}/{SourceDirName}/{F.Name}", Path.Combine(ModuleDirectory, Platform, SourceDirName, F.Name));
+		}
+		
+		if (!CopySubDirs) return;
+		
+		foreach (var SubDir in Infos)
+		{
+			var TempPath = Path.Combine(SourceDirName, SubDir.Name);
+			AddRuntimeDependenciesDirectory(TempPath, Platform, BinPlatform, true);
+		}
+	}
+	
+	/// <summary>
+	/// 指定したディレクトリをRuntimeDependenciesに登録
+	/// </summary>
+	/// <param name="SourceDirName">コピー元のディレクトリ名</param>
+	/// <param name="Platform">プラグイン側のプラットフォームフォルダ名</param>
+	/// <param name="BinPlatform">出力バイナリのプラットフォームフォルダ名</param>
+	/// <param name="CopySubDirs">サブディレクトリもコピーを行うか</param>
+	/// <exception cref="DirectoryNotFoundException"></exception>
+	private void AddRuntimeDependenciesThirdPartyDirectory(string SourceDirName, string Platform, string BinPlatform,  bool CopySubDirs)
+	{
+		var Info = new DirectoryInfo(Path.Combine(ModuleDirectory, Platform, SourceDirName));
+		if (!Info.Exists)
+		{
+			throw new DirectoryNotFoundException($"The specified directory cannot be found: {SourceDirName}");
+		}
+		
+		var Infos = Info.GetDirectories();
+		var Files = Info.GetFiles();
+		
+		foreach (var F in Files)
+		{
+			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/VoicevoxCore/{BinPlatform}/{SourceDirName}/{F.Name}", Path.Combine(ModuleDirectory, Platform, SourceDirName, F.Name));
 		}
 		
 		if (!CopySubDirs) return;
