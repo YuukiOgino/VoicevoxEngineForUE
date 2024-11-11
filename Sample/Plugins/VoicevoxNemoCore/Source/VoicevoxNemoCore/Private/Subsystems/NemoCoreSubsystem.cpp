@@ -21,7 +21,12 @@ void UNemoCoreSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	const FString BaseDir = IPluginManager::Get().FindPlugin("VoicevoxNemoCore")->GetBaseDir();
-	const FString DllName = FPaths::Combine(*BaseDir, TEXT("Binaries/ThirdParty/Nemo/Win64/voicevox_core.dll"));
+	FString DllName;
+#if PLATFORM_WINDOWS
+	DllName = FPaths::Combine(*BaseDir, TEXT("Binaries/ThirdParty/VoicevoxCoreNemo/Win64/voicevox_core.dll"));
+#elif PLATFORM_MAC
+	DllName = FPaths::Combine(*BaseDir, TEXT("Binaries/ThirdParty/VoicevoxCoreNemo/Mac/libvoicevox_core.dylib"));
+#endif 
 	
 	// DLLを読み込み、ポインタを取得
 	if (CoreLibraryHandle = FPlatformProcess::GetDllHandle(*DllName); CoreLibraryHandle == nullptr)
