@@ -21,21 +21,21 @@ public class VoicevoxNativeNemoCore : ModuleRules
 			const string binPlatformName = "Win64";
 			
 			// core.hはEngine側も同名のヘッダーファイルがあるため、意図的にx64フォルダまでをIncludePathに含める
-			PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, platformName, "Nemo")));
+			PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, platformName)));
 			
 			// Add the import library
-			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "Nemo", "voicevox_nemo_core.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "voicevox_core.lib"));
 			
 			// Delay-load the DLL, so we can load it from the right place first
-			PublicDelayLoadDLLs.Add("voicevox_nemo_core.dll");
+			PublicDelayLoadDLLs.Add("voicevox_core.dll");
 			PublicDelayLoadDLLs.Add("onnxruntime.dll");
 
 			// Ensure that the DLL is staged along with the executable
-			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/Nemo/{binPlatformName}/voicevox_nemo_core.dll", Path.Combine(ModuleDirectory, platformName, "Nemo", "voicevox_nemo_core.dll"));
-			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/Nemo/{binPlatformName}/onnxruntime.dll", Path.Combine(ModuleDirectory, platformName,  "Nemo", "onnxruntime.dll"));
+			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/Nemo/{binPlatformName}/voicevox_core.dll", Path.Combine(ModuleDirectory, platformName, "voicevox_core.dll"));
+			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/Nemo/{binPlatformName}/onnxruntime.dll", Path.Combine(ModuleDirectory, platformName, "onnxruntime.dll"));
 			
 			// onnxruntimeのCUDE関連DLLが存在する場合は必要なDLL一式すべてコピーする
-			var cudaPath = Path.Combine(ModuleDirectory, platformName,  "Nemo", "onnxruntime_providers_cuda.dll");
+			var cudaPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_cuda.dll");
 			if (File.Exists(cudaPath))
 			{
 				var cudaDllList = new[]
@@ -59,17 +59,17 @@ public class VoicevoxNativeNemoCore : ModuleRules
 					if (File.Exists(path))
 					{
 						PublicDelayLoadDLLs.Add(variable);
-						RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/Nemo/{binPlatformName}/Nemo/{variable}", path);
+						RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/Nemo/{binPlatformName}/{variable}", path);
 					}
 				}
 			}
 			
 			// DirectML.dllが存在する場合はコピーする
-			var directMlPath = Path.Combine(ModuleDirectory, platformName,  "Nemo",  "DirectML.dll");
+			var directMlPath = Path.Combine(ModuleDirectory, platformName, "DirectML.dll");
 			if (File.Exists(directMlPath))
 			{
 				PublicDelayLoadDLLs.Add("DirectML.dll");
-				RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/Nemo/{binPlatformName}/Nemo/DirectML.dll", directMlPath);
+				RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/Nemo/{binPlatformName}/DirectML.dll", directMlPath);
 			}
 			
 			// Open JTalkライブラリフォルダもコピーする
@@ -122,7 +122,7 @@ public class VoicevoxNativeNemoCore : ModuleRules
 		
 		foreach (var F in Files)
 		{
-			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/Nemo/{BinPlatform}/{SourceDirName}/{F.Name}", Path.Combine(ModuleDirectory, Platform, "Nemo", SourceDirName, F.Name));
+			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/Nemo/{BinPlatform}/{SourceDirName}/{F.Name}", Path.Combine(ModuleDirectory, Platform, SourceDirName, F.Name));
 		}
 		
 		if (!CopySubDirs) return;
