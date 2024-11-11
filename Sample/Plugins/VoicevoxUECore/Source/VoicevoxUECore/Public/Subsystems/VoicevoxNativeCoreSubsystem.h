@@ -46,8 +46,15 @@ protected:
 	virtual void WavFree(uint8* Wav) {}
 	
 public:
-	
-	VOICEVOXUECORE_API UVoicevoxNativeCoreSubsystem();
+
+	//--------------------------------
+	// コンストラクタ
+	//--------------------------------
+
+	/**
+	 * @brief コンストラクタ
+	 */
+	UVoicevoxNativeCoreSubsystem() = default;
 	
 	//--------------------------------
 	// VOICEVOX CORE Initialize関連

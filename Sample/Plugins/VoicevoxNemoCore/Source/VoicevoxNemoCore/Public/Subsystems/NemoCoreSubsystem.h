@@ -14,6 +14,11 @@ class UNemoCoreSubsystem final : public UVoicevoxNativeCoreSubsystem
 {
 	GENERATED_BODY()
 protected:
+	
+	//--------------------------------
+	// Function
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_ttsで生成した音声データを開放
@@ -22,8 +27,15 @@ protected:
 	 */
 	virtual void WavFree(uint8* Wav) override;
 public:
-	
-	VOICEVOXNEMOCORE_API UNemoCoreSubsystem();
+
+	//--------------------------------
+	// コンストラクタ
+	//--------------------------------
+
+	/**
+	 * @brief コンストラクタ
+	 */
+	UNemoCoreSubsystem() = default;
 
 	//--------------------------------
 	// override

@@ -4,10 +4,6 @@
 
 DEFINE_LOG_CATEGORY(LogVoicevoxNativeCore);
 
-UVoicevoxNativeCoreSubsystem::UVoicevoxNativeCoreSubsystem()
-{
-}
-
 /**
  * @brief VOICEVOXから受信したエラーメッセージを表示
  * @param[in] MessageFormat : エラーメッセージのフォーマット

@@ -2,12 +2,8 @@
 
 #include "Subsystems/CoreSubsystem.h"
 #include "JsonObjectConverter.h"
-#include "voicevox_core.h"
+#include <voicevox_core.h>
 #include "Interfaces/IPluginManager.h"
-
-UCoreSubsystem::UCoreSubsystem()
-{
-}
 
 //--------------------------------
 // override
@@ -211,13 +207,7 @@ bool UCoreSubsystem::IsModel(const int64 SpeakerId)
 }
 
 /**
- * @fn
- * VOICEVOX COREのvoicevox_audio_queryを取得
  * @brief AudioQuery を取得する。
- * @param[in] SpeakerId 話者番号
- * @param[in] Message 音声データに変換するtextデータ
- * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
- * @return AudioQueryをjsonでフォーマット後、構造体へ変換したもの。
  * @details
  * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
  */
@@ -433,10 +423,7 @@ TArray<uint8> UCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQuery
 }
 
 /**
- * @fn
- * VOICEVOX COREのvoicevox_ttsで生成した音声データを開放
  * @brief voicevox_tts等で生成した音声データを開放する
- * @param Wav 開放する音声データのポインタ
  */
 void UCoreSubsystem::WavFree(uint8* Wav)
 {
@@ -465,10 +452,7 @@ FString UCoreSubsystem::GetVoicevoxCoreName()
 }
 
 /**
- * @fn
- * メタ情報を取得する
  * @brief 話者名や話者IDのリストを取得する
- * @return メタ情報が格納されたjson形式の構造体
  */
 TArray<FVoicevoxMeta> UCoreSubsystem::GetMetaList()
 {
@@ -498,7 +482,6 @@ TArray<FVoicevoxMeta> UCoreSubsystem::GetMetaList()
 
 /**
  * @brief サポートデバイス情報を取得する
- * @return サポートデバイス情報の構造体
  */
 FVoicevoxSupportedDevices UCoreSubsystem::GetSupportedDevices()
 {
@@ -531,7 +514,6 @@ FVoicevoxSupportedDevices UCoreSubsystem::GetSupportedDevices()
 
 /**
  * @brief VOICEVOX COREのバージョンを取得する
- * @return SemVerでフォーマットされたバージョン
  */
 FString UCoreSubsystem::GetVoicevoxVersion()
 {
@@ -558,7 +540,6 @@ FString UCoreSubsystem::GetVoicevoxVersion()
 
 /**
  * @brief ハードウェアアクセラレーションがGPUモードか判定する
- * @return GPUモードならtrue、そうでないならfalse
  */
 bool UCoreSubsystem::IsGpuMode()
 {

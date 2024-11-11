@@ -5,10 +5,6 @@
 #include <voicevox_core.h>
 #include "Interfaces/IPluginManager.h"
 
-UNemoCoreSubsystem::UNemoCoreSubsystem()
-{
-}
-
 //--------------------------------
 // override
 //--------------------------------
@@ -211,13 +207,7 @@ bool UNemoCoreSubsystem::IsModel(const int64 SpeakerId)
 }
 
 /**
- * @fn
- * VOICEVOX COREのvoicevox_audio_queryを取得
  * @brief AudioQuery を取得する。
- * @param[in] SpeakerId 話者番号
- * @param[in] Message 音声データに変換するtextデータ
- * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
- * @return AudioQueryをjsonでフォーマット後、構造体へ変換したもの。
  * @details
  * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
  */
@@ -433,10 +423,7 @@ TArray<uint8> UNemoCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQ
 }
 
 /**
- * @fn
- * VOICEVOX COREのvoicevox_ttsで生成した音声データを開放
  * @brief voicevox_tts等で生成した音声データを開放する
- * @param Wav 開放する音声データのポインタ
  */
 void UNemoCoreSubsystem::WavFree(uint8* Wav)
 {
@@ -465,10 +452,7 @@ FString UNemoCoreSubsystem::GetVoicevoxCoreName()
 }
 
 /**
- * @fn
- * メタ情報を取得する
  * @brief 話者名や話者IDのリストを取得する
- * @return メタ情報が格納されたjson形式の構造体
  */
 TArray<FVoicevoxMeta> UNemoCoreSubsystem::GetMetaList()
 {
@@ -498,7 +482,6 @@ TArray<FVoicevoxMeta> UNemoCoreSubsystem::GetMetaList()
 
 /**
  * @brief サポートデバイス情報を取得する
- * @return サポートデバイス情報の構造体
  */
 FVoicevoxSupportedDevices UNemoCoreSubsystem::GetSupportedDevices()
 {
@@ -531,7 +514,6 @@ FVoicevoxSupportedDevices UNemoCoreSubsystem::GetSupportedDevices()
 
 /**
  * @brief VOICEVOX COREのバージョンを取得する
- * @return SemVerでフォーマットされたバージョン
  */
 FString UNemoCoreSubsystem::GetVoicevoxVersion()
 {
@@ -558,7 +540,6 @@ FString UNemoCoreSubsystem::GetVoicevoxVersion()
 
 /**
  * @brief ハードウェアアクセラレーションがGPUモードか判定する
- * @return GPUモードならtrue、そうでないならfalse
  */
 bool UNemoCoreSubsystem::IsGpuMode()
 {

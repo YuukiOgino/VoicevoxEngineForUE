@@ -14,6 +14,11 @@ class UCoreSubsystem final : public UVoicevoxNativeCoreSubsystem
 {
 	GENERATED_BODY()
 protected:
+	
+	//--------------------------------
+	// Function
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_ttsで生成した音声データを開放
@@ -22,8 +27,15 @@ protected:
 	 */
 	virtual void WavFree(uint8* Wav) override;
 public:
-	
-	VOICEVOXNATIVECORE_API UCoreSubsystem();
+
+	//--------------------------------
+	// コンストラクタ
+	//--------------------------------
+
+	/**
+	 * @brief コンストラクタ
+	 */
+	UCoreSubsystem() = default;
 
 	//--------------------------------
 	// override
@@ -176,16 +188,16 @@ public:
 	virtual bool IsGpuMode() override;
 
 	/**
- * @fn
- * 音素ごとの長さを求める
- * @brief 音素列から、音素ごとの長さを求める
- * @param[in] Length 音素列の長さ
- * @param[in] PhonemeList 音素列
- * @param[in] SpeakerID 話者番号
- * @return 音素ごとの長さ
- *
- * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
- */
+	 * @fn
+	 * 音素ごとの長さを求める
+	 * @brief 音素列から、音素ごとの長さを求める
+	 * @param[in] Length 音素列の長さ
+	 * @param[in] PhonemeList 音素列
+	 * @param[in] SpeakerID 話者番号
+	 * @return 音素ごとの長さ
+	 *
+	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
+	 */
 	virtual TArray<float> GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID) override;
 
 	/**
