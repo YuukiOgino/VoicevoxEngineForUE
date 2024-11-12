@@ -26,6 +26,13 @@ protected:
 	 * @param Wav 開放する音声データのポインタ
 	 */
 	virtual void WavFree(uint8* Wav) override;
+
+	/**
+	 * エラー結果をメッセージに変換して表示
+	 * @param[in] ApiName : エラーを起こしたAPI名
+	 * @param [in] ResultCode メッセージに変換するエラーコード
+	 */
+	virtual void VoicevoxShowErrorResultMessage(const FString& ApiName, int ResultCode) override;
 public:
 
 	//--------------------------------
