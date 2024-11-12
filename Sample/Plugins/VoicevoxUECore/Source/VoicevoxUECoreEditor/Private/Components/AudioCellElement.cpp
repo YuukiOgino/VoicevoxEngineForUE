@@ -1,3 +1,5 @@
+// Copyright Yuuki Ogino. All Rights Reserved.
+
 #include "Components/AudioCellElement.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"

@@ -1,4 +1,6 @@
-﻿using UnrealBuildTool;
+﻿// Copyright Yuuki Ogino. All Rights Reserved.
+
+using UnrealBuildTool;
 
 public class VoicevoxUECoreEditor : ModuleRules
 {

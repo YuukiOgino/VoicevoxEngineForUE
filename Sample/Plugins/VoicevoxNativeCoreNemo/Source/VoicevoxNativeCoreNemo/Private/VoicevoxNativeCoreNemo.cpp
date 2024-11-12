@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright Yuuki Ogino. All Rights Reserved.
 
 #include "VoicevoxNativeCoreNemo.h"
 #include "Modules/ModuleManager.h"

@@ -1,10 +1,12 @@
-﻿using UnrealBuildTool;
+﻿// Copyright Yuuki Ogino. All Rights Reserved.
+
+using UnrealBuildTool;
 
 public class VoicevoxEngineEditor : ModuleRules
 {
     public VoicevoxEngineEditor(ReadOnlyTargetRules Target) : base(Target)
     {
-        PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(
             new string[]
