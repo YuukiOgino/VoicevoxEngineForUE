@@ -42,13 +42,9 @@ public class VoicevoxCoreNemo : ModuleRules
 			const string binPlatformName = "Mac";
 			const string thirdPartyName = "VoicevoxCoreNemo";
 			
-			// core.hはEngine側も同名のヘッダーファイルがあるため、意図的にx64フォルダまでをIncludePathに含める
 			PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, platformName)));
 			
-			PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, platformName, "libvoicevox_core.dylib"));
-			
-			// Ensure that the DLL is staged along with the executable
-			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/libvoicevox_core.dylib", Path.Combine(ModuleDirectory, platformName, "libvoicevox_core.dylib"));
+			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/libvoicevox_core_nemo.dylib", Path.Combine(ModuleDirectory, platformName, "libvoicevox_core.dylib"));
 			
 			// modelフォルダもコピーする
 			AddRuntimeDependenciesDirectory("model", platformName, binPlatformName, true);

@@ -21,8 +21,8 @@ void UNemoCoreSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 #if PLATFORM_WINDOWS
 	DllName = FPaths::Combine(*BaseDir, TEXT("Binaries/ThirdParty/VoicevoxCoreNemo/Win64/voicevox_core.dll"));
 #elif PLATFORM_MAC
-	DllName = FPaths::Combine(*BaseDir, TEXT("Binaries/ThirdParty/VoicevoxCoreNemo/Mac/libvoicevox_core.dylib"));
-#endif 
+	DllName = FPaths::Combine(*BaseDir, TEXT("Binaries/ThirdParty/VoicevoxCoreNemo/Mac/libvoicevox_core_nemo.dylib"));
+#endif
 	
 	// DLLを読み込み、ポインタを取得
 	if (CoreLibraryHandle = FPlatformProcess::GetDllHandle(*DllName); CoreLibraryHandle == nullptr)
