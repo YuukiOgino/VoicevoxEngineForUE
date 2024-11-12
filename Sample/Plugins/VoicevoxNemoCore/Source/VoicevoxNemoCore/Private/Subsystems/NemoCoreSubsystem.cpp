@@ -125,8 +125,13 @@ void UNemoCoreSubsystem::Finalize()
 	{
 		const FString FuncName = "voicevox_finalize"; 
 		typedef const void(*DLL_Function)();
-
+		
+#if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#else
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		
 		if (!FuncPtr)
 		{
 			const FString Message = TEXT("VOICEVOX voicevox_finalize Function Error");
@@ -157,9 +162,16 @@ bool UNemoCoreSubsystem::LoadModel(const int64 SpeakerId)
 		typedef const bool(*DLL_CheckFunction)(uint32_t SpeakerId);
 		typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
 
+#if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 		const auto CheckFuncPtr = static_cast<DLL_CheckFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *CheckFuncName));
 		const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+#else
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+		const auto CheckFuncPtr = (DLL_CheckFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *CheckFuncName);
+		const auto ErrorFuncPtr = (DLL_ErrorFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName);
+#endif 
+		
 		if (!FuncPtr || !CheckFuncPtr)
 		{
 			const FString Message = TEXT("VOICEVOX voicevox_load_model Function Error");
@@ -233,10 +245,17 @@ FVoicevoxAudioQuery UNemoCoreSubsystem::GetAudioQuery(int64 SpeakerId, const FSt
 				typedef const VoicevoxResultCode(*DLL_Function)(const char *Text, uint32_t Speaker_ID, VoicevoxAudioQueryOptions Options, char **Output_Audio_Query_JSON);
 				typedef const void(*DLL_FreeFunction)(char *Audio_Query_JSON);
 				typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
-				
+
+#if PLATFORM_WINDOWS
 				const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 				const auto FreeFuncPtr = static_cast<DLL_FreeFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName));
 				const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+#else
+				const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+				const auto FreeFuncPtr = (DLL_FreeFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName);
+				const auto ErrorFuncPtr = (DLL_ErrorFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName);
+#endif 
+				
 				if (!FuncPtr || !FreeFuncPtr)
 				{
 					const FString ErrorMessage = TEXT("VOICEVOX voicevox_audio_query Function Error");
@@ -293,15 +312,17 @@ TArray<uint8> UNemoCoreSubsystem::RunTextToSpeech(const int64 SpeakerId, const F
 		{
 			const FString FuncName = "voicevox_tts"; 
 			const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
-			typedef const VoicevoxResultCode(*DLL_Function)(const char *text,
-								uint32_t speaker_id,
-								VoicevoxTtsOptions options,
-								uintptr_t *output_wav_length,
-								uint8_t **output_wav);
+			typedef const VoicevoxResultCode(*DLL_Function)(const char *text, uint32_t speaker_id, VoicevoxTtsOptions options,
+															uintptr_t *output_wav_length, uint8_t **output_wav);
 			typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
 
+#if PLATFORM_WINDOWS
 			const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 			const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+#else
+			const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+			const auto ErrorFuncPtr = (DLL_ErrorFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName);
+#endif 
 			if (!FuncPtr)
 			{
 				const FString ErrorMessage = TEXT("VOICEVOX voicevox_tts Function Error");
@@ -363,15 +384,18 @@ TArray<uint8> UNemoCoreSubsystem::RunSynthesis(const char* AudioQueryJson, const
 		{
 			const FString FuncName = "voicevox_synthesis"; 
 			const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
-			typedef const VoicevoxResultCode(*DLL_Function)(const char *audio_query_json,
-									  uint32_t speaker_id,
-									  VoicevoxSynthesisOptions options,
-									  uintptr_t *output_wav_length,
-									  uint8_t **output_wav);
+			typedef const VoicevoxResultCode(*DLL_Function)(const char *audio_query_json, uint32_t speaker_id, VoicevoxSynthesisOptions options,
+															uintptr_t *output_wav_length, uint8_t **output_wav);
 			typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
 
+#if PLATFORM_WINDOWS
 			const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 			const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+#else
+			const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+			const auto ErrorFuncPtr = (DLL_ErrorFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName);
+#endif 
+			
 			if (!FuncPtr)
 			{
 				const FString ErrorMessage = TEXT("VOICEVOX voicevox_synthesis Function Error");
@@ -467,7 +491,12 @@ TArray<FVoicevoxMeta> UNemoCoreSubsystem::GetMetaList()
 	// DLLを読み込み、ポインタを取得
 	if (CoreLibraryHandle != nullptr)
 	{
+#if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#else
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		
 		if (!FuncPtr)
 		{
 			const FString Message = TEXT("VOICEVOX voicevox_get_metas_json Function Error");
@@ -500,7 +529,12 @@ FVoicevoxSupportedDevices UNemoCoreSubsystem::GetSupportedDevices()
 	// DLLを読み込み、ポインタを取得
 	if (CoreLibraryHandle != nullptr)
 	{
+#if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#else
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		
 		if (!FuncPtr)
 		{
 			const FString Message = TEXT("VOICEVOX voicevox_get_supported_devices_json Function Error");
@@ -528,7 +562,11 @@ FString UNemoCoreSubsystem::GetVoicevoxVersion()
 	// DLLを読み込み、ポインタを取得
 	if (CoreLibraryHandle != nullptr)
 	{
+#if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#else
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
 		if (!FuncPtr)
 		{
 			const FString Message = TEXT("VOICEVOX voicevox_get_version Function Error");
@@ -554,7 +592,11 @@ bool UNemoCoreSubsystem::IsGpuMode()
 	// DLLを読み込み、ポインタを取得
 	if (CoreLibraryHandle != nullptr)
 	{
+#if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#else
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
 		if (!FuncPtr)
 		{
 			const FString Message = TEXT("VOICEVOX voicevox_is_gpu_mode Function Error");
@@ -584,17 +626,21 @@ TArray<float> UNemoCoreSubsystem::GetPhonemeLength(const int64 Length, TArray<in
 		const FString FuncName = "voicevox_predict_duration"; 
 		const FString FreeFuncName = "voicevox_predict_duration_data_free"; 
 		const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
-		typedef const VoicevoxResultCode(*DLL_Function)(uintptr_t length,
-											 int64_t *phoneme_vector,
-											 uint32_t speaker_id,
-											 uintptr_t *output_predict_duration_data_length,
-											 float **output_predict_duration_data);
+		typedef const VoicevoxResultCode(*DLL_Function)(uintptr_t length, int64_t *phoneme_vector, uint32_t speaker_id,
+														uintptr_t *output_predict_duration_data_length, float **output_predict_duration_data);
 		typedef const void(*DLL_FreeFunction)(float *predict_duration_data);
 		typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
 
+#if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 		const auto FreeFuncPtr = static_cast<DLL_FreeFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName));
 		const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+#else
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+		const auto FreeFuncPtr = (DLL_FreeFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName);
+		const auto ErrorFuncPtr = (DLL_ErrorFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName);
+#endif 
+
 		if (!FuncPtr || !FreeFuncPtr)
 		{
 			const FString ErrorMessage = TEXT("VOICEVOX voicevox_predict_duration Function Error");
@@ -650,22 +696,23 @@ TArray<float> UNemoCoreSubsystem::FindPitchEachMora(const int64 Length, TArray<i
 		const FString FuncName = "voicevox_predict_intonation"; 
 		const FString FreeFuncName = "voicevox_predict_intonation_data_free"; 
 		const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
-		typedef const VoicevoxResultCode(*DLL_Function)(uintptr_t length,
-											   int64_t *vowel_phoneme_vector,
-											   int64_t *consonant_phoneme_vector,
-											   int64_t *start_accent_vector,
-											   int64_t *end_accent_vector,
-											   int64_t *start_accent_phrase_vector,
-											   int64_t *end_accent_phrase_vector,
-											   uint32_t speaker_id,
-											   uintptr_t *output_predict_intonation_data_length,
-											   float **output_predict_intonation_data);
+		typedef const VoicevoxResultCode(*DLL_Function)(uintptr_t length, int64_t *vowel_phoneme_vector, int64_t *consonant_phoneme_vector,
+													   int64_t *start_accent_vector, int64_t *end_accent_vector,
+													   int64_t *start_accent_phrase_vector, int64_t *end_accent_phrase_vector,
+													   uint32_t speaker_id, uintptr_t *output_predict_intonation_data_length, float **output_predict_intonation_data);
 		typedef const void(*DLL_FreeFunction)(float *predict_duration_data);
 		typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
 
+#if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 		const auto FreeFuncPtr = static_cast<DLL_FreeFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName));
 		const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+#else
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+		const auto FreeFuncPtr = (DLL_FreeFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName);
+		const auto ErrorFuncPtr = (DLL_ErrorFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName);
+#endif
+		
 		if (!FuncPtr || !FreeFuncPtr)
 		{
 			const FString ErrorMessage = TEXT("VOICEVOX voicevox_predict_intonation Function Error");
@@ -718,19 +765,21 @@ TArray<float> UNemoCoreSubsystem::DecodeForward(const int64 Length, const int64 
 		const FString FuncName = "voicevox_decode"; 
 		const FString FreeFuncName = "voicevox_decode_data_free"; 
 		const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
-		typedef const VoicevoxResultCode(*DLL_Function)(uintptr_t length,
-								   uintptr_t phoneme_size,
-								   float *f0,
-								   float *phoneme_vector,
-								   uint32_t speaker_id,
-								   uintptr_t *output_decode_data_length,
-								   float **output_decode_data);
+		typedef const VoicevoxResultCode(*DLL_Function)(uintptr_t length, uintptr_t phoneme_size, float *f0, float *phoneme_vector,
+														uint32_t speaker_id, uintptr_t *output_decode_data_length, float **output_decode_data);
 		typedef const void(*DLL_FreeFunction)(float* vdecode_data);
 		typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
 
+#if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 		const auto FreeFuncPtr = static_cast<DLL_FreeFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName));
 		const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+#else
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+		const auto FreeFuncPtr = (DLL_FreeFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName);
+		const auto ErrorFuncPtr = (DLL_ErrorFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName);
+#endif
+		
 		if (!FuncPtr || !FreeFuncPtr)
 		{
 			const FString ErrorMessage = TEXT("VOICEVOX voicevox_decode Function Error");
