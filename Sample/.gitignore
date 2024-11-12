@@ -56,10 +56,10 @@ Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/*
 !Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/README.md
 Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/*
 !Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/README.md
-Plugins/VoicevoxNemoCore/Source/ThirdParty/VoicevoxNativeNemoCore/x64/*
-!Plugins/VoicevoxNemoCore/Source/ThirdParty/VoicevoxNativeNemoCore/x64/README.md
-Plugins/VoicevoxNemoCore/Source/ThirdParty/VoicevoxNativeNemoCore/osx/*
-!Plugins/VoicevoxNemoCore/Source/ThirdParty/VoicevoxNativeNemoCore/osx/README.md
+Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/x64/*
+!Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/x64/README.md
+Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/osx/*
+!Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/osx/README.md
 
 # Builds
 Build/*
