@@ -56,6 +56,14 @@ Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/*
 !Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/README.md
 Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/osx/*
 !Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/osx/README.md
+Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/*
+!Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/README.md
+Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/*
+!Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/README.md
+Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/x64/*
+!Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/x64/README.md
+Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/osx/*
+!Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/osx/README.md
 Plugins/*/Intermediate/*
 Plugins/Developer/*
 Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Private/*
