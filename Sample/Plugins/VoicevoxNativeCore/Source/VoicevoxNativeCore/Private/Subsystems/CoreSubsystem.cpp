@@ -337,7 +337,6 @@ TArray<uint8> UCoreSubsystem::RunSynthesis(const char* AudioQueryJson, const int
 			const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 #elif PLATFORM_MAC
 			const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
-			const auto ErrorFuncPtr = (DLL_ErrorFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName);
 #endif 
 			if (!FuncPtr)
 			{
