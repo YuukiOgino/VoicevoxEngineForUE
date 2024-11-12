@@ -16,7 +16,7 @@ void UNemoCoreSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	const FString BaseDir = IPluginManager::Get().FindPlugin("VoicevoxNemoCore")->GetBaseDir();
+	const FString BaseDir = IPluginManager::Get().FindPlugin("VoicevoxNativeCoreNemo")->GetBaseDir();
 	FString DllName;
 #if PLATFORM_WINDOWS
 	DllName = FPaths::Combine(*BaseDir, TEXT("Binaries/ThirdParty/VoicevoxCoreNemo/Win64/voicevox_core.dll"));

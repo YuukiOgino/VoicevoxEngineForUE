@@ -27,7 +27,7 @@ void UCoreSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	// DLLを読み込み、ポインタを取得
 	if (CoreLibraryHandle = FPlatformProcess::GetDllHandle(*DllName); CoreLibraryHandle == nullptr)
 	{
-		const FString Message = TEXT("VOICEVOX voicevox_core  LoadError!!");
+		const FString Message = TEXT("VOICEVOX voicevox_core LoadError!!");
 		ShowVoicevoxErrorMessage(Message);
 	}
 }

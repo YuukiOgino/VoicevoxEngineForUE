@@ -4,7 +4,7 @@
 
 #include "Modules/ModuleManager.h"
 
-class FVoicevoxNemoCoreModule final : public IModuleInterface
+class FVoicevoxNativeCoreNemoModule final : public IModuleInterface
 {
 public:
 

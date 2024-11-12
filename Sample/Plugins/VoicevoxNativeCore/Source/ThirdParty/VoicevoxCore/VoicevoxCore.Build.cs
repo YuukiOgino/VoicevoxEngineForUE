@@ -39,16 +39,18 @@ public class VoicevoxCore : ModuleRules
 			// Delay-load the DLL, so we can load it from the right place first
 			PublicDelayLoadDLLs.Add("voicevox_core.dll");
 			PublicDelayLoadDLLs.Add("onnxruntime.dll");
+			PublicDelayLoadDLLs.Add("onnxruntime_providers_shared.dll");
 
 			// Ensure that the DLL is staged along with the executable
-			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/Voicevox_core.dll", Path.Combine(ModuleDirectory, platformName, "voicevox_core.dll"));
-			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/onnxruntime.dll", Path.Combine(ModuleDirectory, platformName, "onnxruntime.dll"));
+			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/voicevox_core.dll", Path.Combine(ModuleDirectory, platformName, "voicevox_core.dll"));
+			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/onnxruntime.dll", Path.Combine(ModuleDirectory, platformName, "onnxruntime.dll"));
+			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/onnxruntime_providers_shared.dll", Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_shared.dll"));
 			
 			// onnxruntimeのCUDE関連DLLが存在する場合は必要なDLL一式すべてコピーする
-			var CudaPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_cuda.dll");
-			if (File.Exists(CudaPath))
+			var cudaPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_cuda.dll");
+			if (File.Exists(cudaPath))
 			{
-				var CudaDllList = new[]
+				var cudaDllList = new[]
 				{
 					"onnxruntime_providers_cuda.dll",
 					"onnxruntime_providers_shared.dll",
@@ -63,21 +65,21 @@ public class VoicevoxCore : ModuleRules
 					"cufft64_10.dll",
 					"curand64_10.dll"
 				};
-				foreach (var Variable in CudaDllList)
+				foreach (var variable in cudaDllList)
 				{
-					var CudaLibPath = Path.Combine(ModuleDirectory, platformName, Variable);
-					if (!File.Exists(CudaLibPath)) continue;
-					PublicDelayLoadDLLs.Add(Variable);
-					RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/{Variable}", CudaLibPath);
+					var cudaLibPath = Path.Combine(ModuleDirectory, platformName, variable);
+					if (!File.Exists(cudaLibPath)) continue;
+					PublicDelayLoadDLLs.Add(variable);
+					RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/{variable}", cudaLibPath);
 				}
 			}
 			
 			// DirectML.dllが存在する場合はコピーする
-			var DirectMlPath = Path.Combine(ModuleDirectory, platformName, "DirectML.dll");
-			if (File.Exists(DirectMlPath))
+			var directMlPath = Path.Combine(ModuleDirectory, platformName, "DirectML.dll");
+			if (File.Exists(directMlPath))
 			{
 				PublicDelayLoadDLLs.Add("DirectML.dll");
-				RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/DirectML.dll", DirectMlPath);
+				RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/DirectML.dll", directMlPath);
 			}
 			
 			// Open JTalkライブラリフォルダもコピーする
@@ -99,7 +101,7 @@ public class VoicevoxCore : ModuleRules
 			
 			// Ensure that the DLL is staged along with the executable
 			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/libvoicevox_core.dylib", Path.Combine(ModuleDirectory, platformName, "libvoicevox_core.dylib"));
-			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/libonnxruntime.1.13.1.dylib", Path.Combine(ModuleDirectory, platformName, "libonnxruntime.1.13.1.dylib"));
+			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/libonnxruntime.1.13.1.dylib", Path.Combine(ModuleDirectory, platformName, "libonnxruntime.1.13.1.dylib"));
 			
 			// Open JTalkライブラリフォルダもコピーする
 			AddRuntimeDependenciesDirectory(OpenJtalkDicName, platformName, binPlatformName, true);

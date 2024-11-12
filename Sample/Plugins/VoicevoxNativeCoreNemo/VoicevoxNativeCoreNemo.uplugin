@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "0.1",
-	"FriendlyName": "VoicevoxNemoCore",
+	"FriendlyName": "VoicevoxNativeCoreNemo",
 	"Description": "Voicevox Engine for UnrealEngine",
 	"Category": "TextToSpeech",
 	"CreatedBy": "YuukiOgino",
@@ -16,7 +16,7 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "VoicevoxNemoCore",
+			"Name": "VoicevoxNativeCoreNemo",
 			"Type": "Runtime",
 			"LoadingPhase": "PreDefault",
 			"PlatformAllowList": [

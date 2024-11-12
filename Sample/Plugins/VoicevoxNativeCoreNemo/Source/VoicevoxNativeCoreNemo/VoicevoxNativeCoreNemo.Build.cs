@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class VoicevoxNemoCore : ModuleRules
+public class VoicevoxNativeCoreNemo : ModuleRules
 {
-	public VoicevoxNemoCore(ReadOnlyTargetRules Target) : base(Target)
+	public VoicevoxNativeCoreNemo(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		CppStandard = CppStandardVersion.Latest;
@@ -22,7 +22,7 @@ public class VoicevoxNemoCore : ModuleRules
 			{
 				"Projects",
 				"CoreUObject",
-				"VoicevoxNativeNemoCore",
+				"VoicevoxCoreNemo",
 				"VoicevoxUECore",　
 				"Json",
 				"JsonUtilities"

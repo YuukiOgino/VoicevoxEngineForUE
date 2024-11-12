@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TpsData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <Name>VOICEVOX CORE NEMO 0.14.0</Name>
-    <Location>/VoicevoxNemoCore/Source/ThirdParty/VoicevoxNativeNemoCore/</Location>
+    <Location>/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/</Location>
     <Platforms>
         <Platform>WIN64</Platform>
         <Platform>Mac</Platform>
@@ -13,5 +13,5 @@
         <EndUserGroup>Github</EndUserGroup>
     </RedistributeTo>
     <Redistribute>true</Redistribute>
-    <LicenseFolder>/VoicevoxNemoCore/Source/ThirdParty/Licenses</LicenseFolder>
+    <LicenseFolder>/VoicevoxNativeCoreNemo/Source/ThirdParty/Licenses</LicenseFolder>
 </TpsData>
