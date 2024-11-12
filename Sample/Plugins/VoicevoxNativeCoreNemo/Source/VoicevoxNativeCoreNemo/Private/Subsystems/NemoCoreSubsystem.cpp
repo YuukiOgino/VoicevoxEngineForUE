@@ -32,6 +32,10 @@ void UNemoCoreSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	}
 }
 
+//--------------------------------
+// VOICEVOX CORE Initialize関連
+//--------------------------------
+
 /**
  * @brief Deinitialize
  */
@@ -104,6 +108,10 @@ bool UNemoCoreSubsystem::CoreInitialize(const bool bUseGPU, const int CPUNumThre
 
 }
 
+//--------------------------------
+// VOICEVOX CORE Finalize関連
+//--------------------------------
+
 /**
  * @brief 終了処理を行う。以降VOICEVOXのAPIを利用するためには再度Initializeメソッドを行う必要がある。
  */
@@ -135,6 +143,10 @@ void UNemoCoreSubsystem::Finalize()
 	const FString Message = TEXT("VOICEVOX voicevox_core nemo LoadError!!");
 	ShowVoicevoxErrorMessage(Message);
 }
+
+//--------------------------------
+// VOICEVOX CORE Model関連
+//--------------------------------
 
 /**
  * @brief モデルをロードする。
@@ -199,6 +211,10 @@ bool UNemoCoreSubsystem::IsModel(const int64 SpeakerId)
 	return false;
 }
 
+//--------------------------------
+// VOICEVOX CORE AudioQuery関連
+//--------------------------------
+
 /**
  * @brief AudioQuery を取得する。
  * @details
@@ -258,6 +274,10 @@ FVoicevoxAudioQuery UNemoCoreSubsystem::GetAudioQuery(int64 SpeakerId, const FSt
 	}
 	return AudioQuery;
 }
+
+//--------------------------------
+// VOICEVOX CORE TextToSpeech関連
+//--------------------------------
 
 /**
  * @brief VOICEVOX COREのtext to speechを実行
@@ -410,6 +430,10 @@ void UNemoCoreSubsystem::WavFree(uint8* Wav)
 	}
 }
 
+//--------------------------------
+// VOICEVOX CORE Configuration関連
+//--------------------------------
+
 /**
  * @brief VOICEVOX COREの名前取得
  */
@@ -549,6 +573,10 @@ bool UNemoCoreSubsystem::IsGpuMode()
 	return false;
 }
 
+//--------------------------------
+// VOICEVOX CORE PhonemeLength関連
+//--------------------------------
+
 /** 
  * @brief 音素列から、音素ごとの長さを求める
  */
@@ -601,6 +629,10 @@ TArray<float> UNemoCoreSubsystem::GetPhonemeLength(const int64 Length, TArray<in
 
 	return Output;
 }
+
+//--------------------------------
+// VOICEVOX CORE Mora関連
+//--------------------------------
 
 /**
  * @brief モーラごとの音素列とアクセント情報から、モーラごとの音高を求める
@@ -661,6 +693,10 @@ TArray<float> UNemoCoreSubsystem::FindPitchEachMora(const int64 Length, TArray<i
 	return Output;
 }
 
+//--------------------------------
+// VOICEVOX CORE DecodeForward関連
+//--------------------------------
+
 /**
  * @brief フレームごとの音素と音高から、波形を求める
  */
@@ -711,6 +747,10 @@ TArray<float> UNemoCoreSubsystem::DecodeForward(const int64 Length, const int64 
 	
 	return Output;
 }
+
+//--------------------------------
+// VOICEVOX CORE Error関連
+//--------------------------------
 
 /**
  * エラー結果をメッセージに変換して表示

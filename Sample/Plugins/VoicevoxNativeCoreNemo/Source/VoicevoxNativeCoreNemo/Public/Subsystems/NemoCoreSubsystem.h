@@ -15,9 +15,9 @@ class UNemoCoreSubsystem final : public UVoicevoxNativeCoreSubsystem
 	GENERATED_BODY()
 protected:
 	
-	//--------------------------------
+	//----------------------------------------------------------------
 	// Function
-	//--------------------------------
+	//----------------------------------------------------------------
 	
 	/**
 	 * @fn
@@ -33,8 +33,13 @@ protected:
 	 * @param [in] ResultCode メッセージに変換するエラーコード
 	 */
 	virtual void VoicevoxShowErrorResultMessage(const FString& ApiName, int ResultCode) override;
+	
 public:
 
+	//----------------------------------------------------------------
+	// Function
+	//----------------------------------------------------------------
+	
 	//--------------------------------
 	// コンストラクタ
 	//--------------------------------
@@ -57,6 +62,10 @@ public:
 	 * @brief Deinitialize
 	 */
 	virtual void Deinitialize() override;
+
+	//--------------------------------
+	// VOICEVOX CORE Initialize関連
+	//--------------------------------
 	
 	/**
 	 * @fn
@@ -75,6 +84,10 @@ public:
 	 */
 	virtual bool CoreInitialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false) override;
 
+	//--------------------------------
+	// VOICEVOX CORE Finalize関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX CORE 終了処理
@@ -85,6 +98,10 @@ public:
 	 */
 	virtual void Finalize() override;
 
+	//--------------------------------
+	// VOICEVOX CORE Model関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのモデルをロード実行
@@ -107,6 +124,10 @@ public:
 	 */
 	virtual bool IsModel(int64 SpeakerId) override;
 
+	//--------------------------------
+	// VOICEVOX CORE AudioQuery関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_audio_queryを取得
@@ -120,6 +141,10 @@ public:
 	 */
 	virtual FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana) override;
 
+	//--------------------------------
+	// VOICEVOX CORE TextToSpeech関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのtext to speechを実行
@@ -159,6 +184,10 @@ public:
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	virtual TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) override;
+
+	//--------------------------------
+	// VOICEVOX CORE Configuration関連
+	//--------------------------------
 	
 	/**
 	 * @fn
@@ -194,19 +223,27 @@ public:
 	 */
 	virtual bool IsGpuMode() override;
 
+	//--------------------------------
+	// VOICEVOX CORE PhonemeLength関連
+	//--------------------------------
+	
 	/**
- * @fn
- * 音素ごとの長さを求める
- * @brief 音素列から、音素ごとの長さを求める
- * @param[in] Length 音素列の長さ
- * @param[in] PhonemeList 音素列
- * @param[in] SpeakerID 話者番号
- * @return 音素ごとの長さ
- *
- * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
- */
+	 * @fn
+	 * 音素ごとの長さを求める
+	 * @brief 音素列から、音素ごとの長さを求める
+	 * @param[in] Length 音素列の長さ
+	 * @param[in] PhonemeList 音素列
+	 * @param[in] SpeakerID 話者番号
+	 * @return 音素ごとの長さ
+	 *
+	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
+	 */
 	virtual TArray<float> GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID) override;
 
+	//--------------------------------
+	// VOICEVOX CORE Mora関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * モーラごとの音高を求める
@@ -227,6 +264,10 @@ public:
 											  TArray<int64> StartAccentList, TArray<int64> EndAccentList,
 											  TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
 											  int64 SpeakerID) override;
+
+	//--------------------------------
+	// VOICEVOX CORE DecodeForward関連
+	//--------------------------------
 	
 	/**
 	 * @fn

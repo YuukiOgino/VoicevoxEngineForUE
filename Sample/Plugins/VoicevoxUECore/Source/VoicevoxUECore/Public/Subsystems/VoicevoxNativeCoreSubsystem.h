@@ -17,9 +17,9 @@ class UVoicevoxNativeCoreSubsystem : public USubsystem
 	GENERATED_BODY()
 protected:
 	
-	//--------------------------------
+	//----------------------------------------------------------------
 	// Variable
-	//--------------------------------
+	//----------------------------------------------------------------
 	
 	//! 初期化処理実施済みか
 	bool bIsInit = false;
@@ -27,9 +27,9 @@ protected:
 	//! VOICEVOX COREライブラリハンドル
 	void* CoreLibraryHandle = nullptr;
 	
-	//--------------------------------
+	//----------------------------------------------------------------
 	// Function
-	//--------------------------------
+	//----------------------------------------------------------------
 	
 	/**
 	 * @brief VOICEVOXから受信したエラーメッセージを表示
@@ -54,6 +54,10 @@ protected:
 	
 public:
 
+	//----------------------------------------------------------------
+	// Function
+	//----------------------------------------------------------------
+	
 	//--------------------------------
 	// コンストラクタ
 	//--------------------------------
@@ -98,6 +102,10 @@ public:
 	 */
 	virtual void Finalize() {}
 
+	//--------------------------------
+	// VOICEVOX CORE Model関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのモデルをロード実行
@@ -120,6 +128,10 @@ public:
 	 */
 	virtual bool IsModel(int64 SpeakerId) { return false; }
 
+	//--------------------------------
+	// VOICEVOX CORE AudioQuery関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_audio_queryを取得
@@ -133,6 +145,10 @@ public:
 	 */
 	virtual FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana) { return FVoicevoxAudioQuery(); }
 
+	//--------------------------------
+	// VOICEVOX CORE TextToSpeech関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのtext to speechを実行
@@ -172,6 +188,10 @@ public:
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	virtual TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) { return TArray<uint8>(); }
+
+	//--------------------------------
+	// VOICEVOX CORE Configuration関連
+	//--------------------------------
 	
 	/**
 	 * @fn
@@ -207,6 +227,10 @@ public:
 	 */
 	virtual bool IsGpuMode() { return false; }
 
+	//--------------------------------
+	// VOICEVOX CORE PhonemeLength関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * 音素ごとの長さを求める
@@ -220,6 +244,10 @@ public:
 	 */
 	virtual TArray<float> GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID) { return TArray<float>(); }
 
+	//--------------------------------
+	// VOICEVOX CORE Mora関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * モーラごとの音高を求める
@@ -240,6 +268,10 @@ public:
 											  TArray<int64> StartAccentList, TArray<int64> EndAccentList,
 											  TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
 											  int64 SpeakerID) { return TArray<float>(); }
+
+	//--------------------------------
+	// VOICEVOX CORE DecodeForward関連
+	//--------------------------------
 	
 	/**
 	 * @fn

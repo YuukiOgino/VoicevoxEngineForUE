@@ -43,6 +43,10 @@ void UCoreSubsystem::Deinitialize()
 	CoreLibraryHandle = nullptr;
 }
 
+//--------------------------------
+// VOICEVOX CORE Initialize関連
+//--------------------------------
+
 /**
  * @brief 音声合成するための初期化を行う。VOICEVOXのAPIを正しく実行するには先に初期化が必要
  */
@@ -105,6 +109,10 @@ bool UCoreSubsystem::CoreInitialize(const bool bUseGPU, const int CPUNumThreads,
 
 }
 
+//--------------------------------
+// VOICEVOX CORE Finalize関連
+//--------------------------------
+
 /**
  * @brief 終了処理を行う。以降VOICEVOXのAPIを利用するためには再度Initializeメソッドを行う必要がある。
  */
@@ -135,6 +143,10 @@ void UCoreSubsystem::Finalize()
 	const FString Message = TEXT("VOICEVOX voicevox_core  LoadError!!");
 	ShowVoicevoxErrorMessage(Message);
 }
+
+//--------------------------------
+// VOICEVOX CORE Model関連
+//--------------------------------
 
 /**
  * @brief モデルをロードする。
@@ -199,6 +211,10 @@ bool UCoreSubsystem::IsModel(const int64 SpeakerId)
 	return false;
 }
 
+//--------------------------------
+// VOICEVOX CORE AudioQuery関連
+//--------------------------------
+
 /**
  * @brief AudioQuery を取得する。
  * @details
@@ -258,6 +274,10 @@ FVoicevoxAudioQuery UCoreSubsystem::GetAudioQuery(int64 SpeakerId, const FString
 	}
 	return AudioQuery;
 }
+
+//--------------------------------
+// VOICEVOX CORE TextToSpeech関連
+//--------------------------------
 
 /**
  * @brief VOICEVOX COREのtext to speechを実行
@@ -408,6 +428,10 @@ void UCoreSubsystem::WavFree(uint8* Wav)
 	}
 }
 
+//--------------------------------
+// VOICEVOX CORE Configuration関連
+//--------------------------------
+
 /**
  * @brief VOICEVOX COREの名前取得
  */
@@ -545,6 +569,10 @@ bool UCoreSubsystem::IsGpuMode()
 	return false;
 }
 
+//--------------------------------
+// VOICEVOX CORE PhonemeLength関連
+//--------------------------------
+
 /** 
  * @brief 音素列から、音素ごとの長さを求める
  */
@@ -597,6 +625,10 @@ TArray<float> UCoreSubsystem::GetPhonemeLength(const int64 Length, TArray<int64>
 
 	return Output;
 }
+
+//--------------------------------
+// VOICEVOX CORE Mora関連
+//--------------------------------
 
 /**
  * @brief モーラごとの音素列とアクセント情報から、モーラごとの音高を求める
@@ -657,6 +689,10 @@ TArray<float> UCoreSubsystem::FindPitchEachMora(const int64 Length, TArray<int64
 	return Output;
 }
 
+//--------------------------------
+// VOICEVOX CORE DecodeForward関連
+//--------------------------------
+
 /**
  * @brief フレームごとの音素と音高から、波形を求める
  */
@@ -706,6 +742,10 @@ TArray<float> UCoreSubsystem::DecodeForward(const int64 Length, const int64 Phon
 	
 	return Output;
 }
+
+//--------------------------------
+// VOICEVOX CORE Error関連
+//--------------------------------
 
 /**
  * エラー結果をメッセージに変換して表示
