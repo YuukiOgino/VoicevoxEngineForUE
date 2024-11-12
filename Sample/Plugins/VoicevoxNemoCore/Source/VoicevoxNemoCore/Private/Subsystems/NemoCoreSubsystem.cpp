@@ -460,7 +460,11 @@ void UNemoCoreSubsystem::WavFree(uint8* Wav)
 	typedef const void(*DLL_Function)(uint8_t* WAV);
 	if (CoreLibraryHandle != nullptr)
 	{
+#if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#else
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
 		if (!FuncPtr)
 		{
 			const FString Message = TEXT("VOICEVOX voicevox_wav_free Function Error");
