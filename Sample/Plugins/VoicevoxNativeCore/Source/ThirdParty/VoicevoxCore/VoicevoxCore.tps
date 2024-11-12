@@ -7,7 +7,7 @@
         <Platform>Mac</Platform>
     </Platforms>
     <Function>無料で使える中品質なテキスト読み上げソフトウェアのコアライブラリ。A core library of free, medium-quality text-to-speech software.</Function>
-    <Eula>https://github.com/VOICEVOX/voicevox_engine#%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9-1</Eula>
+    <Eula>https://github.com/VOICEVOX/voicevox_engine?tab=readme-ov-file#%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9</Eula>
     <RedistributeTo>
         <EndUserGroup>Licensees</EndUserGroup>
         <EndUserGroup>Github</EndUserGroup>
