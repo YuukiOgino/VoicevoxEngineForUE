@@ -70,8 +70,13 @@ bool UNemoCoreSubsystem::CoreInitialize(const bool bUseGPU, const int CPUNumThre
 	
 	if (CoreLibraryHandle != nullptr)
 	{
+#if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 		const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
+#else
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+		const auto ErrorFuncPtr = (DLL_ErrorFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName);
+#endif 
 		if (!FuncPtr)
 		{
 			const FString Message = TEXT("VOICEVOX voicevox_initialize Function Error");
