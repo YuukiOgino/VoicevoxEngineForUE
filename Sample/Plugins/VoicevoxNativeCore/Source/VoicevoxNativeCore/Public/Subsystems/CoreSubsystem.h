@@ -186,7 +186,7 @@ public:
 	virtual TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) override;
 
 	//--------------------------------
-	// VOICEVOX CORE Configuration関連
+	// VOICEVOX CORE Property関連
 	//--------------------------------
 	
 	/**

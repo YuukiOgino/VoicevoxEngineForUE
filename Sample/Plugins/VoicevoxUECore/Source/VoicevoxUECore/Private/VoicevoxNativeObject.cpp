@@ -1,7 +1,6 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
 #include "VoicevoxNativeObject.h"
-
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 #include "Subsystems/VoicevoxNativeCoreSubsystem.h"
 

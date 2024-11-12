@@ -429,7 +429,7 @@ void UCoreSubsystem::WavFree(uint8* Wav)
 }
 
 //--------------------------------
-// VOICEVOX CORE Configuration関連
+// VOICEVOX CORE Property関連
 //--------------------------------
 
 /**
