@@ -1,5 +1,9 @@
 // Copyright Yuuki Ogino. All Rights Reserved
 
+/**
+ * @brief  Voicevox関連のデータアセットを生成するためのCPPファイル
+ * @author Yuuki Ogino
+ */
 
 #include "Factories/VoicevoxQueryFactory.h"
 #include "JsonObjectConverter.h"
@@ -16,6 +20,9 @@ UVoicevoxQueryFactory::UVoicevoxQueryFactory(): Super()
 	Formats.Add(TEXT("json; AudioQueary"));
 }
 
+/**
+ * @brief FactoryCreateNew override
+ */	
 UObject* UVoicevoxQueryFactory::FactoryCreateNew(UClass* InClass, UObject* InParent,
                                                  FName InName,  EObjectFlags Flags,
                                                  UObject* Context, FFeedbackContext* Warn)
@@ -33,6 +40,9 @@ UObject* UVoicevoxQueryFactory::FactoryCreateNew(UClass* InClass, UObject* InPar
 	return NewObject<UVoicevoxQuery>(InParent, InClass, InName, Flags, Context);
 }
 
+/**
+ * @brief FactoryCreateText override
+ */	
 UObject* UVoicevoxQueryFactory::FactoryCreateText(UClass* InClass, UObject* InParent, const FName InName,
                                                   const EObjectFlags Flags, UObject* Context, const TCHAR* Type,
                                                   const TCHAR*& Buffer, const TCHAR* BufferEnd, FFeedbackContext* Warn)

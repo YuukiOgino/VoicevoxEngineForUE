@@ -1,5 +1,10 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @headerfile VoicevoxSoundWaveFactory.h
+ * @brief  VOICEVOXで変換したサウンドデータを元にSoundWaveを生成するヘッダーファイル
+ * @author Yuuki Ogino
+ */
 #pragma once
 
 #include "CoreMinimal.h"

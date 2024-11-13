@@ -9,12 +9,19 @@
 #include "AssetTypeActions/VoicevoxQueryTypeActions.h"
 #include "VoicevoxQuery.h"
 
+/**
+ * @brief コンストラクタ
+ */
 FVoicevoxQueryTypeActions::FVoicevoxQueryTypeActions():
 	Name(FText::FromString(TEXT("Voicevox AudioQuery"))),
 	AssetCategoryBit(EAssetTypeCategories::Misc)
 {
 }
 
+/**
+ * @brief コンストラクタ
+ * @param AssetCategoryBit 
+ */
 FVoicevoxQueryTypeActions::FVoicevoxQueryTypeActions(EAssetTypeCategories::Type AssetCategoryBit):
 	Name(FText::FromString(TEXT("Voicevox AudioQuery"))),
 	AssetCategoryBit(AssetCategoryBit)

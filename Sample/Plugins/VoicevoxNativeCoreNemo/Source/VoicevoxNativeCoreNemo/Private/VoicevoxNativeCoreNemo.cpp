@@ -1,17 +1,24 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @brief  VoicevoxNativeCoreNemoモジュールCPPファイル
+ * @author Yuuki Ogino
+ */
+
 #include "VoicevoxNativeCoreNemo.h"
 #include "Modules/ModuleManager.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxNativeCoreNemoModule"
 
-void FVoicevoxNativeCoreNemoModule::StartupModule()
-{
-}
+/**
+ * @brief StartupModule
+ */
+void FVoicevoxNativeCoreNemoModule::StartupModule() {}
 
-void FVoicevoxNativeCoreNemoModule::ShutdownModule()
-{
-}
+/**
+ * @brief ShutdownModule
+ */
+void FVoicevoxNativeCoreNemoModule::ShutdownModule() {}
 
 #undef LOCTEXT_NAMESPACE
 	

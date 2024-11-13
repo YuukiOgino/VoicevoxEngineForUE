@@ -1,5 +1,9 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @brief  VOICEVOX編集エディターのヘッダーバーをまとめたCPPファイル
+ * @author Yuuki Ogino
+ */
 #include "Components/VoicevoxEditorCommonHeaderBar.h"
 
 /**

@@ -1,5 +1,9 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @brief  AudioQueryのパラメータ値ウィジェットCPPファイル
+ * @author Yuuki Ogino
+ */
 
 #include "Components/AudioQueryParameterList.h"
 
@@ -39,7 +43,7 @@ void UAudioQueryParameterList::NativeConstruct()
 /**
  * @breif 編集したいAudioQueryを参照でセット
  */
-void UAudioQueryParameterList::SetEditAudioQuery(FVoicevoxAudioQuery& Param)
+void UAudioQueryParameterList::SetEditAudioQuery(FVoicevoxAudioQuery& Param) const
 {
 	SpeedScale->SetEditAudioQuery(Param);
 	PitchScale->SetEditAudioQuery(Param);

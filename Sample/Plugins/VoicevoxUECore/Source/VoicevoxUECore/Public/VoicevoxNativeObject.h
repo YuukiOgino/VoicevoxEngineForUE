@@ -1,9 +1,14 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @headerfile VoicevoxNativeObject.h
+ * @brief  複数のVOICEVOX COREライブラリへアクセスするSubsystemを管理し、各APIへアクセスするヘッダーファイル
+ * @author Yuuki Ogino
+ */
+
 #pragma once
 
 #include "CoreMinimal.h"
-//#include "Subsystems/VoicevoxNativeCoreSubsystem.h"
 #include "Subsystems/VoicevoxSubsystemCollection.h"
 #include "UObject/Object.h"
 #include "VoicevoxNativeObject.generated.h"
@@ -11,17 +16,54 @@
 class UVoicevoxCoreSubsystem;
 
 /**
- * 
+ * @class UVoicevoxNativeObject
+ * @brief COREライブラリへアクセスするSubsystemを管理し、各APIへアクセスするクラス
+ * @details COREライブラリへアクセスするSubsystemを管理するオブジェクトです。
+ *			UVoicevoxCoreSubsystem以外からはアクセス不可のため、APIを呼ぶとき
  */
 UCLASS(transient)
 class UVoicevoxNativeObject : public UObject
 {
 	GENERATED_BODY()
 
-	friend class UVoicevoxCoreSubsystem;
+	//----------------------------------------------------------------
+	// friend class
+	//----------------------------------------------------------------
 	
+	friend class UVoicevoxCoreSubsystem;
+
+	//----------------------------------------------------------------
+	// Variable
+	//----------------------------------------------------------------
+	
+	//! VOICEVOX Native Subsystem管理オブジェクトに登録したクラスリスト
 	TArray<UClass*> SubsystemClasses;
 
+	//! VOICEVOX Native Subsystem管理オブジェクト
+	FVoicevoxSubsystemCollection VoicevoxSubsystemCollection;
+	
+	//----------------------------------------------------------------
+	// Function
+	//----------------------------------------------------------------
+
+	/**
+	 * @brief サブシステム管理オブジェクト初期化
+	 */
+	VOICEVOXUECORE_API void Init();
+
+	/**
+	 * @brief サブシステム管理オブジェクト破棄
+	 */
+	VOICEVOXUECORE_API void Shutdown();
+	
+	//--------------------------------
+	// VOICEVOX CORE APIアクセス関数
+	//--------------------------------
+
+	//--------------------------------
+	// VOICEVOX CORE Initialize関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX CORE 初期化
@@ -33,12 +75,15 @@ class UVoicevoxNativeObject : public UObject
 	 * @detail
 	 * VOICEVOXの初期化処理は何度も実行可能。use_gpuを変更して実行しなおすことも可能。
 	 * 最後に実行したuse_gpuに従って他の関数が実行される。
-	 * 初期化処理はUE::Tasks::Launchで非同期に行われる
 	 *
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	VOICEVOXUECORE_API void CoreInitialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false);
 
+	//--------------------------------
+	// VOICEVOX CORE Finalize関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX CORE 終了処理
@@ -49,6 +94,10 @@ class UVoicevoxNativeObject : public UObject
 	 */
 	VOICEVOXUECORE_API void Finalize();
 
+	//--------------------------------
+	// VOICEVOX CORE Model関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのモデルをロード実行
@@ -62,6 +111,10 @@ class UVoicevoxNativeObject : public UObject
 	 */
 	VOICEVOXUECORE_API void LoadModel(int64 SpeakerId);
 
+	//--------------------------------
+	// VOICEVOX CORE AudioQuery関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_audio_queryを取得
@@ -75,6 +128,10 @@ class UVoicevoxNativeObject : public UObject
 	 */
 	VOICEVOXUECORE_API FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
 
+	//--------------------------------
+	// VOICEVOX CORE TextToSpeech関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのtext to speechを実行
@@ -115,6 +172,10 @@ class UVoicevoxNativeObject : public UObject
 	 */
 	VOICEVOXUECORE_API TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
 
+	//--------------------------------
+	// VOICEVOX CORE PhonemeLength関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * 音素ごとの長さを求める
@@ -128,6 +189,10 @@ class UVoicevoxNativeObject : public UObject
 	 */
 	VOICEVOXUECORE_API TArray<float> GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID);
 
+	//--------------------------------
+	// VOICEVOX CORE Mora関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * モーラごとの音高を求める
@@ -148,6 +213,10 @@ class UVoicevoxNativeObject : public UObject
 											  TArray<int64> StartAccentList, TArray<int64> EndAccentList,
 											  TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
 											  int64 SpeakerID);
+
+	//--------------------------------
+	// VOICEVOX CORE DecodeForward関連
+	//--------------------------------
 	
 	/**
 	 * @fn
@@ -163,15 +232,17 @@ class UVoicevoxNativeObject : public UObject
 	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
 	 */
 	VOICEVOXUECORE_API TArray<float> DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID);
-	
+
 public:
+
+	//----------------------------------------------------------------
+	// Function
+	//----------------------------------------------------------------
 	
-	VOICEVOXUECORE_API void Init();
-
-	VOICEVOXUECORE_API void Shutdown();
-
+	/**
+	 * @brief リファレンスオブジェクトをガベージコレクション対象外に登録
+	 * @param [in] InThis 登録するオブジェクト。
+	 * @param [in] Collector FReferenceCollectorオブジェクト
+	 */
 	static VOICEVOXUECORE_API void AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector);
-
-private:
-	FVoicevoxSubsystemCollection VoicevoxSubsystemCollection;
 };

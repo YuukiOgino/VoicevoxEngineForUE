@@ -47,19 +47,22 @@ public:
 
      /**
       * @brief SpeakerTypeをセットする
-      * @param [in] SpeakerType 
+      * @param [in] SpeakerType : 話者番号
       */
      UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SetSpeakerType"))
      void SetSpeakerType(int64 SpeakerType);
 
      /**
       * @brief アセットからロードしたデータをセットする
-      * @param [in] SpeakerType 
-      * @param [in] Text 
+      * @param [in] SpeakerType : 話者番号
+      * @param [in] Text : 入力テキスト
       */
      UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SetLoadData"))
      void SetLoadData(int64 SpeakerType, const FString& Text);
 
+     /**
+      * @brief スピーカー項目コンポーネントを作成イベント（Blueprint Event）
+      */
      UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
      void OnCreateSpeakerElement();
  

@@ -1,13 +1,23 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @headerfile NemoCoreSubsystem.h
+ * @brief VOICEVOX NEMO COREのAPIをまとめたSubsystemヘッダーファイル
+ * @author Yuuki Ogino
+ */
+
 #pragma once
 
 #include "Subsystems/VoicevoxNativeCoreSubsystem.h"
 #include "NemoCoreSubsystem.generated.h"
 
+//----------------------------------------------------------------
+// class
+//----------------------------------------------------------------
+
 /**
- * @class UCoreSubsystem
- * @brief VOICEVOX COREのAPIをまとめたSubsystem
+ * @class UNemoCoreSubsystem
+ * @brief VOICEVOX NEMO COREのAPIをまとめたSubsystem
  */
 UCLASS(MinimalAPI)
 class UNemoCoreSubsystem final : public UVoicevoxNativeCoreSubsystem

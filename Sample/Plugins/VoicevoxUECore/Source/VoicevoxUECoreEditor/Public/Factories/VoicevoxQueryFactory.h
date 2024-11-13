@@ -26,10 +26,18 @@ class VOICEVOXUECOREEDITOR_API UVoicevoxQueryFactory : public UFactory
 	GENERATED_BODY()
 public:
 
+	//----------------------------------------------------------------
+	// Variable
+	//----------------------------------------------------------------
+	
 	//! 保存用の一時データ。
 	UPROPERTY()
 	TObjectPtr<UVoicevoxQuery> EditAudioQuery = nullptr;
 
+	//----------------------------------------------------------------
+	// Function
+	//----------------------------------------------------------------
+	
 	/**
 	 * @brief コンストラクタ
 	 */

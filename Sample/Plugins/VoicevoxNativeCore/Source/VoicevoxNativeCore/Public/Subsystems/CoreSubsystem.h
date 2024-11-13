@@ -1,9 +1,18 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @headerfile CoreSubsystem.h
+ * @brief VOICEVOX COREのAPIをまとめたSubsystemヘッダーファイル
+ * @author Yuuki Ogino
+ */
 #pragma once
 
 #include "Subsystems/VoicevoxNativeCoreSubsystem.h"
 #include "CoreSubsystem.generated.h"
+
+//------------------------------------------------------------------------
+// class
+//------------------------------------------------------------------------
 
 /**
  * @class UCoreSubsystem

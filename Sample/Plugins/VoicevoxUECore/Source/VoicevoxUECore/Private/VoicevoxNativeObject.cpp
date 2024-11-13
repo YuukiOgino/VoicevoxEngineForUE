@@ -1,9 +1,17 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @brief  複数のVOICEVOX COREライブラリへアクセスするSubsystemを管理し、各APIへアクセスするCPPファイル
+ * @author Yuuki Ogino
+ */
+
 #include "VoicevoxNativeObject.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 #include "Subsystems/VoicevoxNativeCoreSubsystem.h"
 
+/**
+ * @brief サブシステム管理オブジェクト初期化
+ */
 void UVoicevoxNativeObject::Init()
 {
 #if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION == 0)
@@ -18,12 +26,18 @@ void UVoicevoxNativeObject::Init()
 	GetDerivedClasses(BaseType, SubsystemClasses, true);
 }
 
+/**
+ * @brief サブシステム管理オブジェクト破棄
+ */
 void UVoicevoxNativeObject::Shutdown()
 {
 	VoicevoxSubsystemCollection.Deinitialize();
 	SubsystemClasses.Empty();
 }
 
+/**
+ * @brief リファレンスオブジェクトをガベージコレクション対象外に登録
+ */
 void UVoicevoxNativeObject::AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector)
 {
 	UVoicevoxNativeObject* This = CastChecked<UVoicevoxNativeObject>(InThis);
@@ -35,6 +49,17 @@ void UVoicevoxNativeObject::AddReferencedObjects(UObject* InThis, FReferenceColl
 	UObject::AddReferencedObjects(This, Collector);
 }
 
+//--------------------------------
+// VOICEVOX CORE APIアクセス関数
+//--------------------------------
+
+//--------------------------------
+// VOICEVOX CORE Initialize関連
+//--------------------------------
+	
+/**
+ * @brief 音声合成するための初期化を行う。VOICEVOXのAPIを正しく実行するには先に初期化が必要
+ */
 void UVoicevoxNativeObject::CoreInitialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
 {
 	for (const auto Element : SubsystemClasses)
@@ -57,6 +82,13 @@ void UVoicevoxNativeObject::CoreInitialize(const bool bUseGPU, const int CPUNumT
 	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetInitializeResult(true);
 }
 
+//--------------------------------
+// VOICEVOX CORE Finalize関連
+//--------------------------------
+	
+/**
+ * @brief 終了処理を行う。以降VOICEVOXのAPIを利用するためには再度Initializeメソッドを行う必要がある。
+ */
 void UVoicevoxNativeObject::Finalize()
 {
 	for (const auto Element : SubsystemClasses)
@@ -68,16 +100,12 @@ void UVoicevoxNativeObject::Finalize()
 	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetFinalizeResult(true);
 }
 
+//--------------------------------
+// VOICEVOX CORE Model関連
+//--------------------------------
+
 /**
- * @fn
- * VOICEVOX COREのモデルをロード実行
  * @brief モデルをロードする。
- * @param SpeakerId 話者番号
- * @return 成功したらtrue、失敗したらfalse
- * @detail
- * 必ずしも話者とモデルが1:1対応しているわけではない。
- *
- * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
  */
 void UVoicevoxNativeObject::LoadModel(int64 SpeakerId)
 {
@@ -97,16 +125,12 @@ void UVoicevoxNativeObject::LoadModel(int64 SpeakerId)
 	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetLodeModelResult(false);
 }
 
+//--------------------------------
+// VOICEVOX CORE AudioQuery関連
+//--------------------------------
+
 /**
- * @fn
- * VOICEVOX COREのvoicevox_audio_queryを取得
  * @brief AudioQuery を取得する。
- * @param[in] SpeakerId 話者番号
- * @param[in] Message 音声データに変換するtextデータ
- * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
- * @return AudioQueryをjsonでフォーマット後、構造体へ変換したもの。
- * @details
- * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
  */
 FVoicevoxAudioQuery UVoicevoxNativeObject::GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana)
 {
@@ -121,17 +145,12 @@ FVoicevoxAudioQuery UVoicevoxNativeObject::GetAudioQuery(int64 SpeakerId, const 
 	return FVoicevoxAudioQuery();
 }
 
+//--------------------------------
+// VOICEVOX CORE TextToSpeech関連
+//--------------------------------
+
 /**
- * @fn
- * VOICEVOX COREのtext to speechを実行
  * @brief Textデータを音声データに変換する。
- * @param[in] SpeakerId 話者番号
- * @param[in] Message 音声データに変換するtextデータ
- * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
- * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
- * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
- * @details
- * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
  */
 TArray<uint8> UVoicevoxNativeObject::RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak)
 {
@@ -147,15 +166,7 @@ TArray<uint8> UVoicevoxNativeObject::RunTextToSpeech(int64 SpeakerId, const FStr
 }
 
 /**
- * @fn
- * VOICEVOX COREのvoicevox_synthesisを実行
  * @brief AudioQueryを音声データに変換する。
- * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery
- * @param[in] SpeakerId 話者番号
- * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
- * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
- * @details
- * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
  */
 TArray<uint8> UVoicevoxNativeObject::RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak)
 {
@@ -171,15 +182,7 @@ TArray<uint8> UVoicevoxNativeObject::RunSynthesis(const char* AudioQueryJson, in
 }
 
 /**
- * @fn
- * VOICEVOX COREのvoicevox_synthesisを実行
  * @brief AudioQueryを音声データに変換する。
- * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery構造体
- * @param[in] SpeakerId 話者番号
- * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
- * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
- * @details
- * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
  */
 TArray<uint8> UVoicevoxNativeObject::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak)
 {
@@ -194,16 +197,12 @@ TArray<uint8> UVoicevoxNativeObject::RunSynthesis(const FVoicevoxAudioQuery& Aud
 	return TArray<uint8>();
 }
 
+//--------------------------------
+// VOICEVOX CORE PhonemeLength関連
+//--------------------------------
+
 /**
- * @fn
- * 音素ごとの長さを求める
  * @brief 音素列から、音素ごとの長さを求める
- * @param[in] Length 音素列の長さ
- * @param[in] PhonemeList 音素列
- * @param[in] SpeakerID 話者番号
- * @return 音素ごとの長さ
- *
- * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
  */
 TArray<float> UVoicevoxNativeObject::GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID)
 {
@@ -218,21 +217,12 @@ TArray<float> UVoicevoxNativeObject::GetPhonemeLength(int64 Length, TArray<int64
 	return TArray<float>();
 }
 
+//--------------------------------
+// VOICEVOX CORE Mora関連
+//--------------------------------
+
 /**
- * @fn
- * モーラごとの音高を求める
  * @brief モーラごとの音素列とアクセント情報から、モーラごとの音高を求める
- * @param[in] Length モーラ列の長さ
- * @param[in] VowelPhonemeList 母音の音素列
- * @param[in] ConsonantPhonemeList 子音の音素列
- * @param[in] StartAccentList アクセントの開始位置
- * @param[in] EndAccentList アクセントの終了位置
- * @param[in] StartAccentPhraseList アクセント句の開始位置
- * @param[in] EndAccentPhraseList アクセント句の終了位置
- * @param[in] SpeakerID 話者番号
- * @return モーラごとの音高
- *
- * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
  */
 TArray<float> UVoicevoxNativeObject::FindPitchEachMora(int64 Length, TArray<int64> VowelPhonemeList, TArray<int64> ConsonantPhonemeList,
 										  TArray<int64> StartAccentList, TArray<int64> EndAccentList,
@@ -249,19 +239,13 @@ TArray<float> UVoicevoxNativeObject::FindPitchEachMora(int64 Length, TArray<int6
 
 	return TArray<float>();
 }
-	
+
+//--------------------------------
+// VOICEVOX CORE DecodeForward関連
+//--------------------------------
+
 /**
- * @fn
- * 波形を求める
  * @brief フレームごとの音素と音高から、波形を求める
- * @param[in] Length フレームの長さ
- * @param[in] PhonemeSize 音素の種類数
- * @param[in] F0 フレームごとの音高
- * @param[in] Phoneme フレームごとの音素
- * @param[in] SpeakerID 話者番号
- * @return 音声波形
- *
- * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
  */
 TArray<float> UVoicevoxNativeObject::DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID)
 {

@@ -1,11 +1,19 @@
 ﻿// Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @brief  VoicevoxUECoreのEditorモジュールCPPファイル
+ * @author Yuuki Ogino
+ */
+
 #include "VoicevoxUECoreEditor.h"
 #include "AssetToolsModule.h"
 #include "AssetTypeActions/VoicevoxQueryTypeActions.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxUECoreEditorModule"
 
+/**
+ * @brief StartupModule
+ */
 void FVoicevoxUECoreEditorModule::StartupModule()
 {
 	if (const auto& ModuleMgr = FModuleManager::Get(); ModuleMgr.IsModuleLoaded("AssetTools"))
@@ -17,10 +25,10 @@ void FVoicevoxUECoreEditorModule::StartupModule()
 	}
 }
 
-void FVoicevoxUECoreEditorModule::ShutdownModule()
-{
-    
-}
+/**
+ * @brief ShutdownModule
+ */
+void FVoicevoxUECoreEditorModule::ShutdownModule() {}
 
 #undef LOCTEXT_NAMESPACE
     

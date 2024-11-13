@@ -1,8 +1,8 @@
 ﻿// Copyright Yuuki Ogino. All Rights Reserved.
 
 /**
- * @headerfile VoicevoxEngineEditor.h
- * @brief  VoicevoxEngineのEditorモジュールヘッダーファイル
+ * @headerfile VoicevoxUECoreEditor.h
+ * @brief  VoicevoxUECoreのEditorモジュールヘッダーファイル
  * @author Yuuki Ogino
  */
 #pragma once
@@ -15,12 +15,19 @@
 //------------------------------------------------------------------------
 
 /**
- * @class FVoicevoxEngineEditorModule
- * @brief VoicevoxEngine Editoモジュール
+ * @class FVoicevoxUECoreEditorModule
+ * @brief VoicevoxUECore Editorモジュール
  */
 class FVoicevoxUECoreEditorModule : public IModuleInterface
 {
 public:
+    /**
+     * @brief StartupModule
+     */
     virtual void StartupModule() override;
+
+    /**
+     * @brief ShutdownModule
+     */
     virtual void ShutdownModule() override;
 };

@@ -1,5 +1,10 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @brief VOICEVOX NEMO COREのAPIをまとめたSubsystem　CPPファイル
+ * @author Yuuki Ogino
+ */
+
 #include "Subsystems/NemoCoreSubsystem.h"
 #include "JsonObjectConverter.h"
 #include <voicevox_core.h>

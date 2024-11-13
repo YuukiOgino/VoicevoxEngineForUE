@@ -20,10 +20,10 @@
  */
 class FVoicevoxQueryTypeActions : public FAssetTypeActions_Base
 {
-	//!
+	//! 項目名
 	FText                       Name;
 
-	//! 
+	//! アセットカテゴリー
 	EAssetTypeCategories::Type  AssetCategoryBit;
 public:
 	

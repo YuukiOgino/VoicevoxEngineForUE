@@ -2,7 +2,7 @@
 
 /**
  * @headerfile VoicevoxCoreSubsystem.h
- * @brief  各VOICEVOX COREのAPIを呼び出すEngineSubsystemクラスをまとめたヘッダーファイル
+ * @brief  各VOICEVOX COREのAPIを呼び出すSubsystemヘッダーファイル
  * @author Yuuki Ogino
  */
 
@@ -14,13 +14,30 @@
 #include "Subsystems/EngineSubsystem.h"
 #include "VoicevoxCoreSubsystem.generated.h"
 
+//----------------------------------------------------------------
+// using(Delegate)
+//----------------------------------------------------------------
+
+/**
+ * @typedef TVoicevoxCoreDelegate
+ */
 template <typename ...T>
 using TVoicevoxCoreDelegate = TDelegate<T...>;
 
+/**
+ * @typedef TVoicevoxCoreMulticastDelegate
+ */
 template <typename ...T>
 using TVoicevoxCoreMulticastDelegate = TMulticastDelegate<T...>;
 
+/**
+ * @typedef FVoicevoxCoreCompleteDelegate
+ */
 using FVoicevoxCoreCompleteDelegate = TVoicevoxCoreDelegate<void(bool)>;
+
+//----------------------------------------------------------------
+// class
+//----------------------------------------------------------------
 
 class UVoicevoxNativeObject;
 
@@ -33,40 +50,47 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 {
 	GENERATED_BODY()
 
-	//--------------------------------
+	//----------------------------------------------------------------
 	// friend class
-	//--------------------------------
+	//----------------------------------------------------------------
 	
 	friend class UVoicevoxNativeObject;
 	
-	//--------------------------------
+	//----------------------------------------------------------------
 	// Variable
-	//--------------------------------
+	//----------------------------------------------------------------
 
+	//! VOICEVOX COREライブラリ参照プラグイン名リスト
 	UPROPERTY()
 	TArray<FString> CoreNameList;
 
+	//! 話者名や話者IDのリスト
 	UPROPERTY()
 	TArray<FVoicevoxMeta> MetaList;
 
+	//! サポートデバイス情報リスト
 	UPROPERTY()
 	TMap<FString, FVoicevoxSupportedDevices> SupportedDevicesMap;
 
+	//! VOICEVOX COREライブラリバージョンリスト
 	UPROPERTY()
 	TMap<FString, FString> VoicevoxCoreVersionMap;
 
+	//! GPUモードリスト
 	UPROPERTY()
 	TMap<FString, bool> IsGpuModeMap;
-	
+
+	//! VoicevoxNativeCoreSubsystem管理インスタンス 
 	UPROPERTY()
 	TObjectPtr<UVoicevoxNativeObject> NativeInstance;
 
+	//! 初期化済みフラグ
 	UPROPERTY()
 	bool bIsInitialized = false;
 	
-	//--------------------------------
+	//----------------------------------------------------------------
 	// Delegate
-	//--------------------------------
+	//----------------------------------------------------------------
 
 	//! 初期化処理完了通知デリゲート
 	TVoicevoxCoreDelegate<void(bool)> OnInitializeComplete;
@@ -77,8 +101,13 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 	//! モデル読み込み処理完了通知デリゲート
 	TVoicevoxCoreDelegate<void(bool)> OnLodeModelComplete;
 
-	//--------------------------------
+	//----------------------------------------------------------------
 	// Function
+	//----------------------------------------------------------------
+
+	//--------------------------------
+	// CORE API処理完了通知関数
+	// VoicevoxNativeObjectから呼び出し
 	//--------------------------------
 	
 	/**
@@ -109,16 +138,20 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 	 * @fn
 	 * 各VOICEVOX COREの設定情報を内部メモリに加える
 	 * @brief 各VOICEVOX COREの話者名や話者IDのリスト、サポートデバイス、バージョン情報、GPUモード状態を各変数へ追加
-	 * @param [in]CoreName
-	 * @param [in]List
-	 * @param [in]SupportedDevices
-	 * @param [in]Version
-	 * @param [in]bIsGpuMode
+	 * @param [in] CoreName : プラグインに定義したコア名
+	 * @param [in] List : 
+	 * @param [in] SupportedDevices
+	 * @param [in] Version
+	 * @param [in] bIsGpuMode
 	 */
 	void AddVoicevoxConfigData(const FString& CoreName, TArray<FVoicevoxMeta> List, FVoicevoxSupportedDevices SupportedDevices, const FString& Version, const bool bIsGpuMode);
 	
 public:
 
+	//----------------------------------------------------------------
+	// Function
+	//----------------------------------------------------------------
+	
 	//--------------------------------
 	// override
 	//--------------------------------
@@ -134,10 +167,17 @@ public:
 	virtual void Deinitialize() override;
 
 	//--------------------------------
-	// 初期化
+	// Subsystem管理インスタンス初期化
 	//--------------------------------
-	
+
+	/**
+	 * @brief VoicevoxNativeCoreSubsystem管理インスタンスの初期化処理実行
+	 */
 	void NativeInitialize() const;
+
+	//----------------------------------------------------------------
+	// VOICEVOX CORE APIアクセス関数
+	//----------------------------------------------------------------
 	
 	//--------------------------------
 	// VOICEVOX CORE Initialize関連
@@ -219,6 +259,10 @@ public:
 	 */
 	void SetOnLoadModelCompleteDelegate(const FVoicevoxCoreCompleteDelegate& OpenDelegate);
 
+	//--------------------------------
+	// VOICEVOX CORE AudioQuery関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_audio_queryを取得
@@ -232,6 +276,10 @@ public:
 	 */
 	FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana) const;
 
+	//--------------------------------
+	// VOICEVOX CORE TextToSpeech関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのtext to speechを実行
@@ -246,6 +294,10 @@ public:
 	 */
 	TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak) const;
 
+	//--------------------------------
+	// VOICEVOX CORE Synthesis関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_synthesisを実行
@@ -271,6 +323,17 @@ public:
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) const;
+
+	//--------------------------------
+	// VOICEVOX CORE LipSync関連
+	//--------------------------------
+	
+	/**
+	 * @brief VOICEVOX COREで取得したAudioQuery元に、中品質なLipSyncに必要なデータリストを取得(Blueprint公開ノード)
+	 * @param[in] AudioQuery AudioQuery構造体
+	 * @return AudioQuery情報を元に生成した、中品質のLipSyncに必要なデータリスト
+	 */
+	static TArray<FVoicevoxLipSync> GetLipSyncList(FVoicevoxAudioQuery AudioQuery);
 	
 	//--------------------------------
 	// VOICEVOX CORE Meta関連
@@ -322,12 +385,20 @@ public:
 	 */
 	FVoicevoxSupportedDevices GetSupportedDevices(const FString& CoreName);
 
+	//--------------------------------
+	// VOICEVOX CORE プラグイン名取得
+	//--------------------------------
+	
 	/**
 	 * @brief 初期化済みのネイティブコア名を取得
 	 * @return 初期化済みのネイティブコア名のリスト
 	 */
 	TArray<FString> GetCoreNameList();
 
+	//--------------------------------
+	// VOICEVOX CORE PhonemeLength関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * 音素ごとの長さを求める
@@ -341,6 +412,10 @@ public:
 	 */
 	TArray<float> GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID) const;
 
+	//--------------------------------
+	// VOICEVOX CORE Mora関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * モーラごとの音高を求める
@@ -361,6 +436,10 @@ public:
 											  TArray<int64> StartAccentList, TArray<int64> EndAccentList,
 											  TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
 											  int64 SpeakerID) const;
+
+	//--------------------------------
+	// VOICEVOX CORE DecodeForward関連
+	//--------------------------------
 	
 	/**
 	 * @fn

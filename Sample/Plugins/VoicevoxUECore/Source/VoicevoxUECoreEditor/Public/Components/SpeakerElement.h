@@ -17,7 +17,7 @@
 //------------------------------------------------------------------------
 
 /**
- * @class USpeakerElementWidget
+ * @class USpeakerElement
  * @brief スピーカー選択コンボボックスラベルエレメントクラス
  */
 UCLASS()
@@ -27,7 +27,7 @@ class VOICEVOXUECOREEDITOR_API USpeakerElement : public UUserWidget
  
 public:
 
-   //! スピーカータイプID
+   //! 話者番号
    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = true));
    int64 Speaker;
 	

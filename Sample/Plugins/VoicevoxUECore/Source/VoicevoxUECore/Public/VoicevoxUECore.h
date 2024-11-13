@@ -14,7 +14,7 @@
 * @class FVoicevoxUECoreModule
  * @brief UE用VoicevoxCOREモジュール
  */
-class FVoicevoxUECoreModule : public IModuleInterface
+class FVoicevoxUECoreModule final : public IModuleInterface
 {
 public:
 

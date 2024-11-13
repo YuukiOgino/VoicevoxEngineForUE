@@ -77,7 +77,11 @@ void UAudioQueryParameterElement::NativeConstruct()
  */
 void UAudioQueryParameterElement::OnValueChanged(const float Value)
 {
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION == 0)
 	ParamEditableText->SetText(UKismetTextLibrary::Conv_FloatToText(Value, HalfFromZero, false, true, 1, 324, 2, 2));
+#else
+	ParamEditableText->SetText(UKismetTextLibrary::Conv_DoubleToText(Value, HalfFromZero, false, true, 1, 324, 2, 2));
+#endif
 	
 	if (!EditorAudioQueryPtr) return;
 	
@@ -111,10 +115,18 @@ void UAudioQueryParameterElement::OnValueChanged(const float Value)
  */
 void UAudioQueryParameterElement::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION == 0)
 	const float Value = FMath::Clamp(FCString::Atof(*Text.ToString()), ParamSlider->MinValue, ParamSlider->MaxValue);
+#else
+	const float Value = FMath::Clamp(FCString::Atof(*Text.ToString()), ParamSlider->GetMinValue(), ParamSlider->GetMaxValue());
+#endif
 	ParamSlider->SetValue(Value);
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION == 0)
 	ParamEditableText->SetText(UKismetTextLibrary::Conv_FloatToText(Value, HalfFromZero, false, true, 1, 324, 2, 2));
-
+#else
+	ParamEditableText->SetText(UKismetTextLibrary::Conv_DoubleToText(Value, HalfFromZero, false, true, 1, 324, 2, 2));
+#endif
+	
 	if (!EditorAudioQueryPtr) return;
 
 	switch (ParamType)
@@ -148,7 +160,11 @@ void UAudioQueryParameterElement::OnTextCommitted(const FText& Text, ETextCommit
 float UAudioQueryParameterElement::GetParamValue() const
 {
 	if (!ParamEditableText) return 0;
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION == 0)
 	if (!EditorAudioQueryPtr) return ParamSlider->MinValue;
+#else
+	if (!EditorAudioQueryPtr) return ParamSlider->GetMinValue();
+#endif
 	
 	switch (ParamType)
 	{
@@ -174,5 +190,9 @@ float UAudioQueryParameterElement::GetParamValue() const
  */
 FText UAudioQueryParameterElement::GetParamTextValue() const
 {
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION == 0)
 	return UKismetTextLibrary::Conv_FloatToText(GetParamValue(), HalfFromZero, false, true, 1, 324, 2, 2);
+#else
+	return UKismetTextLibrary::Conv_DoubleToText(GetParamValue(), HalfFromZero, false, true, 1, 324, 2, 2);
+#endif
 }

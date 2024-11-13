@@ -9,7 +9,7 @@ public class VoicevoxEngineEditor : ModuleRules
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(
-            new string[]
+            new[]
             {
                 "Core",
                 "Blutility",
@@ -19,7 +19,7 @@ public class VoicevoxEngineEditor : ModuleRules
         );
 
         PrivateDependencyModuleNames.AddRange(
-            new string[]
+            new[]
             {
                 "VoicevoxUECore",
                 "VoicevoxUECoreEditor",

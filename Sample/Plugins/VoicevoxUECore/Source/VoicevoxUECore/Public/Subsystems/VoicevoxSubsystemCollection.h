@@ -1,4 +1,13 @@
+// Copyright Yuuki Ogino. All Rights Reserved.
+
+/**
+ * @headerfile VoicevoxSubsystemCollection.h
+ * @brief VOICEVOX COREのネイティブAPIを参照するSubsystem管理ヘッダーファイル
+ * @author Yuuki Ogino
+ */
+
 #pragma once
+
 #include "Subsystems/VoicevoxNativeCoreSubsystem.h"
 
 class UVoicevoxNativeObject;
@@ -9,8 +18,17 @@ class UVoicevoxNativeObject;
  */
 class FVoicevoxSubsystemCollection final : public FSubsystemCollectionBase
 {
+
+	//----------------------------------------------------------------
+	// friend class
+	//----------------------------------------------------------------
+	
 	friend class UVoicevoxNativeObject;
 
+	//----------------------------------------------------------------
+	// Function
+	//----------------------------------------------------------------
+	
 	/**
 	 * @brief 指定したクラスのSubsystemを取得
 	 * @param SubsystemClass 
@@ -22,11 +40,9 @@ class FVoicevoxSubsystemCollection final : public FSubsystemCollectionBase
 	}
 	
 public:
+	
 	/**
 	 * @brief コンストラクタ
 	 */
-	FVoicevoxSubsystemCollection()
-	: FSubsystemCollectionBase(UVoicevoxNativeCoreSubsystem::StaticClass())
-	{
-	}
+	FVoicevoxSubsystemCollection() : FSubsystemCollectionBase(UVoicevoxNativeCoreSubsystem::StaticClass()) {}
 };

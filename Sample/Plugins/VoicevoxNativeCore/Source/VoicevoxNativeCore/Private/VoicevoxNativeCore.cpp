@@ -1,5 +1,10 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @brief  VoicevoxNativeCoreモジュールCPPファイル
+ * @author Yuuki Ogino
+ */
+
 #include "VoicevoxNativeCore.h"
 #include "Modules/ModuleManager.h"
 
@@ -8,16 +13,12 @@
 /**
  * @brief StartupModule
  */
-void FVoicevoxNativeCoreModule::StartupModule()
-{
-}
+void FVoicevoxNativeCoreModule::StartupModule() {}
 
 /**
  * @brief ShutdownModule
  */
-void FVoicevoxNativeCoreModule::ShutdownModule()
-{
-}
+void FVoicevoxNativeCoreModule::ShutdownModule() {}
 
 #undef LOCTEXT_NAMESPACE
 	

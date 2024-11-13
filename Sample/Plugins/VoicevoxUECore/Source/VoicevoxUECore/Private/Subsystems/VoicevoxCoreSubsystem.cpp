@@ -1,5 +1,10 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @brief  各VOICEVOX COREのAPIを呼び出すSubsystem　CPPファイル
+ * @author Yuuki Ogino
+ */
+
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 #include "VoicevoxNativeObject.h"
 
@@ -29,10 +34,21 @@ void UVoicevoxCoreSubsystem::Deinitialize()
 	NativeInstance->Shutdown();
 }
 
+//--------------------------------
+// Subsystem管理インスタンス初期化
+//--------------------------------
+
+/**
+ * @brief VoicevoxNativeCoreSubsystem管理インスタンスの初期化処理実行
+ */
 void UVoicevoxCoreSubsystem::NativeInitialize() const
 {
 	NativeInstance->Init();
 }
+
+//----------------------------------------------------------------
+// VOICEVOX CORE APIアクセス関数
+//----------------------------------------------------------------
 
 //--------------------------------
 // VOICEVOX CORE Initialize関連
@@ -139,15 +155,12 @@ void UVoicevoxCoreSubsystem::SetFinalizeResult(const bool bIsSuccess)
 	}
 }
 
+//--------------------------------
+// VOICEVOX CORE LoadModel関連
+//--------------------------------
+
 /**
- * @fn
- * VOICEVOX COREのモデルをロード実行
  * @brief モデルをロードする。
- * @param SpeakerId 話者番号
- * @detail
- * 必ずしも話者とモデルが1:1対応しているわけではない。
- *
- * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
  */
 void UVoicevoxCoreSubsystem::LoadModel(const int64 SpeakerId) const
 {
@@ -165,9 +178,6 @@ void UVoicevoxCoreSubsystem::SetOnLoadModelCompleteDelegate(const FVoicevoxCoreC
 
 /**
  * @brief VOICEVOX COREモデル読み込みの結果をセット
- * @param[in] bIsSuccess		モデル読み込み処理が成功したか
- * @detail
- * VOICEVOXのモデル読み込み処理のリザルトをセットする。NativeCoreプラグインで使用する。
  */
 void UVoicevoxCoreSubsystem::SetLodeModelResult(const bool bIsSuccess) const
 {
@@ -187,21 +197,21 @@ void UVoicevoxCoreSubsystem::SetLodeModelResult(const bool bIsSuccess) const
 	}
 }
 
+//--------------------------------
+// VOICEVOX CORE AudioQuery関連
+//--------------------------------
+
 /**
- * @fn
- * VOICEVOX COREのvoicevox_audio_queryを取得
  * @brief AudioQuery を取得する。
- * @param[in] SpeakerId 話者番号
- * @param[in] Message 音声データに変換するtextデータ
- * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
- * @return AudioQueryをjsonでフォーマット後、構造体へ変換したもの。
- * @details
- * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
  */
 FVoicevoxAudioQuery UVoicevoxCoreSubsystem::GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana) const
 {
 	return NativeInstance->GetAudioQuery(SpeakerId, Message, bKana);
 }
+
+//--------------------------------
+// VOICEVOX CORE TextToSpeech関連
+//--------------------------------
 
 /**
  * @brief VOICEVOX COREのtext to speechを実行
@@ -210,6 +220,10 @@ TArray<uint8> UVoicevoxCoreSubsystem::RunTextToSpeech(const int64 SpeakerId, con
 {
 	return NativeInstance->RunTextToSpeech(SpeakerId, Message, bKana, bEnableInterrogativeUpspeak);
 }
+
+//--------------------------------
+// VOICEVOX CORE Synthesis関連
+//--------------------------------
 
 /**
  * @brief AudioQueryを音声データに変換する。
@@ -226,6 +240,50 @@ TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& Au
 {
 	return NativeInstance->RunSynthesis(AudioQueryJson, SpeakerId,  bEnableInterrogativeUpspeak);
 }
+
+//--------------------------------
+// VOICEVOX CORE LipSync関連
+//--------------------------------
+	
+/**
+ * @brief VOICEVOX COREで取得したAudioQuery元に、中品質なLipSyncに必要なデータリストを取得
+ */
+TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQuery AudioQuery)
+{
+	TArray<FVoicevoxLipSync> List;
+	List.Empty();
+
+	TMap<FString, ELipSyncVowelType> FruitMap =
+	{
+		{TEXT("a"), ELipSyncVowelType::A},
+		{TEXT("i"), ELipSyncVowelType::I},
+		{TEXT("u"), ELipSyncVowelType::U},
+		{TEXT("e"), ELipSyncVowelType::E},
+		{TEXT("o"), ELipSyncVowelType::O},
+		{TEXT("cl"), ELipSyncVowelType::U},
+		{TEXT("N"), ELipSyncVowelType::Non},
+		{TEXT("pau"), ELipSyncVowelType::Non},
+	};
+	
+	for (auto [Moras, Accent, Pause_mora, Is_interrogative] : AudioQuery.Accent_phrases)
+	{
+		for (auto [Text, Consonant, Consonant_length, Vowel, Vowel_length, Pitch] : Moras)
+		{
+			List.Add({FruitMap[Vowel], Vowel_length + Consonant_length});
+		}
+
+		if (Pause_mora.Vowel.Equals(TEXT("pau"), ESearchCase::IgnoreCase))
+		{
+			List.Add({ELipSyncVowelType::Non, Pause_mora.Vowel_length});
+		}
+	}
+	
+	return List;
+}
+
+//--------------------------------
+// VOICEVOX CORE Meta関連
+//--------------------------------
 
 /**
  * @brief 話者名や話者IDのリストを取得する
@@ -255,32 +313,45 @@ FString UVoicevoxCoreSubsystem::GetMetaName(const int64 SpeakerID)
 	return TEXT("");
 }
 
+//--------------------------------
+// VOICEVOX CORE Version関連
+//--------------------------------
+
 /**
  * @brief VOICEVOX COREのバージョンを取得する
- * @return SemVerでフォーマットされたバージョン
  */
 FString UVoicevoxCoreSubsystem::GetVoicevoxVersion(const FString& CoreName)
 {
 	return VoicevoxCoreVersionMap[CoreName];
 }
 
+//--------------------------------
+// VOICEVOX CORE GpuMode関連
+//--------------------------------
+
 /**
  * @brief ハードウェアアクセラレーションがGPUモードか判定する
- * @return GPUモードならtrue、そうでないならfalse
  */
 bool UVoicevoxCoreSubsystem::IsGpuMode(const FString& CoreName)
 {
 	return IsGpuModeMap[CoreName];
 }
-	
+
+//--------------------------------
+// VOICEVOX CORE SupportedDevices関連
+//--------------------------------
+
 /**
  * @brief サポートデバイス情報を取得する
- * @return サポートデバイス情報の構造体
  */
 FVoicevoxSupportedDevices UVoicevoxCoreSubsystem::GetSupportedDevices(const FString& CoreName)
 {
 	return SupportedDevicesMap[CoreName];
 }
+
+//--------------------------------
+// VOICEVOX CORE Property関連
+//--------------------------------
 
 /**
  * @brief 各VOICEVOX COREの話者名や話者IDのリスト、サポートデバイス、バージョン情報を各変数へ追加
@@ -297,46 +368,36 @@ void UVoicevoxCoreSubsystem::AddVoicevoxConfigData(const FString& CoreName, TArr
 	IsGpuModeMap.Add(CoreName, bIsGpuMode);
 }
 
+//--------------------------------
+// VOICEVOX CORE プラグイン名取得
+//--------------------------------
+
 /**
  * @brief 初期化済みのネイティブコア名を取得
- * @return 初期化済みのネイティブコア名のリスト
  */
 TArray<FString> UVoicevoxCoreSubsystem::GetCoreNameList()
 {
 	return CoreNameList;
 }
 
+//--------------------------------
+// VOICEVOX CORE PhonemeLength関連
+//--------------------------------
+
 /**
- * @fn
- * 音素ごとの長さを求める
  * @brief 音素列から、音素ごとの長さを求める
- * @param[in] Length 音素列の長さ
- * @param[in] PhonemeList 音素列
- * @param[in] SpeakerID 話者番号
- * @return 音素ごとの長さ
- *
- * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
  */
 TArray<float> UVoicevoxCoreSubsystem::GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID) const
 {
 	return NativeInstance->GetPhonemeLength(Length, PhonemeList,  SpeakerID);
 }
 
+//--------------------------------
+// VOICEVOX CORE Mora関連
+//--------------------------------
+
 /**
- * @fn
- * モーラごとの音高を求める
  * @brief モーラごとの音素列とアクセント情報から、モーラごとの音高を求める
- * @param[in] Length モーラ列の長さ
- * @param[in] VowelPhonemeList 母音の音素列
- * @param[in] ConsonantPhonemeList 子音の音素列
- * @param[in] StartAccentList アクセントの開始位置
- * @param[in] EndAccentList アクセントの終了位置
- * @param[in] StartAccentPhraseList アクセント句の開始位置
- * @param[in] EndAccentPhraseList アクセント句の終了位置
- * @param[in] SpeakerID 話者番号
- * @return モーラごとの音高
- *
- * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
  */
 TArray<float> UVoicevoxCoreSubsystem::FindPitchEachMora(int64 Length, TArray<int64> VowelPhonemeList, TArray<int64> ConsonantPhonemeList,
 										  TArray<int64> StartAccentList, TArray<int64> EndAccentList,
@@ -345,19 +406,13 @@ TArray<float> UVoicevoxCoreSubsystem::FindPitchEachMora(int64 Length, TArray<int
 {
 	return NativeInstance->FindPitchEachMora(Length, VowelPhonemeList,  ConsonantPhonemeList, StartAccentList, EndAccentList, StartAccentPhraseList, EndAccentPhraseList, SpeakerID);
 }
+
+//--------------------------------
+// VOICEVOX CORE DecodeForward関連
+//--------------------------------
 	
 /**
- * @fn
- * 波形を求める
  * @brief フレームごとの音素と音高から、波形を求める
- * @param[in] Length フレームの長さ
- * @param[in] PhonemeSize 音素の種類数
- * @param[in] F0 フレームごとの音高
- * @param[in] Phoneme フレームごとの音素
- * @param[in] SpeakerID 話者番号
- * @return 音声波形
- *
- * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
  */
 TArray<float> UVoicevoxCoreSubsystem::DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID) const
 {

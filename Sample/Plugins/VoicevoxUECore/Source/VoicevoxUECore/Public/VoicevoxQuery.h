@@ -20,12 +20,15 @@ class VOICEVOXUECORE_API UVoicevoxQuery : public UObject
 {
 	GENERATED_BODY()
 public:
+	//! AudioQuery
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX CORE")
 	FVoicevoxAudioQuery VoicevoxAudioQuery;
 
+	//! 話者番号
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX CORE")
 	int64 SpeakerType = 3;
 
+	//! 入力したテキスト
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX CORE")
 	FString Text;
 };

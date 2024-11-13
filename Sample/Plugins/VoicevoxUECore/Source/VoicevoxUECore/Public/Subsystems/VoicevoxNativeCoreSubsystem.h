@@ -1,4 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Yuuki Ogino. All Rights Reserved.
+
+/**
+ * @headerfile VoicevoxNativeCoreSubsystem.h
+ * @brief VOICEVOX COREのネイティブライブラリのAPIを実行する基礎Subsystemヘッダーファイル
+ * @author Yuuki Ogino
+ */
 
 #pragma once
 
@@ -9,7 +15,7 @@
 
 /**
  * @class UVoicevoxNativeCoreSubsystem
- * @brief VOICEVOX COREのネイティブライブラリのAPIを実行する基礎Subsystem
+ * @brief VOICEVOX COREのネイティブライブラリのAPIを実行する基礎Subsystemクラス
  */
 UCLASS(Abstract,  MinimalAPI)
 class UVoicevoxNativeCoreSubsystem : public USubsystem
@@ -35,7 +41,7 @@ protected:
 	 * @brief VOICEVOXから受信したエラーメッセージを表示
 	 * @param[in] MessageFormat : エラーメッセージのフォーマット
 	 */
-	VOICEVOXUECORE_API void ShowVoicevoxErrorMessage(const FString& MessageFormat) const;
+	VOICEVOXUECORE_API static void ShowVoicevoxErrorMessage(const FString& MessageFormat);
 
 	/**
 	 * @fn

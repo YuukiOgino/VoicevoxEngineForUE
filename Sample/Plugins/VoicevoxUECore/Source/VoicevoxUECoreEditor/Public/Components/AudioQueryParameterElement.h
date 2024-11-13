@@ -5,7 +5,6 @@
  * @brief  AudioQueryのパラメータ値編集エレメントヘッダーファイル
  * @author Yuuki Ogino
  */
-
 #pragma once
 
 #include "CoreMinimal.h"

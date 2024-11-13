@@ -1,5 +1,10 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @headerfile AudioQueryParameterList.h
+ * @brief  AudioQueryのパラメータ値ウィジェットヘッダーファイル
+ * @author Yuuki Ogino
+ */
 #pragma once
 
 #include "CoreMinimal.h"
@@ -25,7 +30,7 @@ public:
 	 * @param [in] Param : VOICEVOX COREから生成したAudioQuery
 	 */
 	UFUNCTION(BlueprintCallable)
-	void SetEditAudioQuery(UPARAM(ref) FVoicevoxAudioQuery& Param);
+	void SetEditAudioQuery(UPARAM(ref) FVoicevoxAudioQuery& Param) const;
 	
 protected:
 

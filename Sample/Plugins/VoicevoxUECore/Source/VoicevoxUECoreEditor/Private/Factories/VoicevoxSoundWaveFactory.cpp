@@ -1,5 +1,10 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @brief  VOICEVOXで変換したサウンドデータを元にSoundWaveを生成するCPPファイル
+ * @author Yuuki Ogino
+ */
+
 #include "Factories/VoicevoxSoundWaveFactory.h"
 
 #include "AudioCompressionSettingsUtils.h"

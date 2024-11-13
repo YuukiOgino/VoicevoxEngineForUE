@@ -1,5 +1,10 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @brief VOICEVOX COREのAPIをまとめたSubsystem CPPファイル
+ * @author Yuuki Ogino
+ */
+
 #include "Subsystems/CoreSubsystem.h"
 #include "JsonObjectConverter.h"
 #include <voicevox_core.h>

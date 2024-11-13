@@ -1,5 +1,10 @@
 // Copyright Yuuki Ogino. All Rights Reserved
 
+/**
+ * @brief  VOICEVOX編集Editor Utility WidgetのCPPファイル
+ * @author Yuuki Ogino
+ */
+
 #include "VoicevoxEditorUtilityWidget.h"
 
 #include "AssetToolsModule.h"
@@ -15,13 +20,19 @@
 
 DEFINE_LOG_CATEGORY(LogVoicevoxEditor);
 
-bool UVoicevoxEditorUtilityWidget::IsSetEditorAudioQuery()
+/**
+ * @brief 編集対象のAudioQueryがセット済みか（Blueprint公開ノード）
+ */
+bool UVoicevoxEditorUtilityWidget::IsSetEditorAudioQuery() const
 {
     // 生成されればカナが空っぽになることは無いので、この値で生成済みかどうかを判定する
     return !EditorAudioQueryPtr.Kana.IsEmpty();
 }
 
-void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(const int64 SpeakerType, FString Text)
+/**
+ * @brief 編集したAudioQueryをアセットデータに保存する（Blueprint公開ノード）
+ */
+void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(const int64 SpeakerType, FString Text) const
 {
     UVoicevoxQueryFactory* Factory = NewObject<UVoicevoxQueryFactory>();
     Factory->EditAudioQuery = NewObject<UVoicevoxQuery>();
@@ -42,6 +53,9 @@ void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(const int64 SpeakerType,
     Factory->RemoveFromRoot();
 }
 
+/**
+ * @brief 編集したAudioQueryからSoundWaveアセットを生成して保存する（Blueprint公開ノード）
+ */
 void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(const int64 SpeakerType, const bool bEnableInterrogativeUpspeak) const
 {
     if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(EditorAudioQueryPtr, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
@@ -63,6 +77,9 @@ void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(const int64 SpeakerType, 
     }
 }
 
+/**
+ * @brief 編集したAudioQueryからWavファイルを生成して保存する（Blueprint公開ノード）
+ */
 void UVoicevoxEditorUtilityWidget::SaveWavFile(const int64 SpeakerType, const bool bEnableInterrogativeUpspeak) const
 {
     if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(EditorAudioQueryPtr, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
@@ -95,6 +112,9 @@ void UVoicevoxEditorUtilityWidget::SaveWavFile(const int64 SpeakerType, const bo
     }
 }
 
+/**
+ * @brief AudioQueryアセットデータを読み込む（Blueprint公開ノード）
+ */
 void UVoicevoxEditorUtilityWidget::LoadAudioQueryAssets()
 {
     FOpenAssetDialogConfig OpenAssetDialogConfig;
