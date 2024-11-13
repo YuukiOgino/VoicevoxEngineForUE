@@ -38,6 +38,10 @@
 		{
 			"Name": "VoicevoxUECore",
 			"Enabled": true
+		},
+		{
+			"Name": "VoicevoxNativeCore",
+			"Enabled": true
 		}
 	]
 }
