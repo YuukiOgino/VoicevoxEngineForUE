@@ -7,9 +7,10 @@ public class VoicevoxEngineEditor : ModuleRules
     public VoicevoxEngineEditor(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        CppStandard = CppStandardVersion.Latest;
 
         PublicDependencyModuleNames.AddRange(
-            new[]
+            new string[]
             {
                 "Core",
                 "Blutility",
@@ -19,11 +20,10 @@ public class VoicevoxEngineEditor : ModuleRules
         );
 
         PrivateDependencyModuleNames.AddRange(
-            new[]
+            new string[]
             {
                 "VoicevoxUECore",
                 "VoicevoxUECoreEditor",
-                "VoicevoxNativeCore", //　参照用のEngineSybsystemが完成したら消す
                 "VoicevoxEngine",
                 "UnrealEd",
                 "CoreUObject",
@@ -32,7 +32,7 @@ public class VoicevoxEngineEditor : ModuleRules
                 "SlateCore",
                 "DesktopPlatform",
                 "Json",
-                "JsonUtilities"                
+                "JsonUtilities"
             }
         );
     }

@@ -28,21 +28,23 @@ public class VoicevoxCore : ModuleRules
 			const string binPlatformName = "Win64";
 			const string thirdPartyName = "VoicevoxCore";
 			
-			// core.hはEngine側も同名のヘッダーファイルがあるため、意図的にx64フォルダまでをIncludePathに含める
-			PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, platformName)));
-			
 			// Add the import library
 			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "voicevox_core.lib"));
 
 			// Delay-load the DLL, so we can load it from the right place first
 			PublicDelayLoadDLLs.Add("voicevox_core.dll");
 			PublicDelayLoadDLLs.Add("onnxruntime.dll");
-			PublicDelayLoadDLLs.Add("onnxruntime_providers_shared.dll");
 
 			// Ensure that the DLL is staged along with the executable
 			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/voicevox_core.dll", Path.Combine(ModuleDirectory, platformName, "voicevox_core.dll"));
 			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/onnxruntime.dll", Path.Combine(ModuleDirectory, platformName, "onnxruntime.dll"));
-			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/onnxruntime_providers_shared.dll", Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_shared.dll"));
+
+			var providerSharedPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_shared.dll");
+			if (File.Exists(providerSharedPath))
+			{
+				PublicDelayLoadDLLs.Add("onnxruntime_providers_shared.dll");
+				RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/onnxruntime_providers_shared.dll", providerSharedPath);
+			}
 			
 			// onnxruntimeのCUDE関連DLLが存在する場合は必要なDLL一式すべてコピーする
 			var cudaPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_cuda.dll");

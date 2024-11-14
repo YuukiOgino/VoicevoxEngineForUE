@@ -20,10 +20,7 @@ public class VoicevoxCoreNemo : ModuleRules
 			const string platformName = "x64";
 			const string binPlatformName = "Win64";
 			const string thirdPartyName = "VoicevoxCoreNemo";
-			
-			// core.hはEngine側も同名のヘッダーファイルがあるため、意図的にx64フォルダまでをIncludePathに含める
-			PublicSystemIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, platformName)));
-			
+
 			// Add the import library
 			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "voicevox_core.lib"));
 			

@@ -44,19 +44,25 @@ protected:
 	VOICEVOXUECORE_API static void ShowVoicevoxErrorMessage(const FString& MessageFormat);
 
 	/**
+	 * @brief OpenJtakeのディレクトリ名を取得
+	 * @return OpneJtakeのディレクトリ名
+	 */
+	virtual FString GetOpenJtakeDirectoryName() { return FString(); }
+	
+	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_ttsで生成した音声データを開放
 	 * @brief voicevox_tts等で生成した音声データを開放する
 	 * @param Wav 開放する音声データのポインタ
 	 */
-	virtual void WavFree(uint8* Wav) {}
+	VOICEVOXUECORE_API void WavFree(uint8* Wav);
 
 	/**
 	 * エラー結果をメッセージに変換して表示
 	 * @param[in] ApiName : エラーを起こしたAPI名
 	 * @param [in] ResultCode メッセージに変換するエラーコード
 	 */
-	virtual void VoicevoxShowErrorResultMessage(const FString& ApiName, int ResultCode) {}
+	VOICEVOXUECORE_API void VoicevoxShowErrorResultMessage(const FString& ApiName, int ResultCode);
 	
 public:
 
@@ -92,7 +98,7 @@ public:
 	 *
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	virtual bool CoreInitialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false) { return false; }
+	VOICEVOXUECORE_API bool CoreInitialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false);
 
 	//--------------------------------
 	// VOICEVOX CORE Finalize関連
@@ -106,7 +112,7 @@ public:
 	 * VOICEVOXの終了処理は何度も実行可能。
 	 * 実行せずにexitしても大抵の場合問題ないが、CUDAを利用している場合は終了処理を実行しておかないと例外が起こることがある。
 	 */
-	virtual void Finalize() {}
+	VOICEVOXUECORE_API void Finalize();
 
 	//--------------------------------
 	// VOICEVOX CORE Model関連
@@ -123,7 +129,7 @@ public:
 	 *
 	 * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	virtual bool LoadModel(int64 SpeakerId) { return false; }
+	VOICEVOXUECORE_API bool LoadModel(int64 SpeakerId);
 
 	/**
 	 * @fn
@@ -132,7 +138,7 @@ public:
 	 * @param SpeakerId 話者番号
 	 * @return 存在したらtrue、無い場合はfalse
 	 */
-	virtual bool IsModel(int64 SpeakerId) { return false; }
+	VOICEVOXUECORE_API bool IsModel(int64 SpeakerId);
 
 	//--------------------------------
 	// VOICEVOX CORE AudioQuery関連
@@ -149,7 +155,7 @@ public:
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	virtual FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana) { return FVoicevoxAudioQuery(); }
+	VOICEVOXUECORE_API FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
 
 	//--------------------------------
 	// VOICEVOX CORE TextToSpeech関連
@@ -167,7 +173,7 @@ public:
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	virtual TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak) { return TArray<uint8>(); }
+	VOICEVOXUECORE_API TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak);
 
 	/**
 	 * @fn
@@ -180,7 +186,7 @@ public:
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	virtual TArray<uint8> RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) { return TArray<uint8>(); }
+	VOICEVOXUECORE_API TArray<uint8> RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
 
 	/**
 	 * @fn
@@ -193,7 +199,7 @@ public:
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	virtual TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) { return TArray<uint8>(); }
+	VOICEVOXUECORE_API TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
 
 	//--------------------------------
 	// VOICEVOX CORE Property関連
@@ -213,25 +219,25 @@ public:
 	 * @brief 話者名や話者IDのリストを取得する
 	 * @return メタ情報が格納されたjson形式の構造体
 	 */
-	virtual TArray<FVoicevoxMeta> GetMetaList() { return TArray<FVoicevoxMeta>(); }
+	VOICEVOXUECORE_API TArray<FVoicevoxMeta> GetMetaList();
 
 	/**
 	 * @brief サポートデバイス情報を取得する
 	 * @return サポートデバイス情報の構造体
 	 */
-	virtual FVoicevoxSupportedDevices GetSupportedDevices() { return FVoicevoxSupportedDevices(); }
+	VOICEVOXUECORE_API FVoicevoxSupportedDevices GetSupportedDevices();
 
 	/**
 	 * @brief VOICEVOX COREのバージョンを取得する
 	 * @return SemVerでフォーマットされたバージョン
 	 */
-	virtual FString GetVoicevoxVersion() { return FString(""); }
+	VOICEVOXUECORE_API FString GetVoicevoxVersion();
 
 	/**
 	 * @brief ハードウェアアクセラレーションがGPUモードか判定する
 	 * @return GPUモードならtrue、そうでないならfalse
 	 */
-	virtual bool IsGpuMode() { return false; }
+	VOICEVOXUECORE_API bool IsGpuMode();
 
 	//--------------------------------
 	// VOICEVOX CORE PhonemeLength関連
@@ -248,7 +254,7 @@ public:
 	 *
 	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
 	 */
-	virtual TArray<float> GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID) { return TArray<float>(); }
+	VOICEVOXUECORE_API TArray<float> GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID);
 
 	//--------------------------------
 	// VOICEVOX CORE Mora関連
@@ -270,10 +276,10 @@ public:
 	 *
 	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
 	 */
-	virtual TArray<float> FindPitchEachMora(int64 Length, TArray<int64> VowelPhonemeList, TArray<int64> ConsonantPhonemeList,
+	VOICEVOXUECORE_API TArray<float> FindPitchEachMora(int64 Length, TArray<int64> VowelPhonemeList, TArray<int64> ConsonantPhonemeList,
 											  TArray<int64> StartAccentList, TArray<int64> EndAccentList,
 											  TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
-											  int64 SpeakerID) { return TArray<float>(); }
+											  int64 SpeakerID);
 
 	//--------------------------------
 	// VOICEVOX CORE DecodeForward関連
@@ -292,7 +298,7 @@ public:
 	 *
 	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
 	 */
-	virtual TArray<float> DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID) { return TArray<float>(); }
+	VOICEVOXUECORE_API TArray<float> DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID);
 };
 
 DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxNativeCore, Log, All);

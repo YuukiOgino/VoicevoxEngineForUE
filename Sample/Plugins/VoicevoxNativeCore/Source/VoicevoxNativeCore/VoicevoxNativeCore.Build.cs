@@ -13,8 +13,9 @@ public class VoicevoxNativeCore : ModuleRules
 			new string[]
 			{
 				"Core",
-				"Engine",
-			});
+				"Engine"
+			}
+		);
 			
 		
 		PrivateDependencyModuleNames.AddRange(
@@ -23,10 +24,9 @@ public class VoicevoxNativeCore : ModuleRules
 				"Projects",
 				"CoreUObject",
 				"VoicevoxCore",
-				"VoicevoxUECore",
-				"Json",
-				"JsonUtilities"
-			});
+				"VoicevoxUECore"
+			}
+		);
 		
 		PrivateDefinitions.Add($"VOICEVOX_CORE_NAME=\"CORE\"");
 	}

@@ -6,7 +6,8 @@ public class VoicevoxUECoreEditor : ModuleRules
 {
     public VoicevoxUECoreEditor(ReadOnlyTargetRules Target) : base(Target)
     {
-        PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        CppStandard = CppStandardVersion.Latest;
 
         PublicDependencyModuleNames.AddRange(
             new string[]
@@ -14,8 +15,7 @@ public class VoicevoxUECoreEditor : ModuleRules
                 "Core",
                 "UMG",
                 "UMGEditor",
-                "VoicevoxUECore",
-                "Blutility",
+                "VoicevoxUECore"
             }
         );
 
@@ -30,7 +30,7 @@ public class VoicevoxUECoreEditor : ModuleRules
                 "DesktopPlatform",
                 "AudioMixer",
                 "Json",
-                "JsonUtilities"                
+                "JsonUtilities"
             }
         );
     }

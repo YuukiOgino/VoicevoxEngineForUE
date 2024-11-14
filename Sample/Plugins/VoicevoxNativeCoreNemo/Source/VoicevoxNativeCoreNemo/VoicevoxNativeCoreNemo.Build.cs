@@ -13,8 +13,9 @@ public class VoicevoxNativeCoreNemo : ModuleRules
 			new string[]
 			{
 				"Core",
-				"Engine",
-			});
+				"Engine"
+			}
+		);
 			
 		
 		PrivateDependencyModuleNames.AddRange(
@@ -23,11 +24,10 @@ public class VoicevoxNativeCoreNemo : ModuleRules
 				"Projects",
 				"CoreUObject",
 				"VoicevoxCoreNemo",
-				"VoicevoxUECore",　
-				"Json",
-				"JsonUtilities"
-			});
+				"VoicevoxUECore"
+			}
+		);
 		
-		PrivateDefinitions.Add($"VOICEVOX_NEMO_CORE_NAME=\"NEMO_CORE\"");
+		PrivateDefinitions.Add($"VOICEVOX_NEMO_CORE_NAME=\"NEMO CORE\"");
 	}
 }
