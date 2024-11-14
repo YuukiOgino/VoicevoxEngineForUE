@@ -13,6 +13,8 @@ VoicevoxNativeCoreプラグインが **GPUモード対応ライブラリ**  、V
 
 ## CPUモードの場合
 
+以下のDLL及びフォルダを格納してください。
+
 * modelフォルダ
 * voicevox_core.dll
 * voicevox_core.lib
@@ -27,6 +29,8 @@ VoicevoxNativeCoreプラグインが **GPUモード対応ライブラリ**  、V
 Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/latest/download/download-windows-x64.exe -OutFile ./download.exe
 ./download.exe -v 0.14.6 --device directml
 ```
+
+以下のDLL及びフォルダを格納してください。
 
 * modelフォルダ
 * voicevox_core.dll
