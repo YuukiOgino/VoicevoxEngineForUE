@@ -1,15 +1,33 @@
-# VOICEVOX CORE、Open JTalk、ONNX Runtimeをここに配置してください。
+# VOICEVOX COREをこのフォルダに配置してください。
 
-※格納例<br/>
+- 格納例<br/>
+![image](https://github.com/user-attachments/assets/43787d70-d804-489a-b705-8ca5959b6843)
 
-![image](https://github.com/YuukiOgino/VoicevoxEngineForUE/assets/10606646/230a161a-9ed4-47b2-977f-018bcffaf119)
+> [!NOTE]
+> Open JTalk、ONNX RuntimeはVoicevoxNativeCoreプラグイン側で行います。このフォルダに配置する必要はありません。
 
-以下が格納されていれば動作するはずです。
+## 注意点
 
-* open_jtalk_dic_utf_8-1.11フォルダ
+VoicevoxNativeCoreプラグインに配置したvoicevox_coreライブラリがGPUモードの場合、VOICEVOX NEMOのvoicevox_coreライブラリも**必ずGPUモードのDLLとlibファイルを配置してください**。<br/>
+VoicevoxNativeCoreプラグインが **GPUモード対応ライブラリ**  、VoicevoxNativeCoreNemoプラグインに配置したvoicevox_coreライブラリが**CPUモード対応ライブラリ**の場合は**初期化に失敗して動作しません**。逆も同じです。
+
+## CPUモードの場合
+
 * modelフォルダ
 * voicevox_core.dll
-* voicevox_core.h
 * voicevox_core.lib
-* onnxruntime.dll
-* onnxruntime_providers_shared.dll
+
+## GPUモードの場合（DirectML、CUDA）
+
+> [!NOTE]
+> GPU起動に必要なDLLはダウンローダー以外では入手できません。必ずダウンローダーからVOICEVOX COREを入手してください。
+
+ダウンローダー　DirectML版コマンド例
+```PowerShell
+Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/latest/download/download-windows-x64.exe -OutFile ./download.exe
+./download.exe -v 0.14.6 --device directml
+```
+
+* modelフォルダ
+* voicevox_core.dll
+* voicevox_core.lib
