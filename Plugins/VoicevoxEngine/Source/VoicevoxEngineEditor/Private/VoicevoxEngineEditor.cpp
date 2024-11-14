@@ -1,25 +1,27 @@
 ﻿// Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @headerfile VoicevoxEngineEditor.cpp
+ * @brief  VoicevoxEngineのEditorモジュールCPPファイル
+ * @author Yuuki Ogino
+ */
+
 #include "VoicevoxEngineEditor.h"
-#include "AssetToolsModule.h"
-#include "AssetTypeActions/VoicevoxQueryTypeActions.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxEngineEditorModule"
 
+/**
+ * @brief StartupModule
+ */
 void FVoicevoxEngineEditorModule::StartupModule()
 {
-	if (const auto& ModuleMgr = FModuleManager::Get(); ModuleMgr.IsModuleLoaded("AssetTools"))
-	{
-		auto& AssetTools = ModuleMgr.LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
-		const auto AssetCategoryBit = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("VOICEVOX")), FText::FromString(TEXT("VOICEVOX")));
-		const auto Actions = MakeShareable(new FVoicevoxQueryTypeActions(AssetCategoryBit));
-		AssetTools.RegisterAssetTypeActions(Actions);
-	}
 }
 
+/**
+ * @brief ShutdownModule
+ */
 void FVoicevoxEngineEditorModule::ShutdownModule()
 {
-    
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -21,6 +21,13 @@
 class FVoicevoxEngineEditorModule : public IModuleInterface
 {
 public:
+    /**
+     * @brief StartupModule
+     */
     virtual void StartupModule() override;
+     
+    /**
+     * @brief ShutdownModule
+     */
     virtual void ShutdownModule() override;
 };

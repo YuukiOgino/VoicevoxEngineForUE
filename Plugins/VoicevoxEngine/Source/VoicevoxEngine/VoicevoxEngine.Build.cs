@@ -21,7 +21,6 @@ public class VoicevoxEngine : ModuleRules
 			{
 				"Core",
 				"Engine",
-				"VoicevoxCore"
 			});
 			
 		
@@ -29,6 +28,7 @@ public class VoicevoxEngine : ModuleRules
 			new[]
 			{
 				"CoreUObject",
+				"VoicevoxUECore",
 				"Json",
 				"JsonUtilities"
 			});

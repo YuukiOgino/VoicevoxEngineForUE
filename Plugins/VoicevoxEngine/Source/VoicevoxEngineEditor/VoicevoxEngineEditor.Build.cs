@@ -1,10 +1,13 @@
-﻿using UnrealBuildTool;
+﻿// Copyright Yuuki Ogino. All Rights Reserved.
+
+using UnrealBuildTool;
 
 public class VoicevoxEngineEditor : ModuleRules
 {
     public VoicevoxEngineEditor(ReadOnlyTargetRules Target) : base(Target)
     {
-        PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        CppStandard = CppStandardVersion.Latest;
 
         PublicDependencyModuleNames.AddRange(
             new string[]
@@ -19,6 +22,8 @@ public class VoicevoxEngineEditor : ModuleRules
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
+                "VoicevoxUECore",
+                "VoicevoxUECoreEditor",
                 "VoicevoxEngine",
                 "UnrealEd",
                 "CoreUObject",
@@ -27,7 +32,7 @@ public class VoicevoxEngineEditor : ModuleRules
                 "SlateCore",
                 "DesktopPlatform",
                 "Json",
-                "JsonUtilities"                
+                "JsonUtilities"
             }
         );
     }
