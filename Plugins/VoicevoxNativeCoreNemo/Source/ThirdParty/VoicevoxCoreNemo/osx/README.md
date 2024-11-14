@@ -8,7 +8,7 @@
 
 ## CPUモードの場合
 
-以下のdylib及びファイルを格納してください。
+以下のdylib及びフォルダを格納してください。
 
 * modelフォルダ
 * libonnxruntime.1.13.1.dylib
