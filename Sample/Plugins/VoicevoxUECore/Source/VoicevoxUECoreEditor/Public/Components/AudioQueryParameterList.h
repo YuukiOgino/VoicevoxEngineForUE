@@ -30,7 +30,7 @@ public:
 	 * @param [in] Param : VOICEVOX COREから生成したAudioQuery
 	 */
 	UFUNCTION(BlueprintCallable)
-	void SetEditAudioQuery(UPARAM(ref) FVoicevoxAudioQuery& Param) const;
+	void SetEditAudioQuery(UPARAM(ref) FVoicevoxAudioQuery& Param);
 	
 protected:
 
