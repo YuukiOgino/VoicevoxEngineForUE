@@ -11,6 +11,7 @@
 #include "CoreMinimal.h"
 #include "VoicevoxNativeObject.h"
 #include "VoicevoxUEDefined.h"
+#include "VoicevoxQuery.h"
 #include "Subsystems/EngineSubsystem.h"
 #include "VoicevoxCoreSubsystem.generated.h"
 
@@ -293,7 +294,7 @@ public:
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak) const;
-
+	
 	//--------------------------------
 	// VOICEVOX CORE Synthesis関連
 	//--------------------------------
@@ -315,14 +316,26 @@ public:
 	 * @fn
 	 * VOICEVOX COREのvoicevox_synthesisを実行
 	 * @brief AudioQueryを音声データに変換する。
-	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery構造体
+	 * @param[in] AudioQuery jsonフォーマットされた AudioQuery構造体
 	 * @param[in] SpeakerId 話者番号
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) const;
+	TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQuery, int64 SpeakerId, bool bEnableInterrogativeUpspeak) const;
+
+	/**
+	 * @fn
+	 * VOICEVOX COREのvoicevox_synthesisを実行
+	 * @brief AudioQueryアセットデータを音声データに変換する。
+	 * @param[in] VoicevoxQuery AudioQueryアセットデータ
+	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
+	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
+	 * @details
+	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	TArray<uint8> RunSynthesis(const UVoicevoxQuery& VoicevoxQuery, bool bEnableInterrogativeUpspeak) const;
 
 	//--------------------------------
 	// VOICEVOX CORE LipSync関連

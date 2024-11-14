@@ -108,6 +108,24 @@ USoundWave* UVoicevoxBlueprintLibrary::AudioQueryOutput(const FVoicevoxAudioQuer
 }
 
 /**
+ * @brief AudioQueryアセットからSoundWaveを作成(Blueprint公開ノード)
+ * @param[in] VoicevoxQuery						Queryアセット
+ * @param[in] bEnableInterrogativeUpspeak		疑問文の調整を有効にする
+ * @return AudioQuery情報を元に作成された音楽データが格納されたUSoundWave
+ */
+USoundWave* UVoicevoxBlueprintLibrary::VoicevoxQueryOutput(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak)
+{
+	if (VoicevoxQuery == nullptr) return nullptr;
+	
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(*VoicevoxQuery, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+	{
+		return CreateSoundWave(OutputWAV);
+	}
+
+	return nullptr;
+}
+
+/**
  * @brief 生成した音声データからUSoundWaveを作成
  */
 USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData)

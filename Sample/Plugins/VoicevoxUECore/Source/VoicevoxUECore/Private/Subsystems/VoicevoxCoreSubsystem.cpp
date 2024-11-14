@@ -236,9 +236,17 @@ TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const char* AudioQueryJson, c
 /**
  * @brief AudioQueryを音声データに変換する。
  */
-TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, const int64 SpeakerId, const bool bEnableInterrogativeUpspeak) const
+TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQuery, const int64 SpeakerId, const bool bEnableInterrogativeUpspeak) const
 {
-	return NativeInstance->RunSynthesis(AudioQueryJson, SpeakerId,  bEnableInterrogativeUpspeak);
+	return NativeInstance->RunSynthesis(AudioQuery, SpeakerId,  bEnableInterrogativeUpspeak);
+}
+
+/**
+ * @brief AudioQueryアセットデータを音声データに変換する。
+ */
+TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const UVoicevoxQuery& VoicevoxQuery, bool bEnableInterrogativeUpspeak) const
+{
+	return NativeInstance->RunSynthesis(VoicevoxQuery.VoicevoxAudioQuery, VoicevoxQuery.SpeakerType,  bEnableInterrogativeUpspeak);
 }
 
 //--------------------------------

@@ -10,6 +10,7 @@
 
 #include "CoreMinimal.h"
 #include "VoicevoxUEDefined.h"
+#include "VoicevoxQuery.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "VoicevoxBlueprintLibrary.generated.h"
 
@@ -118,6 +119,15 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxAudioQueryOutput"))
 	static UPARAM(DisplayName="Sound") USoundWave* AudioQueryOutput(FVoicevoxAudioQuery AudioQuery, int SpeakerType, bool bEnableInterrogativeUpspeak = true);
+
+	/**
+	 * @brief AudioQueryアセットからSoundWaveを作成(Blueprint公開ノード)
+	 * @param[in] VoicevoxQuery						Queryアセット
+	 * @param[in] bEnableInterrogativeUpspeak		疑問文の調整を有効にする
+	 * @return AudioQuery情報を元に作成された音楽データが格納されたUSoundWave
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxQueryAssetOutput"))
+	static UPARAM(DisplayName="Sound") USoundWave* VoicevoxQueryOutput(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true);
 
 	/**
 	 * @brief 生成した音声データからUSoundWaveを作成
