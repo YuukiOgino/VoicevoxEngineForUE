@@ -1,9 +1,9 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "0.1",
+	"VersionName": "1.0",
 	"FriendlyName": "VoicevoxNativeCoreNemo",
-	"Description": "Voicevox Engine for UnrealEngine",
+	"Description": "VOICEVOX NEMO CORE Native Library",
 	"Category": "TextToSpeech",
 	"CreatedBy": "YuukiOgino",
 	"CreatedByURL": "https://twitter.com/YuukiOgino",

@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 6,
-	"VersionName": "0.6",
+	"Version": 7,
+	"VersionName": "1.0",
 	"FriendlyName": "VoicevoxEngine",
 	"Description": "Voicevox Engine for UnrealEngine",
 	"Category": "TextToSpeech",
@@ -37,10 +37,6 @@
 	"Plugins": [
 		{
 			"Name": "VoicevoxUECore",
-			"Enabled": true
-		},
-		{
-			"Name": "VoicevoxNativeCore",
 			"Enabled": true
 		}
 	]
