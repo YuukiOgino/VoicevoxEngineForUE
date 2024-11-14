@@ -10,6 +10,7 @@
 
 #include "CoreMinimal.h"
 #include "VoicevoxUEDefined.h"
+#include "VoicevoxNativeDefined.h"
 #include "Subsystems/Subsystem.h"
 #include "VoicevoxNativeCoreSubsystem.generated.h"
 
@@ -62,7 +63,7 @@ protected:
 	 * @param[in] ApiName : エラーを起こしたAPI名
 	 * @param [in] ResultCode メッセージに変換するエラーコード
 	 */
-	VOICEVOXUECORE_API void VoicevoxShowErrorResultMessage(const FString& ApiName, int ResultCode);
+	VOICEVOXUECORE_API void VoicevoxShowErrorResultMessage(const FString& ApiName, VoicevoxResultCode ResultCode);
 	
 public:
 
@@ -100,6 +101,12 @@ public:
 	 */
 	VOICEVOXUECORE_API bool CoreInitialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false);
 
+	/**
+	 * @brief デフォルトの初期化オプションを生成する
+	 * @return デフォルト値が設定された初期化オプション
+	 */
+	VOICEVOXUECORE_API VoicevoxInitializeOptions MakeDefaultInitializeOptions();
+	
 	//--------------------------------
 	// VOICEVOX CORE Finalize関連
 	//--------------------------------
@@ -157,6 +164,12 @@ public:
 	 */
 	VOICEVOXUECORE_API FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
 
+	/**
+	 * @brief デフォルトの AudioQuery のオプションを生成する
+	 * @return デフォルト値が設定された AudioQuery オプション
+	 */
+	VOICEVOXUECORE_API VoicevoxAudioQueryOptions MakeDefaultAudioQueryOptions();
+	
 	//--------------------------------
 	// VOICEVOX CORE TextToSpeech関連
 	//--------------------------------
@@ -175,6 +188,12 @@ public:
 	 */
 	VOICEVOXUECORE_API TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak);
 
+	/**
+	 * @brief デフォルトのテキスト音声合成オプションを生成する
+	 * @return テキスト音声合成オプション
+	 */
+	VOICEVOXUECORE_API VoicevoxTtsOptions MakeDefaultTtsOptions();
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_synthesisを実行
@@ -201,6 +220,12 @@ public:
 	 */
 	VOICEVOXUECORE_API TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
 
+	/**
+	 * @brief デフォルトの `voicevox_synthesis` のオプションを生成する
+	 * @return デフォルト値が設定された `voicevox_synthesis` のオプション
+	 */
+	VOICEVOXUECORE_API VoicevoxSynthesisOptions MakeDefaultSynthesisOptions();
+	
 	//--------------------------------
 	// VOICEVOX CORE Property関連
 	//--------------------------------

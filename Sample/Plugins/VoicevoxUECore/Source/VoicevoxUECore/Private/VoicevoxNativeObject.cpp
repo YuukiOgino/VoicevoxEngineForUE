@@ -82,6 +82,18 @@ void UVoicevoxNativeObject::CoreInitialize(const bool bUseGPU, const int CPUNumT
 	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetInitializeResult(true);
 }
 
+/**
+ * @brief デフォルトの初期化オプションを生成する
+ * @return デフォルト値が設定された初期化オプション
+ */
+VoicevoxInitializeOptions UVoicevoxNativeObject::MakeDefaultInitializeOptions()
+{
+	// デフォルト値は最初に処理したSubsystemの値を返す
+	const auto Element = *SubsystemClasses.begin();
+	const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+	return Subsystem->MakeDefaultInitializeOptions();
+}
+
 //--------------------------------
 // VOICEVOX CORE Finalize関連
 //--------------------------------
@@ -145,6 +157,18 @@ FVoicevoxAudioQuery UVoicevoxNativeObject::GetAudioQuery(int64 SpeakerId, const 
 	return FVoicevoxAudioQuery();
 }
 
+/**
+ * @brief デフォルトの AudioQuery のオプションを生成する
+ * @return デフォルト値が設定された AudioQuery オプション
+ */
+VoicevoxAudioQueryOptions UVoicevoxNativeObject::MakeDefaultAudioQueryOptions()
+{
+	// デフォルト値は最初に処理したSubsystemの値を返す
+	const auto Element = *SubsystemClasses.begin();
+	const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+	return Subsystem->MakeDefaultAudioQueryOptions();
+}
+
 //--------------------------------
 // VOICEVOX CORE TextToSpeech関連
 //--------------------------------
@@ -163,6 +187,18 @@ TArray<uint8> UVoicevoxNativeObject::RunTextToSpeech(int64 SpeakerId, const FStr
 	}
 
 	return TArray<uint8>();
+}
+
+/**
+ * @brief デフォルトのテキスト音声合成オプションを生成する
+ * @return テキスト音声合成オプション
+ */
+VoicevoxTtsOptions UVoicevoxNativeObject::MakeDefaultTtsOptions()
+{
+	// デフォルト値は最初に処理したSubsystemの値を返す
+	const auto Element = *SubsystemClasses.begin();
+	const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+	return Subsystem->MakeDefaultTtsOptions();
 }
 
 /**
@@ -195,6 +231,18 @@ TArray<uint8> UVoicevoxNativeObject::RunSynthesis(const FVoicevoxAudioQuery& Aud
 	}
 
 	return TArray<uint8>();
+}
+
+/**
+ * @brief デフォルトの `voicevox_synthesis` のオプションを生成する
+ * @return デフォルト値が設定された `voicevox_synthesis` のオプション
+ */
+VoicevoxSynthesisOptions UVoicevoxNativeObject::MakeDefaultSynthesisOptions()
+{
+	// デフォルト値は最初に処理したSubsystemの値を返す
+	const auto Element = *SubsystemClasses.begin();
+	const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+	return Subsystem->MakeDefaultSynthesisOptions();
 }
 
 //--------------------------------

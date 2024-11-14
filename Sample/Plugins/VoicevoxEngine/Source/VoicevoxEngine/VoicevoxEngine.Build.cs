@@ -29,7 +29,6 @@ public class VoicevoxEngine : ModuleRules
 			{
 				"CoreUObject",
 				"VoicevoxUECore",
-                "VoicevoxNativeCore", //　参照用のEngineSybsystemが完成したら消す
 				"Json",
 				"JsonUtilities"
 			});

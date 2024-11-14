@@ -80,6 +80,12 @@ class UVoicevoxNativeObject : public UObject
 	 */
 	VOICEVOXUECORE_API void CoreInitialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false);
 
+	/**
+	 * @brief デフォルトの初期化オプションを生成する
+	 * @return デフォルト値が設定された初期化オプション
+	 */
+	VOICEVOXUECORE_API VoicevoxInitializeOptions MakeDefaultInitializeOptions();
+	
 	//--------------------------------
 	// VOICEVOX CORE Finalize関連
 	//--------------------------------
@@ -128,6 +134,12 @@ class UVoicevoxNativeObject : public UObject
 	 */
 	VOICEVOXUECORE_API FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
 
+	/**
+	 * @brief デフォルトの AudioQuery のオプションを生成する
+	 * @return デフォルト値が設定された AudioQuery オプション
+	 */
+	VOICEVOXUECORE_API VoicevoxAudioQueryOptions MakeDefaultAudioQueryOptions();
+	
 	//--------------------------------
 	// VOICEVOX CORE TextToSpeech関連
 	//--------------------------------
@@ -146,6 +158,12 @@ class UVoicevoxNativeObject : public UObject
 	 */
 	VOICEVOXUECORE_API TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak);
 
+	/**
+	 * @brief デフォルトのテキスト音声合成オプションを生成する
+	 * @return テキスト音声合成オプション
+	 */
+	VOICEVOXUECORE_API VoicevoxTtsOptions MakeDefaultTtsOptions();
+	
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_synthesisを実行
@@ -172,6 +190,13 @@ class UVoicevoxNativeObject : public UObject
 	 */
 	VOICEVOXUECORE_API TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
 
+	/**
+	 * @brief デフォルトの `voicevox_synthesis` のオプションを生成する
+	 * @return デフォルト値が設定された `voicevox_synthesis` のオプション
+	 */
+	VOICEVOXUECORE_API VoicevoxSynthesisOptions MakeDefaultSynthesisOptions();
+	
+	
 	//--------------------------------
 	// VOICEVOX CORE PhonemeLength関連
 	//--------------------------------

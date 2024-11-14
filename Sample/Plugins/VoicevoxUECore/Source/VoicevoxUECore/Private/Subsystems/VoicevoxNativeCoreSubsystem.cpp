@@ -6,9 +6,7 @@
  */
 
 #include "Subsystems/VoicevoxNativeCoreSubsystem.h"
-
 #include "JsonObjectConverter.h"
-#include "VoicevoxNativeDefined.h"
 
 DEFINE_LOG_CATEGORY(LogVoicevoxNativeCore);
 
@@ -76,7 +74,7 @@ bool UVoicevoxNativeCoreSubsystem::CoreInitialize(const bool bUseGPU, const int 
 
 		if (const VoicevoxResultCode Result = FuncPtr(Option); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
-			VoicevoxShowErrorResultMessage(TEXT("Initialize"), static_cast<int>(Result));
+			VoicevoxShowErrorResultMessage(TEXT("Initialize"), Result);
 			return false;
 		}
 
@@ -87,7 +85,37 @@ bool UVoicevoxNativeCoreSubsystem::CoreInitialize(const bool bUseGPU, const int 
 	const FString Message =  FString::Printf(TEXT("VOICEVOX %s LoadError!!"), *GetVoicevoxCoreName());
 	ShowVoicevoxErrorMessage(Message);
 	return false;
+}
 
+/**
+ * @brief デフォルトの初期化オプションを生成する
+ */
+VoicevoxInitializeOptions UVoicevoxNativeCoreSubsystem::MakeDefaultInitializeOptions()
+{
+	const FString FuncName = "voicevox_make_default_initialize_options"; 
+	typedef const VoicevoxInitializeOptions(*DLL_Function)();
+	
+	if (CoreLibraryHandle != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		
+		if (!FuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_make_default_initialize_options Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return VoicevoxInitializeOptions{};
+		}
+
+		return FuncPtr();
+	}
+
+	const FString Message =  FString::Printf(TEXT("VOICEVOX %s LoadError!!"), *GetVoicevoxCoreName());
+	ShowVoicevoxErrorMessage(Message);
+	return VoicevoxInitializeOptions{};
 }
 
 //--------------------------------
@@ -161,7 +189,7 @@ bool UVoicevoxNativeCoreSubsystem::LoadModel(const int64 SpeakerId)
 		{
 			if (const VoicevoxResultCode Result = FuncPtr(SpeakerId); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 			{
-				VoicevoxShowErrorResultMessage(TEXT("voicevox_load_model"), static_cast<int>(Result));
+				VoicevoxShowErrorResultMessage(TEXT("voicevox_load_model"), Result);
 				return false;
 			}
 			return true;
@@ -238,7 +266,7 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQuery(int64 SpeakerId,
 				if (const VoicevoxResultCode Result = FuncPtr(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &Output);
 					Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 				{
-					VoicevoxShowErrorResultMessage(TEXT("TTS"), static_cast<int>(Result));
+					VoicevoxShowErrorResultMessage(TEXT("TTS"), Result);
 				}
 				else
 				{
@@ -254,6 +282,37 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQuery(int64 SpeakerId,
 		}
 	}
 	return AudioQuery;
+}
+
+/**
+ * @brief デフォルトの AudioQuery のオプションを生成する
+ */
+VoicevoxAudioQueryOptions UVoicevoxNativeCoreSubsystem::MakeDefaultAudioQueryOptions()
+{
+	const FString FuncName = "voicevox_make_default_audio_query_options"; 
+	typedef const VoicevoxAudioQueryOptions(*DLL_Function)();
+	
+	if (CoreLibraryHandle != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		
+		if (!FuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_make_default_audio_query_options Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return VoicevoxAudioQueryOptions{};
+		}
+
+		return FuncPtr();
+	}
+
+	const FString Message =  FString::Printf(TEXT("VOICEVOX %s LoadError!!"), *GetVoicevoxCoreName());
+	ShowVoicevoxErrorMessage(Message);
+	return VoicevoxAudioQueryOptions{};
 }
 
 //--------------------------------
@@ -298,7 +357,7 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::RunTextToSpeech(const int64 SpeakerI
 			if (const VoicevoxResultCode Result = FuncPtr(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &OutPutSize, &OutputWAV);
 				Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 			{
-				VoicevoxShowErrorResultMessage(TEXT("TTS"), static_cast<int>(Result));
+				VoicevoxShowErrorResultMessage(TEXT("TTS"), Result);
 			}
 			else
 			{
@@ -316,6 +375,34 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::RunTextToSpeech(const int64 SpeakerI
 	}
 
 	return PCMData;
+}
+
+VoicevoxTtsOptions UVoicevoxNativeCoreSubsystem::MakeDefaultTtsOptions()
+{
+	const FString FuncName = "voicevox_make_default_tts_options"; 
+	typedef const VoicevoxTtsOptions(*DLL_Function)();
+	
+	if (CoreLibraryHandle != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		
+		if (!FuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_make_default_tts_options Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return VoicevoxTtsOptions{};
+		}
+
+		return FuncPtr();
+	}
+
+	const FString Message =  FString::Printf(TEXT("VOICEVOX %s LoadError!!"), *GetVoicevoxCoreName());
+	ShowVoicevoxErrorMessage(Message);
+	return VoicevoxTtsOptions{};
 }
 
 /**
@@ -353,7 +440,7 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const char* AudioQueryJ
 			if (const VoicevoxResultCode Result = FuncPtr(AudioQueryJson, SpeakerId, Options, &OutPutSize, &OutputWAV);
 				Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 			{
-				VoicevoxShowErrorResultMessage(TEXT("TTS"), static_cast<int>(Result));
+				VoicevoxShowErrorResultMessage(TEXT("TTS"), Result);
 			}
 			else
 			{
@@ -408,6 +495,41 @@ void UVoicevoxNativeCoreSubsystem::WavFree(uint8* Wav)
 		FuncPtr(Wav);
 	}
 }
+
+/**
+ * @brief デフォルトの `voicevox_synthesis` のオプションを生成する
+ */
+VoicevoxSynthesisOptions UVoicevoxNativeCoreSubsystem::MakeDefaultSynthesisOptions()
+{
+	const FString FuncName = "voicevox_make_default_synthesis_options"; 
+	typedef const VoicevoxSynthesisOptions(*DLL_Function)();
+	
+	if (CoreLibraryHandle != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		
+		if (!FuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_make_default_synthesis_options Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return VoicevoxSynthesisOptions{};
+		}
+
+		return FuncPtr();
+	}
+
+	const FString Message =  FString::Printf(TEXT("VOICEVOX %s LoadError!!"), *GetVoicevoxCoreName());
+	ShowVoicevoxErrorMessage(Message);
+	return VoicevoxSynthesisOptions{};
+}
+
+//--------------------------------
+// VOICEVOX CORE Property関連
+//--------------------------------
 
 /**
  * @brief 話者名や話者IDのリストを取得する
@@ -577,7 +699,7 @@ TArray<float> UVoicevoxNativeCoreSubsystem::GetPhonemeLength(const int64 Length,
 		
 		if (const VoicevoxResultCode Result = FuncPtr(Length, PhonemeList.GetData(), SpeakerID, &OutPutSize, &OutputPredictDurationData); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
-			VoicevoxShowErrorResultMessage(TEXT("voicevox_predict_duration"), static_cast<int>(Result));
+			VoicevoxShowErrorResultMessage(TEXT("voicevox_predict_duration"), Result);
 		}
 		else
 		{
@@ -640,7 +762,7 @@ TArray<float> UVoicevoxNativeCoreSubsystem::FindPitchEachMora(const int64 Length
 											StartAccentList.GetData(), EndAccentList.GetData(), StartAccentPhraseList.GetData(),
 											EndAccentPhraseList.GetData(), SpeakerID, &OutPutSize, &OutputPredictIntonationData); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
-			VoicevoxShowErrorResultMessage(TEXT("voicevox_predict_intonation"), static_cast<int>(Result));
+			VoicevoxShowErrorResultMessage(TEXT("voicevox_predict_intonation"), Result);
 		}
 		else
 		{
@@ -694,7 +816,7 @@ TArray<float> UVoicevoxNativeCoreSubsystem::DecodeForward(const int64 Length, co
 
 		if (const VoicevoxResultCode Result = FuncPtr(Length, PhonemeSize, F0.GetData(), Phoneme.GetData(), SpeakerID, &OutPutSize, &OutputDecodeData); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
-			VoicevoxShowErrorResultMessage(TEXT("voicevox_decode"), static_cast<int>(Result));
+			VoicevoxShowErrorResultMessage(TEXT("voicevox_decode"), Result);
 		}
 		else
 		{
@@ -719,7 +841,7 @@ TArray<float> UVoicevoxNativeCoreSubsystem::DecodeForward(const int64 Length, co
 /**
  * エラー結果をメッセージに変換して表示
  */
-void UVoicevoxNativeCoreSubsystem::VoicevoxShowErrorResultMessage(const FString& ApiName, int ResultCode)
+void UVoicevoxNativeCoreSubsystem::VoicevoxShowErrorResultMessage(const FString& ApiName, VoicevoxResultCode ResultCode)
 {
 	const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
 	typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
