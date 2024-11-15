@@ -100,6 +100,10 @@ enum class VoicevoxResultCode : int32_t
     VOICEVOX_RESULT_INVALID_AUDIO_QUERY_ERROR = 13,
 };
 
+//------------------------------------------------------------------------
+// struct
+//------------------------------------------------------------------------
+
 /**
  * @struct VoicevoxInitializeOptions
  * @brief 初期化オプション
