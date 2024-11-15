@@ -75,6 +75,10 @@ enum class VoicevoxResultCode : int32_t
      */
     VOICEVOX_RESULT_INVALID_MODEL_INDEX_ERROR = 8,
     /**
+    * 対応していないmodelが指定された
+    */
+    VOICEVOX_RESULT_UNSUPPORTED_MODEL_ERROR = 15,
+    /**
      * 推論に失敗した
      */
     VOICEVOX_RESULT_INFERENCE_ERROR = 9,
