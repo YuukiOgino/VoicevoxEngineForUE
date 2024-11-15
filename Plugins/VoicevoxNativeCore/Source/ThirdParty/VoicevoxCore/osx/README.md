@@ -6,6 +6,18 @@
 
 ## CPUモードの場合
 
+(VOICEVOX CORE 0.14.6)[https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.6]から【voicevox_core-osx-arm64-cpu-0.14.6.zip】
+をダウンロードしてください。<br/>
+ダウンロードしたzipファイルは適当なフォルダで解凍をしてください。
+
+また、ターミナルで以下のコマンドを実施すれば、ダウンローダー経由からライブラリを入手できます。
+
+```
+curl -sSfL https://github.com/VOICEVOX/voicevox_core/releases/latest/download/download-osx-arm64 -o download
+chmod +x download
+./download -v 0.14.6
+```
+
 以下のdylib及びファイルを格納してください。
 
 * open_jtalk_dic_utf_8-1.11フォルダ
