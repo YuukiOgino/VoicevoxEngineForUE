@@ -21,7 +21,7 @@
 
 > [!NOTE]
 > 5.4までXCode16以上はビルドが通りません。<br/>
-> > 過去バージョンは[Apple Developer](https://developer.apple.com/jp/xcode/resources/)にアクセスすれば入手できます。<br/>
+> 過去バージョンは[Apple Developer](https://developer.apple.com/jp/xcode/resources/)にアクセスすれば入手できます。<br/>
 
 # プラグイン使用準備
 
