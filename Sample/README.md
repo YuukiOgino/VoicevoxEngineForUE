@@ -87,13 +87,17 @@ sh MacGenerateProjectFile.sh
 > [!NOTE]
 >　5.2ではxcworkspace、5.3以降ではiOSとMacのxcworkspaceが生成されます。<br/>
 >　5.3以降ではMacのxcworkspaceを起動してください。
+> <img width="728" alt="スクリーンショット 2024-11-15 23 48 54" src="https://github.com/user-attachments/assets/00368e07-177c-4e62-93ef-a0e9b6068282">
+
 
 ### 4.xcworkspaceファイルを起動→ビルド
 
-5.2ではそのままRun実行、5.3以降ではVoicevoxEngineSmpleとEditorを選択後にRunを実行してください。
+5.2ではそのままRun実行、5.3以降ではVoicevoxEngineSmpleEditorを選択後にRunを実行してください。
 
 - 5.2<br/>
 <img width="565" alt="スクリーンショット 2024-11-15 23 44 21" src="https://github.com/user-attachments/assets/e6305a81-5cd5-4c93-a8b8-5471195b67dc"><br/><br/>
+- 5.3以降<br/>
+<img width="543" alt="スクリーンショット 2024-11-15 23 54 12" src="https://github.com/user-attachments/assets/a4415429-2c0e-4cc3-b0e0-d5712aac33ef">
 
 > [!NOTE]
 > VOICEVO CORE関連のdylib全てがセキュリティに引っかかりビルドに失敗します。<br/>
