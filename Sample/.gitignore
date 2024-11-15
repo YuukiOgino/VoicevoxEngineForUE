@@ -51,15 +51,7 @@ SourceArt/**/*.tga
 
 # Binary Files
 Binaries/*
-Plugins/*/Binaries/*
-Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/*
-!Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/README.md
-Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/*
-!Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/README.md
-Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/x64/*
-!Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/x64/README.md
-Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/osx/*
-!Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/osx/README.md
+Plugins/*
 
 # Builds
 Build/*
