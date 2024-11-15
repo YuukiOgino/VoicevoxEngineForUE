@@ -119,11 +119,11 @@ uprojectファイルを右クリックして『**Generate Visual Studio project 
 
 ## Mac
 
-以下のGenerateProjectFiles.shをターミナルから起動してください。
+GenerateProjectFiles.shをターミナルから起動してください。
 
 - コマンド例
 ```
-"/Users/Shared/Epic Games/UE_5.2/Engine/Build/BatchFiles/Mac/GenerateProjectFiles.sh" -project="/Users/yukiogino/Documents/VoicevoxEngineForUE/Sample/VoicevoxEngineSample.uproject" -game
+sh "/Users/Shared/Epic Games/UE_5.2/Engine/Build/BatchFiles/Mac/GenerateProjectFiles.sh" -project="/Users/yukiogino/Documents/VoicevoxEngineForUE/Sample/VoicevoxEngineSample.uproject" -game
 ```
 
 生成した.xcworkspaceファイルを起動後、Runを実行してUEのエディターが起動すれば成功です。
