@@ -19,6 +19,8 @@ Windowsでのサンプルプロジェクトの起動方法です。
 1. PluginsフォルダをSampleフォルダ内に手動でコピーする
 2. Win_Pluginジャンクション設定.batを実行し、Pluginsフォルダのシンボリックリンクを作成
 
+シンボリックリンクを作成した場合、Sample/Pluginフォルダを削除する場合はWin_Pluginジャンクション削除.batを実行してください。
+
 ### 2.Generate Project Filesを実行
 
 uprojectを右クリック→「Generate Project Files」を実行して、slnファイルを生成してください。
@@ -45,9 +47,22 @@ Macでのサンプルプロジェクトの起動方法です。
 
 事前にuprojectのEngineAssociationを5.2以上に書き換えてください。
 
-### 2.Pluginsフォルダをコピー
+### 2.Pluginsフォルダをコピー、もしくはシンボリックリンク作成
 
-PluginsフォルダをSampleフォルダ内に手動でコピーしてください。
+以下の1か2を実行してください。
+1. PluginsフォルダをSampleフォルダ内に手動でコピーする
+2. ターミナルでMackPluginLink.shを実行し、Pluginsフォルダのシンボリックリンクを作成
+
+シェルスクリプトの実行例
+```
+sh MacPluginLink.sh 
+```
+
+シンボリックリンクを作成した場合、Sample/Pluginフォルダを削除する場合はMacPluginUnlink.shを実行してください。
+
+```
+sh MacPluginUnlink.sh 
+```
 
 ### 3.xcworkspaceをコマンドラインで生成
 
@@ -61,6 +76,13 @@ Macもuprojectを右クリック→「Generate Project Files」を実行でき�
 ```
 
 「5.2」の部分をEngineAssociationで指定したバージョン、-projectに『VoicevoxEngineSample.uproject』のパスを設定してください。
+
+UnrealEngine5.2のインストール場所を初期設定にしている場合、以下のシェルスクリプトを実行していただくとxcworkspaceを生成します。
+
+```
+sh MacGenerateProjectFile.sh 
+```
+エンジンバージョンの値を変更すると5.3以降も使用できるので、ぜひ使用してください。
 
 > [!NOTE]
 >　5.2ではxcworkspace、5.3以降ではiOSとMacのxcworkspaceが生成されます。<br/>
