@@ -1,12 +1,13 @@
 # VoicevoxEngineForUEサンプルプロジェクト
 
-事前にPluginsフォルダ内の以下のReadMEを参考に、voicevox_coreの動的ライブラリ、及び必要なフォルダを設置してください。
-
-[Windows VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/README.md)<br/>
-[Windows VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCore/x64/README.md)
-
-[Mac VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/README.md)<br/>
-[Mac VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCore/osx/README.md)
+> [!NOTE]
+> 事前にPluginsフォルダ内の以下のReadMEを参考に、voicevox_coreの動的ライブラリ、及び必要なフォルダを設置してください。
+> 
+> [Windows VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/README.md)<br/>
+> [Windows VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCore/x64/README.md)
+> 
+> [Mac VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/README.md)<br/>
+> [Mac VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCore/osx/README.md)
 
 ## Windows
 
