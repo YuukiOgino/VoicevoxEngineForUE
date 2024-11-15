@@ -51,7 +51,6 @@ SourceArt/**/*.tga
 
 # Binary Files
 Binaries/*
-Plugins/*
 
 # Builds
 Build/*
@@ -72,9 +71,6 @@ Saved/*
 
 # Compiled source files for the engine to use
 Intermediate/*
-Plugins/*/Intermediate/*
-Plugins/Developer/*
-Plugins/VoicevoxToolTipTextSpeech
 
 # Cache files for the editor to use
 DerivedDataCache/*
