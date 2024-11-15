@@ -1,4 +1,4 @@
-# VoicevoxEngineForUEサンプルプロジェクト
+# VoicevoxEngine For UE サンプルプロジェクト
 
 > [!NOTE]
 > 事前にPluginsフォルダ内の以下のReadMEを参考に、voicevox_coreの動的ライブラリ、及び必要なフォルダを設置してください。
