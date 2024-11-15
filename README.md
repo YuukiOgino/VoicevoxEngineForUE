@@ -25,9 +25,22 @@
 
 # プラグイン使用準備
 
-VOICEVOX COREのReadMEに従って、最低限CPUモードの動作に必要なライブラリを取得します。
+VOICEVOX COREのReadMEに従って、CPUモード、もしくはGPUモードの動作に必要なライブラリを取得します。
+
+> [!NOTE]
+> v1.0は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
+> [VOICEVOX CORE 0.14.6](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.6)<br/>
+> [VOICEVOX NEMO CORE 0.14.0](https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.14.0)<br/>
 
 ## VOICEVOX CORE、Open JTalk、ONNX Runtimeの取得
+
+v1.0以上の場合、各プラグインのREADMEに詳しい説明を記載したので、そちらを見てください。
+
+[Windows VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/README.md)<br/>
+[Windows VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCore/x64/README.md)
+ 
+[Mac VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/README.md)<br/>
+[Mac VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCore/osx/README.md)
 
 <details>
 <summary>v0.2～0.6の場合</summary>
@@ -40,7 +53,6 @@ VOICEVOX COREのReadMEに従って、最低限CPUモードの動作に必要な�
 
 VOICEVOX CORE 0.14.6はONNX Runtimeが含まれているため、別途ダウンロードする必要はありません。<br/>
 ※MacはONNX Runtimeは不要です。
-</details> 
 
 <details>
 <summary>v0.1の場合</summary>
@@ -51,13 +63,22 @@ VOICEVOX CORE 0.14.6はONNX Runtimeが含まれているため、別途ダウン
   [ONNX Runtime](https://github.com/microsoft/onnxruntime/releases/tag/v1.13.1)をダウンロード、上記コアライブラリを展開したディレクトリに展開してください。
 </details> 
 
+</details> 
 
 ## プラグインへ展開
 
-展開したCOREライブラリを、以下のフォルダに配置してください。
+v1.0以上の場合、各プラグインのREADMEに詳しい説明を記載したので、そちらを見てください。
+
+[Windows VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/README.md)<br/>
+[Windows VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCore/x64/README.md)
+ 
+[Mac VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/README.md)<br/>
+[Mac VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCore/osx/README.md)
 
 <details>
 <summary>v0.6以下の場合</summary>
+
+展開したCOREライブラリを、以下のフォルダに配置してください。
 
 * Windows
 
@@ -87,12 +108,38 @@ Plugins\VoicevoxEngine\Source\ThirdParty\VoicevoxCore\x64\VoicevoxCore
 ![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/104377/33be4503-896f-3d38-d27c-0ce3cab73ea4.png)
 </details> 
 
+上記COREライブラリ展開済みのPluginフォルダを、プロジェクトフォルダに配置してください。
+
 </details> 
 
-上記COREライブラリ展開済みのPluginフォルダを、プロジェクトフォルダに配置後、uprojectファイルを右クリックして『**Generate Visual Studio project files**』を選択し、sln作成をしてください。<br/>
+## Windows
+
+uprojectファイルを右クリックして『**Generate Visual Studio project files**』を選択し、sln作成をしてください。<br/>
 あとはuprojectを起動してビルドが通れば成功です。
 
+## Mac
+
+以下のGenerateProjectFiles.shをターミナルから起動してください。
+
+- コマンド例
+```
+"/Users/Shared/Epic Games/UE_5.2/Engine/Build/BatchFiles/Mac/GenerateProjectFiles.sh" -project="/Users/yukiogino/Documents/VoicevoxEngineForUE/Sample/VoicevoxEngineSample.uproject" -game
+```
+
+生成した.xcworkspaceファイルを起動後、Runを実行してUEのエディターが起動すれば成功です。
+
+
+
 # 各クラスについて
+
+v1.0で破壊的変更を行ったため、記事を再度作成しています。
+もうしばらくお待ちください。
+
+基本的にUVoicevoxCoreSubsystemを経由して各COREライブラリのAPIにアクセスします。
+
+```
+const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunTextToSpeech(SpeakerType, Message, bRunKana, bEnableInterrogativeUpspeak);
+```
 
 <details>
 <summary>v0.1の場合</summary>
