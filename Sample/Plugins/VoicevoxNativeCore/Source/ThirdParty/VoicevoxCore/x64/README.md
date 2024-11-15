@@ -5,7 +5,7 @@
 
 ## CPUモードの場合
 
-以下のDLL及びファイルを格納してください。
+以下のDLL及びフォルダを格納してください。
 
 * open_jtalk_dic_utf_8-1.11フォルダ
 * modelフォルダ
@@ -27,7 +27,7 @@ Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/latest/down
 
 ### DirectML版
 
-以下のDLL及びファイルを格納してください。
+以下のDLL及びフォルダを格納してください。
 
 * open_jtalk_dic_utf_8-1.11フォルダ
 * modelフォルダ
@@ -39,7 +39,7 @@ Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/latest/down
 
 ### CUDA版
 
-以下のDLL及びファイルを格納してください。
+以下のDLL及びフォルダを格納してください。
 
 * open_jtalk_dic_utf_8-1.11フォルダ
 * modelフォルダ
