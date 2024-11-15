@@ -71,6 +71,7 @@ Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/*
 !Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/VoicevoxToolTipTextSpeech.h
 !Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/VoicevoxToolTipTextSpeechActions.h
 !Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/VoicevoxToolTipTextSpeechCommands.h
+Sample/Plugins
 
 # Builds
 Build/*
