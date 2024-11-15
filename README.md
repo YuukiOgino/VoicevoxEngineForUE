@@ -119,7 +119,7 @@ uprojectファイルを右クリックして『**Generate Visual Studio project 
 
 ## Mac
 
-GenerateProjectFiles.shをターミナルから起動してください。
+GenerateProjectFiles.shをターミナルから実行してください。
 
 - コマンド例
 ```
