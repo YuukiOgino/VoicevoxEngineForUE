@@ -17,7 +17,11 @@
 
 * UnrealEngine5.2以上(Apple シリコン)
 * 12.5 Monterey 以降
-* XCode14.1以上
+* XCode14.1～15.4
+
+> [!NOTE]
+> 5.4までXCode16以上はビルドが通りません。<br/>
+> > 過去バージョンは[Apple Developer](https://developer.apple.com/jp/xcode/resources/)にアクセスすれば入手できます。<br/>
 
 # プラグイン使用準備
 
@@ -25,6 +29,9 @@ VOICEVOX COREのReadMEに従って、最低限CPUモードの動作に必要な�
 
 ## VOICEVOX CORE、Open JTalk、ONNX Runtimeの取得
 
+<details>
+<summary>v0.2～0.6の場合</summary>
+  
 [VOICEVOX COREライブラリ](https://github.com/VOICEVOX/voicevox_core)を取得、適当なフォルダに展開してください。<br/>
 
 ※v0.6は[VOICEVOX CORE 0.14.6](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.6)を元に開発しました。
@@ -33,6 +40,7 @@ VOICEVOX COREのReadMEに従って、最低限CPUモードの動作に必要な�
 
 VOICEVOX CORE 0.14.6はONNX Runtimeが含まれているため、別途ダウンロードする必要はありません。<br/>
 ※MacはONNX Runtimeは不要です。
+</details> 
 
 <details>
 <summary>v0.1の場合</summary>
@@ -47,6 +55,9 @@ VOICEVOX CORE 0.14.6はONNX Runtimeが含まれているため、別途ダウン
 ## プラグインへ展開
 
 展開したCOREライブラリを、以下のフォルダに配置してください。
+
+<details>
+<summary>v0.6以下の場合</summary>
 
 * Windows
 
@@ -76,11 +87,19 @@ Plugins\VoicevoxEngine\Source\ThirdParty\VoicevoxCore\x64\VoicevoxCore
 ![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/104377/33be4503-896f-3d38-d27c-0ce3cab73ea4.png)
 </details> 
 
+</details> 
+
 上記COREライブラリ展開済みのPluginフォルダを、プロジェクトフォルダに配置後、uprojectファイルを右クリックして『**Generate Visual Studio project files**』を選択し、sln作成をしてください。<br/>
 あとはuprojectを起動してビルドが通れば成功です。
 
 # 各クラスについて
+
+<details>
+<summary>v0.1の場合</summary>
+
 [Qiitaに記事を公開しています](https://qiita.com/YuukiOgino/items/bc3ab31de4b1d0689625)ので、そちらを見てください。
+
+</details> 
 
 # 現在判明している不具合
 
@@ -107,6 +126,8 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 
 # 更新履歴
 
+- 2024/11/xx
+  - 1.0 大型アップデートを実施。以下、更新内容要約。<br/>・VOICEVOX NEMO CORE対応。<br/>・マルチCORE対応。<br/>・UE5.4対応。<br/>・破棄したLatentノードを名前を変更して復活。<br/>・VOICEVOXのAPIアクセスをUtilからSubsystemへ移行、それに伴う破壊的変更を実施。<br/>・エディターに読み方のテキストボックスを追加。
 - 2024/08/11
   - 0.6 VOICEVOX CORE 0.14.6対応。(新規モデルデータ追加対応) 不具合修正。簡易的なエディタ機能実装
 - 2024/01/10
