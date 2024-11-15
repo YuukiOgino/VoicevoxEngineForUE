@@ -82,7 +82,11 @@ UnrealEngine5.2のインストール場所を初期設定にしている場合�
 ```
 sh MacGenerateProjectFile.sh 
 ```
-エンジンバージョンの値を変更すると5.3以降も使用できるので、ぜひ使用してください。
+第一引数にエンジンバージョンを指定すると5.3以降も指定できるので、ぜひ使用してください。
+
+```
+sh MacGenerateProjectFile.sh 5.3
+```
 
 > [!NOTE]
 >　5.2ではxcworkspace、5.3以降ではiOSとMacのxcworkspaceが生成されます。<br/>
