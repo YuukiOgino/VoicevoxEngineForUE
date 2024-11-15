@@ -56,9 +56,10 @@ public:
       * @brief アセットからロードしたデータをセットする
       * @param [in] SpeakerType : 話者番号
       * @param [in] Text : 入力テキスト
+      * @param [in] Yomikata : 読み方
       */
      UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SetLoadData"))
-     void SetLoadData(int64 SpeakerType, const FString& Text);
+     void SetLoadData(int64 SpeakerType, const FString& Text, const FString& Yomikata);
 
      /**
       * @brief スピーカー項目コンポーネントを作成イベント（Blueprint Event）
@@ -76,6 +77,10 @@ protected:
      UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
      UEditableText* AudioEditableText;
 
+     //! 読み方編集テキスト
+     UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
+     UEditableText* YomikataEditableText;
+ 
      //! 項目削除ボタン
      UPROPERTY(BlueprintReadWrite, meta=(BindWidget))
      UButton* DeleteButton;
@@ -96,4 +101,12 @@ protected:
       */
      UFUNCTION()
      void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
+    /**
+     * @brief 読み方テキストの値が編集された際に呼ばれるデリゲート関数
+     * @param [in] Text
+     * @param [in] CommitMethod
+     */
+     UFUNCTION()
+     void OnYomikataTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 };

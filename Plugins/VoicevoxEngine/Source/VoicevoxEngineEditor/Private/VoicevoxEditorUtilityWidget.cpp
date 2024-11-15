@@ -32,13 +32,14 @@ bool UVoicevoxEditorUtilityWidget::IsSetEditorAudioQuery() const
 /**
  * @brief 編集したAudioQueryをアセットデータに保存する（Blueprint公開ノード）
  */
-void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(const int64 SpeakerType, FString Text) const
+void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(const int64 SpeakerType, FString Text, FString Yomikata) const
 {
     UVoicevoxQueryFactory* Factory = NewObject<UVoicevoxQueryFactory>();
     Factory->EditAudioQuery = NewObject<UVoicevoxQuery>();
     Factory->EditAudioQuery->VoicevoxAudioQuery = EditorAudioQueryPtr;
     Factory->EditAudioQuery->SpeakerType = SpeakerType;
     Factory->EditAudioQuery->Text = Text;
+    Factory->EditAudioQuery->YomikataText = Yomikata;
     Factory->AddToRoot();
     
     const FAssetToolsModule& AssetToolsModule = FAssetToolsModule::GetModule();
@@ -137,7 +138,7 @@ void UVoicevoxEditorUtilityWidget::LoadAudioQueryAssets()
                if(const UVoicevoxQuery* Query = Cast<UVoicevoxQuery>(Obj))
                {
                    EditorAudioQueryPtr = Query->VoicevoxAudioQuery;
-                   OnLoadAudioQuery(Query->SpeakerType, Query->Text);
+                   OnLoadAudioQuery(Query->SpeakerType, Query->Text, Query->YomikataText);
                }
             }
         });

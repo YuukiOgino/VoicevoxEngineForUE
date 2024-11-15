@@ -33,6 +33,7 @@ UObject* UVoicevoxQueryFactory::FactoryCreateNew(UClass* InClass, UObject* InPar
 		NewAudioQueryAsset->VoicevoxAudioQuery = EditAudioQuery->VoicevoxAudioQuery;
 		NewAudioQueryAsset->SpeakerType = EditAudioQuery->SpeakerType;
 		NewAudioQueryAsset->Text = EditAudioQuery->Text;
+		NewAudioQueryAsset->YomikataText = EditAudioQuery->YomikataText;
 		EditAudioQuery = nullptr;
 		return NewAudioQueryAsset;
 	}
@@ -55,5 +56,6 @@ UObject* UVoicevoxQueryFactory::FactoryCreateText(UClass* InClass, UObject* InPa
 	// インポートしたJSONにモデルデータは含まれていないので、仮でずんだもんを入れる。
 	NewAudioQueryAsset->SpeakerType = 3;
 	NewAudioQueryAsset->Text.Empty();
+	NewAudioQueryAsset->YomikataText.Empty();
 	return NewAudioQueryAsset;
 }

@@ -63,9 +63,10 @@ public:
 	 * @brief 編集したAudioQueryをアセットデータに保存する（Blueprint公開ノード）
 	 * @param [in] SpeakerType : スピーカータイプ
 	 * @param [in] Text : 入力したテキスト
+	 * @param [in] Yomikata : 読み方
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Editor", meta=(Keywords="voicevox", DisplayName = "SaveAudioQuearyAssets"))
-	void SaveAudioQueryAssets(int64 SpeakerType, FString Text) const;
+	void SaveAudioQueryAssets(int64 SpeakerType, FString Text, FString Yomikata) const;
 
 	/**
 	 * @brief 編集したAudioQueryからSoundWaveアセットを生成して保存する（Blueprint公開ノード）
@@ -91,9 +92,12 @@ public:
 
 	/**
 	 * @brief AudioQueryアセットデータ読込完了（Blueprint Eventノード）
+	 * @param [in] SpeakerType : スピーカータイプ
+	 * @param [in] Text : 入力したテキスト
+	 * @param [in] Yomikata : 読み方
 	 */
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnLoadAudioQuery(int64 SpeakerType, const FString& Text);
+	void OnLoadAudioQuery(int64 SpeakerType, const FString& Text, const FString& Yomikata);
 };
 
 DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxEditor, Log, All);
