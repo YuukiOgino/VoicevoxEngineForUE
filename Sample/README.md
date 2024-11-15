@@ -92,11 +92,13 @@ sh MacGenerateProjectFile.sh
 
 5.2ではそのままRun実行、5.3以降ではVoicevoxEngineSmpleとEditorを選択後にRunを実行してください。
 
+- 5.2<br/>
+<img width="565" alt="スクリーンショット 2024-11-15 23 44 21" src="https://github.com/user-attachments/assets/e6305a81-5cd5-4c93-a8b8-5471195b67dc"><br/><br/>
+
 > [!NOTE]
 > VOICEVO CORE関連のdylib全てがセキュリティに引っかかりビルドに失敗します。<br/>
 > 失敗した場合は「システム設定」→「プライバシーとセキュリティ」でdylibのブロックを解除してください。<br/>
 > 参考：[[解決]macOS Sequoiaで野良アプリが開けない問題](https://note.com/5mingame2/n/n5912b7ce9474)
-> 
 
 > [!NOTE]
 > UE5.2～4では、XCode16以上では**ビルドに失敗します**。XCode14.x及びXCode15.xでビルドをしてください。<br/>
