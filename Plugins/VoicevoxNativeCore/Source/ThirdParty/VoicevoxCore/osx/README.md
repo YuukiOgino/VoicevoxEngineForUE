@@ -6,7 +6,7 @@
 
 ## CPUモードの場合
 
-(VOICEVOX CORE 0.14.6)[https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.6]から【voicevox_core-osx-arm64-cpu-0.14.6.zip】
+(VOICEVOX CORE 0.15.5)[https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.5]から【voicevox_core-osx-arm64-cpu-0.15.5.zip】
 をダウンロードしてください。<br/>
 ダウンロードしたzipファイルは適当なフォルダで解凍をしてください。
 
@@ -15,7 +15,7 @@
 ```
 curl -sSfL https://github.com/VOICEVOX/voicevox_core/releases/latest/download/download-osx-arm64 -o download
 chmod +x download
-./download -v 0.14.6
+./download -v 0.15.5
 ```
 
 以下のdylib及びファイルを格納してください。

@@ -22,7 +22,7 @@
 ダウンローダー　DirectML版コマンド例
 ```PowerShell
 Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/latest/download/download-windows-x64.exe -OutFile ./download.exe
-./download.exe -v 0.14.6 --device directml
+./download.exe -v 0.15.5 --device directml
 ```
 
 ### DirectML版

@@ -31,6 +31,9 @@ VOICEVOX COREのReadMEに従って、CPUモード、もしくはGPUモードの�
 > v1.0は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
 > [VOICEVOX CORE 0.14.6](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.6)<br/>
 > [VOICEVOX NEMO CORE 0.14.0](https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.14.0)<br/>
+> 
+> [VOICEVOX CORE 0.15.5](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.5)<br/>
+> [VOICEVOX NEMO CORE 0.15.0](https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.15.0)<br/>
 
 ## VOICEVOX CORE、Open JTalk、ONNX Runtimeの取得
 

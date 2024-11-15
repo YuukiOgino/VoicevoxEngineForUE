@@ -8,7 +8,7 @@
 
 ## CPUモードの場合
 
-(VOICEVOX NEMO CORE 0.14.0)[https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.14.0]から【voicevox_core-osx-arm64-cpu-0.14.0.zip】
+(VOICEVOX NEMO CORE 0.15.0)[https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.15.0]から【voicevox_core-osx-arm64-cpu-0.15.0.zip】
 をダウンロードしてください。<br/>
 ダウンロードしたzipファイルは適当なフォルダで解凍をしてください。
 
@@ -17,7 +17,7 @@
 ```
 curl -sSfL https://github.com/VOICEVOX/voicevox_nemo_core/releases/latest/download/download-osx-arm64 -o download
 chmod +x download
-./download -v 0.14.0
+./download -v 0.15.0
 ```
 
 以下のdylib及びフォルダを格納してください。
