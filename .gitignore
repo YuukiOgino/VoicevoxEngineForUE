@@ -72,6 +72,7 @@ Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/*
 !Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/VoicevoxToolTipTextSpeechActions.h
 !Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/VoicevoxToolTipTextSpeechCommands.h
 Sample/Plugins
+Sample/MacGenerateProjectFile.sh
 
 # Builds
 Build/*
