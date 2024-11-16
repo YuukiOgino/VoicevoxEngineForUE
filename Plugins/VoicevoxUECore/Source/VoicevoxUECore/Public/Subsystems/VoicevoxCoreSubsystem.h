@@ -16,27 +16,6 @@
 #include "VoicevoxCoreSubsystem.generated.h"
 
 //----------------------------------------------------------------
-// using(Delegate)
-//----------------------------------------------------------------
-
-/**
- * @typedef TVoicevoxCoreDelegate
- */
-template <typename ...T>
-using TVoicevoxCoreDelegate = TDelegate<T...>;
-
-/**
- * @typedef TVoicevoxCoreMulticastDelegate
- */
-template <typename ...T>
-using TVoicevoxCoreMulticastDelegate = TMulticastDelegate<T...>;
-
-/**
- * @typedef FVoicevoxCoreCompleteDelegate
- */
-using FVoicevoxCoreCompleteDelegate = TVoicevoxCoreDelegate<void(bool)>;
-
-//----------------------------------------------------------------
 // class
 //----------------------------------------------------------------
 
@@ -88,19 +67,6 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 	//! 初期化済みフラグ
 	UPROPERTY()
 	bool bIsInitialized = false;
-	
-	//----------------------------------------------------------------
-	// Delegate
-	//----------------------------------------------------------------
-
-	//! 初期化処理完了通知デリゲート
-	TVoicevoxCoreDelegate<void(bool)> OnInitializeComplete;
-
-	//! 終了処理完了通知デリゲート
-	TVoicevoxCoreDelegate<void(bool)> OnFinalizeComplete;
-
-	//! モデル読み込み処理完了通知デリゲート
-	TVoicevoxCoreDelegate<void(bool)> OnLodeModelComplete;
 
 	//----------------------------------------------------------------
 	// Function
@@ -110,30 +76,6 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 	// CORE API処理完了通知関数
 	// VoicevoxNativeObjectから呼び出し
 	//--------------------------------
-	
-	/**
-	 * @brief 音声合成するための初期化処理の結果をセット
-	 * @param[in] bIsSuccess		初期化が成功したか
-	 * @detail
-	 * VOICEVOXの初期化処理のリザルトをセットする。NativeCoreプラグインで使用する。
-	 */
-	void SetInitializeResult(bool bIsSuccess);
-
-	/**
-	 * @brief VOICEVOX CORE終了処理の結果をセット
-	 * @param[in] bIsSuccess		終了処理が成功したか
-	 * @detail
-	 * VOICEVOXの終了処理のリザルトをセットする。NativeCoreプラグインで使用する。
-	 */
-	void SetFinalizeResult(bool bIsSuccess);
-
-	/**
-	 * @brief VOICEVOX COREモデル読み込みの結果をセット
-	 * @param[in] bIsSuccess		モデル読み込み処理が成功したか
-	 * @detail
-	 * VOICEVOXのモデル読み込み処理のリザルトをセットする。NativeCoreプラグインで使用する。
-	 */
-	void SetLodeModelResult(bool bIsSuccess) const;
 	
 	/**
 	 * @fn
@@ -198,21 +140,13 @@ public:
      *
      * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
      */
-    void Initialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false);
+    bool Initialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false);
 
 	/**
 	 * @brief 全てのVOICEVOX CORE 初期化が完了しているか
 	 * @return 全て初期化済みであればtrue、何かしらのCOREの初期化が失敗したらfalse
 	 */
 	bool GetIsInitialize() const;
-
-	/**
-	 * @brief VOICEVOX CORE初期化完了のデリゲート関数登録
-	 * @param OpenDelegate 初期化完了を通知するデリゲート
-	 * @detail
-	 * 全てののVOICEVOX COREを初期化完了を通知するデリゲートをSubsystemへ登録する
-	 */
-	void SetOnInitializeCompleteDelegate(const FVoicevoxCoreCompleteDelegate& OpenDelegate);
 
 	//--------------------------------
 	// VOICEVOX CORE Finalize関連
@@ -226,15 +160,7 @@ public:
 	 * VOICEVOXの終了処理は何度も実行可能。
 	 * 実行せずにexitしても大抵の場合問題ないが、CUDAを利用している場合は終了処理を実行しておかないと例外が起こることがある。
 	 */
-	void Finalize() const;
-
-	/**
-	 * @brief VOICEVOX CORE終了処理完了のデリゲート関数登録
-	 * @param OpenDelegate 終了完了を通知するデリゲート
-	 * @detail
-	 * 複数のVOICEVOX COREを終了処理完了を通知するデリゲートをSubsystemへ登録する
-	 */
-	void SetOnFinalizeCompleteDelegate(const FVoicevoxCoreCompleteDelegate& OpenDelegate);
+	void Finalize();
 
 	//--------------------------------
 	// VOICEVOX CORE LoadModel関連
@@ -250,15 +176,7 @@ public:
 	 *
 	 * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	 void LoadModel(int64 SpeakerId) const;
-
-	/**
-	 * @brief VOICEVOX COREモデルロード処理完了のデリゲート関数登録
-	 * @param OpenDelegate モデルロード完了を通知するデリゲート
-	 * @detail
-	 * VOICEVOX COREのモデルロード処理完了を通知するデリゲートをSubsystemへ登録する
-	 */
-	void SetOnLoadModelCompleteDelegate(const FVoicevoxCoreCompleteDelegate& OpenDelegate);
+	 bool LoadModel(int64 SpeakerId) const;
 
 	//--------------------------------
 	// VOICEVOX CORE AudioQuery関連

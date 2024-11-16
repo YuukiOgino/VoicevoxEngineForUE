@@ -60,15 +60,14 @@ void UVoicevoxNativeObject::AddReferencedObjects(UObject* InThis, FReferenceColl
 /**
  * @brief 音声合成するための初期化を行う。VOICEVOXのAPIを正しく実行するには先に初期化が必要
  */
-void UVoicevoxNativeObject::CoreInitialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
+bool UVoicevoxNativeObject::CoreInitialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
 {
 	for (const auto Element : SubsystemClasses)
 	{
 		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
 		if (const auto bIsSuccess = Subsystem->CoreInitialize(bUseGPU, CPUNumThreads, bLoadAllModels); !bIsSuccess)
 		{
-			GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetInitializeResult(false);
-			return;
+			return false;
 		}
 
 		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->AddVoicevoxConfigData(
@@ -79,7 +78,7 @@ void UVoicevoxNativeObject::CoreInitialize(const bool bUseGPU, const int CPUNumT
 				Subsystem->IsGpuMode());
 	}
 
-	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetInitializeResult(true);
+	return true;
 }
 
 /**
@@ -108,8 +107,6 @@ void UVoicevoxNativeObject::Finalize()
 		const auto Subsystem = VoicevoxSubsystemCollection.GetSubsystem(Element);
 		static_cast<UVoicevoxNativeCoreSubsystem*>(Subsystem)->Finalize();
 	}
-
-	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetFinalizeResult(true);
 }
 
 //--------------------------------
@@ -119,7 +116,7 @@ void UVoicevoxNativeObject::Finalize()
 /**
  * @brief モデルをロードする。
  */
-void UVoicevoxNativeObject::LoadModel(int64 SpeakerId)
+bool UVoicevoxNativeObject::LoadModel(const int64 SpeakerId)
 {
 	for (const auto Element : SubsystemClasses)
 	{
@@ -127,14 +124,13 @@ void UVoicevoxNativeObject::LoadModel(int64 SpeakerId)
 		{
 			if (const auto bIsSuccess = Subsystem->LoadModel(SpeakerId); bIsSuccess)
 			{
-				GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetLodeModelResult(true);
-				return;
+				return true;
 			}
 			break;
 		}
 	}
 
-	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetLodeModelResult(false);
+	return false;
 }
 
 //--------------------------------
@@ -144,7 +140,7 @@ void UVoicevoxNativeObject::LoadModel(int64 SpeakerId)
 /**
  * @brief AudioQuery を取得する。
  */
-FVoicevoxAudioQuery UVoicevoxNativeObject::GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana)
+FVoicevoxAudioQuery UVoicevoxNativeObject::GetAudioQuery(const int64 SpeakerId, const FString& Message, const bool bKana)
 {
 	for (const auto Element : SubsystemClasses)
 	{

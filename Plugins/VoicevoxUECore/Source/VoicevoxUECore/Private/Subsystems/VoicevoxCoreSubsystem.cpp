@@ -29,7 +29,6 @@ void UVoicevoxCoreSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 void UVoicevoxCoreSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
-	OnInitializeComplete.Unbind();
 
 	NativeInstance->Shutdown();
 }
@@ -57,38 +56,15 @@ void UVoicevoxCoreSubsystem::NativeInitialize() const
 /**
  * @brief VOICEVOX CORE 初期化
  */
-void UVoicevoxCoreSubsystem::Initialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
+bool UVoicevoxCoreSubsystem::Initialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
 {
 	MetaList.Empty();
 	SupportedDevicesMap.Empty();
 	VoicevoxCoreVersionMap.Empty();
 	CoreNameList.Empty();
-	
-	NativeInstance->CoreInitialize(bUseGPU, CPUNumThreads, bLoadAllModels);
-}
 
-/**
- * @brief 音声合成するための初期化処理の結果をセット
- */
-void UVoicevoxCoreSubsystem::SetInitializeResult(const bool bIsSuccess)
-{
-	bIsInitialized = bIsSuccess;
-	
-	if (!bIsSuccess)
-	{
-		if (!OnInitializeComplete.ExecuteIfBound(false))
-		{
-			UE_LOG(LogTemp, Error, TEXT("OnInitializeComplete Not Execute!!"));
-		}
-
-		return;
-	}
-
-	if (!OnInitializeComplete.ExecuteIfBound(true))
-	{
-		UE_LOG(LogTemp, Error, TEXT("OnInitializeComplete Not Execute!!"));
-	}
-	
+	bIsInitialized = NativeInstance->CoreInitialize(bUseGPU, CPUNumThreads, bLoadAllModels);
+	return bIsInitialized;
 }
 
 /**
@@ -99,15 +75,6 @@ bool UVoicevoxCoreSubsystem::GetIsInitialize() const
 	return bIsInitialized;	
 }
 
-/**
- * @brief VOICEVOX CORE初期化完了のデリゲート関数登録
- */
-void UVoicevoxCoreSubsystem::SetOnInitializeCompleteDelegate(const FVoicevoxCoreCompleteDelegate& OpenDelegate)
-{
-	if (OnInitializeComplete.IsBound()) OnInitializeComplete.Unbind();
-	OnInitializeComplete = OpenDelegate;
-}
-
 //--------------------------------
 // VOICEVOX CORE Finalize関連
 //--------------------------------
@@ -115,44 +82,14 @@ void UVoicevoxCoreSubsystem::SetOnInitializeCompleteDelegate(const FVoicevoxCore
 /**
  * @brief VOICEVOX CORE 終了処理
  */
-void UVoicevoxCoreSubsystem::Finalize() const
+void UVoicevoxCoreSubsystem::Finalize()
 {
-	NativeInstance->Finalize();
-}
-
-/**
- * @brief VOICEVOX CORE終了処理完了のデリゲート関数登録
- */
-void UVoicevoxCoreSubsystem::SetOnFinalizeCompleteDelegate(const FVoicevoxCoreCompleteDelegate& OpenDelegate)
-{
-	if (OnFinalizeComplete.IsBound()) OnFinalizeComplete.Unbind();
-	OnFinalizeComplete = OpenDelegate;
-}
-
-/**
- * @brief VOICEVOX CORE終了処理の結果をセット
- */
-void UVoicevoxCoreSubsystem::SetFinalizeResult(const bool bIsSuccess)
-{
-	if (!bIsSuccess)
-	{
-		if (!OnFinalizeComplete.ExecuteIfBound(false))
-		{
-			UE_LOG(LogTemp, Display, TEXT("OnFinalizeComplete Not Execute!!"));
-		}
-
-		return;
-	}
-
 	MetaList.Empty();
 	SupportedDevicesMap.Empty();
 	VoicevoxCoreVersionMap.Empty();
 	CoreNameList.Empty();
 	
-	if (!OnFinalizeComplete.ExecuteIfBound(true))
-	{
-		UE_LOG(LogTemp, Display, TEXT("OnFinalizeComplete Not Execute!!"));
-	}
+	NativeInstance->Finalize();
 }
 
 //--------------------------------
@@ -162,39 +99,9 @@ void UVoicevoxCoreSubsystem::SetFinalizeResult(const bool bIsSuccess)
 /**
  * @brief モデルをロードする。
  */
-void UVoicevoxCoreSubsystem::LoadModel(const int64 SpeakerId) const
+bool UVoicevoxCoreSubsystem::LoadModel(const int64 SpeakerId) const
 {
-	NativeInstance->LoadModel(SpeakerId);
-}
-
-/**
- * @brief VOICEVOX COREモデル読み込み処理完了のデリゲート関数登録
- */
-void UVoicevoxCoreSubsystem::SetOnLoadModelCompleteDelegate(const FVoicevoxCoreCompleteDelegate& OpenDelegate)
-{
-	if (OnLodeModelComplete.IsBound()) OnLodeModelComplete.Unbind();
-	OnLodeModelComplete = OpenDelegate;
-}
-
-/**
- * @brief VOICEVOX COREモデル読み込みの結果をセット
- */
-void UVoicevoxCoreSubsystem::SetLodeModelResult(const bool bIsSuccess) const
-{
-	if (!bIsSuccess)
-	{
-		if (!OnLodeModelComplete.ExecuteIfBound(false))
-		{
-			UE_LOG(LogTemp, Display, TEXT("OnModelLodeComplete Not Execute!!"));
-		}
-
-		return;
-	}
-
-	if (!OnLodeModelComplete.ExecuteIfBound(true))
-	{
-		UE_LOG(LogTemp, Display, TEXT("OnModelLodeComplete Not Execute!!"));
-	}
+	return NativeInstance->LoadModel(SpeakerId);
 }
 
 //--------------------------------

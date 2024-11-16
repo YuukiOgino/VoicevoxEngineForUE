@@ -78,7 +78,7 @@ class UVoicevoxNativeObject : public UObject
 	 *
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API void CoreInitialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false);
+	VOICEVOXUECORE_API bool CoreInitialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false);
 
 	/**
 	 * @brief デフォルトの初期化オプションを生成する
@@ -115,7 +115,7 @@ class UVoicevoxNativeObject : public UObject
 	 *
 	 * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API void LoadModel(int64 SpeakerId);
+	VOICEVOXUECORE_API bool LoadModel(int64 SpeakerId);
 
 	//--------------------------------
 	// VOICEVOX CORE AudioQuery関連

@@ -34,20 +34,15 @@ void UVoicevoxInitializeAsyncTask::Activate()
 {
 	UE::Tasks::Launch<>(TEXT("VoicevoxCoreTask"), [&]
 	{
-		const FVoicevoxCoreCompleteDelegate InitializeCompleteEvent = FVoicevoxCoreCompleteDelegate::CreateLambda([&](const bool bIsSuccess)
+		if (GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Initialize(bUseGPU, CPUNumThreads, false))
 		{
-			if (bIsSuccess)
-			{
-				OnSuccess.Broadcast();
-			}
-			else
-			{
-				OnFail.Broadcast();
-			}
-			SetReadyToDestroy();
-		});
-		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetOnInitializeCompleteDelegate(InitializeCompleteEvent);
-		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Initialize(bUseGPU, CPUNumThreads, false);
+			OnSuccess.Broadcast();
+		}
+		else
+		{
+			OnFail.Broadcast();
+		}
+		SetReadyToDestroy();
 	});
 }
 
@@ -71,21 +66,15 @@ UVoicevoxLoadModelAsyncTask* UVoicevoxLoadModelAsyncTask::LoadModel(UObject* Wor
  */
 void UVoicevoxLoadModelAsyncTask::Activate()
 {
-	const FVoicevoxCoreCompleteDelegate LoadModelCompleteEvent = FVoicevoxCoreCompleteDelegate::CreateLambda([&](const bool bIsSuccess)
+	if (GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->LoadModel(SpeakerId))
 	{
-		if (bIsSuccess)
-		{
-			OnSuccess.Broadcast();
-		}
-		else
-		{
-			OnFail.Broadcast();
-		}
-		SetReadyToDestroy();
-	});
-
-	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SetOnLoadModelCompleteDelegate(LoadModelCompleteEvent);
-	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->LoadModel(SpeakerId);
+		OnSuccess.Broadcast();
+	}
+	else
+	{
+		OnFail.Broadcast();
+	}
+	SetReadyToDestroy();
 }
 
 //------------------------------------------------------------------------
