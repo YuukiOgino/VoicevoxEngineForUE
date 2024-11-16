@@ -539,7 +539,6 @@ TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetMetaList()
 	const FString FuncName = "voicevox_get_metas_json"; 
 	typedef const char*(*DLL_Function)();
 	
-	// DLLを読み込み、ポインタを取得
 	if (CoreLibraryHandle != nullptr)
 	{
 #if PLATFORM_WINDOWS
@@ -608,7 +607,6 @@ FString UVoicevoxNativeCoreSubsystem::GetVoicevoxVersion()
 	const FString FuncName = "voicevox_get_version"; 
 	typedef const char*(*DLL_Function)();
 	
-	// DLLを読み込み、ポインタを取得
 	if (CoreLibraryHandle != nullptr)
 	{
 #if PLATFORM_WINDOWS
