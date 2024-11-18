@@ -17,7 +17,7 @@ void FVoicevoxUECoreModule::StartupModule()
 {
     FCoreDelegates::OnAllModuleLoadingPhasesComplete.AddLambda([]
     {
-			    GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->NativeInitialize();
+		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->NativeInitialize();
     });
 }
 
