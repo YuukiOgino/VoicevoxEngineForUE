@@ -23,6 +23,52 @@
 > 5.4までXCode16以上はビルドが通りません。<br/>
 > 過去バージョンは[Apple Developer](https://developer.apple.com/jp/xcode/resources/)にアクセスすれば入手できます。<br/>
 
+# プラグイン構成
+
+VOICEVOXのマルチエンジン機能をUEで実現させるために、プラグインを以下のように構成しています。
+
+- C++のみ
+  - VoicevoxUECoreプラグイン
+  - VoicevoxNativeCoreプラグイン
+  - VoicevoxNativeCoreNemoプラグイン（NEMOを使用する場合）
+
+- Blueprint＋C++
+  - VoicevoxUECoreプラグイン
+  - VoicevoxEngineプラグイン
+  - VoicevoxNativeCoreプラグイン
+  - VoicevoxNativeCoreNemoプラグイン（NEMOを使用する場合）
+
+## VoicevoxUECoreプラグイン
+
+- VOICEVOX COREをUEで使用するための共通プラグインです。
+- VOICEVOXをUEで使用するためのクラスが一通り入っています。
+  - VOICEVOX CORE及びVOICEVOX NEMO COREのAPIにアクセスするSubsystem
+  - AudioQueryを編集するWidgetの基礎クラス（C++）とWidget Blueprint
+  - AudioQueryをUEで使用するためのアセットクラス
+- 他のプラグインは全てVoicevoxUECoreプラグインに依存するように作られています。
+
+## VoicevoxEngineプラグイン
+
+- Blueprint、及びAudioQueryを編集するEditor Utility Blueprintがまとめられたプラグインです。
+- Blueprintを使用したい、もしくはエディターを利用したい場合に有効にしてください。
+
+> [!NOTE]
+> エディター機能はα版であり、全ての値を編集することはできません。<br/>
+> VOICEVOXのエンジン機能はプラグインに持たせていません。
+
+## VoicevoxNativeCoreプラグイン
+
+- VOICEVOX COREライブラリを読み込むためのプラグインです。
+- VOICEVOX CORE製品版をこのフォルダに配置します。
+
+## VoicevoxNativeCoreNemoプラグイン
+
+- VOICEVOX NEMO COREライブラリを読み込むためのプラグインです。
+- VOICEVOX製品版におけるプラグイン機能を再現しています。
+- VOICEVOX NEMO CORE製品版をこのフォルダに配置します。
+  - COREで共通使用する動的ライブラリ及びOpenJtakはVoicevoxNativeCoreプラグインで行っています。
+  - 上記仕様のため、VoicevoxNativeCoreNemoプラグイン単体では動作しません。
+
 # プラグイン使用準備
 
 VOICEVOX COREのReadMEに従って、CPUモード、もしくはGPUモードの動作に必要なライブラリを取得します。
