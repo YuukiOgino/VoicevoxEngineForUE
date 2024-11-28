@@ -8,7 +8,7 @@
 
 ## CPUモードの場合
 
-(VOICEVOX NEMO CORE 0.15.0)[https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.15.0]から【voicevox_core-osx-arm64-cpu-0.15.0.zip】
+[VOICEVOX NEMO CORE 0.15.0](https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.15.0)から【voicevox_core-osx-arm64-cpu-0.15.0.zip】
 をダウンロードしてください。<br/>
 ダウンロードしたzipファイルは適当なフォルダで解凍をしてください。
 
