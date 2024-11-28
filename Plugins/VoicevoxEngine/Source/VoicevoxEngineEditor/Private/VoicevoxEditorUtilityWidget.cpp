@@ -1,5 +1,10 @@
 // Copyright Yuuki Ogino. All Rights Reserved
 
+/**
+ * @brief  VOICEVOX編集Editor Utility WidgetのCPPファイル
+ * @author Yuuki Ogino
+ */
+
 #include "VoicevoxEditorUtilityWidget.h"
 
 #include "AssetToolsModule.h"
@@ -11,22 +16,30 @@
 #include "Factories/VoicevoxQueryFactory.h"
 #include "Factories/VoicevoxSoundWaveFactory.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Subsystems/VoicevoxCoreSubsystem.h"
 
 DEFINE_LOG_CATEGORY(LogVoicevoxEditor);
 
-bool UVoicevoxEditorUtilityWidget::IsSetEditorAudioQuery()
+/**
+ * @brief 編集対象のAudioQueryがセット済みか（Blueprint公開ノード）
+ */
+bool UVoicevoxEditorUtilityWidget::IsSetEditorAudioQuery() const
 {
     // 生成されればカナが空っぽになることは無いので、この値で生成済みかどうかを判定する
     return !EditorAudioQueryPtr.Kana.IsEmpty();
 }
 
-void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(const int64 SpeakerType, FString Text)
+/**
+ * @brief 編集したAudioQueryをアセットデータに保存する（Blueprint公開ノード）
+ */
+void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(const int64 SpeakerType, FString Text, FString Yomikata) const
 {
     UVoicevoxQueryFactory* Factory = NewObject<UVoicevoxQueryFactory>();
     Factory->EditAudioQuery = NewObject<UVoicevoxQuery>();
     Factory->EditAudioQuery->VoicevoxAudioQuery = EditorAudioQueryPtr;
     Factory->EditAudioQuery->SpeakerType = SpeakerType;
     Factory->EditAudioQuery->Text = Text;
+    Factory->EditAudioQuery->YomikataText = Yomikata;
     Factory->AddToRoot();
     
     const FAssetToolsModule& AssetToolsModule = FAssetToolsModule::GetModule();
@@ -41,9 +54,12 @@ void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(const int64 SpeakerType,
     Factory->RemoveFromRoot();
 }
 
+/**
+ * @brief 編集したAudioQueryからSoundWaveアセットを生成して保存する（Blueprint公開ノード）
+ */
 void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(const int64 SpeakerType, const bool bEnableInterrogativeUpspeak) const
 {
-    if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(EditorAudioQueryPtr, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+    if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(EditorAudioQueryPtr, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
     {
         UVoicevoxSoundWaveFactory* Factory = NewObject<UVoicevoxSoundWaveFactory>();
         Factory->OutputWAV = OutputWAV;
@@ -62,9 +78,12 @@ void UVoicevoxEditorUtilityWidget::SaveSoundWaveAssets(const int64 SpeakerType, 
     }
 }
 
+/**
+ * @brief 編集したAudioQueryからWavファイルを生成して保存する（Blueprint公開ノード）
+ */
 void UVoicevoxEditorUtilityWidget::SaveWavFile(const int64 SpeakerType, const bool bEnableInterrogativeUpspeak) const
 {
-    if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(EditorAudioQueryPtr, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+    if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(EditorAudioQueryPtr, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
     {
         if (IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get())
         {
@@ -94,6 +113,9 @@ void UVoicevoxEditorUtilityWidget::SaveWavFile(const int64 SpeakerType, const bo
     }
 }
 
+/**
+ * @brief AudioQueryアセットデータを読み込む（Blueprint公開ノード）
+ */
 void UVoicevoxEditorUtilityWidget::LoadAudioQueryAssets()
 {
     FOpenAssetDialogConfig OpenAssetDialogConfig;
@@ -116,7 +138,7 @@ void UVoicevoxEditorUtilityWidget::LoadAudioQueryAssets()
                if(const UVoicevoxQuery* Query = Cast<UVoicevoxQuery>(Obj))
                {
                    EditorAudioQueryPtr = Query->VoicevoxAudioQuery;
-                   OnLoadAudioQuery(Query->SpeakerType, Query->Text);
+                   OnLoadAudioQuery(Query->SpeakerType, Query->Text, Query->YomikataText);
                }
             }
         });

@@ -17,14 +17,83 @@
 
 * UnrealEngine5.2以上(Apple シリコン)
 * 12.5 Monterey 以降
-* XCode14.1以上
+* XCode14.1～15.4
+
+> [!NOTE]
+> 5.4までXCode16以上はビルドが通りません。<br/>
+> 過去バージョンは[Apple Developer](https://developer.apple.com/jp/xcode/resources/)にアクセスすれば入手できます。<br/>
+
+# プラグイン構成
+
+VOICEVOXのマルチエンジン機能をUEで実現させるために、プラグインを以下のように構成しています。
+
+- C++のみ
+  - VoicevoxUECoreプラグイン
+  - VoicevoxNativeCoreプラグイン
+  - VoicevoxNativeCoreNemoプラグイン（NEMOを使用する場合）
+
+- Blueprint＋C++
+  - VoicevoxUECoreプラグイン
+  - VoicevoxEngineプラグイン
+  - VoicevoxNativeCoreプラグイン
+  - VoicevoxNativeCoreNemoプラグイン（NEMOを使用する場合）
+
+## VoicevoxUECoreプラグイン
+
+- VOICEVOX COREをUEで使用するための共通プラグインです。
+- VOICEVOXをUEで使用するためのクラスが一通り入っています。
+  - VOICEVOX CORE及びVOICEVOX NEMO COREのAPIにアクセスするSubsystem
+  - AudioQueryを編集するWidgetの基礎クラス（C++）とWidget Blueprint
+  - AudioQueryをUEで使用するためのアセットクラス
+- 他のプラグインは全てVoicevoxUECoreプラグインに依存するように作られています。
+
+## VoicevoxEngineプラグイン
+
+- Blueprint、及びAudioQueryを編集するEditor Utility Blueprintがまとめられたプラグインです。
+- Blueprintを使用したい、もしくはエディターを利用したい場合に有効にしてください。
+
+> [!NOTE]
+> エディター機能はα版であり、全ての値を編集することはできません。<br/>
+> VOICEVOXのエンジン機能はプラグインに持たせていません。
+
+## VoicevoxNativeCoreプラグイン
+
+- VOICEVOX COREライブラリを読み込むためのプラグインです。
+- VOICEVOX CORE製品版をこのフォルダに配置します。
+
+## VoicevoxNativeCoreNemoプラグイン
+
+- VOICEVOX NEMO COREライブラリを読み込むためのプラグインです。
+- VOICEVOX製品版におけるプラグイン機能を再現しています。
+- VOICEVOX NEMO CORE製品版をこのフォルダに配置します。
+  - COREで共通使用する動的ライブラリ及びOpenJtakはVoicevoxNativeCoreプラグインで行っています。
+  - 上記仕様のため、VoicevoxNativeCoreNemoプラグイン単体では動作しません。
 
 # プラグイン使用準備
 
-VOICEVOX COREのReadMEに従って、最低限CPUモードの動作に必要なライブラリを取得します。
+VOICEVOX COREのReadMEに従って、CPUモード、もしくはGPUモードの動作に必要なライブラリを取得します。
+
+> [!NOTE]
+> v1.0は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
+> [VOICEVOX CORE 0.14.6](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.6)<br/>
+> [VOICEVOX NEMO CORE 0.14.0](https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.14.0)<br/>
+> 
+> [VOICEVOX CORE 0.15.5](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.5)<br/>
+> [VOICEVOX NEMO CORE 0.15.0](https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.15.0)<br/>
 
 ## VOICEVOX CORE、Open JTalk、ONNX Runtimeの取得
 
+v1.0以上の場合、各プラグインのREADMEに詳しい説明を記載したので、そちらを見てください。
+
+[Windows VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/README.md)<br/>
+[Windows VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCore/x64/README.md)
+ 
+[Mac VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/README.md)<br/>
+[Mac VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCore/osx/README.md)
+
+<details>
+<summary>v0.2～0.6の場合</summary>
+  
 [VOICEVOX COREライブラリ](https://github.com/VOICEVOX/voicevox_core)を取得、適当なフォルダに展開してください。<br/>
 
 ※v0.6は[VOICEVOX CORE 0.14.6](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.6)を元に開発しました。
@@ -43,8 +112,20 @@ VOICEVOX CORE 0.14.6はONNX Runtimeが含まれているため、別途ダウン
   [ONNX Runtime](https://github.com/microsoft/onnxruntime/releases/tag/v1.13.1)をダウンロード、上記コアライブラリを展開したディレクトリに展開してください。
 </details> 
 
+</details> 
 
 ## プラグインへ展開
+
+v1.0以上の場合、各プラグインのREADMEに詳しい説明を記載したので、そちらを見てください。
+
+[Windows VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/README.md)<br/>
+[Windows VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCore/x64/README.md)
+ 
+[Mac VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/README.md)<br/>
+[Mac VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCore/osx/README.md)
+
+<details>
+<summary>v0.6以下の場合</summary>
 
 展開したCOREライブラリを、以下のフォルダに配置してください。
 
@@ -76,11 +157,45 @@ Plugins\VoicevoxEngine\Source\ThirdParty\VoicevoxCore\x64\VoicevoxCore
 ![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/104377/33be4503-896f-3d38-d27c-0ce3cab73ea4.png)
 </details> 
 
-上記COREライブラリ展開済みのPluginフォルダを、プロジェクトフォルダに配置後、uprojectファイルを右クリックして『**Generate Visual Studio project files**』を選択し、sln作成をしてください。<br/>
+上記COREライブラリ展開済みのPluginフォルダを、プロジェクトフォルダに配置してください。
+
+</details> 
+
+## Windows
+
+uprojectファイルを右クリックして『**Generate Visual Studio project files**』を選択し、sln作成をしてください。<br/>
 あとはuprojectを起動してビルドが通れば成功です。
 
+## Mac
+
+GenerateProjectFiles.shをターミナルから実行してください。
+
+- コマンド例
+```
+sh "/Users/Shared/Epic Games/UE_5.2/Engine/Build/BatchFiles/Mac/GenerateProjectFiles.sh" -project="/Users/yukiogino/Documents/VoicevoxEngineForUE/Sample/VoicevoxEngineSample.uproject" -game
+```
+
+生成した.xcworkspaceファイルを起動後、Runを実行してUEのエディターが起動すれば成功です。
+
+
+
 # 各クラスについて
+
+v1.0で破壊的変更を行ったため、記事を再度作成しています。
+もうしばらくお待ちください。
+
+基本的にUVoicevoxCoreSubsystemを経由して各COREライブラリのAPIにアクセスします。
+
+```
+const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunTextToSpeech(SpeakerType, Message, bRunKana, bEnableInterrogativeUpspeak);
+```
+
+<details>
+<summary>v0.1の場合</summary>
+
 [Qiitaに記事を公開しています](https://qiita.com/YuukiOgino/items/bc3ab31de4b1d0689625)ので、そちらを見てください。
+
+</details> 
 
 # 現在判明している不具合
 
@@ -107,6 +222,8 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 
 # 更新履歴
 
+- 2024/11/xx
+  - 1.0 大型アップデートを実施。以下、更新内容要約。<br/>・VOICEVOX NEMO CORE対応。<br/>・マルチCORE対応。<br/>・UE5.4対応。<br/>・破棄したLatentノードを名前を変更して復活。<br/>・VOICEVOXのAPIアクセスをUtilからSubsystemへ移行、それに伴う破壊的変更を実施。<br/>・エディターに読み方のテキストボックスを追加。
 - 2024/08/11
   - 0.6 VOICEVOX CORE 0.14.6対応。(新規モデルデータ追加対応) 不具合修正。簡易的なエディタ機能実装
 - 2024/01/10

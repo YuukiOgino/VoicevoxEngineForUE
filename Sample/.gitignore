@@ -51,14 +51,10 @@ SourceArt/**/*.tga
 
 # Binary Files
 Binaries/*
-Plugins/*/Binaries/*
-Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/*
-!Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/README.md
-Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/osx/*
-!Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/osx/README.md
 
 # Builds
 Build/*
+Plugins/*
 
 # Whitelist PakBlacklist-<BuildConfiguration>.txt files
 !Build/*/
@@ -76,9 +72,6 @@ Saved/*
 
 # Compiled source files for the engine to use
 Intermediate/*
-Plugins/*/Intermediate/*
-Plugins/Developer/*
-Plugins/VoicevoxToolTipTextSpeech
 
 # Cache files for the editor to use
 DerivedDataCache/*

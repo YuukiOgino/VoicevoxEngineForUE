@@ -9,8 +9,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VoicevoxUEDefined.h"
+#include "VoicevoxQuery.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "VoicevoxCoreUtil.h"
 #include "VoicevoxBlueprintLibrary.generated.h"
 
 /**
@@ -36,6 +37,15 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxFinalize"))
 	static void Finalize();
+
+	/**
+	 * @fn
+	 *  初期化済みのVOICEVOX CORE名のリスト取得(Blueprint公開ノード)
+	 * @brief 初期化済みのVOICEVOX CORE名のリスト取得
+	 * @return 初期化済みのVOICEVOX CORE名のリスト
+	 */
+	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxCoreNameList"))
+	static UPARAM(DisplayName="CoreNameList") TArray<FString> GetCoreNameList();
 	
 	/**
 	 * @fn
@@ -51,21 +61,21 @@ public:
 	 * @return サポートデバイス情報の構造体
 	 */
 	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxSupportedDevices"))
-	static UPARAM(DisplayName="SupportedDevices") FVoicevoxSupportedDevices GetSupportedDevices();
+	static UPARAM(DisplayName="SupportedDevices") FVoicevoxSupportedDevices GetSupportedDevices(const FString& CoreName);
 
 	/**
 	 * @brief VOICEVOX COREのバージョン情報を取得する
 	 * @return VOICEVOX COREのバージョン情報
 	 */
 	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxVersion"))
-	static UPARAM(DisplayName="VoicevoxCoreVersion") FString GetVoicevoxCoreVersion();
+	static UPARAM(DisplayName="VoicevoxCoreVersion") FString GetVoicevoxCoreVersion(const FString& CoreName);
 
 	/**
 	 * @brief ハードウェアアクセラレーションがGPUモードか判定する
 	 * @return GPUモードならtrue、そうでないならfalse
 	 */
 	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "IsVoicevoxGpuMode"))
-	static UPARAM(DisplayName="GPU Mode") bool IsVoicevoxGpuMode();
+	static UPARAM(DisplayName="GPU Mode") bool IsVoicevoxGpuMode(const FString& CoreName);
 	
 	/**
 	 * @brief VOICEVOX COREで変換した音声データを元にSoundWaveを生成(Blueprint公開ノード)
@@ -76,7 +86,7 @@ public:
 	 * @return TextToSpeechで作成された音楽データが格納されたUSoundWave
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxTextToSpeechOutput"))
-	static UPARAM(DisplayName="Sound") USoundWave* TextToSpeechOutput(EVoicevoxSpeakerType SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
+	static UPARAM(DisplayName="Sound") USoundWave* TextToSpeechOutput(int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
 	
 	/**
 	 * @brief 入力したテキストをVOICEVOX COREでAudioQueryに変換後、SoundWaveを生成(Blueprint公開ノード)
@@ -87,7 +97,7 @@ public:
 	 * @return AudioQuery情報を元に作成された音楽データが格納されたUSoundWave
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxToTextAudioQueryOutput"))
-	static UPARAM(DisplayName="Sound") USoundWave* TextToAudioQueryOutput(EVoicevoxSpeakerType SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
+	static UPARAM(DisplayName="Sound") USoundWave* TextToAudioQueryOutput(int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
 	
 	/**
 	 * @fn
@@ -98,7 +108,7 @@ public:
 	 * @return AudioQuery情報が格納されたjson形式の構造体
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxAudioQuery"))
-	static UPARAM(DisplayName="AudioQuery") FVoicevoxAudioQuery GetAudioQuery(EVoicevoxSpeakerType SpeakerType, FString Message, bool bRunKana = false);
+	static UPARAM(DisplayName="AudioQuery") FVoicevoxAudioQuery GetAudioQuery(int SpeakerType, FString Message, bool bRunKana = false);
 
 	/**
 	 * @brief VOICEVOX COREで取得したAudioQuery元にSoundWaveを作成(Blueprint公開ノード)
@@ -108,7 +118,16 @@ public:
 	 * @return AudioQuery情報を元に作成された音楽データが格納されたUSoundWave
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxAudioQueryOutput"))
-	static UPARAM(DisplayName="Sound") USoundWave* AudioQueryOutput(FVoicevoxAudioQuery AudioQuery, EVoicevoxSpeakerType SpeakerType, bool bEnableInterrogativeUpspeak = true);
+	static UPARAM(DisplayName="Sound") USoundWave* AudioQueryOutput(FVoicevoxAudioQuery AudioQuery, int SpeakerType, bool bEnableInterrogativeUpspeak = true);
+
+	/**
+	 * @brief AudioQueryアセットからSoundWaveを作成(Blueprint公開ノード)
+	 * @param[in] VoicevoxQuery						Queryアセット
+	 * @param[in] bEnableInterrogativeUpspeak		疑問文の調整を有効にする
+	 * @return AudioQuery情報を元に作成された音楽データが格納されたUSoundWave
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxQueryAssetOutput"))
+	static UPARAM(DisplayName="Sound") USoundWave* VoicevoxQueryOutput(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true);
 
 	/**
 	 * @brief 生成した音声データからUSoundWaveを作成

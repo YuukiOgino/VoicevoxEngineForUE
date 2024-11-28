@@ -6,13 +6,24 @@
  */
 
 #include "VoicevoxBlueprintLibrary.h"
+#include <Sound/SoundWaveProcedural.h>
+
+#include "Subsystems/VoicevoxCoreSubsystem.h"
 
 /**
  * @brief VOICEVOX CORE 終了処理(Blueprint公開ノード)
  */
 void UVoicevoxBlueprintLibrary::Finalize()
 {
-	FVoicevoxCoreUtil::Finalize();
+	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Finalize();
+}
+
+/**
+ * @brief 初期化済みのVOICEVOX CORE名のリスト取得
+ */
+TArray<FString> UVoicevoxBlueprintLibrary::GetCoreNameList()
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetCoreNameList();
 }
 
 /**
@@ -20,39 +31,39 @@ void UVoicevoxBlueprintLibrary::Finalize()
  */
 TArray<FVoicevoxMeta> UVoicevoxBlueprintLibrary::GetMetasToList()
 {
-	return FVoicevoxCoreUtil::GetMetaList();
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetMetaList();
 }
 
 /**
  * @brief サポートデバイス情報を取得する(Blueprint公開ノード)
  */
-FVoicevoxSupportedDevices UVoicevoxBlueprintLibrary::GetSupportedDevices()
+FVoicevoxSupportedDevices UVoicevoxBlueprintLibrary::GetSupportedDevices(const FString& CoreName)
 {
-	return FVoicevoxCoreUtil::GetSupportedDevices();
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetSupportedDevices(CoreName);
 }
 
 /**
  * @brief VOICEVOX COREのバージョン情報を取得する
  */
-FString UVoicevoxBlueprintLibrary::GetVoicevoxCoreVersion()
+FString UVoicevoxBlueprintLibrary::GetVoicevoxCoreVersion(const FString& CoreName)
 {
-	return FVoicevoxCoreUtil::GetVoicevoxVersion();
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetVoicevoxVersion(CoreName);
 }
 
 /**
  * @brief ハードウェアアクセラレーションがGPUモードか判定する
  */
-bool UVoicevoxBlueprintLibrary::IsVoicevoxGpuMode()
+bool UVoicevoxBlueprintLibrary::IsVoicevoxGpuMode(const FString& CoreName)
 {
-	return FVoicevoxCoreUtil::IsGpuMode();
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->IsGpuMode(CoreName);
 }
 
 /**
  * @brief VOICEVOX COREで変換した音声データを元にSoundWaveを生成(Blueprint公開ノード)
  */
-USoundWave* UVoicevoxBlueprintLibrary::TextToSpeechOutput(EVoicevoxSpeakerType SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
+USoundWave* UVoicevoxBlueprintLibrary::TextToSpeechOutput(int SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
 {
-	if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunTextToSpeech(static_cast<int64>(SpeakerType), Message, bRunKana, bEnableInterrogativeUpspeak);
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunTextToSpeech(SpeakerType, Message, bRunKana, bEnableInterrogativeUpspeak);
 		!OutputWAV.IsEmpty())
 	{
 		return CreateSoundWave(OutputWAV);
@@ -64,11 +75,11 @@ USoundWave* UVoicevoxBlueprintLibrary::TextToSpeechOutput(EVoicevoxSpeakerType S
 /**
  * @brief 入力したテキストをVOICEVOX COREでAudioQueryに変換後、SoundWaveを生成(Blueprint公開ノード)
  */
-USoundWave* UVoicevoxBlueprintLibrary::TextToAudioQueryOutput(EVoicevoxSpeakerType SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
+USoundWave* UVoicevoxBlueprintLibrary::TextToAudioQueryOutput(int SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
 {
-	const FVoicevoxAudioQuery AudioQuery = FVoicevoxCoreUtil::GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana);
+	const FVoicevoxAudioQuery AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerType, Message, bRunKana);
 
-	if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(AudioQuery, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
 	{
 		return CreateSoundWave(OutputWAV);
 	}
@@ -78,17 +89,35 @@ USoundWave* UVoicevoxBlueprintLibrary::TextToAudioQueryOutput(EVoicevoxSpeakerTy
 /**
  * @brief  VOICEVOX COREで変換したAudioQueryを取得する(Blueprint公開ノード)
  */
-FVoicevoxAudioQuery UVoicevoxBlueprintLibrary::GetAudioQuery(EVoicevoxSpeakerType SpeakerType, const FString Message, const bool bRunKana)
+FVoicevoxAudioQuery UVoicevoxBlueprintLibrary::GetAudioQuery(int SpeakerType, const FString Message, const bool bRunKana)
 {
-	return FVoicevoxCoreUtil::GetAudioQuery(static_cast<int64>(SpeakerType), Message, bRunKana);
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerType, Message, bRunKana);
 }
 
 /**
  * @brief VOICEVOX COREで取得したAudioQuery元にSoundWaveを作成(Blueprint公開ノード)
  */
-USoundWave* UVoicevoxBlueprintLibrary::AudioQueryOutput(const FVoicevoxAudioQuery AudioQuery, EVoicevoxSpeakerType SpeakerType, bool bEnableInterrogativeUpspeak)
+USoundWave* UVoicevoxBlueprintLibrary::AudioQueryOutput(const FVoicevoxAudioQuery AudioQuery, int SpeakerType, bool bEnableInterrogativeUpspeak)
 {
-	if (const TArray<uint8> OutputWAV = FVoicevoxCoreUtil::RunSynthesis(AudioQuery, static_cast<int64>(SpeakerType), bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(AudioQuery, SpeakerType, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
+	{
+		return CreateSoundWave(OutputWAV);
+	}
+
+	return nullptr;
+}
+
+/**
+ * @brief AudioQueryアセットからSoundWaveを作成(Blueprint公開ノード)
+ * @param[in] VoicevoxQuery						Queryアセット
+ * @param[in] bEnableInterrogativeUpspeak		疑問文の調整を有効にする
+ * @return AudioQuery情報を元に作成された音楽データが格納されたUSoundWave
+ */
+USoundWave* UVoicevoxBlueprintLibrary::VoicevoxQueryOutput(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak)
+{
+	if (VoicevoxQuery == nullptr) return nullptr;
+	
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(*VoicevoxQuery, bEnableInterrogativeUpspeak); !OutputWAV.IsEmpty())
 	{
 		return CreateSoundWave(OutputWAV);
 	}
@@ -105,15 +134,16 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData)
 	
 	if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(PCMData.GetData(), PCMData.Num(), &ErrorMessage))
 	{
-		USoundWave* Sound = NewObject<USoundWave>(USoundWave::StaticClass());
+		USoundWaveProcedural* Sound = NewObject<USoundWaveProcedural>(USoundWaveProcedural::StaticClass());
 		const int32 ChannelCount = *WaveInfo.pChannels;
 		const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
 		const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
 		const int32 NumFrames = NumSamples / ChannelCount;
 		
 		Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
-		Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
-		FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
+		Sound->QueueAudio(WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
+		//Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
+		//FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
 		
 		Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
 		Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
@@ -130,35 +160,7 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData)
 /**
  * @brief VOICEVOX COREで取得したAudioQuery元に、中品質なLipSyncに必要なデータリストを取得(Blueprint公開ノード)
  */
-TArray<FVoicevoxLipSync> UVoicevoxBlueprintLibrary::GetLipSyncList(FVoicevoxAudioQuery AudioQuery)
+TArray<FVoicevoxLipSync> UVoicevoxBlueprintLibrary::GetLipSyncList(const FVoicevoxAudioQuery AudioQuery)
 {
-	TArray<FVoicevoxLipSync> List;
-	List.Empty();
-
-	TMap<FString, ELipSyncVowelType> FruitMap =
-	{
-		{TEXT("a"), ELipSyncVowelType::A},
-		{TEXT("i"), ELipSyncVowelType::I},
-		{TEXT("u"), ELipSyncVowelType::U},
-		{TEXT("e"), ELipSyncVowelType::E},
-		{TEXT("o"), ELipSyncVowelType::O},
-		{TEXT("cl"), ELipSyncVowelType::U},
-		{TEXT("N"), ELipSyncVowelType::Non},
-		{TEXT("pau"), ELipSyncVowelType::Non},
-	};
-	
-	for (auto [Moras, Accent, Pause_mora, Is_interrogative] : AudioQuery.Accent_phrases)
-	{
-		for (auto [Text, Consonant, Consonant_length, Vowel, Vowel_length, Pitch] : Moras)
-		{
-			List.Add({FruitMap[Vowel], Vowel_length + Consonant_length});
-		}
-
-		if (Pause_mora.Vowel.Equals(TEXT("pau"), ESearchCase::IgnoreCase))
-		{
-			List.Add({ELipSyncVowelType::Non, Pause_mora.Vowel_length});
-		}
-	}
-	
-	return List;
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetLipSyncList(AudioQuery);
 }

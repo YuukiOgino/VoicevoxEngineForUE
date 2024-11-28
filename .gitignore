@@ -52,10 +52,14 @@ SourceArt/**/*.tga
 # Binary Files
 Binaries/*
 Plugins/*/Binaries/*
-Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/*
-!Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/x64/README.md
-Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/osx/*
-!Plugins/VoicevoxEngine/Source/ThirdParty/VoicevoxCore/osx/README.md
+Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/*
+!Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/README.md
+Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/*
+!Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/README.md
+Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/x64/*
+!Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/x64/README.md
+Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/osx/*
+!Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/osx/README.md
 Plugins/*/Intermediate/*
 Plugins/Developer/*
 Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Private/*
@@ -67,6 +71,7 @@ Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/*
 !Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/VoicevoxToolTipTextSpeech.h
 !Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/VoicevoxToolTipTextSpeechActions.h
 !Plugins/VoicevoxToolTipTextSpeech/Source/VoicevoxToolTipTextSpeech/Public/VoicevoxToolTipTextSpeechCommands.h
+Sample/Plugins
 
 # Builds
 Build/*
