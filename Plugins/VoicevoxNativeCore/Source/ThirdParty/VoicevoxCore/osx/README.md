@@ -6,7 +6,7 @@
 
 ## CPUモードの場合
 
-(VOICEVOX CORE 0.15.5)[https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.5]から【voicevox_core-osx-arm64-cpu-0.15.5.zip】
+[VOICEVOX CORE 0.15.5](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.5)から【voicevox_core-osx-arm64-cpu-0.15.5.zip】
 をダウンロードしてください。<br/>
 ダウンロードしたzipファイルは適当なフォルダで解凍をしてください。
 
