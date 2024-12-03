@@ -32,7 +32,7 @@ UVoicevoxInitializeAsyncTask* UVoicevoxInitializeAsyncTask::Initialize(UObject* 
  */
 void UVoicevoxInitializeAsyncTask::Activate()
 {
-	UE::Tasks::Launch<>(TEXT("VoicevoxCoreTask"), [&]
+	Task = UE::Tasks::Launch<>(TEXT("VoicevoxCoreTask"), [&]
 	{
 		if (GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Initialize(bUseGPU, CPUNumThreads, false))
 		{
@@ -44,6 +44,15 @@ void UVoicevoxInitializeAsyncTask::Activate()
 		}
 		SetReadyToDestroy();
 	});
+}
+
+/**
+ * @brief BeginDestroy
+ */
+void UVoicevoxInitializeAsyncTask::BeginDestroy()
+{
+	Task.Wait();
+	Super::BeginDestroy();
 }
 
 //------------------------------------------------------------------------
@@ -116,7 +125,7 @@ UVoicevoxTextToSpeechAsyncTask* UVoicevoxTextToSpeechAsyncTask::TextToAudioQuery
  */	
 void UVoicevoxTextToSpeechAsyncTask::Activate()
 {
-	UE::Tasks::Launch<>(TEXT("VoicevoxCoreTextToSpeechTask"), [&]
+	Task = UE::Tasks::Launch<>(TEXT("VoicevoxCoreTextToSpeechTask"), [&]
 	{
 		if (USoundWave* Sound = bIsUseAudioQuery ?
 			UVoicevoxBlueprintLibrary::TextToAudioQueryOutput(SpeakerId, Message, bRunKana, bEnableInterrogativeUpspeak) :
@@ -133,6 +142,15 @@ void UVoicevoxTextToSpeechAsyncTask::Activate()
 		SetReadyToDestroy();
 	});
 
+}
+
+/**
+ * @brief BeginDestroy
+ */
+void UVoicevoxTextToSpeechAsyncTask::BeginDestroy()
+{
+	Task.Wait();
+	Super::BeginDestroy();
 }
 
 //------------------------------------------------------------------------
@@ -179,7 +197,7 @@ void UVoicevoxAudioQueryToSpeechAsyncTask::Activate()
 		return;
 	}
 	
-	UE::Tasks::Launch<>(TEXT("VoicevoxCoreTextToSpeechTask"), [&]
+	Task = UE::Tasks::Launch<>(TEXT("VoicevoxCoreTextToSpeechTask"), [&]
 	{
 		if (USoundWave* Sound = UVoicevoxBlueprintLibrary::AudioQueryOutput(AudioQuery, SpeakerId, bEnableInterrogativeUpspeak);
 			Sound != nullptr)
@@ -194,4 +212,13 @@ void UVoicevoxAudioQueryToSpeechAsyncTask::Activate()
 		SetReadyToDestroy();
 	});
 
+}
+
+/**
+ * @brief BeginDestroy
+ */
+void UVoicevoxAudioQueryToSpeechAsyncTask::BeginDestroy()
+{
+	Task.Wait();
+	Super::BeginDestroy();
 }
