@@ -179,19 +179,23 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 		{TEXT("N"), ELipSyncVowelType::Non},
 		{TEXT("pau"), ELipSyncVowelType::Non},
 	};
+
+	List.Add({ELipSyncVowelType::Non, AudioQuery.Pre_phoneme_length / AudioQuery.Speed_scale});
 	
 	for (auto [Moras, Accent, Pause_mora, Is_interrogative] : AudioQuery.Accent_phrases)
 	{
 		for (auto [Text, Consonant, Consonant_length, Vowel, Vowel_length, Pitch] : Moras)
 		{
-			List.Add({FruitMap[Vowel], Vowel_length + Consonant_length});
+			List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.Speed_scale + Consonant_length / AudioQuery.Speed_scale });
 		}
 
 		if (Pause_mora.Vowel.Equals(TEXT("pau"), ESearchCase::IgnoreCase))
 		{
-			List.Add({ELipSyncVowelType::Non, Pause_mora.Vowel_length});
+			List.Add({ELipSyncVowelType::Non, Pause_mora.Vowel_length / AudioQuery.Speed_scale});
 		}
 	}
+
+	List.Add({ELipSyncVowelType::Non, AudioQuery.Post_phoneme_length / AudioQuery.Speed_scale});
 	
 	return List;
 }
