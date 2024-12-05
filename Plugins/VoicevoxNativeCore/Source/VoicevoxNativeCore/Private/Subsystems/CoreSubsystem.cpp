@@ -42,8 +42,11 @@ void UCoreSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
 
-	FPlatformProcess::FreeDllHandle(CoreLibraryHandle);
-	CoreLibraryHandle = nullptr;
+	if (CoreLibraryHandle != nullptr)
+	{
+		FPlatformProcess::FreeDllHandle(CoreLibraryHandle);
+		CoreLibraryHandle = nullptr;
+	}
 }
 
 //--------------------------------

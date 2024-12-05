@@ -54,6 +54,9 @@ UCLASS()
 class VOICEVOXENGINE_API UVoicevoxInitializeAsyncTask : public UVoicevoxAsyncTaskBase
 {
 	GENERATED_BODY()
+
+	//! 実行タスク
+	UE::Tasks::TTask<void> Task;
 public:
 	
 	/**
@@ -77,6 +80,11 @@ public:
 	 * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
 	 */
 	virtual void Activate() override;
+
+	/**
+	 * @brief BeginDestroy
+	 */
+	virtual void BeginDestroy() override;
 };
 
 //------------------------------------------------------------------------
@@ -124,6 +132,10 @@ UCLASS()
 class VOICEVOXENGINE_API UVoicevoxTextToSpeechAsyncTask : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()
+
+	//! 実行タスク
+	UE::Tasks::TTask<void> Task;
+	
 public:
 
 	//! 処理成功時のデリゲート
@@ -171,6 +183,11 @@ public:
 	 * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
 	 */	
 	virtual void Activate() override;
+
+	/**
+	 * @brief BeginDestroy
+	 */
+	virtual void BeginDestroy() override;
 };
 
 //------------------------------------------------------------------------
@@ -185,6 +202,10 @@ UCLASS()
 class VOICEVOXENGINE_API UVoicevoxAudioQueryToSpeechAsyncTask : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()
+
+	//! 実行タスク
+	UE::Tasks::TTask<void> Task;
+	
 public:
 
 	//! 処理成功時のデリゲート
@@ -225,4 +246,9 @@ public:
 	 * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
 	 */	
 	virtual void Activate() override;
+
+	/**
+	 * @brief BeginDestroy
+	 */
+	virtual void BeginDestroy() override;
 };
