@@ -142,8 +142,6 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData)
 		
 		Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
 		Sound->QueueAudio(WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
-		//Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
-		//FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
 		
 		Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
 		Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
