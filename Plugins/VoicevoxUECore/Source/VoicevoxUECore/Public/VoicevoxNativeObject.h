@@ -19,7 +19,7 @@ class UVoicevoxCoreSubsystem;
  * @class UVoicevoxNativeObject
  * @brief COREライブラリへアクセスするSubsystemを管理し、各APIへアクセスするクラス
  * @details COREライブラリへアクセスするSubsystemを管理するオブジェクトです。
- *			UVoicevoxCoreSubsystem以外からはアクセス不可のため、APIを呼ぶとき
+ *			UVoicevoxCoreSubsystem以外からはアクセス不可のため、APIを呼ぶ時はUVoicevoxCoreSubsystemを利用してください。
  */
 UCLASS(transient)
 class UVoicevoxNativeObject : public UObject
