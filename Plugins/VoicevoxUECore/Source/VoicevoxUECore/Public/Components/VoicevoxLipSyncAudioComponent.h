@@ -27,12 +27,6 @@ class VOICEVOXUECORE_API UVoicevoxLipSyncAudioComponent : public UAudioComponent
 public:
 	// Sets default values for this component's properties
 	UVoicevoxLipSyncAudioComponent();
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	USkeletalMeshComponent* SkeletalMeshComp;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	USkeletalMesh* SkeletalMesh;
 	
 protected:
 	// Called when the game starts
@@ -42,4 +36,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
+
+	UFUNCTION(BlueprintCallable)
+	void PlayToText(FString Text, float StartTime = 0.0f);
 };

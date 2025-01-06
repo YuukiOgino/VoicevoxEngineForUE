@@ -26,6 +26,7 @@ UVoicevoxLipSyncAudioComponent::UVoicevoxLipSyncAudioComponent()
 void UVoicevoxLipSyncAudioComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	
 }
 
 
@@ -34,14 +35,14 @@ void UVoicevoxLipSyncAudioComponent::TickComponent(float DeltaTime, ELevelTick T
                                                    FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if (SkeletalMeshComp != nullptr)
-	{
-		SkeletalMeshComp->SetMorphTarget(FName(TEXT("Face_M_F00_000_00_Fcl_MTH_A")),1.0f);
-	}
 }
 
 void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage)
 {
 
+}
+
+void UVoicevoxLipSyncAudioComponent::PlayToText(FString Text, float StartTime)
+{
+	
 }
