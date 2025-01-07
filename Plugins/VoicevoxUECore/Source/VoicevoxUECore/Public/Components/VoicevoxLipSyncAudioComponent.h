@@ -38,5 +38,5 @@ public:
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
-	void PlayToText(FString Text, float StartTime = 0.0f);
+	void PlayToText(int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true, float StartTime = 0.0f);
 };
