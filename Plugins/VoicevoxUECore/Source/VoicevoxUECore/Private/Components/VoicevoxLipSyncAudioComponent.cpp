@@ -56,7 +56,22 @@ void UVoicevoxLipSyncAudioComponent::TickComponent(float DeltaTime, ELevelTick T
 
 void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage)
 {
+	if (LipSyncList.IsEmpty()) return;
 
+	if (LipSyncTime < InPlaybackPercentage)
+	{
+		const FVoicevoxLipSync LipSync = LipSyncList.Pop();
+		LipSyncTime += LipSync.Length;
+		if (OnLipSyncUpdate.IsBound())
+		{
+			OnLipSyncUpdate.Broadcast(LipSync);
+		}
+
+		if (OnLipSyncUpdateNative.IsBound())
+		{
+			OnLipSyncUpdateNative.Broadcast(LipSync);
+		}
+	}
 }
 
 void UVoicevoxLipSyncAudioComponent::PlayToText(const int SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak, const float StartTime)
@@ -69,7 +84,9 @@ void UVoicevoxLipSyncAudioComponent::PlayToText(const int SpeakerType, const FSt
 
 		// LipSyncに必要なデータを生成する
 		AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerType, Message, bRunKana);
-
+		LipSyncList = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetLipSyncList(AudioQuery);
+		Algo::Reverse(LipSyncList);
+		LipSyncTime = 0.0f;
 		// USoundWaveを生成する。Launch内でPlayを実行するとクラッシュするため、Play処理はTickTickComponentで行う
 		if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(AudioQuery, SpeakerType, bEnableInterrogativeUpspeak);
 		!OutputWAV.IsEmpty())

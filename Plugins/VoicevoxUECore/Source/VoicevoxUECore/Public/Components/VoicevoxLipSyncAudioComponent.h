@@ -13,6 +13,9 @@
 #include "Components/AudioComponent.h"
 #include "VoicevoxLipSyncAudioComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLipSyncUpdate, FVoicevoxLipSync, VoicevoxLipSync);
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnLipSyncUpdateNative, FVoicevoxLipSync);
 
 /**
  * @class UVoicevoxLipSyncAudioComponent
@@ -32,6 +35,10 @@ class VOICEVOXUECORE_API UVoicevoxLipSyncAudioComponent : public UAudioComponent
 	//!
 	FVoicevoxAudioQuery AudioQuery;
 
+	TArray<FVoicevoxLipSync> LipSyncList;
+
+	float LipSyncTime = 0.0f;
+	
 	//!
 	bool bIsExecTts = false;
 	
@@ -46,6 +53,12 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+
+	UPROPERTY(BlueprintAssignable)
+	FOnLipSyncUpdate OnLipSyncUpdate;
+	
+	FOnLipSyncUpdateNative OnLipSyncUpdateNative;
+	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
