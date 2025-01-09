@@ -175,7 +175,7 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 		{TEXT("u"), ELipSyncVowelType::U},
 		{TEXT("e"), ELipSyncVowelType::E},
 		{TEXT("o"), ELipSyncVowelType::O},
-		{TEXT("cl"), ELipSyncVowelType::U},
+		{TEXT("cl"), ELipSyncVowelType::CL},
 		{TEXT("N"), ELipSyncVowelType::Non},
 		{TEXT("pau"), ELipSyncVowelType::Non},
 	};

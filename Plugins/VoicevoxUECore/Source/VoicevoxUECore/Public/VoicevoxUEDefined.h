@@ -26,6 +26,7 @@ enum class ELipSyncVowelType : uint8
 	U	UMETA(DisplayName = "母音:う",	ToolTip = "母音:う（u）"),
 	E	UMETA(DisplayName = "母音:え",	ToolTip = "母音:え（e）"),
 	O	UMETA(DisplayName = "母音:お",	ToolTip = "母音:お（o）"),
+	CL  UMETA(DisplayName = "子音:っ",	ToolTip = "子音:っ（cl）"),
 	Non	UMETA(DisplayName = "無音",		ToolTip = "無音（句読点の待機時間）"),
 };
 

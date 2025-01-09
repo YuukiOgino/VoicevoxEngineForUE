@@ -57,8 +57,8 @@ void UVoicevoxLipSyncAudioComponent::TickComponent(float DeltaTime, ELevelTick T
 void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage)
 {
 	if (LipSyncList.IsEmpty()) return;
-
-	if (LipSyncTime < InPlaybackPercentage)
+	
+	if (LipSyncTime < Sound->Duration * InPlaybackPercentage)
 	{
 		const FVoicevoxLipSync LipSync = LipSyncList.Pop();
 		LipSyncTime += LipSync.Length;
