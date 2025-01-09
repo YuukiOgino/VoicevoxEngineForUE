@@ -9,6 +9,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VoicevoxUEDefined.h"
 #include "Components/AudioComponent.h"
 #include "VoicevoxLipSyncAudioComponent.generated.h"
 
@@ -22,6 +23,18 @@ class VOICEVOXUECORE_API UVoicevoxLipSyncAudioComponent : public UAudioComponent
 {
 	GENERATED_BODY()
 
+	//!
+	UE::Tasks::FTask TtsTask;
+
+	//!
+	float PlayStartTime = 0.0f;
+
+	//!
+	FVoicevoxAudioQuery AudioQuery;
+
+	//!
+	bool bIsExecTts = false;
+	
 	void HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage);
 	
 public:

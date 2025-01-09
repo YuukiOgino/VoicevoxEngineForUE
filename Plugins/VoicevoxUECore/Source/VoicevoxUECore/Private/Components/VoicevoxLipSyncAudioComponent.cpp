@@ -21,7 +21,6 @@ UVoicevoxLipSyncAudioComponent::UVoicevoxLipSyncAudioComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	OnAudioPlaybackPercentNative.AddUObject(this, &UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent);
-	// ...
 }
 
 
@@ -38,6 +37,21 @@ void UVoicevoxLipSyncAudioComponent::TickComponent(float DeltaTime, ELevelTick T
                                                    FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (bIsExecTts)
+	{
+		if (TtsTask.IsValid() && TtsTask.IsCompleted())
+		{
+			if (Sound != nullptr)
+			{
+				Play(PlayStartTime);
+			}
+			
+			bIsExecTts = false;
+			PlayStartTime = 0.0f;
+		}
+	}
+
 }
 
 void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage)
@@ -45,38 +59,40 @@ void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent
 
 }
 
-void UVoicevoxLipSyncAudioComponent::PlayToText(int SpeakerType, FString Message, bool bRunKana, bool bEnableInterrogativeUpspeak, float StartTime)
+void UVoicevoxLipSyncAudioComponent::PlayToText(const int SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak, const float StartTime)
 {
-	UE::Tasks::Launch<>(TEXT("VoicevoxCoreTextToSpeechTask"), [&]
+	SetSound(nullptr);
+	PlayStartTime = StartTime;
+	TtsTask = UE::Tasks::Launch<>(TEXT("LipSyncComponentTextToSpeechTask"), [=]
 	{
-		if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunTextToSpeech(SpeakerType, Message, bRunKana, bEnableInterrogativeUpspeak);
+		bIsExecTts = true;
+
+		// LipSyncに必要なデータを生成する
+		AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerType, Message, bRunKana);
+
+		// USoundWaveを生成する。Launch内でPlayを実行するとクラッシュするため、Play処理はTickTickComponentで行う
+		if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(AudioQuery, SpeakerType, bEnableInterrogativeUpspeak);
 		!OutputWAV.IsEmpty())
 		{
 			FString ErrorMessage = "";
-	
 			if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV.GetData(), OutputWAV.Num(), &ErrorMessage))
 			{
-				USoundWaveProcedural* Sound = NewObject<USoundWaveProcedural>(USoundWaveProcedural::StaticClass());
+				USoundWaveProcedural* SoundWave = NewObject<USoundWaveProcedural>(USoundWaveProcedural::StaticClass());
 				const int32 ChannelCount = *WaveInfo.pChannels;
 				const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
 				const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
 				const int32 NumFrames = NumSamples / ChannelCount;
 				
-				Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
-				Sound->QueueAudio(WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
+				SoundWave->RawPCMDataSize = WaveInfo.SampleDataSize;
+				SoundWave->QueueAudio(WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
 				
-				Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
-				Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
-				Sound->NumChannels = ChannelCount;
-				Sound->TotalSamples = *WaveInfo.pSamplesPerSec * Sound->Duration;
-				Sound->SoundGroup = SOUNDGROUP_Default;
+				SoundWave->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
+				SoundWave->SetSampleRate(*WaveInfo.pSamplesPerSec);
+				SoundWave->NumChannels = ChannelCount;
+				SoundWave->TotalSamples = *WaveInfo.pSamplesPerSec * SoundWave->Duration;
+				SoundWave->SoundGroup = SOUNDGROUP_Default;
 
-				SetSound(Sound);
-				
-				PlayInternalRequestData InternalRequestData;
-				InternalRequestData.StartTime = StartTime;
-				PlayInternal(InternalRequestData);
-				
+				SetSound(SoundWave);
 			}
 		}
 	});
