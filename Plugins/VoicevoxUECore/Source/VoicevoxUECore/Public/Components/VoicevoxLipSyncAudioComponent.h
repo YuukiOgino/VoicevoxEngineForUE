@@ -65,4 +65,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void PlayToText(int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true, float StartTime = 0.0f);
+
+	UFUNCTION(BlueprintCallable)
+	void PlayToAudioQuery(const FVoicevoxAudioQuery& Query, int64 SpeakerType, bool bEnableInterrogativeUpspeak = true, float StartTime = 0.0f);
 };
