@@ -11,6 +11,7 @@
 #include "CoreMinimal.h"
 #include "VoicevoxUEDefined.h"
 #include "Components/AudioComponent.h"
+#include "Tasks/Task.h"
 #include "VoicevoxLipSyncAudioComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLipSyncUpdate, FVoicevoxLipSync, VoicevoxLipSync);
@@ -35,8 +36,10 @@ class VOICEVOXUECORE_API UVoicevoxLipSyncAudioComponent : public UAudioComponent
 	//!
 	FVoicevoxAudioQuery AudioQuery;
 
+	//! 
 	TArray<FVoicevoxLipSync> LipSyncList;
 
+	//!
 	float LipSyncTime = 0.0f;
 	
 	//!
@@ -69,3 +72,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayToAudioQuery(const FVoicevoxAudioQuery& Query, int64 SpeakerType, bool bEnableInterrogativeUpspeak = true, float StartTime = 0.0f);
 };
+
+DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxLipSync, Log, All);

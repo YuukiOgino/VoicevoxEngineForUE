@@ -12,6 +12,7 @@
 #include "Sound/SoundWaveProcedural.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 
+DEFINE_LOG_CATEGORY(LogVoicevoxLipSync);
 
 // Sets default values for this component's properties
 UVoicevoxLipSyncAudioComponent::UVoicevoxLipSyncAudioComponent()
@@ -81,6 +82,15 @@ void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent
 
 void UVoicevoxLipSyncAudioComponent::PlayToText(const int SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak, const float StartTime)
 {
+	if (bIsExecTts)
+	{
+		UE_LOG(LogVoicevoxLipSync, Warning, TEXT("合成音声生成中のため、音声再生をキャンセルしました。Delay等で少し時間を置いてから再度実行してください"));
+		const FColor Col = FColor::Yellow;
+		const FVector2D Scl = FVector2D(1.0f, 1.0f);
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, Col, TEXT("合成音声生成中のため、音声再生をキャンセルしました。Delay等で少し時間を置いてから再度実行してください"), true, Scl);
+		return;
+	}
+	
 	if (Sound != nullptr)
 	{
 		Stop();
@@ -127,6 +137,15 @@ void UVoicevoxLipSyncAudioComponent::PlayToText(const int SpeakerType, const FSt
 
 void UVoicevoxLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery& Query, int64 SpeakerType, bool bEnableInterrogativeUpspeak, float StartTime)
 {
+	if (bIsExecTts)
+	{
+		UE_LOG(LogVoicevoxLipSync, Warning, TEXT("合成音声生成中のため、音声再生をキャンセルしました。Delay等で少し時間を置いてから再度実行してください"));
+		const FColor Col = FColor::Yellow;
+		const FVector2D Scl = FVector2D(1.0f, 1.0f);
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, Col, TEXT("合成音声生成中のため、音声再生をキャンセルしました。Delay等で少し時間を置いてから再度実行してください"), true, Scl);
+		return;
+	}
+	
 	if (Sound != nullptr)
 	{
 		Stop();
