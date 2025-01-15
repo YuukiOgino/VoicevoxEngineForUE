@@ -55,6 +55,8 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	void ToSoundWave(int64 SpeakerType, bool bEnableInterrogativeUpspeak = true);
+	
 public:
 
 	UPROPERTY(BlueprintAssignable)

@@ -189,3 +189,41 @@ void UVoicevoxLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery&
 		}
 	});
 }
+
+void UVoicevoxLipSyncAudioComponent::ToSoundWave(int64 SpeakerType, bool bEnableInterrogativeUpspeak)
+{
+	TtsTask = UE::Tasks::Launch<>(TEXT("LipSyncComponentTextToSpeechTask"), [=]
+	{
+		bIsExecTts = true;
+
+		// LipSyncに必要なデータを生成する
+		LipSyncList = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetLipSyncList(AudioQuery);
+		Algo::Reverse(LipSyncList);
+		LipSyncTime = 0.0f;
+		// USoundWaveを生成する。Launch内でPlayを実行するとクラッシュするため、Play処理はTickTickComponentで行う
+		if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(AudioQuery, SpeakerType, bEnableInterrogativeUpspeak);
+		!OutputWAV.IsEmpty())
+		{
+			FString ErrorMessage = "";
+			if (FWaveModInfo WaveInfo; WaveInfo.ReadWaveInfo(OutputWAV.GetData(), OutputWAV.Num(), &ErrorMessage))
+			{
+				USoundWaveProcedural* SoundWave = NewObject<USoundWaveProcedural>(USoundWaveProcedural::StaticClass());
+				const int32 ChannelCount = *WaveInfo.pChannels;
+				const int32 SizeOfSample = *WaveInfo.pBitsPerSample / 8;
+				const int32 NumSamples = WaveInfo.SampleDataSize / SizeOfSample;
+				const int32 NumFrames = NumSamples / ChannelCount;
+					
+				SoundWave->RawPCMDataSize = WaveInfo.SampleDataSize;
+				SoundWave->QueueAudio(WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
+					
+				SoundWave->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
+				SoundWave->SetSampleRate(*WaveInfo.pSamplesPerSec);
+				SoundWave->NumChannels = ChannelCount;
+				SoundWave->TotalSamples = *WaveInfo.pSamplesPerSec * SoundWave->Duration;
+				SoundWave->SoundGroup = SOUNDGROUP_Default;
+
+				SetSound(SoundWave);
+			}
+		}
+	});
+}
