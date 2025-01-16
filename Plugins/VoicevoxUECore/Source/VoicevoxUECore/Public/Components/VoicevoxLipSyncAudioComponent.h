@@ -15,9 +15,9 @@
 #include "Tasks/Task.h"
 #include "VoicevoxLipSyncAudioComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnLipSyncUpdate, FVoicevoxLipSync, VoicevoxLipSync, FName, MorphTargetName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLipSyncUpdate, ELipSyncVowelType, VowelType, FName, MorphTargetName, float, MorphTargetNum);
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnLipSyncUpdateNative, FVoicevoxLipSync, FName);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnLipSyncUpdateNative, ELipSyncVowelType, FName, float);
 
 /**
  * @class UVoicevoxLipSyncAudioComponent
@@ -75,8 +75,9 @@ protected:
 
 	void InitMorphNumMap();
 
-	void UpdateVowelMorphNum(ELipSyncVowelType VowelType);
-	
+	TMap<ELipSyncVowelType, float> UpdateVowelMorphNum(float Alpha);
+
+	TMap<ELipSyncVowelType, float> UpdateConsonantMorphNum(float Alpha);
 public:
 
 	UPROPERTY(BlueprintAssignable)

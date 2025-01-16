@@ -225,7 +225,15 @@ struct FVoicevoxLipSync
 	
 	//! 長さ
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Length;	
+	float Length;
+
+	//! 子音の発音であるか
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	bool IsConsonant;
+
+	//! 口唇音、もしくは破裂音か（口を閉じて発音するか）
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	bool IsLabialOrPlosive;
 };
 
 /**
