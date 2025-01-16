@@ -63,6 +63,49 @@ void UVoicevoxLipSyncAudioComponent::InitMorphNumMap()
 	LipSyncMorphNumMap[ELipSyncVowelType::O] = 0.0f;
 }
 
+void UVoicevoxLipSyncAudioComponent::UpdateVowelMorphNum(ELipSyncVowelType VowelType)
+{
+	float CloseA = LipSyncMorphNumMap[ELipSyncVowelType::A] * 0.8f;
+	float CloseI = LipSyncMorphNumMap[ELipSyncVowelType::I] * 0.8f;
+	float CloseU = LipSyncMorphNumMap[ELipSyncVowelType::U] * 0.8f;
+	float CloseE = LipSyncMorphNumMap[ELipSyncVowelType::E] * 0.8f;
+	float CloseO = LipSyncMorphNumMap[ELipSyncVowelType::O] * 0.8f;
+
+	float UpdateA = 0.0f;
+	float UpdateI = 0.0f;
+	float UpdateU = 0.0f;
+	float UpdateE = 0.0f;
+	float UpdateO = 0.0f;
+
+	switch (VowelType)
+	{
+		case ELipSyncVowelType::A:
+			UpdateA = 1.0f;
+			break;
+		case ELipSyncVowelType::I:
+			UpdateI = 1.0f;
+			break;
+		case ELipSyncVowelType::U:
+			UpdateU = 1.0f;
+			break;
+		case ELipSyncVowelType::E:
+			UpdateE = 1.0f;
+			break;
+		case ELipSyncVowelType::O:
+			UpdateO = 1.0f;
+			break;
+		case ELipSyncVowelType::CL:
+			UpdateA = CloseA * 0.8f;
+			UpdateI = CloseI * 0.8f;
+			UpdateU = CloseU * 0.8f;
+			UpdateE = CloseE * 0.8f;
+			UpdateO = CloseO * 0.8f;
+			break;
+		default:
+			break;
+	}
+}
+
 void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage)
 {
 	// ループ無しかつ最後まで再生しても止まらない場合があるので、明確にストップする
@@ -173,7 +216,7 @@ void UVoicevoxLipSyncAudioComponent::ToSoundWave(const int64 SpeakerType, const 
 		LipSyncList = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetLipSyncList(AudioQuery);
 		Algo::Reverse(LipSyncList);
 		LipSyncTime = 0.0f;
-		// USoundWaveを生成する。Launch内でPlayを実行するとクラッシュするため、Play処理はTickTickComponentで行う
+		// USoundWaveを生成する。Launch内でPlayを実行するとクラッシュするため、Play処理はTickComponentで行う
 		if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunSynthesis(AudioQuery, SpeakerType, bEnableInterrogativeUpspeak);
 		!OutputWAV.IsEmpty())
 		{

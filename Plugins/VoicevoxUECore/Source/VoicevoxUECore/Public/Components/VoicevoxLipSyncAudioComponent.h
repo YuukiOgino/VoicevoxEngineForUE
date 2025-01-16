@@ -45,6 +45,9 @@ class VOICEVOXUECORE_API UVoicevoxLipSyncAudioComponent : public UAudioComponent
 	
 	//!
 	bool bIsExecTts = false;
+
+	//!
+	FVoicevoxLipSync NowLipSync;
 	
 	void HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage);
 	
@@ -71,6 +74,8 @@ protected:
 	bool CheckExecTts() const;
 
 	void InitMorphNumMap();
+
+	void UpdateVowelMorphNum(ELipSyncVowelType VowelType);
 	
 public:
 
