@@ -54,6 +54,15 @@ void UVoicevoxLipSyncAudioComponent::TickComponent(float DeltaTime, ELevelTick T
 	}
 }
 
+void UVoicevoxLipSyncAudioComponent::InitMorphNumMap() 
+{
+	LipSyncMorphNumMap[ELipSyncVowelType::A] = 0.0f;
+	LipSyncMorphNumMap[ELipSyncVowelType::I] = 0.0f;
+	LipSyncMorphNumMap[ELipSyncVowelType::U] = 0.0f;
+	LipSyncMorphNumMap[ELipSyncVowelType::E] = 0.0f;
+	LipSyncMorphNumMap[ELipSyncVowelType::O] = 0.0f;
+}
+
 void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage)
 {
 	// ループ無しかつ最後まで再生しても止まらない場合があるので、明確にストップする
@@ -94,7 +103,8 @@ void UVoicevoxLipSyncAudioComponent::PlayToText(const int SpeakerType, const FSt
 		Stop();
 		SetSound(nullptr);
 	}
-	
+
+	InitMorphNumMap();
 	PlayStartTime = StartTime;
 	AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerType, Message, bRunKana);
 
@@ -110,9 +120,10 @@ void UVoicevoxLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery&
 		Stop();
 		SetSound(nullptr);
 	}
-	
-	AudioQuery = Query;
+
+	InitMorphNumMap();
 	PlayStartTime = StartTime;
+	AudioQuery = Query;
 	ToSoundWave(SpeakerType, bEnableInterrogativeUpspeak);
 }
 
@@ -126,6 +137,7 @@ void UVoicevoxLipSyncAudioComponent::PlayToAudioQueryAsset(UVoicevoxQuery* Voice
 		SetSound(nullptr);
 	}
 
+	InitMorphNumMap();
 	PlayStartTime = StartTime;
 	AudioQuery = VoicevoxQuery->VoicevoxAudioQuery;
 	ToSoundWave(VoicevoxQuery->SpeakerType, bEnableInterrogativeUpspeak);

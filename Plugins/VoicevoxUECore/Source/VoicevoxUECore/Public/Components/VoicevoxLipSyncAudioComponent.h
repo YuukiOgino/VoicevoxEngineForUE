@@ -53,6 +53,7 @@ public:
 	UVoicevoxLipSyncAudioComponent();
 	
 protected:
+
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
@@ -68,6 +69,8 @@ protected:
 	 * @return trueの場合はテキストから音声変換のタスク実行中
 	 */
 	bool CheckExecTts() const;
+
+	void InitMorphNumMap();
 	
 public:
 
@@ -87,6 +90,16 @@ public:
 			{ELipSyncVowelType::O, NAME_None},
 		};
 	
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta=(AllowPrivateAccess=true))
+	TMap<ELipSyncVowelType, float> LipSyncMorphNumMap =
+		{
+			{ELipSyncVowelType::A, 0.0f},
+			{ELipSyncVowelType::I, 0.0f},
+			{ELipSyncVowelType::U, 0.0f},
+			{ELipSyncVowelType::E, 0.0f},
+			{ELipSyncVowelType::O, 0.0f},
+		};
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
