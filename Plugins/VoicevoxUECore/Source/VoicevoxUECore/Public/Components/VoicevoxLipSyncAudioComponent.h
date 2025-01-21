@@ -58,14 +58,7 @@ public:
 protected:
 
 	//! モーフターゲット値のマップ
-	TMap<ELipSyncVowelType, float> LipSyncMorphNumMap =
-	{
-		{ELipSyncVowelType::A, 0.0f},
-		{ELipSyncVowelType::I, 0.0f},
-		{ELipSyncVowelType::U, 0.0f},
-		{ELipSyncVowelType::E, 0.0f},
-		{ELipSyncVowelType::O, 0.0f},
-	};
+	TMap<ELipSyncVowelType, float> LipSyncMorphNumMap;
 	
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -104,17 +97,10 @@ public:
 
 	//! リップシンクで使用するモーフターゲット名のマップ
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta=(AllowPrivateAccess=true))
-	TMap<ELipSyncVowelType, FName> LipSyncMorphNameMap =
-		{
-			{ELipSyncVowelType::A, NAME_None},
-			{ELipSyncVowelType::I, NAME_None},
-			{ELipSyncVowelType::U, NAME_None},
-			{ELipSyncVowelType::E, NAME_None},
-			{ELipSyncVowelType::O, NAME_None},
-		};
+	TMap<ELipSyncVowelType, FName> LipSyncMorphNameMap;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta=(AllowPrivateAccess=true, ClampMin = "0.1", ClampMax = "2.0", UIMin = "0.1", UIMax = "2.0"))
-	float LipSyncSpeed = 1.2f;
+	float LipSyncSpeed = 0.75f;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta=(AllowPrivateAccess=true, ClampMin = "0.1", ClampMax = "1.0", UIMin = "0.1", UIMax = "1.0"))
 	float MaxMouthScale = 1.0f;

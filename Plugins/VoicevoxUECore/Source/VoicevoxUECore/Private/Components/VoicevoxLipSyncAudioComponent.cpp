@@ -8,7 +8,6 @@
 
 
 #include "Components/VoicevoxLipSyncAudioComponent.h"
-
 #include "Sound/SoundWaveProcedural.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 
@@ -17,10 +16,22 @@ DEFINE_LOG_CATEGORY(LogVoicevoxLipSync);
 // Sets default values for this component's properties
 UVoicevoxLipSyncAudioComponent::UVoicevoxLipSyncAudioComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	LipSyncMorphNameMap.Reserve(5);
+	LipSyncMorphNameMap.Add(ELipSyncVowelType::A, NAME_None);
+	LipSyncMorphNameMap.Add(ELipSyncVowelType::I, NAME_None);
+	LipSyncMorphNameMap.Add(ELipSyncVowelType::U, NAME_None);
+	LipSyncMorphNameMap.Add(ELipSyncVowelType::E, NAME_None);
+	LipSyncMorphNameMap.Add(ELipSyncVowelType::O, NAME_None);
+
+	LipSyncMorphNumMap.Reserve(5);
+	LipSyncMorphNumMap.Add(ELipSyncVowelType::A, 0.0f);
+	LipSyncMorphNumMap.Add(ELipSyncVowelType::I, 0.0f);
+	LipSyncMorphNumMap.Add(ELipSyncVowelType::U, 0.0f);
+	LipSyncMorphNumMap.Add(ELipSyncVowelType::E, 0.0f);
+	LipSyncMorphNumMap.Add(ELipSyncVowelType::O, 0.0f);
+	
 	OnAudioPlaybackPercentNative.AddUObject(this, &UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent);
 }
 
@@ -67,14 +78,13 @@ TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdateVowelMorphN
 {
 	const float Rate = LipSyncSpeed * Alpha;
 	const float A = FMath::Clamp(Rate, 0.0f, 1.0f);
-	TMap<ELipSyncVowelType, float> Map =
-		{
-			{ELipSyncVowelType::A, 0.0f},
-			{ELipSyncVowelType::I, 0.0f},
-			{ELipSyncVowelType::U, 0.0f},
-			{ELipSyncVowelType::E, 0.0f},
-			{ELipSyncVowelType::O, 0.0f},
-		};
+	TMap<ELipSyncVowelType, float> Map;
+	Map.Reserve(LipSyncMorphNumMap.Num());
+	Map.Add(ELipSyncVowelType::A, 0.0f);
+	Map.Add(ELipSyncVowelType::I, 0.0f);
+	Map.Add(ELipSyncVowelType::U, 0.0f);
+	Map.Add(ELipSyncVowelType::E, 0.0f);
+	Map.Add(ELipSyncVowelType::O, 0.0f);
 
 	float UpdateA = 0.0f;
 	float UpdateI = 0.0f;
@@ -123,15 +133,13 @@ TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdateConsonantMo
 {
 	const float Rate = LipSyncSpeed * Alpha;
 	const float A = FMath::Clamp(Rate, 0.0f, 1.0f);
-	TMap<ELipSyncVowelType, float> Map =
-	{
-		{ELipSyncVowelType::A, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::A], 0.0f, A)},
-		{ELipSyncVowelType::I, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::I], 0.0f, A)},
-		{ELipSyncVowelType::U, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::U], 0.0f, A)},
-		{ELipSyncVowelType::E, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::E], 0.0f, A)},
-		{ELipSyncVowelType::O, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::O], 0.0f, A)},
-	};
-	
+	TMap<ELipSyncVowelType, float> Map;
+	Map.Reserve(LipSyncMorphNumMap.Num());
+	Map.Add(ELipSyncVowelType::A, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::A], 0.0f, A));
+	Map.Add(ELipSyncVowelType::I, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::I], 0.0f, A));
+	Map.Add(ELipSyncVowelType::U, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::U], 0.0f, A));
+	Map.Add(ELipSyncVowelType::E, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::E], 0.0f, A));
+	Map.Add(ELipSyncVowelType::O, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::O], 0.0f, A));
 	return Map;
 }
 
@@ -140,14 +148,13 @@ TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdatePauseMorphN
 	// 最速でデフォルトに戻すためにレートは2.0固定
 	const float PauseRate = 2.0f * Alpha;
 	const float A = FMath::Clamp(PauseRate, 0.0f, 1.0f);
-	TMap<ELipSyncVowelType, float> Map =
-	{
-		{ELipSyncVowelType::A, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::A], 0.0f, A)},
-		{ELipSyncVowelType::I, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::I], 0.0f, A)},
-		{ELipSyncVowelType::U, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::U], 0.0f, A)},
-		{ELipSyncVowelType::E, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::E], 0.0f, A)},
-		{ELipSyncVowelType::O, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::O], 0.0f, A)},
-	};
+	TMap<ELipSyncVowelType, float> Map;
+	Map.Reserve(LipSyncMorphNumMap.Num());
+	Map.Add(ELipSyncVowelType::A, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::A], 0.0f, A));
+	Map.Add(ELipSyncVowelType::I, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::I], 0.0f, A));
+	Map.Add(ELipSyncVowelType::U, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::U], 0.0f, A));
+	Map.Add(ELipSyncVowelType::E, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::E], 0.0f, A));
+	Map.Add(ELipSyncVowelType::O, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::O], 0.0f, A));
 	
 	return Map;
 }
