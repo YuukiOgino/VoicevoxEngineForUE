@@ -110,11 +110,11 @@ TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdateVowelMorphN
 			break;
 	}
 	
-	Map[ELipSyncVowelType::A] = FMath::Lerp(LipSyncMorphNumMap[ELipSyncVowelType::A], UpdateA, A);
-	Map[ELipSyncVowelType::I] = FMath::Lerp(LipSyncMorphNumMap[ELipSyncVowelType::I], UpdateI, A);
-	Map[ELipSyncVowelType::U] = FMath::Lerp(LipSyncMorphNumMap[ELipSyncVowelType::U], UpdateU, A);
-	Map[ELipSyncVowelType::E] = FMath::Lerp(LipSyncMorphNumMap[ELipSyncVowelType::E], UpdateE, A);
-	Map[ELipSyncVowelType::O] = FMath::Lerp(LipSyncMorphNumMap[ELipSyncVowelType::O], UpdateO, A);
+	Map[ELipSyncVowelType::A] = FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::A], UpdateA, A);
+	Map[ELipSyncVowelType::I] = FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::I], UpdateI, A);
+	Map[ELipSyncVowelType::U] = FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::U], UpdateU, A);
+	Map[ELipSyncVowelType::E] = FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::E], UpdateE, A);
+	Map[ELipSyncVowelType::O] = FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::O], UpdateO, A);
 
 	return Map;
 }
@@ -124,11 +124,11 @@ TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdateConsonantMo
 	const float A = FMath::Clamp(Alpha, 0, 1);
 	TMap<ELipSyncVowelType, float> Map =
 	{
-		{ELipSyncVowelType::A, FMath::Lerp(LipSyncMorphNumMap[ELipSyncVowelType::A], 0.0f, A)},
-		{ELipSyncVowelType::I, FMath::Lerp(LipSyncMorphNumMap[ELipSyncVowelType::I], 0.0f, A)},
-		{ELipSyncVowelType::U, FMath::Lerp(LipSyncMorphNumMap[ELipSyncVowelType::U], 0.0f, A)},
-		{ELipSyncVowelType::E, FMath::Lerp(LipSyncMorphNumMap[ELipSyncVowelType::E], 0.0f, A)},
-		{ELipSyncVowelType::O, FMath::Lerp(LipSyncMorphNumMap[ELipSyncVowelType::O], 0.0f, A)},
+		{ELipSyncVowelType::A, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::A], 0.0f, A)},
+		{ELipSyncVowelType::I, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::I], 0.0f, A)},
+		{ELipSyncVowelType::U, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::U], 0.0f, A)},
+		{ELipSyncVowelType::E, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::E], 0.0f, A)},
+		{ELipSyncVowelType::O, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::O], 0.0f, A)},
 	};
 	
 	return Map;
@@ -157,7 +157,7 @@ void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent
 	}
 	if (LipSyncList.IsEmpty()) return;
 
-	float NowDuration = Sound->Duration * InPlaybackPercentage;
+	const float NowDuration = Sound->Duration * InPlaybackPercentage;
 	if (LipSyncTime < NowDuration)
 	{
 		// 前回のリップシンク情報を元に初期化
@@ -165,7 +165,6 @@ void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent
 		{
 			if (NowLipSync.IsLabialOrPlosive)
 			{
-				InitMorphNumMap();
 				for (const auto Result : LipSyncMorphNumMap)
 				{
 					if (OnLipSyncUpdate.IsBound())
@@ -285,7 +284,7 @@ void UVoicevoxLipSyncAudioComponent::PlayToText(const int SpeakerType, const FSt
 	InitMorphNumMap();
 	PlayStartTime = StartTime;
 	AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerType, Message, bRunKana);
-	NowLipSync = {ELipSyncVowelType::Non, 0.0f, false, false};
+	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
 	ToSoundWave(SpeakerType, bEnableInterrogativeUpspeak);
 }
 
@@ -302,7 +301,7 @@ void UVoicevoxLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery&
 	InitMorphNumMap();
 	PlayStartTime = StartTime;
 	AudioQuery = Query;
-	NowLipSync = {ELipSyncVowelType::Non, 0.0f, false, false};
+	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
 	ToSoundWave(SpeakerType, bEnableInterrogativeUpspeak);
 }
 
@@ -319,7 +318,7 @@ void UVoicevoxLipSyncAudioComponent::PlayToAudioQueryAsset(UVoicevoxQuery* Voice
 	InitMorphNumMap();
 	PlayStartTime = StartTime;
 	AudioQuery = VoicevoxQuery->VoicevoxAudioQuery;
-	NowLipSync = {ELipSyncVowelType::Non, 0.0f, false, false};
+	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
 	ToSoundWave(VoicevoxQuery->SpeakerType, bEnableInterrogativeUpspeak);
 }
 
