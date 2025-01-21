@@ -78,6 +78,8 @@ protected:
 	TMap<ELipSyncVowelType, float> UpdateVowelMorphNum(float Alpha);
 
 	TMap<ELipSyncVowelType, float> UpdateConsonantMorphNum(float Alpha);
+	
+	TMap<ELipSyncVowelType, float> UpdatePauseMorphNum(float Alpha);
 public:
 
 	UPROPERTY(BlueprintAssignable)

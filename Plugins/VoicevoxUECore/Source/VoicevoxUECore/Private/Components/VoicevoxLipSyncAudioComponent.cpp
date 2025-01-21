@@ -66,7 +66,7 @@ void UVoicevoxLipSyncAudioComponent::InitMorphNumMap()
 TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdateVowelMorphNum(const float Alpha)
 {
 
-	const float A = FMath::Clamp(Alpha, 0, 1);
+	const float A = FMath::Clamp(Alpha, 0.0f, 1.0f);
 	TMap<ELipSyncVowelType, float> Map =
 		{
 			{ELipSyncVowelType::A, 0.0f},
@@ -121,7 +121,22 @@ TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdateVowelMorphN
 
 TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdateConsonantMorphNum(const float Alpha)
 {
-	const float A = FMath::Clamp(Alpha, 0, 1);
+	const float A = FMath::Clamp(Alpha, 0.0f, 1.0f);
+	TMap<ELipSyncVowelType, float> Map =
+	{
+		{ELipSyncVowelType::A, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::A], 0.0f, A)},
+		{ELipSyncVowelType::I, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::I], 0.0f, A)},
+		{ELipSyncVowelType::U, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::U], 0.0f, A)},
+		{ELipSyncVowelType::E, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::E], 0.0f, A)},
+		{ELipSyncVowelType::O, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::O], 0.0f, A)},
+	};
+	
+	return Map;
+}
+
+TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdatePauseMorphNum(const float Alpha)
+{
+	const float A = FMath::Clamp(Alpha, 0.0f, 1.0f);
 	TMap<ELipSyncVowelType, float> Map =
 	{
 		{ELipSyncVowelType::A, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::A], 0.0f, A)},
@@ -251,6 +266,22 @@ void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent
 				{
 					OnLipSyncUpdateNative.Broadcast(Result.Key, LipSyncMorphNameMap[Result.Key], Result.Value);
 				}
+			}
+		}
+	}
+	else if (NowLipSync.VowelType == ELipSyncVowelType::Non)
+	{
+		const float PauseAlpha = 2.0f / NowLength;
+		for (auto Map = UpdatePauseMorphNum(PauseAlpha); const auto Result : Map)
+		{
+			if (OnLipSyncUpdate.IsBound())
+			{
+				OnLipSyncUpdate.Broadcast(Result.Key, LipSyncMorphNameMap[Result.Key], Result.Value);
+			}
+
+			if (OnLipSyncUpdateNative.IsBound())
+			{
+				OnLipSyncUpdateNative.Broadcast(Result.Key, LipSyncMorphNameMap[Result.Key], Result.Value);
 			}
 		}
 	}
