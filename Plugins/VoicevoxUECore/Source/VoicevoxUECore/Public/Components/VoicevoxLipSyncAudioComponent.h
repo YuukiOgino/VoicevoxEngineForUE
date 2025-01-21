@@ -36,20 +36,11 @@ class VOICEVOXUECORE_API UVoicevoxLipSyncAudioComponent : public UAudioComponent
 
 	//!
 	FVoicevoxAudioQuery AudioQuery;
-
-	//! 
-	TArray<FVoicevoxLipSync> LipSyncList;
-
-	//!
-	float LipSyncTime = 0.0f;
 	
 	//!
 	bool bIsExecTts = false;
 
-	//!
-	FVoicevoxLipSync NowLipSync;
-	
-	void HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage);
+	virtual void HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage);
 	
 public:
 	// Sets default values for this component's properties
@@ -59,6 +50,15 @@ protected:
 
 	//! モーフターゲット値のマップ
 	TMap<ELipSyncVowelType, float> LipSyncMorphNumMap;
+
+	//! 
+	TArray<FVoicevoxLipSync> LipSyncList;
+	
+	//!
+	FVoicevoxLipSync NowLipSync;
+
+	//!
+	float LipSyncTime = 0.0f;
 	
 	// Called when the game starts
 	virtual void BeginPlay() override;
