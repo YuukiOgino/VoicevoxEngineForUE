@@ -65,8 +65,8 @@ void UVoicevoxLipSyncAudioComponent::InitMorphNumMap()
 
 TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdateVowelMorphNum(const float Alpha)
 {
-
-	const float A = FMath::Clamp(Alpha, 0.0f, 1.0f);
+	const float Rate = LipSyncSpeed * Alpha;
+	const float A = FMath::Clamp(Rate, 0.0f, 1.0f);
 	TMap<ELipSyncVowelType, float> Map =
 		{
 			{ELipSyncVowelType::A, 0.0f},
@@ -85,19 +85,19 @@ TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdateVowelMorphN
 	switch (NowLipSync.VowelType)
 	{
 		case ELipSyncVowelType::A:
-			UpdateA = 1.0f;
+			UpdateA = MaxMouthScale;
 			break;
 		case ELipSyncVowelType::I:
-			UpdateI = 1.0f;
+			UpdateI = MaxMouthScale;
 			break;
 		case ELipSyncVowelType::U:
-			UpdateU = 1.0f;
+			UpdateU = MaxMouthScale;
 			break;
 		case ELipSyncVowelType::E:
-			UpdateE = 1.0f;
+			UpdateE = MaxMouthScale;
 			break;
 		case ELipSyncVowelType::O:
-			UpdateO = 1.0f;
+			UpdateO = MaxMouthScale;
 			break;
 		case ELipSyncVowelType::CL:
 			UpdateA = LipSyncMorphNumMap[ELipSyncVowelType::A];
@@ -121,7 +121,8 @@ TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdateVowelMorphN
 
 TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdateConsonantMorphNum(const float Alpha)
 {
-	const float A = FMath::Clamp(Alpha, 0.0f, 1.0f);
+	const float Rate = LipSyncSpeed * Alpha;
+	const float A = FMath::Clamp(Rate, 0.0f, 1.0f);
 	TMap<ELipSyncVowelType, float> Map =
 	{
 		{ELipSyncVowelType::A, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::A], 0.0f, A)},
@@ -136,7 +137,9 @@ TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdateConsonantMo
 
 TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdatePauseMorphNum(const float Alpha)
 {
-	const float A = FMath::Clamp(Alpha, 0.0f, 1.0f);
+	// 最速でデフォルトに戻すためにレートは2.0固定
+	const float PauseRate = 2.0f * Alpha;
+	const float A = FMath::Clamp(PauseRate, 0.0f, 1.0f);
 	TMap<ELipSyncVowelType, float> Map =
 	{
 		{ELipSyncVowelType::A, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::A], 0.0f, A)},
@@ -202,23 +205,23 @@ void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent
 			{
 			case ELipSyncVowelType::A:
 				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::A] = 0.8f;
+				LipSyncMorphNumMap[ELipSyncVowelType::A] = MaxMouthScale * 0.8f;
 				break;
 			case ELipSyncVowelType::I:
 				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::I] = 0.8f;
+				LipSyncMorphNumMap[ELipSyncVowelType::I] = MaxMouthScale * 0.8f;
 				break;
 			case ELipSyncVowelType::U:
 				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::U] = 0.8f;
+				LipSyncMorphNumMap[ELipSyncVowelType::U] = MaxMouthScale * 0.8f;
 				break;
 			case ELipSyncVowelType::E:
 				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::E] = 0.8f;
+				LipSyncMorphNumMap[ELipSyncVowelType::E] = MaxMouthScale * 0.8f;
 				break;
 			case ELipSyncVowelType::O:
 				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::O] = 0.8f;
+				LipSyncMorphNumMap[ELipSyncVowelType::O] = MaxMouthScale * 0.8f;
 				break;
 			case ELipSyncVowelType::CL:
 				LipSyncMorphNumMap[ELipSyncVowelType::A] = LipSyncMorphNumMap[ELipSyncVowelType::A] * 0.8f * 0.8f;
@@ -271,8 +274,7 @@ void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent
 	}
 	else if (NowLipSync.VowelType == ELipSyncVowelType::Non)
 	{
-		const float PauseAlpha = 2.0f / NowLength;
-		for (auto Map = UpdatePauseMorphNum(PauseAlpha); const auto Result : Map)
+		for (auto Map = UpdatePauseMorphNum(NowLength); const auto Result : Map)
 		{
 			if (OnLipSyncUpdate.IsBound())
 			{
