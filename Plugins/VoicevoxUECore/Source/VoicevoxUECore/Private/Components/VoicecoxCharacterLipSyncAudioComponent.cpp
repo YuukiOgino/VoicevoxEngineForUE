@@ -17,7 +17,7 @@ UVoicecoxCharacterLipSyncAudioComponent::UVoicecoxCharacterLipSyncAudioComponent
 	LipSyncMorphNameMap.Add(ELipSyncVowelType::U, NAME_None);
 	LipSyncMorphNameMap.Add(ELipSyncVowelType::E, NAME_None);
 	LipSyncMorphNameMap.Add(ELipSyncVowelType::O, NAME_None);
-
+	
 	LipSyncMorphNumMap.Reserve(5);
 	LipSyncMorphNumMap.Add(ELipSyncVowelType::A, 0.0f);
 	LipSyncMorphNumMap.Add(ELipSyncVowelType::I, 0.0f);
@@ -67,6 +67,7 @@ void UVoicecoxCharacterLipSyncAudioComponent::HandlePlaybackPercent(const UAudio
 		{
 			if (NowLipSync.IsLabialOrPlosive)
 			{
+				InitMorphNumMap();
 				for (const auto Result : LipSyncMorphNumMap)
 				{
 					SkeletalMeshComponent->SetMorphTarget(LipSyncMorphNameMap[Result.Key], Result.Value);
@@ -80,24 +81,15 @@ void UVoicecoxCharacterLipSyncAudioComponent::HandlePlaybackPercent(const UAudio
 			switch (NowLipSync.VowelType)
 			{
 			case ELipSyncVowelType::A:
-				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::A] = MaxMouthScale * 0.8f;
-				break;
 			case ELipSyncVowelType::I:
-				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::I] = MaxMouthScale * 0.8f;
-				break;
 			case ELipSyncVowelType::U:
-				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::U] = MaxMouthScale * 0.8f;
-				break;
 			case ELipSyncVowelType::E:
-				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::E] = MaxMouthScale * 0.8f;
-				break;
 			case ELipSyncVowelType::O:
-				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::O] = MaxMouthScale * 0.8f;
+				if (NowLipSync.VowelType != LipSyncList.Last().VowelType && LipSyncList.Last().VowelType != ELipSyncVowelType::Non && LipSyncList.Last().VowelType != ELipSyncVowelType::CL)
+				{
+					InitMorphNumMap();
+					LipSyncMorphNumMap[NowLipSync.VowelType] = MaxMouthScale * 0.8f;
+				}
 				break;
 			case ELipSyncVowelType::CL:
 				LipSyncMorphNumMap[ELipSyncVowelType::A] = LipSyncMorphNumMap[ELipSyncVowelType::A] * 0.8f * 0.8f;

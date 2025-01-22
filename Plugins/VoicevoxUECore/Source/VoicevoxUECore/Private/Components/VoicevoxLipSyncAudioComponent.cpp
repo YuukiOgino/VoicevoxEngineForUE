@@ -211,24 +211,15 @@ void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent
 			switch (NowLipSync.VowelType)
 			{
 			case ELipSyncVowelType::A:
-				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::A] = MaxMouthScale * 0.8f;
-				break;
 			case ELipSyncVowelType::I:
-				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::I] = MaxMouthScale * 0.8f;
-				break;
 			case ELipSyncVowelType::U:
-				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::U] = MaxMouthScale * 0.8f;
-				break;
 			case ELipSyncVowelType::E:
-				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::E] = MaxMouthScale * 0.8f;
-				break;
 			case ELipSyncVowelType::O:
-				InitMorphNumMap();
-				LipSyncMorphNumMap[ELipSyncVowelType::O] = MaxMouthScale * 0.8f;
+				if (NowLipSync.VowelType != LipSyncList.Last().VowelType && LipSyncList.Last().VowelType != ELipSyncVowelType::Non)
+				{
+					InitMorphNumMap();
+					LipSyncMorphNumMap[NowLipSync.VowelType] = MaxMouthScale * 0.8f;
+				}
 				break;
 			case ELipSyncVowelType::CL:
 				LipSyncMorphNumMap[ELipSyncVowelType::A] = LipSyncMorphNumMap[ELipSyncVowelType::A] * 0.8f * 0.8f;
