@@ -28,10 +28,10 @@ class VOICEVOXUECORE_API UVoicevoxLipSyncAudioComponent : public UAudioComponent
 {
 	GENERATED_BODY()
 
-	//!
+	//! タスク
 	UE::Tasks::FTask TtsTask;
 
-	//!
+	//! 
 	float PlayStartTime = 0.0f;
 
 	//!
@@ -39,17 +39,6 @@ class VOICEVOXUECORE_API UVoicevoxLipSyncAudioComponent : public UAudioComponent
 	
 	//!
 	bool bIsExecTts = false;
-
-	void HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage);
-	
-public:
-	
-	/**
-	 * @brief コンストラクタ
-	 */
-	UVoicevoxLipSyncAudioComponent();
-	
-protected:
 
 	//! モーフターゲット値のマップ
 	TMap<ELipSyncVowelType, float> LipSyncMorphNumMap;
@@ -62,6 +51,14 @@ protected:
 
 	//!
 	float LipSyncTime = 0.0f;
+	
+	/**
+	 * @brief OnAudioPlaybackPercentのコールバック
+	 * @param InComponent 
+	 * @param InSoundWave 
+	 * @param InPlaybackPercentage 
+	 */
+	void HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage);
 
 	/**
 	 * @brief BeginPlay
@@ -121,6 +118,13 @@ protected:
 	 * @return 無音のモーフターゲット値リスト
 	 */	
 	TMap<ELipSyncVowelType, float> UpdatePauseMorphNum(float Alpha);
+
+	/**
+	 * @brief モーフターゲット値の通知実行
+	 * @param Map 
+	 */
+	void NotificationMorphNum(TMap<ELipSyncVowelType, float> Map);
+	
 public:
 
 	//! リップシンク更新イベント
@@ -131,7 +135,7 @@ public:
 	FOnLipSyncUpdateNative OnLipSyncUpdateNative;
 
 	//! リップシンクで使用するモーフターゲット名のマップ
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, EditFixedSize)
 	TMap<ELipSyncVowelType, FName> LipSyncMorphNameMap;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(ClampMin = "0.1", ClampMax = "2.0", UIMin = "0.1", UIMax = "2.0"))
@@ -139,7 +143,17 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(ClampMin = "0.1", ClampMax = "1.0", UIMin = "0.1", UIMax = "1.0"))
 	float MaxMouthScale = 1.0f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bEnabledLipSync = true;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bEnabledSimpleLipSync = false;
 	
+	/**
+	 * @brief コンストラクタ
+	 */
+	UVoicevoxLipSyncAudioComponent();
 
 	UFUNCTION(BlueprintCallable)
 	void PlayToText(int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);

@@ -1,4 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Yuuki Ogino. All Rights Reserved.
+
+/**
+ * @headerfile VoicecoxCharacterLipSyncAudioComponent.h
+ * @brief  VOICEVOXのAudioQueryを解析して音再生とスケルタルメッシュコンポーネントにリップシンクを行うコンポーネントのヘッダーファイル
+ * @author Yuuki Ogino
+ */
+
 
 #pragma once
 
@@ -10,11 +17,16 @@
 #include "VoicecoxCharacterLipSyncAudioComponent.generated.h"
 
 
+/**
+ * @class UVoicecoxCharacterLipSyncAudioComponent
+ * @brief VOICEVOXのAudioQueryを解析して、音再生とスケルタルメッシュコンポーネントにリップシンクを行うコンポーネントクラス
+ */
 UCLASS(ClassGroup=(Audio, Common), HideCategories=(Object, ActorComponent, Physics, Rendering, Mobility, LOD), ShowCategories=Trigger, meta=(BlueprintSpawnableComponent))
 class VOICEVOXUECORE_API UVoicecoxCharacterLipSyncAudioComponent : public UAudioComponent
 {
 	GENERATED_BODY()
 
+	//! リップシンク対象のスケルタルメッシュコンポーネント
 	UPROPERTY()
 	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComponent;
 	
@@ -43,24 +55,23 @@ class VOICEVOXUECORE_API UVoicecoxCharacterLipSyncAudioComponent : public UAudio
 	float LipSyncTime = 0.0f;
 	
 	void HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage);
-	
-public:
-	// Sets default values for this component's properties
-	UVoicecoxCharacterLipSyncAudioComponent();
-	
-protected:
 
 	/**
 	 * @brief BeginPlay
 	 */
 	virtual void BeginPlay() override;
-	
-	// Called every frame
+
+	/**
+	 * @brief TickComponent
+	 * @param DeltaTime 
+	 * @param TickType 
+	 * @param ThisTickFunction 
+	 */
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 							   FActorComponentTickFunction* ThisTickFunction) override;
 	/**
 	 * @brief EndPlay 
-	 * @param EndPlayReason 
+	 * @param [in]EndPlayReason 
 	 */
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
@@ -103,10 +114,12 @@ protected:
 	 */	
 	TMap<ELipSyncVowelType, float> UpdatePauseMorphNum(float Alpha);
 
+	void UpdateSkeletalMeshMorphTargetNum(TMap<ELipSyncVowelType, float> Map);
+
 public:
 
 	//! リップシンクで使用するモーフターゲット名のマップ
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, EditFixedSize)
 	TMap<ELipSyncVowelType, FName> LipSyncMorphNameMap;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(ClampMin = "0.1", ClampMax = "2.0", UIMin = "0.1", UIMax = "2.0"))
@@ -114,6 +127,17 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(ClampMin = "0.1", ClampMax = "1.0", UIMin = "0.1", UIMax = "1.0"))
 	float MaxMouthScale = 1.0f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bEnabledLipSync = true;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bEnabledSimpleLipSync = false;
+	
+	/**
+	 * @brief コンストラクタ
+	 */
+	UVoicecoxCharacterLipSyncAudioComponent();
 	
 	UFUNCTION(BlueprintCallable)
 	void PlayToText(int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
@@ -124,6 +148,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true);
 
+	/**
+	 * @brief リップシンク対象のスケルタルメッシュをセット
+	 * @param SkeletalMesh 
+	 */
 	UFUNCTION(BlueprintCallable)
 	void SetSkeletalMesh(USkeletalMeshComponent* SkeletalMesh);
 };

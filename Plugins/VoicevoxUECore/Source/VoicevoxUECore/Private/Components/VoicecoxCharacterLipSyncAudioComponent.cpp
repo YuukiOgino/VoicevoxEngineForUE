@@ -1,5 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Yuuki Ogino. All Rights Reserved.
 
+/**
+ * @brief  VOICEVOXのAudioQueryを解析して音再生とスケルタルメッシュコンポーネントにリップシンクを行うコンポーネントのCPPファイル
+ * @author Yuuki Ogino
+ */
 
 #include "Components/VoicecoxCharacterLipSyncAudioComponent.h"
 #include "Sound/SoundWaveProcedural.h"
@@ -7,27 +11,34 @@
 
 DEFINE_LOG_CATEGORY(LogVoicevoxCharacterLipSync);
 
-// Sets default values for this component's properties
+/**
+ * @brief コンストラクタ
+ */
 UVoicecoxCharacterLipSyncAudioComponent::UVoicecoxCharacterLipSyncAudioComponent(): SkeletalMeshComponent(),
 	AudioQuery(), NowLipSync()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	LipSyncMorphNameMap.Reserve(5);
+	LipSyncMorphNameMap.Reserve(6);
 	LipSyncMorphNameMap.Add(ELipSyncVowelType::A, NAME_None);
 	LipSyncMorphNameMap.Add(ELipSyncVowelType::I, NAME_None);
 	LipSyncMorphNameMap.Add(ELipSyncVowelType::U, NAME_None);
 	LipSyncMorphNameMap.Add(ELipSyncVowelType::E, NAME_None);
 	LipSyncMorphNameMap.Add(ELipSyncVowelType::O, NAME_None);
+	LipSyncMorphNameMap.Add(ELipSyncVowelType::Simple, NAME_None);
 
-	LipSyncMorphNumMap.Reserve(5);
+	LipSyncMorphNumMap.Reserve(6);
 	LipSyncMorphNumMap.Add(ELipSyncVowelType::A, 0.0f);
 	LipSyncMorphNumMap.Add(ELipSyncVowelType::I, 0.0f);
 	LipSyncMorphNumMap.Add(ELipSyncVowelType::U, 0.0f);
 	LipSyncMorphNumMap.Add(ELipSyncVowelType::E, 0.0f);
 	LipSyncMorphNumMap.Add(ELipSyncVowelType::O, 0.0f);
+	LipSyncMorphNumMap.Add(ELipSyncVowelType::Simple, 0.0f);
 }
 
+/**
+ * @brief BeginPlay
+ */
 void UVoicecoxCharacterLipSyncAudioComponent::BeginPlay()
 {
 	OnAudioPlaybackPercentNative.AddUObject(this, &UVoicecoxCharacterLipSyncAudioComponent::HandlePlaybackPercent);
@@ -48,8 +59,7 @@ void UVoicecoxCharacterLipSyncAudioComponent::EndPlay(const EEndPlayReason::Type
 }
 
 // Called every frame
-void UVoicecoxCharacterLipSyncAudioComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                                            FActorComponentTickFunction* ThisTickFunction)
+void UVoicecoxCharacterLipSyncAudioComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -81,6 +91,8 @@ void UVoicecoxCharacterLipSyncAudioComponent::HandlePlaybackPercent(const UAudio
 		}
 		return;
 	}
+
+	if (!bEnabledLipSync) return;
 	if (LipSyncList.IsEmpty()) return;
 
 	const float NowDuration = Sound->Duration * InPlaybackPercentage;
@@ -92,10 +104,7 @@ void UVoicecoxCharacterLipSyncAudioComponent::HandlePlaybackPercent(const UAudio
 			if (NowLipSync.IsLabialOrPlosive)
 			{
 				InitMorphNumMap();
-				for (const auto Result : LipSyncMorphNumMap)
-				{
-					SkeletalMeshComponent->SetMorphTarget(LipSyncMorphNameMap[Result.Key], Result.Value);
-				}
+				UpdateSkeletalMeshMorphTargetNum(LipSyncMorphNumMap);
 			}
 		}
 		else
@@ -132,10 +141,7 @@ void UVoicecoxCharacterLipSyncAudioComponent::HandlePlaybackPercent(const UAudio
 				break;
 			}
 
-			for (const auto Result : LipSyncMorphNumMap)
-			{
-				SkeletalMeshComponent->SetMorphTarget(LipSyncMorphNameMap[Result.Key], Result.Value);
-			}
+			UpdateSkeletalMeshMorphTargetNum(LipSyncMorphNumMap);
 		}
 		
 		NowLipSync = LipSyncList.Pop();
@@ -147,25 +153,16 @@ void UVoicecoxCharacterLipSyncAudioComponent::HandlePlaybackPercent(const UAudio
 	{
 		if (NowLipSync.IsLabialOrPlosive)
 		{
-			for (auto Map = UpdateConsonantMorphNum(NowLength); const auto Result : Map)
-			{
-				SkeletalMeshComponent->SetMorphTarget(LipSyncMorphNameMap[Result.Key], Result.Value);
-			}
+			UpdateSkeletalMeshMorphTargetNum(UpdateConsonantMorphNum(NowLength));
 		}
 	}
 	else if (NowLipSync.VowelType == ELipSyncVowelType::Non)
 	{
-		for (auto Map = UpdatePauseMorphNum(NowLength); const auto Result : Map)
-		{
-			SkeletalMeshComponent->SetMorphTarget(LipSyncMorphNameMap[Result.Key], Result.Value);
-		}
+		UpdateSkeletalMeshMorphTargetNum(UpdatePauseMorphNum(NowLength));
 	}
 	else
 	{
-		for (auto Map = UpdateVowelMorphNum(NowLength); const auto Result : Map)
-		{
-			SkeletalMeshComponent->SetMorphTarget(LipSyncMorphNameMap[Result.Key], Result.Value);
-		}
+		UpdateSkeletalMeshMorphTargetNum(UpdateVowelMorphNum(NowLength));
 	}
 }
 
@@ -181,6 +178,7 @@ void UVoicecoxCharacterLipSyncAudioComponent::InitMorphNumMap()
 	LipSyncMorphNumMap[ELipSyncVowelType::U] = 0.0f;
 	LipSyncMorphNumMap[ELipSyncVowelType::E] = 0.0f;
 	LipSyncMorphNumMap[ELipSyncVowelType::O] = 0.0f;
+	LipSyncMorphNumMap[ELipSyncVowelType::Simple] = 0.0f;
 }
 
 TMap<ELipSyncVowelType, float> UVoicecoxCharacterLipSyncAudioComponent::UpdateVowelMorphNum(const float Alpha)
@@ -188,7 +186,7 @@ TMap<ELipSyncVowelType, float> UVoicecoxCharacterLipSyncAudioComponent::UpdateVo
 	const float Rate = LipSyncSpeed * Alpha;
 	const float A = FMath::Clamp(Rate, 0.0f, 1.0f);
 	TMap<ELipSyncVowelType, float> Map;
-	Map.Reserve(LipSyncMorphNumMap.Num());
+	Map.Reserve(5);
 	Map.Add(ELipSyncVowelType::A, 0.0f);
 	Map.Add(ELipSyncVowelType::I, 0.0f);
 	Map.Add(ELipSyncVowelType::U, 0.0f);
@@ -243,7 +241,7 @@ TMap<ELipSyncVowelType, float> UVoicecoxCharacterLipSyncAudioComponent::UpdateCo
 	const float Rate = LipSyncSpeed * Alpha;
 	const float A = FMath::Clamp(Rate, 0.0f, 1.0f);
 	TMap<ELipSyncVowelType, float> Map;
-	Map.Reserve(LipSyncMorphNumMap.Num());
+	Map.Reserve(5);
 	Map.Add(ELipSyncVowelType::A, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::A], 0.0f, A));
 	Map.Add(ELipSyncVowelType::I, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::I], 0.0f, A));
 	Map.Add(ELipSyncVowelType::U, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::U], 0.0f, A));
@@ -258,7 +256,7 @@ TMap<ELipSyncVowelType, float> UVoicecoxCharacterLipSyncAudioComponent::UpdatePa
 	const float PauseRate = 2.0f * Alpha;
 	const float A = FMath::Clamp(PauseRate, 0.0f, 1.0f);
 	TMap<ELipSyncVowelType, float> Map;
-	Map.Reserve(LipSyncMorphNumMap.Num());
+	Map.Reserve(5);
 	Map.Add(ELipSyncVowelType::A, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::A], 0.0f, A));
 	Map.Add(ELipSyncVowelType::I, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::I], 0.0f, A));
 	Map.Add(ELipSyncVowelType::U, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::U], 0.0f, A));
@@ -266,6 +264,14 @@ TMap<ELipSyncVowelType, float> UVoicecoxCharacterLipSyncAudioComponent::UpdatePa
 	Map.Add(ELipSyncVowelType::O, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::O], 0.0f, A));
 	
 	return Map;
+}
+
+void UVoicecoxCharacterLipSyncAudioComponent::UpdateSkeletalMeshMorphTargetNum(TMap<ELipSyncVowelType, float> Map)
+{
+	for (const auto Result : Map)
+	{
+		SkeletalMeshComponent->SetMorphTarget(LipSyncMorphNameMap[Result.Key], Result.Value);
+	}
 }
 
 void UVoicecoxCharacterLipSyncAudioComponent::PlayToText(const int SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
