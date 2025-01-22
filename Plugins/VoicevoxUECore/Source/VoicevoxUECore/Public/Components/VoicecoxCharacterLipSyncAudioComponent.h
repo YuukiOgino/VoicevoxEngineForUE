@@ -3,36 +3,129 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "VoicevoxLipSyncAudioComponent.h"
+#include "VoicevoxQuery.h"
+#include "VoicevoxUEDefined.h"
+#include "Components/AudioComponent.h"
+#include "Tasks/Task.h"
 #include "VoicecoxCharacterLipSyncAudioComponent.generated.h"
 
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class VOICEVOXUECORE_API UVoicecoxCharacterLipSyncAudioComponent : public UVoicevoxLipSyncAudioComponent
+UCLASS(ClassGroup=(Audio, Common), HideCategories=(Object, ActorComponent, Physics, Rendering, Mobility, LOD), ShowCategories=Trigger, meta=(BlueprintSpawnableComponent))
+class VOICEVOXUECORE_API UVoicecoxCharacterLipSyncAudioComponent : public UAudioComponent
 {
 	GENERATED_BODY()
 
 	UPROPERTY()
 	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComponent;
+	
+	//!
+	UE::Tasks::FTask TtsTask;
 
-	virtual void HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage) override;
+	//!
+	float PlayStartTime = 0.0f;
+
+	//!
+	FVoicevoxAudioQuery AudioQuery;
+	
+	//!
+	bool bIsExecTts = false;
+
+	//! モーフターゲット値のマップ
+	TMap<ELipSyncVowelType, float> LipSyncMorphNumMap;
+
+	//! 
+	TArray<FVoicevoxLipSync> LipSyncList;
+	
+	//!
+	FVoicevoxLipSync NowLipSync;
+
+	//!
+	float LipSyncTime = 0.0f;
+	
+	void HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage);
 	
 public:
 	// Sets default values for this component's properties
 	UVoicecoxCharacterLipSyncAudioComponent();
 	
 protected:
-	// Called when the game starts
+
+	/**
+	 * @brief BeginPlay
+	 */
 	virtual void BeginPlay() override;
-
-public:
-
 	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+							   FActorComponentTickFunction* ThisTickFunction) override;
+	/**
+	 * @brief EndPlay 
+	 * @param EndPlayReason 
+	 */
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
+	/**
+	 * @brief AudioQueryからSoundWaveへ変換
+	 * @param [in] SpeakerType 
+	 * @param [in] bEnableInterrogativeUpspeak 
+	 */
+	void ToSoundWave(int64 SpeakerType, bool bEnableInterrogativeUpspeak = true);
 
+	/**
+	 * @briefテキストから音声変換を実行中かチェック
+	 * @return trueの場合はテキストから音声変換のタスク実行中
+	 */
+	bool CheckExecTts() const;
+
+	/**
+	 * @brief モーフターゲット値を初期化
+	 */
+	void InitMorphNumMap();
+
+	/**
+	 * @brief 母音のモーフターゲット値リストを更新
+	 * @param [in]Alpha : α値 
+	 * @return 母音のモーフターゲット値リスト
+	 */
+	TMap<ELipSyncVowelType, float> UpdateVowelMorphNum(float Alpha);
+
+	/**
+	 * @brief 子音のモーフターゲット値リストを更新
+	 * @param [in]Alpha : α値 
+	 * @return 子音のモーフターゲット値リスト
+	 */
+	TMap<ELipSyncVowelType, float> UpdateConsonantMorphNum(float Alpha);
+
+	/**
+	 * @brief 無音のモーフターゲット値リストを更新
+	 * @param [in]Alpha : α値 
+	 * @return 無音のモーフターゲット値リスト
+	 */	
+	TMap<ELipSyncVowelType, float> UpdatePauseMorphNum(float Alpha);
+
+public:
+
+	//! リップシンクで使用するモーフターゲット名のマップ
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TMap<ELipSyncVowelType, FName> LipSyncMorphNameMap;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(ClampMin = "0.1", ClampMax = "2.0", UIMin = "0.1", UIMax = "2.0"))
+	float LipSyncSpeed = 0.75f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(ClampMin = "0.1", ClampMax = "1.0", UIMin = "0.1", UIMax = "1.0"))
+	float MaxMouthScale = 1.0f;
+	
+	UFUNCTION(BlueprintCallable)
+	void PlayToText(int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
+
+	UFUNCTION(BlueprintCallable)
+	void PlayToAudioQuery(const FVoicevoxAudioQuery& Query, int64 SpeakerType, bool bEnableInterrogativeUpspeak = true);
+
+	UFUNCTION(BlueprintCallable)
+	void PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true);
 
 	UFUNCTION(BlueprintCallable)
 	void SetSkeletalMesh(USkeletalMeshComponent* SkeletalMesh);
 };
+
+DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxCharacterLipSync, Log, All);

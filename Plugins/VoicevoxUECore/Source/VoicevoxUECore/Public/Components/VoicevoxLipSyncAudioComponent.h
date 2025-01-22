@@ -23,7 +23,7 @@ DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnLipSyncUpdateNative, ELipSyncVowelType
  * @class UVoicevoxLipSyncAudioComponent
  * @brief VOICEVOXのAudioQueryを解析して音再生とリップシンクを行うコンポーネントクラス
  */
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(Audio, Common), HideCategories=(Object, ActorComponent, Physics, Rendering, Mobility, LOD), ShowCategories=Trigger, meta=(BlueprintSpawnableComponent))
 class VOICEVOXUECORE_API UVoicevoxLipSyncAudioComponent : public UAudioComponent
 {
 	GENERATED_BODY()
@@ -40,10 +40,13 @@ class VOICEVOXUECORE_API UVoicevoxLipSyncAudioComponent : public UAudioComponent
 	//!
 	bool bIsExecTts = false;
 
-	virtual void HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage);
+	void HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage);
 	
 public:
-	// Sets default values for this component's properties
+	
+	/**
+	 * @brief コンストラクタ
+	 */
 	UVoicevoxLipSyncAudioComponent();
 	
 protected:
@@ -59,10 +62,27 @@ protected:
 
 	//!
 	float LipSyncTime = 0.0f;
-	
-	// Called when the game starts
-	virtual void BeginPlay() override;
 
+	/**
+	 * @brief BeginPlay
+	 */
+	virtual void BeginPlay() override;
+	
+	/**
+	 * @brief TickComponent
+	 * @param DeltaTime 
+	 * @param TickType 
+	 * @param ThisTickFunction 
+	 */
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+							   FActorComponentTickFunction* ThisTickFunction) override;
+	
+	/**
+	 * @brief EndPlay 
+	 * @param EndPlayReason 
+	 */
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
 	/**
 	 * @brief AudioQueryからSoundWaveへ変換
 	 * @param [in] SpeakerType 
@@ -81,10 +101,25 @@ protected:
 	 */
 	void InitMorphNumMap();
 
+	/**
+	 * @brief 母音のモーフターゲット値リストを更新
+	 * @param [in]Alpha : α値 
+	 * @return 母音のモーフターゲット値リスト
+	 */
 	TMap<ELipSyncVowelType, float> UpdateVowelMorphNum(float Alpha);
 
+	/**
+	 * @brief 子音のモーフターゲット値リストを更新
+	 * @param [in]Alpha : α値 
+	 * @return 子音のモーフターゲット値リスト
+	 */
 	TMap<ELipSyncVowelType, float> UpdateConsonantMorphNum(float Alpha);
-	
+
+	/**
+	 * @brief 無音のモーフターゲット値リストを更新
+	 * @param [in]Alpha : α値 
+	 * @return 無音のモーフターゲット値リスト
+	 */	
 	TMap<ELipSyncVowelType, float> UpdatePauseMorphNum(float Alpha);
 public:
 
@@ -105,18 +140,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(ClampMin = "0.1", ClampMax = "1.0", UIMin = "0.1", UIMax = "1.0"))
 	float MaxMouthScale = 1.0f;
 	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
-	void PlayToText(int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true, float StartTime = 0.0f);
+	void PlayToText(int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
 
 	UFUNCTION(BlueprintCallable)
-	void PlayToAudioQuery(const FVoicevoxAudioQuery& Query, int64 SpeakerType, bool bEnableInterrogativeUpspeak = true, float StartTime = 0.0f);
+	void PlayToAudioQuery(const FVoicevoxAudioQuery& Query, int64 SpeakerType, bool bEnableInterrogativeUpspeak = true);
 
 	UFUNCTION(BlueprintCallable)
-	void PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true, float StartTime = 0.0f);
+	void PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true);
 };
 
 DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxLipSync, Log, All);

@@ -14,7 +14,7 @@
 DEFINE_LOG_CATEGORY(LogVoicevoxLipSync);
 
 // Sets default values for this component's properties
-UVoicevoxLipSyncAudioComponent::UVoicevoxLipSyncAudioComponent()
+UVoicevoxLipSyncAudioComponent::UVoicevoxLipSyncAudioComponent(): AudioQuery(), NowLipSync()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
@@ -31,20 +31,31 @@ UVoicevoxLipSyncAudioComponent::UVoicevoxLipSyncAudioComponent()
 	LipSyncMorphNumMap.Add(ELipSyncVowelType::U, 0.0f);
 	LipSyncMorphNumMap.Add(ELipSyncVowelType::E, 0.0f);
 	LipSyncMorphNumMap.Add(ELipSyncVowelType::O, 0.0f);
-	
+}
+
+void UVoicevoxLipSyncAudioComponent::BeginPlay()
+{
 	OnAudioPlaybackPercentNative.AddUObject(this, &UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent);
 }
 
-
-// Called when the game starts
-void UVoicevoxLipSyncAudioComponent::BeginPlay()
+/**
+ * @brief EndPlay 
+ */
+void UVoicevoxLipSyncAudioComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::BeginPlay();
-	
+	if (bIsExecTts)
+	{
+		bIsExecTts = false;
+		TtsTask.Wait();
+		Sound = nullptr;
+	}
+	Super::EndPlay(EndPlayReason);
 }
 
 
-// Called every frame
+/**
+ * @brief TickComponent
+ */
 void UVoicevoxLipSyncAudioComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                                    FActorComponentTickFunction* ThisTickFunction)
 {
@@ -307,7 +318,7 @@ void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent
 	}
 }
 
-void UVoicevoxLipSyncAudioComponent::PlayToText(const int SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak, const float StartTime)
+void UVoicevoxLipSyncAudioComponent::PlayToText(const int SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
 {
 	if (CheckExecTts()) return;
 	
@@ -318,13 +329,13 @@ void UVoicevoxLipSyncAudioComponent::PlayToText(const int SpeakerType, const FSt
 	}
 
 	InitMorphNumMap();
-	PlayStartTime = StartTime;
+	PlayStartTime = 0.0f;
 	AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerType, Message, bRunKana);
 	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
 	ToSoundWave(SpeakerType, bEnableInterrogativeUpspeak);
 }
 
-void UVoicevoxLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery& Query, const int64 SpeakerType, const bool bEnableInterrogativeUpspeak, const float StartTime)
+void UVoicevoxLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery& Query, const int64 SpeakerType, const bool bEnableInterrogativeUpspeak)
 {
 	if (CheckExecTts()) return;
 	
@@ -335,13 +346,13 @@ void UVoicevoxLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery&
 	}
 
 	InitMorphNumMap();
-	PlayStartTime = StartTime;
+	PlayStartTime = 0.0f;
 	AudioQuery = Query;
 	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
 	ToSoundWave(SpeakerType, bEnableInterrogativeUpspeak);
 }
 
-void UVoicevoxLipSyncAudioComponent::PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, const bool bEnableInterrogativeUpspeak, const float StartTime)
+void UVoicevoxLipSyncAudioComponent::PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, const bool bEnableInterrogativeUpspeak)
 {
 	if (CheckExecTts()) return;
 	
@@ -352,7 +363,7 @@ void UVoicevoxLipSyncAudioComponent::PlayToAudioQueryAsset(UVoicevoxQuery* Voice
 	}
 
 	InitMorphNumMap();
-	PlayStartTime = StartTime;
+	PlayStartTime = 0.0f;
 	AudioQuery = VoicevoxQuery->VoicevoxAudioQuery;
 	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
 	ToSoundWave(VoicevoxQuery->SpeakerType, bEnableInterrogativeUpspeak);
