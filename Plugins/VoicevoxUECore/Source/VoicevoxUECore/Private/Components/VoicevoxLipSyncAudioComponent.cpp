@@ -220,6 +220,11 @@ void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent
 					InitMorphNumMap();
 					LipSyncMorphNumMap[NowLipSync.VowelType] = MaxMouthScale * 0.8f;
 				}
+				else
+				{
+					InitMorphNumMap();
+					LipSyncMorphNumMap[NowLipSync.VowelType] = MaxMouthScale;
+				}
 				break;
 			case ELipSyncVowelType::CL:
 				LipSyncMorphNumMap[ELipSyncVowelType::A] = LipSyncMorphNumMap[ELipSyncVowelType::A] * 0.8f * 0.8f;
