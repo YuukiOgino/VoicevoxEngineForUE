@@ -163,7 +163,7 @@ TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const UVoicevoxQuery& Voicevo
 /**
  * @brief VOICEVOX COREで取得したAudioQuery元に、中品質なLipSyncに必要なデータリストを取得
  */
-TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQuery AudioQuery)
+TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQuery AudioQuery, bool bIsSimple)
 {
 	TArray<FVoicevoxLipSync> List;
 	List.Empty();
@@ -186,13 +186,21 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 	{
 		for (auto [Text, Consonant, Consonant_length, Vowel, Vowel_length, Pitch] : Moras)
 		{
-			if (!Consonant.IsEmpty())
+			if (bIsSimple)
 			{
-				FString C = Consonant.ToLower();
-				bool IsLabialOrPlosive = C.Equals(TEXT("w")) || C.Equals(TEXT("m")) || C.Equals(TEXT("b")) || C.Equals(TEXT("p")) || C.Equals(TEXT("f")) || C.Equals(TEXT("v"));
-				List.Add({FruitMap[Vowel], Consonant_length / AudioQuery.Speed_scale, true, IsLabialOrPlosive});
+				List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.Speed_scale + Consonant_length / AudioQuery.Speed_scale });
 			}
-			List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.Speed_scale, false, false});
+			else
+			{
+				if (!Consonant.IsEmpty())
+				{
+					FString C = Consonant.ToLower();
+					bool IsLabialOrPlosive = C.Equals(TEXT("w")) || C.Equals(TEXT("m")) || C.Equals(TEXT("b")) || C.Equals(TEXT("p")) || C.Equals(TEXT("f")) || C.Equals(TEXT("v"));
+					List.Add({FruitMap[Vowel], Consonant_length / AudioQuery.Speed_scale, true, IsLabialOrPlosive});
+				}
+				List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.Speed_scale, false, false});
+			}
+			
 		}
 
 		if (Pause_mora.Vowel.Equals(TEXT("pau"), ESearchCase::IgnoreCase))

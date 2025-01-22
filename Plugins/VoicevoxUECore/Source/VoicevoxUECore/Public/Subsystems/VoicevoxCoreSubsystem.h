@@ -264,7 +264,7 @@ public:
 	 * @param[in] AudioQuery AudioQuery構造体
 	 * @return AudioQuery情報を元に生成した、中品質のLipSyncに必要なデータリスト
 	 */
-	static TArray<FVoicevoxLipSync> GetLipSyncList(FVoicevoxAudioQuery AudioQuery);
+	static TArray<FVoicevoxLipSync> GetLipSyncList(FVoicevoxAudioQuery AudioQuery, bool bIsSimple = false);
 	
 	//--------------------------------
 	// VOICEVOX CORE Meta関連

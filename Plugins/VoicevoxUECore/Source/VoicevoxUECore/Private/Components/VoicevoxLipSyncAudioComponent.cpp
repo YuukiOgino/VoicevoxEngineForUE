@@ -117,7 +117,7 @@ TMap<ELipSyncVowelType, float> UVoicevoxLipSyncAudioComponent::UpdateVowelMorphN
 			Update = MaxMouthScale * 0.8f;
 			break;
 		case ELipSyncVowelType::CL:
-			Update = LipSyncMorphNumMap[ELipSyncVowelType::A];
+			Update = MaxMouthScale * 0.15f;
 			break;
 		default:
 			break;
@@ -445,7 +445,7 @@ void UVoicevoxLipSyncAudioComponent::ToSoundWave(const int64 SpeakerType, const 
 		bIsExecTts = true;
 
 		// LipSyncに必要なデータを生成する
-		LipSyncList = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetLipSyncList(AudioQuery);
+		LipSyncList = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetLipSyncList(AudioQuery, bEnabledSimpleLipSync);
 		Algo::Reverse(LipSyncList);
 		LipSyncTime = 0.0f;
 		// USoundWaveを生成する。Launch内でPlayを実行するとクラッシュするため、Play処理はTickComponentで行う
