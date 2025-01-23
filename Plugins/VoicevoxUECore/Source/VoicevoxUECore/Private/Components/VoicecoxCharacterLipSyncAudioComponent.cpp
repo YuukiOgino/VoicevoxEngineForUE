@@ -427,7 +427,8 @@ void UVoicecoxCharacterLipSyncAudioComponent::StopAudioAndLipSync()
 	Super::Stop();
 }
 
-void UVoicecoxCharacterLipSyncAudioComponent::PlayToText(const int SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
+void UVoicecoxCharacterLipSyncAudioComponent::PlayToText(const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak,
+	const float SpeedScale, const float PitchScale, const float IntonationScale, const float VolumeScale, const float PrePhonemeLength, const float PostPhonemeLength)
 {
 	if (CheckExecTts()) return;
 	
@@ -439,13 +440,19 @@ void UVoicecoxCharacterLipSyncAudioComponent::PlayToText(const int SpeakerType, 
 
 	InitMorphNumMap();
 	PlayStartTime = 0.0f;
-	AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerType, Message, bRunKana);
+	AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerId, Message, bRunKana);
+	AudioQuery.Speed_scale = SpeedScale;
+	AudioQuery.Pitch_scale = PitchScale;
+	AudioQuery.Intonation_scale = IntonationScale;
+	AudioQuery.Volume_scale = VolumeScale;
+	AudioQuery.Pre_phoneme_length = PrePhonemeLength;
+	AudioQuery.Post_phoneme_length = PostPhonemeLength;
 	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
 	bIsPlayLipSyncSimple = bEnabledSimpleLipSync;
-	ToSoundWave(SpeakerType, bEnableInterrogativeUpspeak);
+	ToSoundWave(SpeakerId, bEnableInterrogativeUpspeak);
 }
 
-void UVoicecoxCharacterLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery& Query, const int64 SpeakerType, const bool bEnableInterrogativeUpspeak)
+void UVoicecoxCharacterLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery& Query, const bool bEnableInterrogativeUpspeak)
 {
 	if (CheckExecTts()) return;
 	
@@ -460,7 +467,7 @@ void UVoicecoxCharacterLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAu
 	AudioQuery = Query;
 	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
 	bIsPlayLipSyncSimple = bEnabledSimpleLipSync;
-	ToSoundWave(SpeakerType, bEnableInterrogativeUpspeak);
+	ToSoundWave(SpeakerId, bEnableInterrogativeUpspeak);
 }
 
 void UVoicecoxCharacterLipSyncAudioComponent::PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, const bool bEnableInterrogativeUpspeak)

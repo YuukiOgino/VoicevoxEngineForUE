@@ -132,6 +132,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, EditFixedSize)
 	TMap<ELipSyncVowelType, FName> LipSyncMorphNameMap;
 
+	//! 再生するスピーカーID
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int64 SpeakerId = 3;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(ClampMin = "0.1", ClampMax = "2.0", UIMin = "0.1", UIMax = "2.0"))
 	float LipSyncSpeed = 0.75f;
 
@@ -157,10 +161,11 @@ public:
 	void StopAudioAndLipSync();
 	
 	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
-	void PlayToText(int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
+	void PlayToText(FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true,
+		float SpeedScale = 1.0f, float PitchScale = 0.0f,  float IntonationScale = 1.0f, float VolumeScale = 1.0f, float PrePhonemeLength = 0.1f, float PostPhonemeLength = 0.1f);
 
 	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
-	void PlayToAudioQuery(const FVoicevoxAudioQuery& Query, int64 SpeakerType, bool bEnableInterrogativeUpspeak = true);
+	void PlayToAudioQuery(const FVoicevoxAudioQuery& Query, bool bEnableInterrogativeUpspeak = true);
 
 	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
 	void PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true);
