@@ -11,7 +11,9 @@
 
 DEFINE_LOG_CATEGORY(LogVoicevoxLipSync);
 
-// Sets default values for this component's properties
+/**
+ * @brief コンストラクタ
+ */
 UVoicevoxLipSyncAudioComponent::UVoicevoxLipSyncAudioComponent(): AudioQuery(), NowLipSync()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -366,6 +368,15 @@ void UVoicevoxLipSyncAudioComponent::NotificationMorphNum(TMap<ELipSyncVowelType
 			OnLipSyncUpdateNative.Broadcast(Result.Key, LipSyncMorphNameMap[Result.Key], Result.Value);
 		}
 	}
+}
+
+void UVoicevoxLipSyncAudioComponent::StopAudioAndLipSync()
+{
+	if (bIsExecTts)
+	{
+		bIsExecTts = false;
+	}
+	Super::Stop();
 }
 
 void UVoicevoxLipSyncAudioComponent::PlayToText(const int SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)

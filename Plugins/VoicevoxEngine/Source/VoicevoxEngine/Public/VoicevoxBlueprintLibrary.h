@@ -26,6 +26,13 @@ class VOICEVOXENGINE_API UVoicevoxBlueprintLibrary : public UBlueprintFunctionLi
 	GENERATED_BODY()
 
 public:
+
+	/**
+	 * @brief 全てのVOICEVOX CORE 初期化が完了しているか
+	 * @return 全てのCOREの初期化実行済みの場合はtrue
+	 */
+	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxIsInitialize"))
+	static UPARAM(DisplayName="IsInitialize")  bool IsInitialize();
 	
 	/**
 	 * @fn

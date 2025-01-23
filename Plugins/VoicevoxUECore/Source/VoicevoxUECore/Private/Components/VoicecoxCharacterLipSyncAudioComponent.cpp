@@ -363,6 +363,15 @@ void UVoicecoxCharacterLipSyncAudioComponent::UpdateSkeletalMeshMorphTargetNum(T
 	}
 }
 
+void UVoicecoxCharacterLipSyncAudioComponent::StopAudioAndLipSync()
+{
+	if (bIsExecTts)
+	{
+		bIsExecTts = false;
+	}
+	Super::Stop();
+}
+
 void UVoicecoxCharacterLipSyncAudioComponent::PlayToText(const int SpeakerType, const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak)
 {
 	if (CheckExecTts()) return;

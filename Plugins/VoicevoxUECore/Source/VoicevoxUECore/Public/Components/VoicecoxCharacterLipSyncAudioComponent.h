@@ -138,14 +138,17 @@ public:
 	 * @brief コンストラクタ
 	 */
 	UVoicecoxCharacterLipSyncAudioComponent();
+
+	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
+	void StopAudioAndLipSync();
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
 	void PlayToText(int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
 	void PlayToAudioQuery(const FVoicevoxAudioQuery& Query, int64 SpeakerType, bool bEnableInterrogativeUpspeak = true);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
 	void PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true);
 
 	/**

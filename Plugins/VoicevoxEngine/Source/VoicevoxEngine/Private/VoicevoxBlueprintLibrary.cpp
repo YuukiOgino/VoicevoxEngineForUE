@@ -11,6 +11,14 @@
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 
 /**
+ * @brief 全てのVOICEVOX CORE 初期化が完了しているか
+ */
+bool UVoicevoxBlueprintLibrary::IsInitialize()
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetIsInitialize();
+}
+
+/**
  * @brief VOICEVOX CORE 終了処理(Blueprint公開ノード)
  */
 void UVoicevoxBlueprintLibrary::Finalize()
