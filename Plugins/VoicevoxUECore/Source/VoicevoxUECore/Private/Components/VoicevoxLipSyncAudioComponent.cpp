@@ -255,11 +255,35 @@ void UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent
 		}
 		return;
 	}
-
+	
 	if (!bEnabledLipSync) return;
 	if (LipSyncList.IsEmpty()) return;
-
+	if (Sound == nullptr)
+	{
+		InitMorphNumMap();
+		if (bEnabledSimpleLipSync)
+		{
+			TMap<ELipSyncVowelType, float> Map;
+			Map.Reserve(1);
+			Map.Add(ELipSyncVowelType::Simple, LipSyncMorphNumMap[ELipSyncVowelType::Simple]);
+			NotificationMorphNum(Map);
+		}
+		else
+		{
+			TMap<ELipSyncVowelType, float> Map;
+			Map.Reserve(5);
+			Map.Add(ELipSyncVowelType::A, LipSyncMorphNumMap[ELipSyncVowelType::A]);
+			Map.Add(ELipSyncVowelType::I, LipSyncMorphNumMap[ELipSyncVowelType::I]);
+			Map.Add(ELipSyncVowelType::U, LipSyncMorphNumMap[ELipSyncVowelType::U]);
+			Map.Add(ELipSyncVowelType::E, LipSyncMorphNumMap[ELipSyncVowelType::E]);
+			Map.Add(ELipSyncVowelType::O, LipSyncMorphNumMap[ELipSyncVowelType::O]);
+			NotificationMorphNum(Map);
+		}
+		return;
+	}
+	
 	const float NowDuration = Sound->Duration * InPlaybackPercentage;
+	
 	if (LipSyncTime < NowDuration)
 	{
 		// 前回のリップシンク情報を元に初期化
@@ -375,6 +399,7 @@ void UVoicevoxLipSyncAudioComponent::StopAudioAndLipSync()
 	if (bIsExecTts)
 	{
 		bIsExecTts = false;
+		TtsTask.Wait();
 	}
 	Super::Stop();
 }
