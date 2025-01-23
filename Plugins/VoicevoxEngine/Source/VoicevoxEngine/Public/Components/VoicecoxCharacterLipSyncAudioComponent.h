@@ -10,9 +10,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbstractLipSyncAudioComponent.h"
+#include "Components/AbstractLipSyncAudioComponent.h"
 #include "VoicevoxUEDefined.h"
-#include "Tasks/Task.h"
 #include "VoicecoxCharacterLipSyncAudioComponent.generated.h"
 
 /**
@@ -20,7 +19,7 @@
  * @brief VOICEVOXのAudioQueryを解析して、音再生とスケルタルメッシュコンポーネントにリップシンクを行うコンポーネントクラス
  */
 UCLASS(ClassGroup=(Audio, Common), HideCategories=(Object, ActorComponent, Physics, Rendering, Mobility, LOD), ShowCategories=Trigger, meta=(BlueprintSpawnableComponent))
-class VOICEVOXUECORE_API UVoicecoxCharacterLipSyncAudioComponent : public UAbstractLipSyncAudioComponent
+class VOICEVOXENGINE_API UVoicecoxCharacterLipSyncAudioComponent : public UAbstractLipSyncAudioComponent
 {
 	GENERATED_BODY()
 

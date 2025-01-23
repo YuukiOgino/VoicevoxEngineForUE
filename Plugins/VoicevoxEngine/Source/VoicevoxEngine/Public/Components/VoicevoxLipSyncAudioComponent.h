@@ -9,9 +9,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbstractLipSyncAudioComponent.h"
+#include "Components/AbstractLipSyncAudioComponent.h"
 #include "VoicevoxUEDefined.h"
-#include "Tasks/Task.h"
 #include "VoicevoxLipSyncAudioComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLipSyncUpdate, ELipSyncVowelType, VowelType, FName, MorphTargetName, float, MorphTargetNum);
@@ -23,7 +22,7 @@ DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnLipSyncUpdateNative, ELipSyncVowelType
  * @brief VOICEVOXのAudioQueryを解析して音再生とリップシンクを行うコンポーネントクラス
  */
 UCLASS(ClassGroup=(Audio, Common), HideCategories=(Object, ActorComponent, Physics, Rendering, Mobility, LOD), ShowCategories=Trigger, meta=(BlueprintSpawnableComponent))
-class VOICEVOXUECORE_API UVoicevoxLipSyncAudioComponent : public UAbstractLipSyncAudioComponent
+class VOICEVOXENGINE_API UVoicevoxLipSyncAudioComponent : public UAbstractLipSyncAudioComponent
 {
 	GENERATED_BODY()
 
