@@ -168,17 +168,16 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 	TArray<FVoicevoxLipSync> List;
 	List.Empty();
 
-	TMap<FString, ELipSyncVowelType> FruitMap =
-	{
-		{TEXT("a"), ELipSyncVowelType::A},
-		{TEXT("i"), ELipSyncVowelType::I},
-		{TEXT("u"), ELipSyncVowelType::U},
-		{TEXT("e"), ELipSyncVowelType::E},
-		{TEXT("o"), ELipSyncVowelType::O},
-		{TEXT("cl"), ELipSyncVowelType::CL},
-		{TEXT("N"), ELipSyncVowelType::Non},
-		{TEXT("pau"), ELipSyncVowelType::Non},
-	};
+	TMap<FString, ELipSyncVowelType> FruitMap;
+	FruitMap.Reserve(8);
+	FruitMap.Add(TEXT("a"), ELipSyncVowelType::A);
+	FruitMap.Add(TEXT("i"), ELipSyncVowelType::I);
+	FruitMap.Add(TEXT("u"), ELipSyncVowelType::U);
+	FruitMap.Add(TEXT("e"), ELipSyncVowelType::E);
+	FruitMap.Add(TEXT("o"), ELipSyncVowelType::O);
+	FruitMap.Add(TEXT("cl"), ELipSyncVowelType::CL);
+	FruitMap.Add(TEXT("N"), ELipSyncVowelType::Non);
+	FruitMap.Add(TEXT("pau"), ELipSyncVowelType::Non);
 
 	List.Add({ELipSyncVowelType::Non, AudioQuery.Pre_phoneme_length / AudioQuery.Speed_scale, false, false});
 	

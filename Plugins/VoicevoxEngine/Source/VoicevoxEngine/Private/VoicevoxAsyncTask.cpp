@@ -9,7 +9,6 @@
 
 #include "VoicevoxBlueprintLibrary.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
-#include "Tasks/Task.h"
 
 //------------------------------------------------------------------------
 // UVoicevoxInitializeAsyncTask

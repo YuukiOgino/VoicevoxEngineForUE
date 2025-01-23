@@ -35,9 +35,6 @@ class VOICEVOXUECORE_API UVoicevoxLipSyncAudioComponent : public UAudioComponent
 	//! タスク
 	UE::Tasks::FTask TtsTask;
 
-	//! 
-	float PlayStartTime = 0.0f;
-
 	//!
 	FVoicevoxAudioQuery AudioQuery;
 	

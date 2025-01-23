@@ -59,7 +59,9 @@ void UVoicecoxCharacterLipSyncAudioComponent::EndPlay(const EEndPlayReason::Type
 	Super::EndPlay(EndPlayReason);
 }
 
-// Called every frame
+/**
+ * @brief TickComponent
+ */
 void UVoicecoxCharacterLipSyncAudioComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -70,11 +72,10 @@ void UVoicecoxCharacterLipSyncAudioComponent::TickComponent(float DeltaTime, ELe
 		{
 			if (Sound != nullptr)
 			{
-				Play(PlayStartTime);
+				Play(0.0f);
 			}
 			
 			bIsExecTts = false;
-			PlayStartTime = 0.0f;
 		}
 	}
 }
@@ -439,7 +440,6 @@ void UVoicecoxCharacterLipSyncAudioComponent::PlayToText(const FString Message, 
 	}
 
 	InitMorphNumMap();
-	PlayStartTime = 0.0f;
 	AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerId, Message, bRunKana);
 	AudioQuery.Speed_scale = SpeedScale;
 	AudioQuery.Pitch_scale = PitchScale;
@@ -463,7 +463,6 @@ void UVoicecoxCharacterLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAu
 	}
 
 	InitMorphNumMap();
-	PlayStartTime = 0.0f;
 	AudioQuery = Query;
 	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
 	bIsPlayLipSyncSimple = bEnabledSimpleLipSync;
@@ -481,7 +480,6 @@ void UVoicecoxCharacterLipSyncAudioComponent::PlayToAudioQueryAsset(UVoicevoxQue
 	}
 
 	InitMorphNumMap();
-	PlayStartTime = 0.0f;
 	AudioQuery = VoicevoxQuery->VoicevoxAudioQuery;
 	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
 	bIsPlayLipSyncSimple = bEnabledSimpleLipSync;
