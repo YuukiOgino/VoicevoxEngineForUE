@@ -38,6 +38,7 @@ UVoicevoxLipSyncAudioComponent::UVoicevoxLipSyncAudioComponent(): AudioQuery(), 
  */
 void UVoicevoxLipSyncAudioComponent::BeginPlay()
 {
+	Super::BeginPlay();
 	OnAudioPlaybackPercentNative.AddUObject(this, &UVoicevoxLipSyncAudioComponent::HandlePlaybackPercent);
 }
 

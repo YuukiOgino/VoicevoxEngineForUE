@@ -41,6 +41,7 @@ UVoicecoxCharacterLipSyncAudioComponent::UVoicecoxCharacterLipSyncAudioComponent
  */
 void UVoicecoxCharacterLipSyncAudioComponent::BeginPlay()
 {
+	Super::BeginPlay();
 	OnAudioPlaybackPercentNative.AddUObject(this, &UVoicecoxCharacterLipSyncAudioComponent::HandlePlaybackPercent);
 }
 
