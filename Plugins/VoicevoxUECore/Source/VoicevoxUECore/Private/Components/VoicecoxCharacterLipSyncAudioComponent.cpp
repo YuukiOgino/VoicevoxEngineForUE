@@ -86,7 +86,7 @@ void UVoicecoxCharacterLipSyncAudioComponent::HandlePlaybackPercent(const UAudio
 	{
 		Stop();
 		InitMorphNumMap();
-		if (bEnabledSimpleLipSync)
+		if (bIsPlayLipSyncSimple)
 		{
 			TMap<ELipSyncVowelType, float> Map;
 			Map.Reserve(1);
@@ -107,12 +107,40 @@ void UVoicecoxCharacterLipSyncAudioComponent::HandlePlaybackPercent(const UAudio
 		return;
 	}
 
-	if (!bEnabledLipSync) return;
+	if (!bEnabledLipSync)
+	{
+		InitMorphNumMap();
+		if (bIsPlayLipSyncSimple)
+		{
+			TMap<ELipSyncVowelType, float> Map;
+			Map.Reserve(1);
+			Map.Add(ELipSyncVowelType::Simple, LipSyncMorphNumMap[ELipSyncVowelType::Simple]);
+			UpdateSkeletalMeshMorphTargetNum(Map);
+		}
+		else
+		{
+			TMap<ELipSyncVowelType, float> Map;
+			Map.Reserve(5);
+			Map.Add(ELipSyncVowelType::A, LipSyncMorphNumMap[ELipSyncVowelType::A]);
+			Map.Add(ELipSyncVowelType::I, LipSyncMorphNumMap[ELipSyncVowelType::I]);
+			Map.Add(ELipSyncVowelType::U, LipSyncMorphNumMap[ELipSyncVowelType::U]);
+			Map.Add(ELipSyncVowelType::E, LipSyncMorphNumMap[ELipSyncVowelType::E]);
+			Map.Add(ELipSyncVowelType::O, LipSyncMorphNumMap[ELipSyncVowelType::O]);
+			UpdateSkeletalMeshMorphTargetNum(Map);
+		}
+		
+		if (Sound != nullptr && LipSyncTime < Sound->Duration * InPlaybackPercentage)
+		{
+			NowLipSync = LipSyncList.Pop();
+			LipSyncTime += NowLipSync.Length;
+		}
+		return;
+	}
 	if (LipSyncList.IsEmpty()) return;
 	if (Sound == nullptr)
 	{
 		InitMorphNumMap();
-		if (bEnabledSimpleLipSync)
+		if (bIsPlayLipSyncSimple)
 		{
 			TMap<ELipSyncVowelType, float> Map;
 			Map.Reserve(1);
@@ -137,7 +165,7 @@ void UVoicecoxCharacterLipSyncAudioComponent::HandlePlaybackPercent(const UAudio
 	if (LipSyncTime < NowDuration)
 	{
 		// 前回のリップシンク情報を元に初期化
-		if (NowLipSync.IsConsonant && !bEnabledSimpleLipSync)
+		if (NowLipSync.IsConsonant && !bIsPlayLipSyncSimple)
 		{
 			if (NowLipSync.IsLabialOrPlosive)
 			{
@@ -153,7 +181,7 @@ void UVoicecoxCharacterLipSyncAudioComponent::HandlePlaybackPercent(const UAudio
 		}
 		else
 		{
-			if (!bEnabledSimpleLipSync)
+			if (!bIsPlayLipSyncSimple)
 			{
 				// 母音の初期化
 				// 前回のリップシンク情報から最大値を更新
@@ -248,7 +276,7 @@ TMap<ELipSyncVowelType, float> UVoicecoxCharacterLipSyncAudioComponent::UpdateVo
 	const float Rate = LipSyncSpeed * Alpha;
 	const float A = FMath::Clamp(Rate, 0.0f, 1.0f);
 	TMap<ELipSyncVowelType, float> Map;
-	if (bEnabledSimpleLipSync)
+	if (bIsPlayLipSyncSimple)
 	{
 		Map.Reserve(1);
 		Map.Add(ELipSyncVowelType::Simple, 0.0f);
@@ -337,7 +365,7 @@ TMap<ELipSyncVowelType, float> UVoicecoxCharacterLipSyncAudioComponent::UpdateCo
 	const float Rate = LipSyncSpeed * Alpha;
 	const float A = FMath::Clamp(Rate, 0.0f, 1.0f);
 	TMap<ELipSyncVowelType, float> Map;
-	if (bEnabledSimpleLipSync)
+	if (bIsPlayLipSyncSimple)
 	{
 		Map.Reserve(1);
 		Map.Add(ELipSyncVowelType::Simple, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::Simple], 0.0f, A));
@@ -360,7 +388,7 @@ TMap<ELipSyncVowelType, float> UVoicecoxCharacterLipSyncAudioComponent::UpdatePa
 	const float PauseRate = 2.0f * Alpha;
 	const float A = FMath::Clamp(PauseRate, 0.0f, 1.0f);
 	TMap<ELipSyncVowelType, float> Map;
-	if (bEnabledSimpleLipSync)
+	if (bIsPlayLipSyncSimple)
 	{
 		Map.Reserve(1);
 		Map.Add(ELipSyncVowelType::Simple, FMath::LerpStable(LipSyncMorphNumMap[ELipSyncVowelType::Simple], 0.0f, A));
@@ -386,6 +414,9 @@ void UVoicecoxCharacterLipSyncAudioComponent::UpdateSkeletalMeshMorphTargetNum(T
 	}
 }
 
+/**
+ * @brief オーディオ再生とリップシンク再生を止める
+ */
 void UVoicecoxCharacterLipSyncAudioComponent::StopAudioAndLipSync()
 {
 	if (bIsExecTts)
@@ -410,6 +441,7 @@ void UVoicecoxCharacterLipSyncAudioComponent::PlayToText(const int SpeakerType, 
 	PlayStartTime = 0.0f;
 	AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerType, Message, bRunKana);
 	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
+	bIsPlayLipSyncSimple = bEnabledSimpleLipSync;
 	ToSoundWave(SpeakerType, bEnableInterrogativeUpspeak);
 }
 
@@ -427,6 +459,7 @@ void UVoicecoxCharacterLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAu
 	PlayStartTime = 0.0f;
 	AudioQuery = Query;
 	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
+	bIsPlayLipSyncSimple = bEnabledSimpleLipSync;
 	ToSoundWave(SpeakerType, bEnableInterrogativeUpspeak);
 }
 
@@ -444,7 +477,40 @@ void UVoicecoxCharacterLipSyncAudioComponent::PlayToAudioQueryAsset(UVoicevoxQue
 	PlayStartTime = 0.0f;
 	AudioQuery = VoicevoxQuery->VoicevoxAudioQuery;
 	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
+	bIsPlayLipSyncSimple = bEnabledSimpleLipSync;
 	ToSoundWave(VoicevoxQuery->SpeakerType, bEnableInterrogativeUpspeak);
+}
+
+/**
+ * @brief リップシンクデータをAudioQueryからセットする
+ */
+void UVoicecoxCharacterLipSyncAudioComponent::SetLipSyncDataToAudioQuery(const FVoicevoxAudioQuery& Query)
+{
+	if (GetPlayState() != EAudioComponentPlayState::Stopped) return;
+	
+	AudioQuery = Query;
+	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
+	// LipSyncに必要なデータを生成する
+	bIsPlayLipSyncSimple = bEnabledSimpleLipSync;
+	LipSyncList = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetLipSyncList(AudioQuery, bIsPlayLipSyncSimple);
+	Algo::Reverse(LipSyncList);
+	LipSyncTime = 0.0f;
+}
+
+/**
+ * @brief リップシンクデータをAudioQueryアセットからセットする
+ */
+void UVoicecoxCharacterLipSyncAudioComponent::SetLipSyncDataToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery)
+{
+	if (GetPlayState() != EAudioComponentPlayState::Stopped) return;
+	
+	AudioQuery = VoicevoxQuery->VoicevoxAudioQuery;
+	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
+	// LipSyncに必要なデータを生成する
+	bIsPlayLipSyncSimple = bEnabledSimpleLipSync;
+	LipSyncList = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetLipSyncList(AudioQuery, bIsPlayLipSyncSimple);
+	Algo::Reverse(LipSyncList);
+	LipSyncTime = 0.0f;
 }
 
 /**
@@ -474,7 +540,7 @@ void UVoicecoxCharacterLipSyncAudioComponent::ToSoundWave(const int64 SpeakerTyp
 		bIsExecTts = true;
 
 		// LipSyncに必要なデータを生成する
-		LipSyncList = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetLipSyncList(AudioQuery, bEnabledSimpleLipSync);
+		LipSyncList = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetLipSyncList(AudioQuery, bIsPlayLipSyncSimple);
 		Algo::Reverse(LipSyncList);
 		LipSyncTime = 0.0f;
 		// USoundWaveを生成する。Launch内でPlayを実行するとクラッシュするため、Play処理はTickComponentで行う
@@ -500,6 +566,16 @@ void UVoicecoxCharacterLipSyncAudioComponent::ToSoundWave(const int64 SpeakerTyp
 				SoundWave->SoundGroup = SOUNDGROUP_Default;
 
 				SetSound(SoundWave);
+
+				if (OnCreateSoundWave.IsBound())
+				{
+					OnCreateSoundWave.Broadcast();
+				}
+
+				if (OnCreateSoundWaveNative.IsBound())
+				{
+					OnCreateSoundWaveNative.Broadcast();
+				}
 			}
 		}
 	});

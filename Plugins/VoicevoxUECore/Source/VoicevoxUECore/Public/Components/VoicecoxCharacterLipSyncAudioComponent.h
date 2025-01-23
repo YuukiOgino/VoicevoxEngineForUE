@@ -10,12 +10,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VoicevoxLipSyncAudioComponent.h"
 #include "VoicevoxQuery.h"
 #include "VoicevoxUEDefined.h"
 #include "Components/AudioComponent.h"
 #include "Tasks/Task.h"
 #include "VoicecoxCharacterLipSyncAudioComponent.generated.h"
-
 
 /**
  * @class UVoicecoxCharacterLipSyncAudioComponent
@@ -53,6 +53,9 @@ class VOICEVOXUECORE_API UVoicecoxCharacterLipSyncAudioComponent : public UAudio
 
 	//!
 	float LipSyncTime = 0.0f;
+
+	//! リップシンク実行しているのは簡易リップシンク再生をしているか
+	bool bIsPlayLipSyncSimple = false;
 	
 	void HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage);
 
@@ -118,6 +121,13 @@ class VOICEVOXUECORE_API UVoicecoxCharacterLipSyncAudioComponent : public UAudio
 
 public:
 
+	//! サウンド生成完了イベント
+	UPROPERTY(BlueprintAssignable)
+	FOnCreateSoundWave OnCreateSoundWave;
+
+	//! サウンド再生完了デリゲート(C++)
+	FOnCreateSoundWaveNative OnCreateSoundWaveNative;
+	
 	//! リップシンクで使用するモーフターゲット名のマップ
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, EditFixedSize)
 	TMap<ELipSyncVowelType, FName> LipSyncMorphNameMap;
@@ -139,6 +149,10 @@ public:
 	 */
 	UVoicecoxCharacterLipSyncAudioComponent();
 
+	/**
+	 * @brief オーディオ再生とリップシンク再生を止める
+	 * @details サウンド生成中の場合、生成完了するまでスレッドを停止します。ゲームの描画が長時間止まっても問題ないタイミングで実行してください。
+	 */
 	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
 	void StopAudioAndLipSync();
 	
@@ -152,8 +166,26 @@ public:
 	void PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true);
 
 	/**
+	 * @brief リップシンクデータをAudioQueryからセットする
+	 * @details 予め生成したVOICCEVOXの音声アセットをSetSoundでセット後、リップシンクを行う場合はAudioQueryを渡してリップシンクデータを生成してください。<br/>
+	*			サウンド再生中はバグを防ぐため更新は行いません。サウンドをStopした状態で呼び出してください。
+	 * @param [in]Query : リップシンクデータをセットするAudioQuery 
+	 */
+	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
+	void SetLipSyncDataToAudioQuery(const FVoicevoxAudioQuery& Query);
+
+	/**
+	 * @brief リップシンクデータをAudioQueryアセットからセットする
+	 * @details 予め生成したVOICCEVOXの音声アセットをSetSoundでセット後、リップシンクを行う場合はAudioQueryアセットを渡してリップシンクデータを生成してください。<br/>
+	*			サウンド再生中はバグを防ぐため更新は行いません。サウンドをStopした状態で呼び出してください。
+	 * @param [in]VoicevoxQuery : リップシンクデータをセットするAudioQueryアセット
+	 */
+	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
+	void SetLipSyncDataToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery);
+	
+	/**
 	 * @brief リップシンク対象のスケルタルメッシュをセット
-	 * @param SkeletalMesh 
+	 * @param [in]SkeletalMesh :  リップシンク対象のスケルタルメッシュ
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetSkeletalMesh(USkeletalMeshComponent* SkeletalMesh);
