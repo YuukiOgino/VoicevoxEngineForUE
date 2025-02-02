@@ -28,7 +28,11 @@ class VOICEVOXENGINE_API UVoicecoxCharacterLipSyncAudioComponent : public UAbstr
 	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComponent;
 
 protected:
-	
+
+	/**
+	 * @brief モーフターゲット値の通知実行
+	 * @param [in] Map : 「あいうえお」、もしくは簡易リップシンクに関わるモーフターゲット値のマップ
+	 */
 	virtual void NotificationMorphNum(TMap<ELipSyncVowelType, float> Map) override;
 	
 public:

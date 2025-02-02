@@ -10,6 +10,9 @@
 
 DEFINE_LOG_CATEGORY(LogVoicevoxLipSync);
 
+/**
+ * @brief コンストラクタ
+ */
 UAbstractLipSyncAudioComponent::UAbstractLipSyncAudioComponent(): AudioQuery(), NowLipSync()
 {
 	PrimaryComponentTick.bCanEverTick = true;

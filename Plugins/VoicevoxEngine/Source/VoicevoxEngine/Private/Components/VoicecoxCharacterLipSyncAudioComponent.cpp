@@ -7,11 +7,17 @@
 
 #include "Components/VoicecoxCharacterLipSyncAudioComponent.h"
 
+/**
+ * @brief リップシンク対象のスケルタルメッシュをセット
+ */
 void UVoicecoxCharacterLipSyncAudioComponent::SetSkeletalMesh(USkeletalMeshComponent* SkeletalMesh)
 {
 	SkeletalMeshComponent = SkeletalMesh;
 }
 
+/**
+ * @brief モーフターゲット値の通知実行
+ */
 void UVoicecoxCharacterLipSyncAudioComponent::NotificationMorphNum(TMap<ELipSyncVowelType, float> Map)
 {
 	for (const auto Result : Map)

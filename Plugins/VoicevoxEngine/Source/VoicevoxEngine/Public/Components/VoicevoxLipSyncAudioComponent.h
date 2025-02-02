@@ -27,9 +27,10 @@ class VOICEVOXENGINE_API UVoicevoxLipSyncAudioComponent : public UAbstractLipSyn
 	GENERATED_BODY()
 
 protected:
+	
 	/**
 	 * @brief モーフターゲット値の通知実行
-	 * @param Map 
+	 * @param [in] Map : 「あいうえお」、もしくは簡易リップシンクに関わるモーフターゲット値のマップ
 	 */
 	virtual void NotificationMorphNum(TMap<ELipSyncVowelType, float> Map) override;
 	
