@@ -1,6 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Yuuki Ogino. All Rights Reserved.
 
-
+/**
+ * @brief  VOICEVOXのAudioQueryを解析して音再生とリップシンクを行う抽象コンポーネントのCPPファイル
+ * @author Yuuki Ogino
+ */
 #include "Components/AbstractLipSyncAudioComponent.h"
 #include "Sound/SoundWaveProcedural.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
@@ -72,6 +75,9 @@ void UAbstractLipSyncAudioComponent::TickComponent(float DeltaTime, ELevelTick T
 	}
 }
 
+/**
+ * @brief OnAudioPlaybackPercentのコールバック
+ */
 void UAbstractLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent* InComponent, const USoundWave* InSoundWave, const float InPlaybackPercentage)
 {
 	// ループ無しかつ最後まで再生しても止まらない場合があるので、明確にストップする
@@ -249,7 +255,9 @@ void UAbstractLipSyncAudioComponent::HandlePlaybackPercent(const UAudioComponent
 	}
 }
 
-
+/**
+ * @brief モーフターゲット値を初期化
+ */
 void UAbstractLipSyncAudioComponent::InitMorphNumMap() 
 {
 	LipSyncMorphNumMap[ELipSyncVowelType::A] = 0.0f;
@@ -260,6 +268,9 @@ void UAbstractLipSyncAudioComponent::InitMorphNumMap()
 	LipSyncMorphNumMap[ELipSyncVowelType::Simple] = 0.0f;
 }
 
+/**
+ * @brief 母音のモーフターゲット値リストを更新
+ */
 TMap<ELipSyncVowelType, float> UAbstractLipSyncAudioComponent::UpdateVowelMorphNum(const float Alpha)
 {
 	const float Rate = LipSyncSpeed * Alpha;
@@ -349,6 +360,9 @@ TMap<ELipSyncVowelType, float> UAbstractLipSyncAudioComponent::UpdateVowelMorphN
 	return Map;
 }
 
+/**
+ * @brief 子音のモーフターゲット値リストを更新
+ */
 TMap<ELipSyncVowelType, float> UAbstractLipSyncAudioComponent::UpdateConsonantMorphNum(const float Alpha)
 {
 	const float Rate = LipSyncSpeed * Alpha;
@@ -371,6 +385,9 @@ TMap<ELipSyncVowelType, float> UAbstractLipSyncAudioComponent::UpdateConsonantMo
 	return Map;
 }
 
+/**
+ * @brief 無音のモーフターゲット値リストを更新
+ */	
 TMap<ELipSyncVowelType, float> UAbstractLipSyncAudioComponent::UpdatePauseMorphNum(const float Alpha)
 {
 	// 最速でデフォルトに戻すためにレートは2.0固定
@@ -408,6 +425,9 @@ void UAbstractLipSyncAudioComponent::StopAudioAndLipSync()
 	Super::Stop();
 }
 
+/**
+ * @brief テキストを解析してSoundWave生成後、音祭再生とリップシンク再生を行います。
+ */
 void UAbstractLipSyncAudioComponent::PlayToText(const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak,
 	const float SpeedScale, const float PitchScale, const float IntonationScale, const float VolumeScale, const float PrePhonemeLength, const float PostPhonemeLength)
 {
@@ -432,6 +452,9 @@ void UAbstractLipSyncAudioComponent::PlayToText(const FString Message, const boo
 	ToSoundWave(SpeakerId, bEnableInterrogativeUpspeak);
 }
 
+/**
+ * @brief VOICEVOX COREで取得したAudioQueryを元にSoundWaveを生成後、音祭再生とリップシンク再生を行います。
+ */
 void UAbstractLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery& Query, const bool bEnableInterrogativeUpspeak)
 {
 	if (CheckExecTts()) return;
@@ -449,6 +472,9 @@ void UAbstractLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery&
 	ToSoundWave(SpeakerId, bEnableInterrogativeUpspeak);
 }
 
+/**
+ * @brief AudioQueryアセットからSoundWaveを生成後、音祭再生とリップシンク再生を行います。
+ */
 void UAbstractLipSyncAudioComponent::PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, const bool bEnableInterrogativeUpspeak)
 {
 	if (CheckExecTts()) return;
