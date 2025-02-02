@@ -80,8 +80,8 @@ class VOICEVOXUECORE_API UAbstractLipSyncAudioComponent : public UAudioComponent
 	
 	/**
 	 * @brief AudioQueryからSoundWaveへ変換
-	 * @param [in] SpeakerType 
-	 * @param [in] bEnableInterrogativeUpspeak 
+	 * @param [in] SpeakerType						: スピーカーID
+	 * @param [in] bEnableInterrogativeUpspeak 		: 疑問文の調整を有効にする
 	 */
 	void ToSoundWave(int64 SpeakerType, bool bEnableInterrogativeUpspeak = true);
 
