@@ -21,7 +21,7 @@ DECLARE_MULTICAST_DELEGATE(FOnCreateSoundWaveNative);
  * @class UAbstractLipSyncAudioComponent
  * @brief VOICEVOXから生成したデータを元に音再生とリップシンク再生を行う抽象AudioComponentクラス
  */
-UCLASS(Abstract, ClassGroup=(Audio, Common), HideCategories=(Object, ActorComponent, Physics, Rendering, Mobility, LOD), ShowCategories=Trigger, meta=(BlueprintSpawnableComponent))
+UCLASS(Abstract, ClassGroup=(Audio, Common), HideCategories=(Object, ActorComponent, Physics, Rendering, Mobility, LOD), ShowCategories=Trigger, meta=(BlueprintSpawnableComponent, DisplayName = "VoicevoxLipSyncAudioComponent"))
 class VOICEVOXUECORE_API UAbstractLipSyncAudioComponent : public UAudioComponent
 {
 	GENERATED_BODY()
