@@ -18,7 +18,7 @@
  * @class UVoicecoxCharacterLipSyncAudioComponent
  * @brief VOICEVOXのAudioQueryを解析して、音再生とスケルタルメッシュコンポーネントにリップシンクを行うコンポーネントクラス
  */
-UCLASS(ClassGroup=(Audio, Common), HideCategories=(Object, ActorComponent, Physics, Rendering, Mobility, LOD), ShowCategories=Trigger, meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(Audio, Common), meta=(BlueprintSpawnableComponent))
 class VOICEVOXENGINE_API UVoicecoxCharacterLipSyncAudioComponent : public UAbstractLipSyncAudioComponent
 {
 	GENERATED_BODY()
