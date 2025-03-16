@@ -1,5 +1,11 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
+// リップシンクの実装にあたり、以下のソースコードを元にUE版で実装しています。
+// https://github.com/TORISOUP/VoicevoxClientSharp/blob/master/VoicevoxClientSharp.Unity/Assets/VoicevoxClientSharp.Unity/Runtime/VRM/VoicevoxVrmLipSyncPlayer.cs
+// Copyright © 2024 TORISOUP 
+// MITライセンス全文
+// https://opensource.org/licenses/mit-license.php
+
 /**
  * @brief  VOICEVOXのAudioQueryを解析して音再生とリップシンクを行う抽象コンポーネントのCPPファイル
  * @author Yuuki Ogino
