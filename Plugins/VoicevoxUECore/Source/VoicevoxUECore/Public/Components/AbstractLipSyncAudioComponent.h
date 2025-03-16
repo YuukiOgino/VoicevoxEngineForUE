@@ -135,27 +135,27 @@ public:
 	FOnCreateSoundWaveNative OnCreateSoundWaveNative;
 	
 	//! リップシンクで使用するモーフターゲット名のマップ
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, EditFixedSize)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, EditFixedSize, Category="Voicevox|LipSync")
 	TMap<ELipSyncVowelType, FName> LipSyncMorphNameMap;
 
 	//! 再生するスピーカーID
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Voicevox|LipSync")
 	int64 SpeakerId = 3;
 
 	//! リップシンクの実行速度（最大値までの時間、0だとリップシンク実行が行われない）
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(ClampMin = "0.1", ClampMax = "2.0", UIMin = "0.1", UIMax = "2.0"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Voicevox|LipSync", meta=(ClampMin = "0.1", ClampMax = "2.0", UIMin = "0.1", UIMax = "2.0"))
 	float LipSyncSpeed = 0.75f;
 
 	//! 発音に関わるモーフターゲットの最大値（0だとリップシンク実行が行われない）
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(ClampMin = "0.1", ClampMax = "1.0", UIMin = "0.1", UIMax = "1.0"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Voicevox|LipSync", meta=(ClampMin = "0.1", ClampMax = "1.0", UIMin = "0.1", UIMax = "1.0"))
 	float MaxMouthScale = 1.0f;
 
 	//! リップシンクを実行するか。falseの場合は音再生のみ行う
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Voicevox|LipSync")
 	bool bEnabledLipSync = true;
 
 	//! 簡易的なリップシンクを実行するか。
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Voicevox|LipSync")
 	bool bEnabledSimpleLipSync = false;
 	
 	/**
@@ -167,7 +167,7 @@ public:
 	 * @brief オーディオ再生とリップシンク再生を止める
 	 * @details サウンド生成中の場合、生成完了するまでスレッドを停止します。ゲームの描画が長時間止まっても問題ないタイミングで実行してください。
 	 */
-	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
+	UFUNCTION(BlueprintCallable, Category="Voicevox|LipSync")
 	void StopAudioAndLipSync();
 	
 	/**
@@ -182,7 +182,7 @@ public:
 	 * @param [in] PrePhonemeLength					: 開始無音
 	 * @param [in] PostPhonemeLength				: 終了無音
 	 */
-	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
+	UFUNCTION(BlueprintCallable, Category="Voicevox|LipSync")
 	void PlayToText(FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true,
 		float SpeedScale = 1.0f, float PitchScale = 0.0f,  float IntonationScale = 1.0f, float VolumeScale = 1.0f, float PrePhonemeLength = 0.1f, float PostPhonemeLength = 0.1f);
 
@@ -191,7 +191,7 @@ public:
 	 * @param [in] Query							: VOICEVOXのAudioQuery
 	 * @param [in] bEnableInterrogativeUpspeak 		: 疑問文の調整を有効にする
 	 */
-	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
+	UFUNCTION(BlueprintCallable, Category="Voicevox|LipSync")
 	void PlayToAudioQuery(const FVoicevoxAudioQuery& Query, bool bEnableInterrogativeUpspeak = true);
 
 	/**
@@ -199,7 +199,7 @@ public:
 	 * @param [in] VoicevoxQuery					: Queryアセット
 	 * @param [in] bEnableInterrogativeUpspeak 		: 疑問文の調整を有効にする
 	 */
-	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
+	UFUNCTION(BlueprintCallable, Category="Voicevox|LipSync")
 	void PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true);
 
 	/**
@@ -208,7 +208,7 @@ public:
 	*			サウンド再生中はバグを防ぐため更新は行いません。サウンドをStopした状態で呼び出してください。
 	 * @param [in]Query : リップシンクデータをセットするAudioQuery 
 	 */
-	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
+	UFUNCTION(BlueprintCallable, Category="Voicevox|LipSync")
 	void SetLipSyncDataToAudioQuery(const FVoicevoxAudioQuery& Query);
 
 	/**
@@ -217,7 +217,7 @@ public:
 	*			サウンド再生中はバグを防ぐため更新は行いません。サウンドをStopした状態で呼び出してください。
 	 * @param [in]VoicevoxQuery : リップシンクデータをセットするAudioQueryアセット
 	 */
-	UFUNCTION(BlueprintCallable, Category="Voicevox|Components")
+	UFUNCTION(BlueprintCallable, Category="Voicevox|LipSync")
 	void SetLipSyncDataToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery);
 };
 
