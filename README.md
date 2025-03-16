@@ -217,6 +217,12 @@ VOICEVOX Engine for UE5プラグインに関して質問があれば、[X](https
 
 ※VOICEVOX CORE作者のヒホ氏、VOICEVOX公式Twitterアカウント及びVOICEVOX ホームページで、VOICEVOX Engine for UE5プラグインの問い合わせをしないようにお願いいたします。
 
+# スペシャルサンクス
+
+- arayz (株式会社アレイズ)
+  - http://arayz.co.jp/
+  - リップシンク実装にあたり「あれいずちゃん」の3Dモデルをお借りしました。
+
 # ライセンス
 VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコードの公開が不要な別ライセンスのデュアルライセンスとなります。
 
