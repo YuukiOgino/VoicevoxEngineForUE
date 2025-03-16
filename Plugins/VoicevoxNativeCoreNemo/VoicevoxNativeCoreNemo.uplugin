@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 2,
-	"VersionName": "1.1",
+	"Version": 3,
+	"VersionName": "1.2",
 	"FriendlyName": "VoicevoxNativeCoreNemo",
 	"Description": "VOICEVOX NEMO CORE Native Library",
 	"Category": "TextToSpeech",
