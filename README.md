@@ -247,6 +247,7 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 - 2022/12/01
   - 0.1 公開バージョン
 
+---
 
 - リップシンクの実装にあたり、以下のコードを参考にしました。
   - https://github.com/TORISOUP/VoicevoxClientSharp/blob/master/VoicevoxClientSharp.Unity/Assets/VoicevoxClientSharp.Unity/Runtime/VRM/VoicevoxVrmLipSyncPlayer.cs
