@@ -163,7 +163,7 @@ TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const UVoicevoxQuery& Voicevo
 /**
  * @brief VOICEVOX COREで取得したAudioQuery元に、中品質なLipSyncに必要なデータリストを取得
  */
-TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQuery AudioQuery, bool bIsSimple)
+TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQuery AudioQuery, bool bIsSimple, float PitchModulation)
 {
 	TArray<FVoicevoxLipSync> List;
 	List.Empty();
