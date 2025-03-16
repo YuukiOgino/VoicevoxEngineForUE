@@ -248,6 +248,6 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 
 - リップシンクの実装にあたり、以下のコードを参考にしました。
   - https://github.com/TORISOUP/VoicevoxClientSharp/blob/master/VoicevoxClientSharp.Unity/Assets/VoicevoxClientSharp.Unity/Runtime/VRM/VoicevoxVrmLipSyncPlayer.cs
-  - Copyright © 2024 TORISOUP 
-  - MITライセンス全文
+- Copyright © 2024 TORISOUP 
+- MITライセンス全文
   - https://opensource.org/licenses/mit-license.php
