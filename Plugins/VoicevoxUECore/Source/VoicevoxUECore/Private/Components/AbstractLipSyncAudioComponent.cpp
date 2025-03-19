@@ -435,7 +435,7 @@ void UAbstractLipSyncAudioComponent::StopAudioAndLipSync()
 }
 
 /**
- * @brief テキストを解析してSoundWave生成後、音祭再生とリップシンク再生を行います。
+ * @brief テキストを解析してSoundWave生成後、音再生とリップシンク再生を行います。
  */
 void UAbstractLipSyncAudioComponent::PlayToText(const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak,
 	const float SpeedScale, const float PitchScale, const float IntonationScale, const float VolumeScale, const float PrePhonemeLength, const float PostPhonemeLength)
@@ -462,7 +462,7 @@ void UAbstractLipSyncAudioComponent::PlayToText(const FString Message, const boo
 }
 
 /**
- * @brief VOICEVOX COREで取得したAudioQueryを元にSoundWaveを生成後、音祭再生とリップシンク再生を行います。
+ * @brief VOICEVOX COREで取得したAudioQueryを元にSoundWaveを生成後、音再生とリップシンク再生を行います。
  */
 void UAbstractLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery& Query, const bool bEnableInterrogativeUpspeak)
 {
@@ -482,7 +482,7 @@ void UAbstractLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery&
 }
 
 /**
- * @brief AudioQueryアセットからSoundWaveを生成後、音祭再生とリップシンク再生を行います。
+ * @brief AudioQueryアセットからSoundWaveを生成後、音再生とリップシンク再生を行います。
  */
 void UAbstractLipSyncAudioComponent::PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, const bool bEnableInterrogativeUpspeak)
 {
