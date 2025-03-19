@@ -203,7 +203,7 @@ public:
 	void PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true);
 
 	/**
-	 * @brief リップシンクデータをAudioQueryからセットする
+	 * @brief AudioQueryセットしてリップシンクデータを事前生成します
 	 * @details 予め生成したVOICCEVOXの音声アセットをSetSoundでセット後、リップシンクを行う場合はAudioQueryを渡してリップシンクデータを生成してください。<br/>
 	*			サウンド再生中はバグを防ぐため更新は行いません。サウンドをStopした状態で呼び出してください。
 	 * @param [in] Query : リップシンクデータをセットするAudioQuery 
@@ -212,7 +212,7 @@ public:
 	void SetLipSyncDataToAudioQuery(const FVoicevoxAudioQuery& Query);
 
 	/**
-	 * @brief リップシンクデータをAudioQueryアセットからセットする
+	 * @brief AudioQueryアセットをセットしてリップシンクデータを事前生成します
 	 * @details 予め生成したVOICCEVOXの音声アセットをSetSoundでセット後、リップシンクを行う場合はAudioQueryアセットを渡してリップシンクデータを生成してください。<br/>
 	*			サウンド再生中はバグを防ぐため更新は行いません。サウンドをStopした状態で呼び出してください。
 	 * @param [in] VoicevoxQuery : リップシンクデータをセットするAudioQueryアセット

@@ -502,7 +502,7 @@ void UAbstractLipSyncAudioComponent::PlayToAudioQueryAsset(UVoicevoxQuery* Voice
 }
 
 /**
- * @brief リップシンクデータをAudioQueryからセットする
+ * @brief AudioQueryをセットしてリップシンクデータを事前生成します。
  */
 void UAbstractLipSyncAudioComponent::SetLipSyncDataToAudioQuery(const FVoicevoxAudioQuery& Query)
 {
@@ -518,7 +518,7 @@ void UAbstractLipSyncAudioComponent::SetLipSyncDataToAudioQuery(const FVoicevoxA
 }
 
 /**
- * @brief リップシンクデータをAudioQueryアセットからセットする
+ * @brief AudioQueryアセットをセットしてリップシンクデータを事前生成します。
  */
 void UAbstractLipSyncAudioComponent::SetLipSyncDataToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery)
 {
