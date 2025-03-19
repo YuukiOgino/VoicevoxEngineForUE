@@ -206,7 +206,7 @@ public:
 	 * @brief リップシンクデータをAudioQueryからセットする
 	 * @details 予め生成したVOICCEVOXの音声アセットをSetSoundでセット後、リップシンクを行う場合はAudioQueryを渡してリップシンクデータを生成してください。<br/>
 	*			サウンド再生中はバグを防ぐため更新は行いません。サウンドをStopした状態で呼び出してください。
-	 * @param [in]Query : リップシンクデータをセットするAudioQuery 
+	 * @param [in] Query : リップシンクデータをセットするAudioQuery 
 	 */
 	UFUNCTION(BlueprintCallable, Category="Voicevox|LipSync")
 	void SetLipSyncDataToAudioQuery(const FVoicevoxAudioQuery& Query);
@@ -215,7 +215,7 @@ public:
 	 * @brief リップシンクデータをAudioQueryアセットからセットする
 	 * @details 予め生成したVOICCEVOXの音声アセットをSetSoundでセット後、リップシンクを行う場合はAudioQueryアセットを渡してリップシンクデータを生成してください。<br/>
 	*			サウンド再生中はバグを防ぐため更新は行いません。サウンドをStopした状態で呼び出してください。
-	 * @param [in]VoicevoxQuery : リップシンクデータをセットするAudioQueryアセット
+	 * @param [in] VoicevoxQuery : リップシンクデータをセットするAudioQueryアセット
 	 */
 	UFUNCTION(BlueprintCallable, Category="Voicevox|LipSync")
 	void SetLipSyncDataToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery);

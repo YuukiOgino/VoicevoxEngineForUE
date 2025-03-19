@@ -540,10 +540,11 @@ bool UAbstractLipSyncAudioComponent::CheckExecTts() const
 {
 	if (bIsExecTts)
 	{
-		UE_LOG(LogVoicevoxLipSync, Warning, TEXT("合成音声生成中のため、音声再生をキャンセルしました。Delay等で少し時間を置いてから再度実行してください"));
+		const FString Message = TEXT("合成音声生成中のため、音声再生をキャンセルしました。Delay等で少し時間を置いてから再度実行してください");
+		UE_LOG(LogVoicevoxLipSync, Warning, TEXT("%s"), *Message);
 		const FColor Col = FColor::Yellow;
 		const FVector2D Scl = FVector2D(1.0f, 1.0f);
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, Col, TEXT("合成音声生成中のため、音声再生をキャンセルしました。Delay等で少し時間を置いてから再度実行してください"), true, Scl);
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, Col, Message, true, Scl);
 		return true;
 	}
 
