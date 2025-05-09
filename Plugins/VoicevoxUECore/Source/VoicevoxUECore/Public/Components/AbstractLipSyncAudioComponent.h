@@ -171,7 +171,7 @@ public:
 	void StopAudioAndLipSync();
 	
 	/**
-	 * @brief テキストを解析してSoundWave生成後、音祭再生とリップシンク再生を行います。
+	 * @brief テキストを解析してSoundWave生成後、音再生とリップシンク再生を行います。
 	 * @param [in] Message							: 音声データに変換するtextデータ
 	 * @param [in] bRunKana							: AquesTalkライクな記法で実行するか
 	 * @param [in] bEnableInterrogativeUpspeak		: 疑問文の調整を有効にする
@@ -187,7 +187,7 @@ public:
 		float SpeedScale = 1.0f, float PitchScale = 0.0f,  float IntonationScale = 1.0f, float VolumeScale = 1.0f, float PrePhonemeLength = 0.1f, float PostPhonemeLength = 0.1f);
 
 	/**
-	 * @brief VOICEVOX COREで取得したAudioQueryを元にSoundWaveを生成後、音祭再生とリップシンク再生を行います。
+	 * @brief VOICEVOX COREで取得したAudioQueryを元にSoundWaveを生成後、音再生とリップシンク再生を行います。
 	 * @param [in] Query							: VOICEVOXのAudioQuery
 	 * @param [in] bEnableInterrogativeUpspeak 		: 疑問文の調整を有効にする
 	 */
@@ -195,7 +195,7 @@ public:
 	void PlayToAudioQuery(const FVoicevoxAudioQuery& Query, bool bEnableInterrogativeUpspeak = true);
 
 	/**
-	 * @brief AudioQueryアセットからSoundWaveを生成後、音祭再生とリップシンク再生を行います。
+	 * @brief AudioQueryアセットからSoundWaveを生成後、音再生とリップシンク再生を行います。
 	 * @param [in] VoicevoxQuery					: Queryアセット
 	 * @param [in] bEnableInterrogativeUpspeak 		: 疑問文の調整を有効にする
 	 */
@@ -203,19 +203,19 @@ public:
 	void PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true);
 
 	/**
-	 * @brief リップシンクデータをAudioQueryからセットする
+	 * @brief AudioQueryセットしてリップシンクデータを事前生成します
 	 * @details 予め生成したVOICCEVOXの音声アセットをSetSoundでセット後、リップシンクを行う場合はAudioQueryを渡してリップシンクデータを生成してください。<br/>
 	*			サウンド再生中はバグを防ぐため更新は行いません。サウンドをStopした状態で呼び出してください。
-	 * @param [in]Query : リップシンクデータをセットするAudioQuery 
+	 * @param [in] Query : リップシンクデータをセットするAudioQuery 
 	 */
 	UFUNCTION(BlueprintCallable, Category="Voicevox|LipSync")
 	void SetLipSyncDataToAudioQuery(const FVoicevoxAudioQuery& Query);
 
 	/**
-	 * @brief リップシンクデータをAudioQueryアセットからセットする
+	 * @brief AudioQueryアセットをセットしてリップシンクデータを事前生成します
 	 * @details 予め生成したVOICCEVOXの音声アセットをSetSoundでセット後、リップシンクを行う場合はAudioQueryアセットを渡してリップシンクデータを生成してください。<br/>
 	*			サウンド再生中はバグを防ぐため更新は行いません。サウンドをStopした状態で呼び出してください。
-	 * @param [in]VoicevoxQuery : リップシンクデータをセットするAudioQueryアセット
+	 * @param [in] VoicevoxQuery : リップシンクデータをセットするAudioQueryアセット
 	 */
 	UFUNCTION(BlueprintCallable, Category="Voicevox|LipSync")
 	void SetLipSyncDataToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery);

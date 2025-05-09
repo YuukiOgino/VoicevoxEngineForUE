@@ -435,7 +435,7 @@ void UAbstractLipSyncAudioComponent::StopAudioAndLipSync()
 }
 
 /**
- * @brief テキストを解析してSoundWave生成後、音祭再生とリップシンク再生を行います。
+ * @brief テキストを解析してSoundWave生成後、音再生とリップシンク再生を行います。
  */
 void UAbstractLipSyncAudioComponent::PlayToText(const FString Message, const bool bRunKana, const bool bEnableInterrogativeUpspeak,
 	const float SpeedScale, const float PitchScale, const float IntonationScale, const float VolumeScale, const float PrePhonemeLength, const float PostPhonemeLength)
@@ -462,7 +462,7 @@ void UAbstractLipSyncAudioComponent::PlayToText(const FString Message, const boo
 }
 
 /**
- * @brief VOICEVOX COREで取得したAudioQueryを元にSoundWaveを生成後、音祭再生とリップシンク再生を行います。
+ * @brief VOICEVOX COREで取得したAudioQueryを元にSoundWaveを生成後、音再生とリップシンク再生を行います。
  */
 void UAbstractLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery& Query, const bool bEnableInterrogativeUpspeak)
 {
@@ -482,7 +482,7 @@ void UAbstractLipSyncAudioComponent::PlayToAudioQuery(const FVoicevoxAudioQuery&
 }
 
 /**
- * @brief AudioQueryアセットからSoundWaveを生成後、音祭再生とリップシンク再生を行います。
+ * @brief AudioQueryアセットからSoundWaveを生成後、音再生とリップシンク再生を行います。
  */
 void UAbstractLipSyncAudioComponent::PlayToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery, const bool bEnableInterrogativeUpspeak)
 {
@@ -502,7 +502,7 @@ void UAbstractLipSyncAudioComponent::PlayToAudioQueryAsset(UVoicevoxQuery* Voice
 }
 
 /**
- * @brief リップシンクデータをAudioQueryからセットする
+ * @brief AudioQueryをセットしてリップシンクデータを事前生成します。
  */
 void UAbstractLipSyncAudioComponent::SetLipSyncDataToAudioQuery(const FVoicevoxAudioQuery& Query)
 {
@@ -518,7 +518,7 @@ void UAbstractLipSyncAudioComponent::SetLipSyncDataToAudioQuery(const FVoicevoxA
 }
 
 /**
- * @brief リップシンクデータをAudioQueryアセットからセットする
+ * @brief AudioQueryアセットをセットしてリップシンクデータを事前生成します。
  */
 void UAbstractLipSyncAudioComponent::SetLipSyncDataToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery)
 {
@@ -540,10 +540,11 @@ bool UAbstractLipSyncAudioComponent::CheckExecTts() const
 {
 	if (bIsExecTts)
 	{
-		UE_LOG(LogVoicevoxLipSync, Warning, TEXT("合成音声生成中のため、音声再生をキャンセルしました。Delay等で少し時間を置いてから再度実行してください"));
+		const FString Message = TEXT("合成音声生成中のため、音声再生をキャンセルしました。Delay等で少し時間を置いてから再度実行してください");
+		UE_LOG(LogVoicevoxLipSync, Warning, TEXT("%s"), *Message);
 		const FColor Col = FColor::Yellow;
 		const FVector2D Scl = FVector2D(1.0f, 1.0f);
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, Col, TEXT("合成音声生成中のため、音声再生をキャンセルしました。Delay等で少し時間を置いてから再度実行してください"), true, Scl);
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, Col, Message, true, Scl);
 		return true;
 	}
 

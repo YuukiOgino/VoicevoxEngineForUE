@@ -7,6 +7,8 @@
 
 #include "Components/VoicecoxCharacterLipSyncAudioComponent.h"
 
+DEFINE_LOG_CATEGORY(LogVoicevoxLipSync);
+
 /**
  * @brief リップシンク対象のスケルタルメッシュをセット
  */
@@ -22,6 +24,19 @@ void UVoicecoxCharacterLipSyncAudioComponent::NotificationMorphNum(TMap<ELipSync
 {
 	for (const auto Result : Map)
 	{
-		SkeletalMeshComponent->SetMorphTarget(LipSyncMorphNameMap[Result.Key], Result.Value);
+		if (FName MorphName = LipSyncMorphNameMap[Result.Key]; MorphName == NAME_None)
+		{
+			FString KeyName = StaticEnum<ELipSyncVowelType>()->GetValueAsString(Result.Key);
+			FString Message = FString::Format(TEXT("LipSyncMorphNameMap {0}にモーフターゲットの名前を設定してください。"), { KeyName });
+			UE_LOG(LogVoicevoxLipSync, Error, TEXT("%s"), *Message);
+			
+			const FColor Col = FColor::Yellow;
+			const FVector2D Scl = FVector2D(1.0f, 1.0f);
+			GEngine->AddOnScreenDebugMessage(-1, 3.0f, Col, Message, true, Scl);
+		}
+		else
+		{
+			SkeletalMeshComponent->SetMorphTarget(MorphName, Result.Value);
+		}
 	}
 }
