@@ -190,6 +190,12 @@ v1.0で破壊的変更を行ったため、記事を再度作成しています�
 const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunTextToSpeech(SpeakerType, Message, bRunKana, bEnableInterrogativeUpspeak);
 ```
 
+v1.2で追加されたリップシンクコンポーネントは以下の記事を御覧ください。<br/>
+[VoicevoxEngine For UE リップシンクコンポーネント](https://zenn.dev/yuukiogino/articles/6506b5a134cee7)
+
+![Sample1](https://github.com/user-attachments/assets/3999829a-e1ba-4647-b234-3c0fd30f89d4)
+<br/> © 2025 arayz. All rights reserved.
+
 <details>
 <summary>v0.1の場合</summary>
 
@@ -213,15 +219,23 @@ VOICEVOX Engine for UE5の利用規約は[VOICEVOXのホームページに記載
 各スピーカーモデルのライセンスは[VOICEVOX公式ホームページのキャラクター一覧](https://voicevox.hiroshiba.jp/)を参照してください。
 
 # 問い合わせに関して
-VOICEVOX Engine for UE5プラグインに関して質問があれば、[Twitter](https://twitter.com/YuukiOgino)で聞いてもらうか、[Qiitaのコメント欄](https://qiita.com/YuukiOgino/items/bc3ab31de4b1d0689625)、及び[issue](https://github.com/YuukiOgino/VoicevoxEngineForUE/issues)に記載してください。
+VOICEVOX Engine for UE5プラグインに関して質問があれば、[X](https://x.com/YuukiOgino)で聞いてもらうか、[Qiitaのコメント欄](https://qiita.com/YuukiOgino/items/bc3ab31de4b1d0689625)、及び[issue](https://github.com/YuukiOgino/VoicevoxEngineForUE/issues)に記載してください。
 
 ※VOICEVOX CORE作者のヒホ氏、VOICEVOX公式Twitterアカウント及びVOICEVOX ホームページで、VOICEVOX Engine for UE5プラグインの問い合わせをしないようにお願いいたします。
+
+# スペシャルサンクス
+
+- arayz (株式会社アレイズ)様
+  - http://arayz.co.jp/
+  - リップシンク実装にあたり「あれいずちゃん」の3Dモデルをお借りしました。
 
 # ライセンス
 VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコードの公開が不要な別ライセンスのデュアルライセンスとなります。
 
 # 更新履歴
 
+- 2025/06/29
+  - 1.2 リップシンクの実行コードをVoicevoxClientSharpを元に大幅リニューアル、リップシンク用のコンポーネントを追加
 - 2024/12/05
   - 1.1 UE5.5対応。不具合修正。
 - 2024/11/28
@@ -238,3 +252,11 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
   - 0.2 VOICEVOX CORE 0.14.4対応。Mac対応。一部APIの破壊的変更を実施。
 - 2022/12/01
   - 0.1 公開バージョン
+
+---
+
+- リップシンクの実装にあたり、以下のコードを参考にしました。
+  - https://github.com/TORISOUP/VoicevoxClientSharp/blob/master/VoicevoxClientSharp.Unity/Assets/VoicevoxClientSharp.Unity/Runtime/VRM/VoicevoxVrmLipSyncPlayer.cs
+- Copyright © 2024 TORISOUP 
+- MITライセンス全文
+  - https://opensource.org/licenses/mit-license.php

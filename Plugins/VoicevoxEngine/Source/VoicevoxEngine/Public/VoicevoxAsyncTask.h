@@ -12,6 +12,7 @@
 #include "VoicevoxUEDefined.h"
 #include "VoicevoxQuery.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
+#include "Tasks/Task.h"
 #include "VoicevoxAsyncTask.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FVoicevoxCoreAsyncTaskDelegate);

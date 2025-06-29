@@ -163,35 +163,52 @@ TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const UVoicevoxQuery& Voicevo
 /**
  * @brief VOICEVOX COREで取得したAudioQuery元に、中品質なLipSyncに必要なデータリストを取得
  */
-TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQuery AudioQuery)
+TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQuery AudioQuery, bool bIsSimple, float PitchModulation)
 {
 	TArray<FVoicevoxLipSync> List;
 	List.Empty();
 
-	TMap<FString, ELipSyncVowelType> FruitMap =
-	{
-		{TEXT("a"), ELipSyncVowelType::A},
-		{TEXT("i"), ELipSyncVowelType::I},
-		{TEXT("u"), ELipSyncVowelType::U},
-		{TEXT("e"), ELipSyncVowelType::E},
-		{TEXT("o"), ELipSyncVowelType::O},
-		{TEXT("cl"), ELipSyncVowelType::U},
-		{TEXT("N"), ELipSyncVowelType::Non},
-		{TEXT("pau"), ELipSyncVowelType::Non},
-	};
+	TMap<FString, ELipSyncVowelType> FruitMap;
+	FruitMap.Reserve(8);
+	FruitMap.Add(TEXT("a"), ELipSyncVowelType::A);
+	FruitMap.Add(TEXT("i"), ELipSyncVowelType::I);
+	FruitMap.Add(TEXT("u"), ELipSyncVowelType::U);
+	FruitMap.Add(TEXT("e"), ELipSyncVowelType::E);
+	FruitMap.Add(TEXT("o"), ELipSyncVowelType::O);
+	FruitMap.Add(TEXT("cl"), ELipSyncVowelType::CL);
+	FruitMap.Add(TEXT("N"), ELipSyncVowelType::Non);
+	FruitMap.Add(TEXT("pau"), ELipSyncVowelType::Non);
+
+	List.Add({ELipSyncVowelType::Non, AudioQuery.Pre_phoneme_length / AudioQuery.Speed_scale, false, false});
 	
 	for (auto [Moras, Accent, Pause_mora, Is_interrogative] : AudioQuery.Accent_phrases)
 	{
 		for (auto [Text, Consonant, Consonant_length, Vowel, Vowel_length, Pitch] : Moras)
 		{
-			List.Add({FruitMap[Vowel], Vowel_length + Consonant_length});
+			if (bIsSimple)
+			{
+				List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.Speed_scale + Consonant_length / AudioQuery.Speed_scale });
+			}
+			else
+			{
+				if (!Consonant.IsEmpty())
+				{
+					FString C = Consonant.ToLower();
+					bool IsLabialOrPlosive = C.Equals(TEXT("w")) || C.Equals(TEXT("m")) || C.Equals(TEXT("b")) || C.Equals(TEXT("p")) || C.Equals(TEXT("f")) || C.Equals(TEXT("v"));
+					List.Add({FruitMap[Vowel], Consonant_length / AudioQuery.Speed_scale, true, IsLabialOrPlosive});
+				}
+				List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.Speed_scale, false, false});
+			}
+			
 		}
 
 		if (Pause_mora.Vowel.Equals(TEXT("pau"), ESearchCase::IgnoreCase))
 		{
-			List.Add({ELipSyncVowelType::Non, Pause_mora.Vowel_length});
+			List.Add({ELipSyncVowelType::Non, Pause_mora.Vowel_length / AudioQuery.Speed_scale, false, false});
 		}
 	}
+
+	List.Add({ELipSyncVowelType::Non, AudioQuery.Post_phoneme_length / AudioQuery.Speed_scale, false, false});
 	
 	return List;
 }

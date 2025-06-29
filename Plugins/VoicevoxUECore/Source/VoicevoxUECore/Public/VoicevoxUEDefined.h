@@ -21,12 +21,14 @@
 UENUM(BlueprintType)
 enum class ELipSyncVowelType : uint8
 {
-	A	UMETA(DisplayName = "母音:あ",	ToolTip = "母音:あ（a）"),
-	I	UMETA(DisplayName = "母音:い",	ToolTip = "母音:い（i）"),
-	U	UMETA(DisplayName = "母音:う",	ToolTip = "母音:う（u）"),
-	E	UMETA(DisplayName = "母音:え",	ToolTip = "母音:え（e）"),
-	O	UMETA(DisplayName = "母音:お",	ToolTip = "母音:お（o）"),
-	Non	UMETA(DisplayName = "無音",		ToolTip = "無音（句読点の待機時間）"),
+	A		UMETA(DisplayName = "母音:あ",	ToolTip = "母音:あ（a）"),
+	I		UMETA(DisplayName = "母音:い",	ToolTip = "母音:い（i）"),
+	U		UMETA(DisplayName = "母音:う",	ToolTip = "母音:う（u）"),
+	E		UMETA(DisplayName = "母音:え",	ToolTip = "母音:え（e）"),
+	O		UMETA(DisplayName = "母音:お",	ToolTip = "母音:お（o）"),
+	CL		UMETA(DisplayName = "子音:っ",	ToolTip = "子音:っ（cl）"),
+	Simple  UMETA(DisplayName = "簡易",		ToolTip = "簡易の口パク"),
+	Non		UMETA(DisplayName = "無音",		ToolTip = "無音（句読点の待機時間）"),
 };
 
 //------------------------------------------------------------------------
@@ -224,7 +226,15 @@ struct FVoicevoxLipSync
 	
 	//! 長さ
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Length;	
+	float Length;
+
+	//! 子音の発音であるか
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	bool IsConsonant;
+
+	//! 口唇音、もしくは破裂音か（口を閉じて発音するか）
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	bool IsLabialOrPlosive;
 };
 
 /**

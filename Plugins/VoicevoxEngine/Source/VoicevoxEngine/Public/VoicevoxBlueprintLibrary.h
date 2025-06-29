@@ -26,6 +26,13 @@ class VOICEVOXENGINE_API UVoicevoxBlueprintLibrary : public UBlueprintFunctionLi
 	GENERATED_BODY()
 
 public:
+
+	/**
+	 * @brief 全てのVOICEVOX CORE 初期化が完了しているか
+	 * @return 全てのCOREの初期化実行済みの場合はtrue
+	 */
+	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxIsInitialize"))
+	static UPARAM(DisplayName="IsInitialize")  bool IsInitialize();
 	
 	/**
 	 * @fn
@@ -111,7 +118,7 @@ public:
 	static UPARAM(DisplayName="AudioQuery") FVoicevoxAudioQuery GetAudioQuery(int SpeakerType, FString Message, bool bRunKana = false);
 
 	/**
-	 * @brief VOICEVOX COREで取得したAudioQuery元にSoundWaveを作成(Blueprint公開ノード)
+	 * @brief VOICEVOX COREで取得したAudioQueryを元にSoundWaveを作成(Blueprint公開ノード)
 	 * @param[in] AudioQuery						AudioQuery構造体
 	 * @param[in] SpeakerType						話者番号
 	 * @param[in] bEnableInterrogativeUpspeak		疑問文の調整を有効にする

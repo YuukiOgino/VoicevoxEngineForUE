@@ -262,9 +262,11 @@ public:
 	/**
 	 * @brief VOICEVOX COREで取得したAudioQuery元に、中品質なLipSyncに必要なデータリストを取得(Blueprint公開ノード)
 	 * @param[in] AudioQuery AudioQuery構造体
+	 * @param[in] bIsSimple 簡易のリップシンクで再生するか
+	 * @param[in] PitchModulation USoundWave再生時のピッチ
 	 * @return AudioQuery情報を元に生成した、中品質のLipSyncに必要なデータリスト
 	 */
-	static TArray<FVoicevoxLipSync> GetLipSyncList(FVoicevoxAudioQuery AudioQuery);
+	static TArray<FVoicevoxLipSync> GetLipSyncList(FVoicevoxAudioQuery AudioQuery, bool bIsSimple = false, float PitchModulation = 1.0f);
 	
 	//--------------------------------
 	// VOICEVOX CORE Meta関連

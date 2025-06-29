@@ -11,6 +11,14 @@
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 
 /**
+ * @brief 全てのVOICEVOX CORE 初期化が完了しているか
+ */
+bool UVoicevoxBlueprintLibrary::IsInitialize()
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetIsInitialize();
+}
+
+/**
  * @brief VOICEVOX CORE 終了処理(Blueprint公開ノード)
  */
 void UVoicevoxBlueprintLibrary::Finalize()
@@ -142,8 +150,6 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData)
 		
 		Sound->RawPCMDataSize = WaveInfo.SampleDataSize;
 		Sound->QueueAudio(WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
-		//Sound->RawPCMData = static_cast<uint8*>(FMemory::Malloc(WaveInfo.SampleDataSize));
-		//FMemory::Memmove(Sound->RawPCMData, WaveInfo.SampleDataStart, WaveInfo.SampleDataSize);
 		
 		Sound->Duration = static_cast<float>(NumFrames) / *WaveInfo.pSamplesPerSec;
 		Sound->SetSampleRate(*WaveInfo.pSamplesPerSec);
