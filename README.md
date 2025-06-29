@@ -190,6 +190,12 @@ v1.0で破壊的変更を行ったため、記事を再度作成しています�
 const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RunTextToSpeech(SpeakerType, Message, bRunKana, bEnableInterrogativeUpspeak);
 ```
 
+v1.2で追加されたリップシンクコンポーネントは以下の記事を御覧ください。<br/>
+[VoicevoxEngine For UE リップシンクコンポーネント](https://zenn.dev/yuukiogino/articles/6506b5a134cee7)
+
+![Sample1](https://github.com/user-attachments/assets/3999829a-e1ba-4647-b234-3c0fd30f89d4)
+<br/> © 2025 arayz. All rights reserved.
+
 <details>
 <summary>v0.1の場合</summary>
 
@@ -228,7 +234,7 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 
 # 更新履歴
 
-- 2025/03/XX
+- 2025/06/29
   - 1.2 リップシンクの実行コードをVoicevoxClientSharpを元に大幅リニューアル、リップシンク用のコンポーネントを追加
 - 2024/12/05
   - 1.1 UE5.5対応。不具合修正。
