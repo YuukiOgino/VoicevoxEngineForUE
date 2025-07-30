@@ -556,7 +556,7 @@ bool UAbstractLipSyncAudioComponent::CheckExecTts() const
  */
 void UAbstractLipSyncAudioComponent::ToSoundWave(const int64 SpeakerType, const bool bEnableInterrogativeUpspeak)
 {
-	TtsTask = UE::Tasks::Launch<>(TEXT("LipSyncComponentTextToSpeechTask"), [=]
+	TtsTask = UE::Tasks::Launch<>(TEXT("LipSyncComponentTextToSpeechTask"), [=, this]
 	{
 		bIsExecTts = true;
 
