@@ -221,4 +221,4 @@ public:
 	void SetLipSyncDataToAudioQueryAsset(UVoicevoxQuery* VoicevoxQuery);
 };
 
-DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxLipSync, Log, All);
+VOICEVOXUECORE_API DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxLipSync, Log, All);

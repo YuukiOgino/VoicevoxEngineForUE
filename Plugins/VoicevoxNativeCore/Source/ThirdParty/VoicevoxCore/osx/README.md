@@ -6,17 +6,22 @@
 
 ## CPUモードの場合
 
-[VOICEVOX CORE 0.15.5](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.5)から【voicevox_core-osx-arm64-cpu-0.15.5.zip】
+[VOICEVOX CORE 0.15.7](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.7)から【voicevox_core-osx-arm64-cpu-0.15.7.zip】
 をダウンロードしてください。<br/>
 ダウンロードしたzipファイルは適当なフォルダで解凍をしてください。
 
 また、ターミナルで以下のコマンドを実施すれば、ダウンローダー経由からライブラリを入手できます。
 
 ```
-curl -sSfL https://github.com/VOICEVOX/voicevox_core/releases/latest/download/download-osx-arm64 -o download
+curl -sSfL https://github.com/VOICEVOX/voicevox_core/releases/0.15.7/download/download-osx-arm64 -o download
 chmod +x download
-./download -v 0.15.5
+./download -v 0.15.7
 ```
+
+> [!WARNING]
+> ダウンローダーの最新版(Latest)はVOICEVOX CORE 0.16.ｘ以上のダウンロードに対応しており、15.9以下のバージョンはフォルダ構造の違いからダウンロードできません。<br/>
+> ダウンローダーは必ず15.ｘから使用してください。<br/>
+> https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.7
 
 以下のdylib及びファイルを格納してください。
 

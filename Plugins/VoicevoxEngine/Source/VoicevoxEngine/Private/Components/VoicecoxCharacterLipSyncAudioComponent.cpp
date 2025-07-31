@@ -7,8 +7,6 @@
 
 #include "Components/VoicecoxCharacterLipSyncAudioComponent.h"
 
-DEFINE_LOG_CATEGORY(LogVoicevoxLipSync);
-
 /**
  * @brief リップシンク対象のスケルタルメッシュをセット
  */

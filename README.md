@@ -9,15 +9,21 @@
 
 ## Windows
 
-* UnrealEngine5.0以上
+* UnrealEngine5.0～5.5
 * Windows10以上
 * VisualStudio2022もしくはJetBrains Rider
 
 ## Mac
 
-* UnrealEngine5.2以上(Apple シリコン)
+* UnrealEngine5.2～5.5(Apple シリコン)
 * 12.5 Monterey 以降
 * XCode14.1～15.4
+
+> [!NOTE]
+> UE5.6からモデルデータの読み込みに必ず失敗してしまうため、UE5.6以降は当面の間サポート対象外とさせていただきます。<br/>
+> ↓原因と思われる現象<br/>
+> https://github.com/onnx/onnx/issues/6313<br/>
+> https://github.com/Hiroshiba/vv_core_inference/issues/27
 
 > [!NOTE]
 > 5.4までXCode16以上はビルドが通りません。<br/>
@@ -74,11 +80,11 @@ VOICEVOXのマルチエンジン機能をUEで実現させるために、プラ�
 VOICEVOX COREのReadMEに従って、CPUモード、もしくはGPUモードの動作に必要なライブラリを取得します。
 
 > [!NOTE]
-> v1.1は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
+> v1.3は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
 > [VOICEVOX CORE 0.14.6](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.6)<br/>
 > [VOICEVOX NEMO CORE 0.14.0](https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.14.0)<br/>
 > 
-> [VOICEVOX CORE 0.15.5](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.5)<br/>
+> [VOICEVOX CORE 0.15.7](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.7)<br/>
 > [VOICEVOX NEMO CORE 0.15.0](https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.15.0)<br/>
 
 ## VOICEVOX CORE、Open JTalk、ONNX Runtimeの取得
@@ -205,8 +211,13 @@ v1.2で追加されたリップシンクコンポーネントは以下の記事�
 
 # 現在判明している不具合
 
-- COREのAPIを非同期で行った場合、特にRunTextToSpeechからの戻りを待たずにプレイ終了したり、続けてRunTextToSpeechを実行するとクラッシュします。
-  - この部分はどうしようか、現在模索中です。
+- UE5.6からmodelフォルダにある各binファイルの読み込みに失敗してしまう。
+  - 以下のissuesに対応方法が書かれていますが、検証していないので動作保証はしません。
+    - https://github.com/Hiroshiba/vv_core_inference/issues/27
+  - VOICEVOX CORE 0.16.xを使用することで修正される可能性あり？
+
+- ~~COREのAPIを非同期で行った場合、特にRunTextToSpeechからの戻りを待たずにプレイ終了したり、続けてRunTextToSpeechを実行するとクラッシュします。~~（解決済）
+  - 修正しました。（v1.2）
 
 - ~~パッケージングを行うとOpen JTalkフォルダとmodelフォルダのコピーが失敗します。~~（解決済）
   - 修正しました。（v0.3）
@@ -234,6 +245,8 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 
 # 更新履歴
 
+- 2025/07/31
+  - 1.3 パッケージングができない不具合を修正。
 - 2025/06/29
   - 1.2 リップシンクの実行コードをVoicevoxClientSharpを元に大幅リニューアル、リップシンク用のコンポーネントを追加
 - 2024/12/05
