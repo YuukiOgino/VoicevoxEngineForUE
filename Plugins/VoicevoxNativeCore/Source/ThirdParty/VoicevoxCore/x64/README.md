@@ -19,10 +19,15 @@
 > [!NOTE]
 > GPU起動に必要なDLLはダウンローダー以外では入手できません。必ずダウンローダーからVOICEVOX COREを入手してください。
 
+> [!WARNING]
+> ダウンローダーの最新版(Latest)はVOICEVOX CORE 0.16.ｘ以上のダウンロードに対応しており、15.9以下のバージョンはフォルダ構造の違いからダウンロードできません。<br/>
+> ダウンローダーは必ず15.ｘから使用してください。<br/>
+> https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.7
+
 ダウンローダー　DirectML版コマンド例
 ```PowerShell
-Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/latest/download/download-windows-x64.exe -OutFile ./download.exe
-./download.exe -v 0.15.5 --device directml
+Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/download/0.15.7/download-windows-x64.exe -OutFile ./download.exe
+./download.exe -v 0.15.7 --device directml
 ```
 
 ### DirectML版
