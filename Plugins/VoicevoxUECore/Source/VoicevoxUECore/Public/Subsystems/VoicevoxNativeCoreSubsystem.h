@@ -9,8 +9,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "VoicevoxUEDefined.h"
-#include "VoicevoxNativeDefined.h"
+#include "VoicevoxApiSubsystem.h"
 #include "Subsystems/Subsystem.h"
 #include "VoicevoxNativeCoreSubsystem.generated.h"
 
@@ -18,8 +17,8 @@
  * @class UVoicevoxNativeCoreSubsystem
  * @brief VOICEVOX COREのネイティブライブラリのAPIを実行する基礎Subsystemクラス
  */
-UCLASS(Abstract,  MinimalAPI)
-class UVoicevoxNativeCoreSubsystem : public USubsystem
+UCLASS(Abstract, MinimalAPI)
+class UVoicevoxNativeCoreSubsystem : public UVoicevoxApiSubsystem
 {
 	GENERATED_BODY()
 protected:
@@ -27,9 +26,6 @@ protected:
 	//----------------------------------------------------------------
 	// Variable
 	//----------------------------------------------------------------
-	
-	//! 初期化処理実施済みか
-	bool bIsInit = false;
 
 	//! VOICEVOX COREライブラリハンドル
 	void* CoreLibraryHandle = nullptr;
@@ -37,12 +33,6 @@ protected:
 	//----------------------------------------------------------------
 	// Function
 	//----------------------------------------------------------------
-	
-	/**
-	 * @brief VOICEVOXから受信したエラーメッセージを表示
-	 * @param[in] MessageFormat : エラーメッセージのフォーマット
-	 */
-	VOICEVOXUECORE_API static void ShowVoicevoxErrorMessage(const FString& MessageFormat);
 
 	/**
 	 * @brief OpenJtakeのディレクトリ名を取得
@@ -99,13 +89,13 @@ public:
 	 *
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API bool CoreInitialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false);
+	VOICEVOXUECORE_API virtual bool ApiInitialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false) override;
 
 	/**
 	 * @brief デフォルトの初期化オプションを生成する
 	 * @return デフォルト値が設定された初期化オプション
 	 */
-	VOICEVOXUECORE_API VoicevoxInitializeOptions MakeDefaultInitializeOptions();
+	VOICEVOXUECORE_API virtual VoicevoxInitializeOptions MakeDefaultInitializeOptions() override;
 	
 	//--------------------------------
 	// VOICEVOX CORE Finalize関連
@@ -119,7 +109,7 @@ public:
 	 * VOICEVOXの終了処理は何度も実行可能。
 	 * 実行せずにexitしても大抵の場合問題ないが、CUDAを利用している場合は終了処理を実行しておかないと例外が起こることがある。
 	 */
-	VOICEVOXUECORE_API void Finalize();
+	VOICEVOXUECORE_API virtual void Finalize() override;
 
 	//--------------------------------
 	// VOICEVOX CORE Model関連
@@ -136,7 +126,7 @@ public:
 	 *
 	 * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API bool LoadModel(int64 SpeakerId);
+	VOICEVOXUECORE_API virtual bool LoadModel(int64 SpeakerId) override;
 
 	/**
 	 * @fn
@@ -145,7 +135,7 @@ public:
 	 * @param SpeakerId 話者番号
 	 * @return 存在したらtrue、無い場合はfalse
 	 */
-	VOICEVOXUECORE_API bool IsModel(int64 SpeakerId);
+	VOICEVOXUECORE_API virtual bool IsModel(int64 SpeakerId) override;
 
 	//--------------------------------
 	// VOICEVOX CORE AudioQuery関連
@@ -162,13 +152,7 @@ public:
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
-
-	/**
-	 * @brief デフォルトの AudioQuery のオプションを生成する
-	 * @return デフォルト値が設定された AudioQuery オプション
-	 */
-	VOICEVOXUECORE_API VoicevoxAudioQueryOptions MakeDefaultAudioQueryOptions();
+	VOICEVOXUECORE_API virtual FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana) override;
 	
 	//--------------------------------
 	// VOICEVOX CORE TextToSpeech関連
@@ -186,13 +170,13 @@ public:
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak);
+	VOICEVOXUECORE_API virtual TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak) override;
 
 	/**
 	 * @brief デフォルトのテキスト音声合成オプションを生成する
 	 * @return テキスト音声合成オプション
 	 */
-	VOICEVOXUECORE_API VoicevoxTtsOptions MakeDefaultTtsOptions();
+	VOICEVOXUECORE_API virtual VoicevoxTtsOptions MakeDefaultTtsOptions() override;
 	
 	/**
 	 * @fn
@@ -205,7 +189,7 @@ public:
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API TArray<uint8> RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
+	VOICEVOXUECORE_API virtual TArray<uint8> RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) override;
 
 	/**
 	 * @fn
@@ -218,13 +202,13 @@ public:
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
+	VOICEVOXUECORE_API virtual TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) override;
 
 	/**
 	 * @brief デフォルトの `voicevox_synthesis` のオプションを生成する
 	 * @return デフォルト値が設定された `voicevox_synthesis` のオプション
 	 */
-	VOICEVOXUECORE_API VoicevoxSynthesisOptions MakeDefaultSynthesisOptions();
+	VOICEVOXUECORE_API virtual VoicevoxSynthesisOptions MakeDefaultSynthesisOptions() override;
 	
 	//--------------------------------
 	// VOICEVOX CORE Property関連
@@ -232,37 +216,29 @@ public:
 	
 	/**
 	 * @fn
-	 *  VOICEVOX CORE名取得
-	 * @brief VOICEVOX COREの名前取得
-	 * @return VOICEVOX COREの名前取得
-	 */
-	virtual FString GetVoicevoxCoreName() { return FString(""); }
-	
-	/**
-	 * @fn
 	 * メタ情報を取得する
 	 * @brief 話者名や話者IDのリストを取得する
 	 * @return メタ情報が格納されたjson形式の構造体
 	 */
-	VOICEVOXUECORE_API TArray<FVoicevoxMeta> GetMetaList();
+	VOICEVOXUECORE_API virtual TArray<FVoicevoxMeta> GetMetaList() override;
 
 	/**
 	 * @brief サポートデバイス情報を取得する
 	 * @return サポートデバイス情報の構造体
 	 */
-	VOICEVOXUECORE_API FVoicevoxSupportedDevices GetSupportedDevices();
+	VOICEVOXUECORE_API virtual FVoicevoxSupportedDevices GetSupportedDevices() override;
 
 	/**
 	 * @brief VOICEVOX COREのバージョンを取得する
 	 * @return SemVerでフォーマットされたバージョン
 	 */
-	VOICEVOXUECORE_API FString GetVoicevoxVersion();
+	VOICEVOXUECORE_API virtual FString GetVoicevoxVersion() override;
 
 	/**
 	 * @brief ハードウェアアクセラレーションがGPUモードか判定する
 	 * @return GPUモードならtrue、そうでないならfalse
 	 */
-	VOICEVOXUECORE_API bool IsGpuMode();
+	VOICEVOXUECORE_API virtual bool IsGpuMode() override;
 
 	//--------------------------------
 	// VOICEVOX CORE PhonemeLength関連
@@ -279,7 +255,7 @@ public:
 	 *
 	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
 	 */
-	VOICEVOXUECORE_API TArray<float> GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID);
+	VOICEVOXUECORE_API virtual TArray<float> GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID) override;
 
 	//--------------------------------
 	// VOICEVOX CORE Mora関連
@@ -301,10 +277,10 @@ public:
 	 *
 	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
 	 */
-	VOICEVOXUECORE_API TArray<float> FindPitchEachMora(int64 Length, TArray<int64> VowelPhonemeList, TArray<int64> ConsonantPhonemeList,
-											  TArray<int64> StartAccentList, TArray<int64> EndAccentList,
-											  TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
-											  int64 SpeakerID);
+	VOICEVOXUECORE_API virtual TArray<float> FindPitchEachMora(int64 Length, TArray<int64> VowelPhonemeList, TArray<int64> ConsonantPhonemeList,
+	                                                            TArray<int64> StartAccentList, TArray<int64> EndAccentList,
+	                                                            TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
+	                                                            int64 SpeakerID) override;
 
 	//--------------------------------
 	// VOICEVOX CORE DecodeForward関連
@@ -323,7 +299,7 @@ public:
 	 *
 	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
 	 */
-	VOICEVOXUECORE_API TArray<float> DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID);
+	VOICEVOXUECORE_API virtual TArray<float> DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID) override;
 };
 
 DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxNativeCore, Log, All);

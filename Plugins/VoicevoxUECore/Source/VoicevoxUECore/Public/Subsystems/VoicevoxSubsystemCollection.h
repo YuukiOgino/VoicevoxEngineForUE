@@ -10,7 +10,7 @@
 
 #include "Subsystems/VoicevoxNativeCoreSubsystem.h"
 
-class UVoicevoxNativeObject;
+class UVoicevoxApiObject;
 
 /**
  * @class FVoicevoxSubsystemCollection
@@ -23,7 +23,7 @@ class FVoicevoxSubsystemCollection final : public FSubsystemCollectionBase
 	// friend class
 	//----------------------------------------------------------------
 	
-	friend class UVoicevoxNativeObject;
+	friend class UVoicevoxApiObject;
 
 	//----------------------------------------------------------------
 	// Function

@@ -6,7 +6,7 @@
  */
 
 #include "Subsystems/VoicevoxCoreSubsystem.h"
-#include "VoicevoxNativeObject.h"
+#include "VoicevoxApiObject.h"
 
 //--------------------------------
 // override
@@ -19,8 +19,8 @@ void UVoicevoxCoreSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	const UClass* NativeClass = UVoicevoxNativeObject::StaticClass();
-	NativeInstance = NewObject<UVoicevoxNativeObject>(this, NativeClass);
+	const UClass* NativeClass = UVoicevoxApiObject::StaticClass();
+	NativeInstance = NewObject<UVoicevoxApiObject>(this, NativeClass);
 }
 
 /**

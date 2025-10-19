@@ -10,18 +10,6 @@
 
 DEFINE_LOG_CATEGORY(LogVoicevoxNativeCore);
 
-/**
- * @brief VOICEVOXから受信したエラーメッセージを表示
- * @param [in] MessageFormat : エラーメッセージのフォーマット
- */
-void UVoicevoxNativeCoreSubsystem::ShowVoicevoxErrorMessage(const FString& MessageFormat)
-{
-	  UE_LOG(LogVoicevoxNativeCore, Error, TEXT("%s"), *MessageFormat);
-	  const FColor Col = FColor::Red;
-	  const FVector2D Scl = FVector2D(1.0f, 1.0f);
-	  GEngine->AddOnScreenDebugMessage(-1, 3.0f, Col, *MessageFormat, true, Scl);
-}
-
 //--------------------------------
 // VOICEVOX CORE Initialize関連
 //--------------------------------
@@ -29,7 +17,7 @@ void UVoicevoxNativeCoreSubsystem::ShowVoicevoxErrorMessage(const FString& Messa
 /**
  * @brief 音声合成するための初期化を行う。VOICEVOXのAPIを正しく実行するには先に初期化が必要
  */
-bool UVoicevoxNativeCoreSubsystem::CoreInitialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
+bool UVoicevoxNativeCoreSubsystem::ApiInitialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
 {
 #if PLATFORM_WINDOWS
 	const FString PlatformFolderName = TEXT("Win64");
@@ -69,8 +57,6 @@ bool UVoicevoxNativeCoreSubsystem::CoreInitialize(const bool bUseGPU, const int 
 		VoicevoxInitializeOptions Option;
 		Option.acceleration_mode = bUseGPU ? VoicevoxAccelerationMode::VOICEVOX_ACCELERATION_MODE_GPU : VoicevoxAccelerationMode::VOICEVOX_ACCELERATION_MODE_CPU;
 		Option.cpu_num_threads = CPUNumThreads;
-		Option.load_all_models = bLoadAllModels;
-		Option.open_jtalk_dict_dir = TCHAR_TO_UTF8(*JtalkPath);
 
 		if (const VoicevoxResultCode Result = FuncPtr(Option); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
@@ -242,7 +228,7 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQuery(int64 SpeakerId,
 			{
 				const FString FuncName = "voicevox_audio_query"; 
 				const FString FreeFuncName = "voicevox_audio_query_json_free"; 
-				typedef const VoicevoxResultCode(*DLL_Function)(const char *Text, uint32_t Speaker_ID, VoicevoxAudioQueryOptions Options, char **Output_Audio_Query_JSON);
+				typedef const VoicevoxResultCode(*DLL_Function)(const char *Text, uint32_t Speaker_ID, char **Output_Audio_Query_JSON);
 				typedef const void(*DLL_FreeFunction)(char *Audio_Query_JSON);
 
 #if PLATFORM_WINDOWS
@@ -261,9 +247,7 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQuery(int64 SpeakerId,
 				}
 
 				char* Output = nullptr;
-				VoicevoxAudioQueryOptions Options;
-				Options.kana = bKana;
-				if (const VoicevoxResultCode Result = FuncPtr(TCHAR_TO_UTF8(*Message), SpeakerId, Options, &Output);
+				if (const VoicevoxResultCode Result = FuncPtr(TCHAR_TO_UTF8(*Message), SpeakerId, &Output);
 					Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 				{
 					VoicevoxShowErrorResultMessage(TEXT("TTS"), Result);
@@ -282,37 +266,6 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQuery(int64 SpeakerId,
 		}
 	}
 	return AudioQuery;
-}
-
-/**
- * @brief デフォルトの AudioQuery のオプションを生成する
- */
-VoicevoxAudioQueryOptions UVoicevoxNativeCoreSubsystem::MakeDefaultAudioQueryOptions()
-{
-	const FString FuncName = "voicevox_make_default_audio_query_options"; 
-	typedef const VoicevoxAudioQueryOptions(*DLL_Function)();
-	
-	if (CoreLibraryHandle != nullptr)
-	{
-#if PLATFORM_WINDOWS
-		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
-#elif PLATFORM_MAC
-		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
-#endif 
-		
-		if (!FuncPtr)
-		{
-			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_make_default_audio_query_options Function Error"), *GetVoicevoxCoreName());
-			ShowVoicevoxErrorMessage(Message);
-			return VoicevoxAudioQueryOptions{};
-		}
-
-		return FuncPtr();
-	}
-
-	const FString Message =  FString::Printf(TEXT("VOICEVOX %s LoadError!!"), *GetVoicevoxCoreName());
-	ShowVoicevoxErrorMessage(Message);
-	return VoicevoxAudioQueryOptions{};
 }
 
 //--------------------------------
@@ -350,7 +303,6 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::RunTextToSpeech(const int64 SpeakerI
 
 			uint8* OutputWAV = nullptr;
 			VoicevoxTtsOptions Options;
-			Options.kana = bKana;
 			Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
 			uintptr_t OutPutSize = 0;
 		

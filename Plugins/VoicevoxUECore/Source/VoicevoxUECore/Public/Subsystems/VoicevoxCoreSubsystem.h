@@ -9,7 +9,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "VoicevoxNativeObject.h"
+#include "VoicevoxApiObject.h"
 #include "VoicevoxUEDefined.h"
 #include "VoicevoxQuery.h"
 #include "Subsystems/EngineSubsystem.h"
@@ -19,7 +19,7 @@
 // class
 //----------------------------------------------------------------
 
-class UVoicevoxNativeObject;
+class UVoicevoxApiObject;
 
 /**
  * @class UVoicevoxCoreSubsystem
@@ -34,7 +34,7 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 	// friend class
 	//----------------------------------------------------------------
 	
-	friend class UVoicevoxNativeObject;
+	friend class UVoicevoxApiObject;
 	
 	//----------------------------------------------------------------
 	// Variable
@@ -62,7 +62,7 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 
 	//! VoicevoxNativeCoreSubsystem管理インスタンス 
 	UPROPERTY()
-	TObjectPtr<UVoicevoxNativeObject> NativeInstance;
+	TObjectPtr<UVoicevoxApiObject> NativeInstance;
 
 	//! 初期化済みフラグ
 	UPROPERTY()
