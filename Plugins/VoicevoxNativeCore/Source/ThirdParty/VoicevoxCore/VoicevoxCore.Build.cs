@@ -33,11 +33,11 @@ public class VoicevoxCore : ModuleRules
 
 			// Delay-load the DLL, so we can load it from the right place first
 			PublicDelayLoadDLLs.Add("voicevox_core.dll");
-			PublicDelayLoadDLLs.Add("onnxruntime.dll");
+			PublicDelayLoadDLLs.Add("voicevox_onnxruntime.dll");
 
 			// Ensure that the DLL is staged along with the executable
 			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/voicevox_core.dll", Path.Combine(ModuleDirectory, platformName, "voicevox_core.dll"));
-			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/onnxruntime.dll", Path.Combine(ModuleDirectory, platformName, "onnxruntime.dll"));
+			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/voicevox_onnxruntime.dll", Path.Combine(ModuleDirectory, platformName, "voicevox_onnxruntime.dll"));
 
 			var providerSharedPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_shared.dll");
 			if (File.Exists(providerSharedPath))
@@ -85,13 +85,13 @@ public class VoicevoxCore : ModuleRules
 			// Open JTalkライブラリフォルダもコピーする
 			AddRuntimeDependenciesDirectory(OpenJtalkDicName, platformName, binPlatformName, true);
 			// modelフォルダもコピーする
-			AddRuntimeDependenciesThirdPartyDirectory("model", platformName, binPlatformName, true);
+			AddRuntimeDependenciesThirdPartyDirectory("models", platformName, binPlatformName, true);
         }
 		else if (Target.Platform == UnrealTargetPlatform.Mac)
 		{
 			const string platformName = "osx";
 			const string binPlatformName = "Mac";
-			const string thirdPartyName = "VoicevoxCoreNemo";
+			const string thirdPartyName = "VoicevoxCore";
 			
 			PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, platformName, "libvoicevox_core.dylib"));
 			PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, platformName, "libonnxruntime.1.13.1.dylib"));
@@ -112,66 +112,66 @@ public class VoicevoxCore : ModuleRules
 	/// <summary>
 	/// 指定したディレクトリをRuntimeDependenciesに登録
 	/// </summary>
-	/// <param name="SourceDirName">コピー元のディレクトリ名</param>
-	/// <param name="Platform">プラグイン側のプラットフォームフォルダ名</param>
-	/// <param name="BinPlatform">出力バイナリのプラットフォームフォルダ名</param>
-	/// <param name="CopySubDirs">サブディレクトリもコピーを行うか</param>
+	/// <param name="sourceDirName">コピー元のディレクトリ名</param>
+	/// <param name="platform">プラグイン側のプラットフォームフォルダ名</param>
+	/// <param name="binPlatform">出力バイナリのプラットフォームフォルダ名</param>
+	/// <param name="copySubDirs">サブディレクトリもコピーを行うか</param>
 	/// <exception cref="DirectoryNotFoundException"></exception>
-	private void AddRuntimeDependenciesDirectory(string SourceDirName, string Platform, string BinPlatform,  bool CopySubDirs)
+	private void AddRuntimeDependenciesDirectory(string sourceDirName, string platform, string binPlatform,  bool copySubDirs)
 	{
-		var Info = new DirectoryInfo(Path.Combine(ModuleDirectory, Platform, SourceDirName));
-		if (!Info.Exists)
+		var info = new DirectoryInfo(Path.Combine(ModuleDirectory, platform, sourceDirName));
+		if (!info.Exists)
 		{
-			throw new DirectoryNotFoundException($"The specified directory cannot be found: {SourceDirName}");
+			throw new DirectoryNotFoundException($"The specified directory cannot be found: {sourceDirName}");
 		}
 		
-		var Infos = Info.GetDirectories();
-		var Files = Info.GetFiles();
+		var infos = info.GetDirectories();
+		var files = info.GetFiles();
 		
-		foreach (var F in Files)
+		foreach (var f in files)
 		{
-			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{BinPlatform}/{SourceDirName}/{F.Name}", Path.Combine(ModuleDirectory, Platform, SourceDirName, F.Name));
+			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatform}/{sourceDirName}/{f.Name}", Path.Combine(ModuleDirectory, platform, sourceDirName, f.Name));
 		}
 		
-		if (!CopySubDirs) return;
+		if (!copySubDirs) return;
 		
-		foreach (var SubDir in Infos)
+		foreach (var subDir in infos)
 		{
-			var TempPath = Path.Combine(SourceDirName, SubDir.Name);
-			AddRuntimeDependenciesDirectory(TempPath, Platform, BinPlatform, true);
+			var tempPath = Path.Combine(sourceDirName, subDir.Name);
+			AddRuntimeDependenciesDirectory(tempPath, platform, binPlatform, true);
 		}
 	}
 	
 	/// <summary>
 	/// 指定したディレクトリをRuntimeDependenciesに登録
 	/// </summary>
-	/// <param name="SourceDirName">コピー元のディレクトリ名</param>
-	/// <param name="Platform">プラグイン側のプラットフォームフォルダ名</param>
-	/// <param name="BinPlatform">出力バイナリのプラットフォームフォルダ名</param>
-	/// <param name="CopySubDirs">サブディレクトリもコピーを行うか</param>
+	/// <param name="sourceDirName">コピー元のディレクトリ名</param>
+	/// <param name="platform">プラグイン側のプラットフォームフォルダ名</param>
+	/// <param name="binPlatform">出力バイナリのプラットフォームフォルダ名</param>
+	/// <param name="copySubDirs">サブディレクトリもコピーを行うか</param>
 	/// <exception cref="DirectoryNotFoundException"></exception>
-	private void AddRuntimeDependenciesThirdPartyDirectory(string SourceDirName, string Platform, string BinPlatform,  bool CopySubDirs)
+	private void AddRuntimeDependenciesThirdPartyDirectory(string sourceDirName, string platform, string binPlatform,  bool copySubDirs)
 	{
-		var Info = new DirectoryInfo(Path.Combine(ModuleDirectory, Platform, SourceDirName));
-		if (!Info.Exists)
+		var info = new DirectoryInfo(Path.Combine(ModuleDirectory, platform, sourceDirName));
+		if (!info.Exists)
 		{
-			throw new DirectoryNotFoundException($"The specified directory cannot be found: {SourceDirName}");
+			throw new DirectoryNotFoundException($"The specified directory cannot be found: {sourceDirName}");
 		}
 		
-		var Infos = Info.GetDirectories();
-		var Files = Info.GetFiles();
+		var infos = info.GetDirectories();
+		var files = info.GetFiles();
 		
-		foreach (var F in Files)
+		foreach (var f in files)
 		{
-			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/VoicevoxCore/{BinPlatform}/{SourceDirName}/{F.Name}", Path.Combine(ModuleDirectory, Platform, SourceDirName, F.Name));
+			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/VoicevoxCore/{binPlatform}/{sourceDirName}/{f.Name}", Path.Combine(ModuleDirectory, platform, sourceDirName, f.Name));
 		}
 		
-		if (!CopySubDirs) return;
+		if (!copySubDirs) return;
 		
-		foreach (var SubDir in Infos)
+		foreach (var subDir in infos)
 		{
-			var TempPath = Path.Combine(SourceDirName, SubDir.Name);
-			AddRuntimeDependenciesDirectory(TempPath, Platform, BinPlatform, true);
+			var tempPath = Path.Combine(sourceDirName, subDir.Name);
+			AddRuntimeDependenciesDirectory(tempPath, platform, binPlatform, true);
 		}
 	}
 }
