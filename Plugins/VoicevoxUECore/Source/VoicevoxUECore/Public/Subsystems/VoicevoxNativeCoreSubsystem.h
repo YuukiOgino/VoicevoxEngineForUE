@@ -29,6 +29,10 @@ protected:
 
 	//! VOICEVOX COREライブラリハンドル
 	void* CoreLibraryHandle = nullptr;
+
+	VoicevoxSynthesizer* Synthesizer;
+	
+	const VoicevoxOnnxruntime* Onnxruntime;
 	
 	//----------------------------------------------------------------
 	// Function
@@ -48,6 +52,14 @@ protected:
 	 */
 	VOICEVOXUECORE_API void WavFree(uint8* Wav);
 
+	/**
+	 * @brief OpenJtalkRc を<b>破棄</b>(_destruct_)する。
+	 * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
+	 * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+	 * @param [in] OpenJTalk 破棄対象。nullable
+	 */
+	VOICEVOXUECORE_API void OpenJTalkRcDelete(OpenJtalkRc *OpenJTalk);
+	
 	/**
 	 * エラー結果をメッセージに変換して表示
 	 * @param[in] ApiName : エラーを起こしたAPI名

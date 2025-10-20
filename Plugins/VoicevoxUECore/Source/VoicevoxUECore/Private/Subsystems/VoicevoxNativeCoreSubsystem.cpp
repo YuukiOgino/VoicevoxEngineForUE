@@ -34,11 +34,80 @@ bool UVoicevoxNativeCoreSubsystem::ApiInitialize(const bool bUseGPU, const int C
 		return false;
 	}
 	
-	const FString FuncName = "voicevox_initialize"; 
-	typedef const VoicevoxResultCode(*DLL_Function)(VoicevoxInitializeOptions Option);
+	const FString FuncName = "voicevox_synthesizer_new"; 
+	typedef const VoicevoxResultCode(*DLL_Function)(const VoicevoxOnnxruntime *Onnxruntime,
+											const OpenJtalkRc *OpenJtalk,
+											VoicevoxInitializeOptions Options,
+											VoicevoxSynthesizer **OutSynthesizer);
+
+	const FString MakeDefaultFuncName = "voicevox_make_default_load_onnxruntime_options"; 
+	typedef const VoicevoxLoadOnnxruntimeOptions(*DLL_MakeDefaultLoadOnnxruntimeOptionsFunction)();
+
+	const FString OnnxruntimeLoadOnceFuncName = "voicevox_onnxruntime_load_once"; 
+	typedef const VoicevoxResultCode(*DLL_OnnxruntimeLoadOnceFunction)(VoicevoxLoadOnnxruntimeOptions Options,
+	                                                                   const VoicevoxOnnxruntime **OutOnnxruntime);
+
+	const FString OpenJTalkRcNewFuncName = "voicevox_open_jtalk_rc_new"; 
+	typedef const VoicevoxResultCode(*DLL_OpenJTalkRcNewFunction)(const char *OpenJtalkDicDir,
+	                                                              OpenJtalkRc **OutOpenJtalk);
 	
 	if (CoreLibraryHandle != nullptr)
 	{
+#if PLATFORM_WINDOWS
+		const auto MakeDefaultFuncPtr = static_cast<DLL_MakeDefaultLoadOnnxruntimeOptionsFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *MakeDefaultFuncName));
+#elif PLATFORM_MAC
+		const auto MakeDefaultFuncPtr = (DLL_MakeDefaultLoadOnnxruntimeOptionsFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *MakeDefaultFuncName);
+#endif
+
+		if (!MakeDefaultFuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_make_default_load_onnxruntime_options Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return false;
+		}
+
+		const auto LoadOrtOptions = MakeDefaultFuncPtr();
+
+#if PLATFORM_WINDOWS
+		const auto LoadOnceFuncPtr = static_cast<DLL_OnnxruntimeLoadOnceFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *OnnxruntimeLoadOnceFuncName));
+#elif PLATFORM_MAC
+		const auto LoadOnceFuncPtr = (DLL_OnnxruntimeLoadOnceFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *OnnxruntimeLoadOnceFuncName);
+#endif
+
+		if (!LoadOnceFuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_onnxruntime_load_once Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return false;
+		}
+		
+		if (const VoicevoxResultCode Result = LoadOnceFuncPtr(LoadOrtOptions, &Onnxruntime); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		{
+			VoicevoxShowErrorResultMessage(TEXT("Initialize"), Result);
+			return false;
+		}
+
+#if PLATFORM_WINDOWS
+		const auto OpenJTalkRcFuncPtr = static_cast<DLL_OpenJTalkRcNewFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *OpenJTalkRcNewFuncName));
+#elif PLATFORM_MAC
+		const auto OpenJTalkRcFuncPtr = (DLL_OpenJTalkRcNewFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *OpenJTalkRcNewFuncName);
+#endif
+
+		if (!OpenJTalkRcFuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_open_jtalk_rc_new Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return false;
+		}
+
+		OpenJtalkRc* OpenJTalk;
+		const FString JTalkPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, GetOpenJtakeDirectoryName()));
+		if (const VoicevoxResultCode Result = OpenJTalkRcFuncPtr(TCHAR_TO_UTF8(*JTalkPath), &OpenJTalk); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		{
+			VoicevoxShowErrorResultMessage(TEXT("Initialize"), Result);
+			return false;
+		}
+		
 #if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 #elif PLATFORM_MAC
@@ -51,19 +120,19 @@ bool UVoicevoxNativeCoreSubsystem::ApiInitialize(const bool bUseGPU, const int C
 			ShowVoicevoxErrorMessage(Message);
 			return false;
 		}
-
-		const FString JtalkPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, GetOpenJtakeDirectoryName()));
-
+		
 		VoicevoxInitializeOptions Option;
 		Option.acceleration_mode = bUseGPU ? VoicevoxAccelerationMode::VOICEVOX_ACCELERATION_MODE_GPU : VoicevoxAccelerationMode::VOICEVOX_ACCELERATION_MODE_CPU;
 		Option.cpu_num_threads = CPUNumThreads;
 
-		if (const VoicevoxResultCode Result = FuncPtr(Option); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		if (const VoicevoxResultCode Result = FuncPtr(Onnxruntime, OpenJTalk, Option, &Synthesizer); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(TEXT("Initialize"), Result);
+			OpenJTalkRcDelete(OpenJTalk);
 			return false;
 		}
 
+		OpenJTalkRcDelete(OpenJTalk);
 		bIsInit = true;
 		return true;
 	}
@@ -104,6 +173,31 @@ VoicevoxInitializeOptions UVoicevoxNativeCoreSubsystem::MakeDefaultInitializeOpt
 	return VoicevoxInitializeOptions{};
 }
 
+/**
+ * @brief OpenJtalkRc を<b>破棄</b>(_destruct_)する。
+ */
+void UVoicevoxNativeCoreSubsystem::OpenJTalkRcDelete(OpenJtalkRc *OpenJTalk)
+{
+	const FString FuncName = "voicevox_open_jtalk_rc_delete"; 
+	typedef const void(*DLL_Function)(OpenJtalkRc *OpenJTalk);
+	if (CoreLibraryHandle != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		if (!FuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_open_jtalk_rc_delete Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return;
+		}
+		
+		FuncPtr(OpenJTalk);
+	}
+}
+
 //--------------------------------
 // VOICEVOX CORE Finalize関連
 //--------------------------------
@@ -113,10 +207,10 @@ VoicevoxInitializeOptions UVoicevoxNativeCoreSubsystem::MakeDefaultInitializeOpt
  */
 void UVoicevoxNativeCoreSubsystem::Finalize()
 {
-	if (CoreLibraryHandle != nullptr)
+	if (CoreLibraryHandle != nullptr && Synthesizer != nullptr)
 	{
-		const FString FuncName = "voicevox_finalize"; 
-		typedef const void(*DLL_Function)();
+		const FString FuncName = "voicevox_synthesizer_delete"; 
+		typedef const void(*DLL_Function)(VoicevoxSynthesizer *synthesizer);
 
 #if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
@@ -130,7 +224,7 @@ void UVoicevoxNativeCoreSubsystem::Finalize()
 			return;
 		}
 	
-		FuncPtr();
+		FuncPtr(nullptr);
 		bIsInit = false;
 		return;
 	}
