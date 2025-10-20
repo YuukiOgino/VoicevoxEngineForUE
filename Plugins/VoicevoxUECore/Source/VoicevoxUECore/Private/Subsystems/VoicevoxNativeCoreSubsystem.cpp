@@ -276,6 +276,49 @@ bool UVoicevoxNativeCoreSubsystem::LoadVoiceModel(const FString VvmFileName)
 }
 
 /**
+ * @brief　全てのVVMファイルを開く。
+ */
+bool UVoicevoxNativeCoreSubsystem::AllLoadVoiceModel()
+{
+#if PLATFORM_WINDOWS
+	const FString PlatformFolderName = TEXT("Win64");
+#elif PLATFORM_MAC
+	const FString PlatformFolderName = TEXT("Mac");
+#else
+	const FString PlatformFolderName = "";
+#endif
+
+	if (PlatformFolderName.IsEmpty())
+	{
+		const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX %s Initialize Error:Not covered Platform"), *GetVoicevoxCoreName());
+		ShowVoicevoxErrorMessage(ErrorMessage);
+		return false;
+	}
+
+	const FString ModelsDirPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, TEXT("models")));
+	TArray<FString> FoundFiles;
+	// ファイルを検索
+	IFileManager::Get().FindFilesRecursive(FoundFiles, *ModelsDirPath,TEXT("*.vvm"), true, false);
+
+	for (const FString& FileName : FoundFiles)
+	{
+		VoicevoxVoiceModelFile* Model = nullptr;
+		if (!VoiceModelFileOpen(FileName, &Model))
+		{
+			return false;
+		}
+		
+		if (!SynthesizerLoadVoiceModel(*Model))
+		{
+			return false;
+		}
+		
+		VoiceModelFileDelete(*Model);
+	}
+	
+	return true;
+}
+/**
  * @brief VMファイルを開く。
  */
 bool UVoicevoxNativeCoreSubsystem::VoiceModelFileOpen(const FString& Path, VoicevoxVoiceModelFile** Model)

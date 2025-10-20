@@ -169,6 +169,12 @@ public:
 	 * @returns 読み込み結果
 	 */
 	VOICEVOXUECORE_API virtual bool LoadVoiceModel(const FString VvmFileName) override;
+
+	/**
+	 * @brief　全てのVVMファイルを開く。
+	 * @returns 読み込み結果
+	 */
+	VOICEVOXUECORE_API virtual bool AllLoadVoiceModel() override;
 	
 	/**
 	 * @fn
