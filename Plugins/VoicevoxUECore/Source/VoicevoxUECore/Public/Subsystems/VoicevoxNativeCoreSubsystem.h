@@ -59,6 +59,13 @@ protected:
 	 * @param [in] OpenJTalk 破棄対象。nullable
 	 */
 	VOICEVOXUECORE_API void OpenJTalkRcDelete(OpenJtalkRc *OpenJTalk);
+
+	/**
+	 * @brief JSON文字列を解放する。
+	 *
+	 * @param [in] JsonData 解放するJSON文字列。nullable
+	 */
+	VOICEVOXUECORE_API void JsonFree(char* JsonData);
 	
 	/**
 	 * エラー結果をメッセージに変換して表示

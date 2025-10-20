@@ -582,8 +582,8 @@ VoicevoxSynthesisOptions UVoicevoxNativeCoreSubsystem::MakeDefaultSynthesisOptio
  */
 TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetMetaList()
 {
-	const FString FuncName = "voicevox_get_metas_json"; 
-	typedef const char*(*DLL_Function)();
+	const FString FuncName = "voicevox_synthesizer_create_metas_json"; 
+	typedef char*(*DLL_Function)(const VoicevoxSynthesizer* Synthesizer);
 	
 	if (CoreLibraryHandle != nullptr)
 	{
@@ -599,8 +599,9 @@ TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetMetaList()
 			return TArray<FVoicevoxMeta>();
 		}
 		TArray<FVoicevoxMeta> List;
-		const char* Metas = FuncPtr();
+		char* Metas = FuncPtr(Synthesizer);
 		FJsonObjectConverter::JsonArrayStringToUStruct(UTF8_TO_TCHAR(Metas), &List, 0, 0);
+		JsonFree(Metas);
 		return List;
 	}
 	
@@ -618,8 +619,9 @@ FVoicevoxSupportedDevices UVoicevoxNativeCoreSubsystem::GetSupportedDevices()
 	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
 	if (!bIsInit) return Devices;
 
-	const FString FuncName = "voicevox_get_supported_devices_json"; 
-	typedef const char*(*DLL_Function)();
+	const FString FuncName = "voicevox_onnxruntime_create_supported_devices_json"; 
+	typedef const VoicevoxResultCode(*DLL_Function)(const VoicevoxOnnxruntime *Onnxruntime,
+																	  char **OutputSupportedDevicesJSON);
 	
 	// DLLを読み込み、ポインタを取得
 	if (CoreLibraryHandle != nullptr)
@@ -631,12 +633,18 @@ FVoicevoxSupportedDevices UVoicevoxNativeCoreSubsystem::GetSupportedDevices()
 #endif 
 		if (!FuncPtr)
 		{
-			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_get_supported_devices_json Function Error"), *GetVoicevoxCoreName());
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_onnxruntime_create_supported_devices_json Function Error"), *GetVoicevoxCoreName());
 			ShowVoicevoxErrorMessage(Message);
 			return Devices;
 		}
-		
-		FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(FuncPtr()), &Devices, 0, 0);
+		char* OutputSupportedDevicesJSON;
+		if (const VoicevoxResultCode Result = FuncPtr(Onnxruntime, &OutputSupportedDevicesJSON); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		{
+			VoicevoxShowErrorResultMessage(TEXT("voicevox_onnxruntime_create_supported_devices_json"), Result);
+			return Devices;
+		}
+		FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(OutputSupportedDevicesJSON), &Devices, 0, 0);
+		JsonFree(OutputSupportedDevicesJSON);
 		return Devices;
 	}
 	
@@ -679,8 +687,8 @@ FString UVoicevoxNativeCoreSubsystem::GetVoicevoxVersion()
  */
 bool UVoicevoxNativeCoreSubsystem::IsGpuMode()
 {
-	const FString FuncName = "voicevox_is_gpu_mode"; 
-	typedef bool(*DLL_Function)();
+	const FString FuncName = "voicevox_synthesizer_is_gpu_mode"; 
+	typedef bool(*DLL_Function)(const VoicevoxSynthesizer *synthesizer);
 	
 	// DLLを読み込み、ポインタを取得
 	if (CoreLibraryHandle != nullptr)
@@ -692,11 +700,11 @@ bool UVoicevoxNativeCoreSubsystem::IsGpuMode()
 #endif 
 		if (!FuncPtr)
 		{
-			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_is_gpu_mode Function Error"), *GetVoicevoxCoreName());
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_synthesizer_is_gpu_mode Function Error"), *GetVoicevoxCoreName());
 			ShowVoicevoxErrorMessage(Message);
 			return false;
 		}
-		return FuncPtr();
+		return FuncPtr(Synthesizer);
 	}
 	
 	const FString Message =  FString::Printf(TEXT("VOICEVOX %s LoadError!!"), *GetVoicevoxCoreName());
@@ -912,3 +920,27 @@ void UVoicevoxNativeCoreSubsystem::VoicevoxShowErrorResultMessage(const FString&
 	}
 }
 
+/**
+ * @brief JSON文字列を解放する。
+ */
+void UVoicevoxNativeCoreSubsystem::JsonFree(char* JsonData)
+{
+	const FString FuncName = "voicevox_json_free"; 
+	typedef const void(*DLL_Function)(char* Json);
+	if (CoreLibraryHandle != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		if (!FuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_json_free Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return;
+		}
+		
+		FuncPtr(JsonData);
+	}
+}

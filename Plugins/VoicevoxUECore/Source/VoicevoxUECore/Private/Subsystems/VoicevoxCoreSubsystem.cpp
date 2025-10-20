@@ -58,7 +58,6 @@ void UVoicevoxCoreSubsystem::NativeInitialize() const
  */
 bool UVoicevoxCoreSubsystem::Initialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
 {
-	MetaList.Empty();
 	SupportedDevicesMap.Empty();
 	VoicevoxCoreVersionMap.Empty();
 	CoreNameList.Empty();
@@ -84,7 +83,6 @@ bool UVoicevoxCoreSubsystem::GetIsInitialize() const
  */
 void UVoicevoxCoreSubsystem::Finalize()
 {
-	MetaList.Empty();
 	SupportedDevicesMap.Empty();
 	VoicevoxCoreVersionMap.Empty();
 	CoreNameList.Empty();
@@ -222,7 +220,7 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
  */
 TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetMetaList()
 {
-	return MetaList;
+	return NativeInstance->GetMetaList();
 }
 
 /**
@@ -288,12 +286,8 @@ FVoicevoxSupportedDevices UVoicevoxCoreSubsystem::GetSupportedDevices(const FStr
 /**
  * @brief 各VOICEVOX COREの話者名や話者IDのリスト、サポートデバイス、バージョン情報を各変数へ追加
  */
-void UVoicevoxCoreSubsystem::AddVoicevoxConfigData(const FString& CoreName, TArray<FVoicevoxMeta> List, FVoicevoxSupportedDevices SupportedDevices, const FString& Version, const bool bIsGpuMode)
+void UVoicevoxCoreSubsystem::AddVoicevoxConfigData(const FString& CoreName, FVoicevoxSupportedDevices SupportedDevices, const FString& Version, const bool bIsGpuMode)
 {
-	for (auto Element : List)
-	{
-		MetaList.Emplace(Element);
-	}
 	CoreNameList.Add(CoreName);
 	SupportedDevicesMap.Add(CoreName, SupportedDevices);
 	VoicevoxCoreVersionMap.Add(CoreName, Version);

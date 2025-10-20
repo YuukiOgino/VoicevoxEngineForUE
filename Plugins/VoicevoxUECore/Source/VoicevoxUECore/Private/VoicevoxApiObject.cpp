@@ -72,7 +72,6 @@ bool UVoicevoxApiObject::CoreInitialize(const bool bUseGPU, const int CPUNumThre
 
 		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->AddVoicevoxConfigData(
 				Subsystem->GetVoicevoxCoreName(),
-				Subsystem->GetMetaList(),
 				Subsystem->GetSupportedDevices(),
 				Subsystem->GetVoicevoxVersion(),
 				Subsystem->IsGpuMode());
@@ -290,4 +289,25 @@ TArray<float> UVoicevoxApiObject::DecodeForward(int64 Length, int64 PhonemeSize,
 	}
 
 	return TArray<float>();
+}
+
+/**
+ * @fn
+ * メタ情報を取得する
+ * @brief 話者名や話者IDのリストを取得する
+ * @return メタ情報が格納されたjson形式の構造体
+ */
+TArray<FVoicevoxMeta> UVoicevoxApiObject::GetMetaList()
+{
+	TArray<FVoicevoxMeta> MetaList;
+	for (const auto Element : SubsystemClasses)
+	{
+		for (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+			auto Meta : Subsystem->GetMetaList())
+		{
+			MetaList.Emplace(Meta);
+		}
+	}
+
+	return MetaList;
 }

@@ -252,6 +252,14 @@ class UVoicevoxApiObject : public UObject
 	 */
 	VOICEVOXUECORE_API TArray<float> DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID);
 
+	/**
+	 * @fn
+	 * メタ情報を取得する
+	 * @brief 話者名や話者IDのリストを取得する
+	 * @return メタ情報が格納されたjson形式の構造体
+	 */
+	VOICEVOXUECORE_API TArray<FVoicevoxMeta> GetMetaList();
+	
 public:
 
 	//----------------------------------------------------------------

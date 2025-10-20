@@ -44,10 +44,6 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 	UPROPERTY()
 	TArray<FString> CoreNameList;
 
-	//! 話者名や話者IDのリスト
-	UPROPERTY()
-	TArray<FVoicevoxMeta> MetaList;
-
 	//! サポートデバイス情報リスト
 	UPROPERTY()
 	TMap<FString, FVoicevoxSupportedDevices> SupportedDevicesMap;
@@ -82,12 +78,11 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 	 * 各VOICEVOX COREの設定情報を内部メモリに加える
 	 * @brief 各VOICEVOX COREの話者名や話者IDのリスト、サポートデバイス、バージョン情報、GPUモード状態を各変数へ追加
 	 * @param [in] CoreName : プラグインに定義したコア名
-	 * @param [in] List : 
 	 * @param [in] SupportedDevices
 	 * @param [in] Version
 	 * @param [in] bIsGpuMode
 	 */
-	void AddVoicevoxConfigData(const FString& CoreName, TArray<FVoicevoxMeta> List, FVoicevoxSupportedDevices SupportedDevices, const FString& Version, const bool bIsGpuMode);
+	void AddVoicevoxConfigData(const FString& CoreName, FVoicevoxSupportedDevices SupportedDevices, const FString& Version, const bool bIsGpuMode);
 	
 public:
 
