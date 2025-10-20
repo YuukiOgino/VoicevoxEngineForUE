@@ -45,6 +45,33 @@ protected:
 	 * @return OpneJtakeのディレクトリ名
 	 */
 	virtual FString GetOpenJtakeDirectoryName() { return FString(); }
+
+	/**
+	 * @brief VMファイルを開く。
+	 *
+	 * @param [in] Path vvmファイルへのUTF-8のファイルパス
+	 * @param [out] Model 構築先
+	 *
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool VoiceModelFileOpen(const FString& Path, VoicevoxVoiceModelFile** Model);
+
+	/**
+	 * 音声モデルを読み込む。
+	 * @param [in] Model 音声モデル
+	 *
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool SynthesizerLoadVoiceModel(const VoicevoxVoiceModelFile& Model);
+	
+	/**
+	 * @brief VoicevoxVoiceModelFile を、所有しているファイルディスクリプタを閉じた上で<b>破棄</b>(_destruct_)する。ファイルの削除(_delete_)<b>ではない</b>。
+	 * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
+	 * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+	 *
+	 * @param [in] Model 破棄対象。nullable
+	 */
+	VOICEVOXUECORE_API void VoiceModelFileDelete(VoicevoxVoiceModelFile& Model);
 	
 	/**
 	 * @fn
@@ -60,7 +87,7 @@ protected:
 	 * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
 	 * @param [in] OpenJTalk 破棄対象。nullable
 	 */
-	VOICEVOXUECORE_API void OpenJTalkRcDelete(OpenJtalkRc *OpenJTalk);
+	VOICEVOXUECORE_API void OpenJTalkRcDelete(OpenJtalkRc* OpenJTalk);
 
 	/**
 	 * @brief JSON文字列を解放する。
