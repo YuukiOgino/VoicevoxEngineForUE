@@ -162,6 +162,13 @@ public:
 	//--------------------------------
 
 	/**
+	 * @brief　VVMファイルのロード実行
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 読み込み結果
+	 */
+	bool LoadVoiceModel(const FString& VvmFileName) const;
+	
+	/**
 	 * @fn
 	 * VOICEVOX COREのモデルをロード実行
 	 * @brief モデルをロードする。

@@ -30,8 +30,10 @@ protected:
 	//! VOICEVOX COREライブラリハンドル
 	void* CoreLibraryHandle = nullptr;
 
+	//! 
 	VoicevoxSynthesizer* Synthesizer;
 	
+	//!
 	const VoicevoxOnnxruntime* Onnxruntime;
 	
 	//----------------------------------------------------------------
@@ -133,6 +135,13 @@ public:
 	//--------------------------------
 	// VOICEVOX CORE Model関連
 	//--------------------------------
+	
+	/**
+	 * @brief　VVMファイルのロード実行
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 読み込み結果
+	 */
+	VOICEVOXUECORE_API virtual bool LoadVoiceModel(const FString VvmFileName) override;
 	
 	/**
 	 * @fn

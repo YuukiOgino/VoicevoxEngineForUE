@@ -95,6 +95,14 @@ void UVoicevoxCoreSubsystem::Finalize()
 //--------------------------------
 
 /**
+ * @brief　VVMファイルのロード実行
+ */
+bool UVoicevoxCoreSubsystem::LoadVoiceModel(const FString& VvmFileName) const
+{
+	return NativeInstance->LoadVoiceModel(VvmFileName);
+}
+
+/**
  * @brief モデルをロードする。
  */
 bool UVoicevoxCoreSubsystem::LoadModel(const int64 SpeakerId) const

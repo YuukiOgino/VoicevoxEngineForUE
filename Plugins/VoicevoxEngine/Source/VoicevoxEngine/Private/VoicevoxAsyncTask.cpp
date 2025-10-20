@@ -86,6 +86,49 @@ void UVoicevoxLoadModelAsyncTask::Activate()
 }
 
 //------------------------------------------------------------------------
+// UVoicevoxLoadVoiceModelAsyncTask
+//------------------------------------------------------------------------
+
+/**
+ * @brief VOICEVOX COREのVVMをロード実行
+ */	
+UVoicevoxLoadVoiceModelAsyncTask* UVoicevoxLoadVoiceModelAsyncTask::LoadVoiceModel(UObject* WorldContextObject, FString VvmFileName)
+{
+	UVoicevoxLoadVoiceModelAsyncTask* Task = NewObject<UVoicevoxLoadVoiceModelAsyncTask>();
+	Task->VvmFileName = VvmFileName;
+	Task->RegisterWithGameInstance(WorldContextObject);
+	return Task;
+}
+
+/**
+ * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
+ */
+void UVoicevoxLoadVoiceModelAsyncTask::Activate()
+{
+	Task = UE::Tasks::Launch<>(TEXT("VoicevoxCoreTask"), [&]
+	{
+		if (GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->LoadVoiceModel(VvmFileName))
+		{
+			OnSuccess.Broadcast();
+		}
+		else
+		{
+			OnFail.Broadcast();
+		}
+		SetReadyToDestroy();
+	});
+}
+
+/**
+ * @brief BeginDestroy
+ */
+void UVoicevoxLoadVoiceModelAsyncTask::BeginDestroy()
+{
+	Task.Wait();
+	Super::BeginDestroy();
+}
+
+//------------------------------------------------------------------------
 // UVoicevoxTextToSpeechAsyncTask
 //------------------------------------------------------------------------
 

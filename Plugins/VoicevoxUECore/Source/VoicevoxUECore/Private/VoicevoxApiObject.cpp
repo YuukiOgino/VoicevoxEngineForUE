@@ -113,6 +113,23 @@ void UVoicevoxApiObject::Finalize()
 //--------------------------------
 
 /**
+ * @brief　VVMファイルのロード実行
+ */
+bool UVoicevoxApiObject::LoadVoiceModel(const FString& VvmFileName)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (const auto bIsSuccess = Subsystem->LoadVoiceModel(VvmFileName); bIsSuccess)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
  * @brief モデルをロードする。
  */
 bool UVoicevoxApiObject::LoadModel(const int64 SpeakerId)

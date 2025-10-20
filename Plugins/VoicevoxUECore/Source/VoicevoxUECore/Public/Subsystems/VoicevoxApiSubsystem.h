@@ -100,6 +100,13 @@ public:
 	//--------------------------------
 	// VOICEVOX CORE Model関連
 	//--------------------------------
+
+	/**
+	 * @brief　VVMファイルを開く。
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 読み込み結果
+	 */
+	virtual bool LoadVoiceModel(const FString VvmFileName) { return false; }
 	
 	/**
 	 * @fn

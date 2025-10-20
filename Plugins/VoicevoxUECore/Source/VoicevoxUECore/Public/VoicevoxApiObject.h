@@ -103,6 +103,13 @@ class UVoicevoxApiObject : public UObject
 	//--------------------------------
 	// VOICEVOX CORE Model関連
 	//--------------------------------
+
+	/**
+	 * @brief　VVMファイルのロード実行
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 読み込み結果
+	 */
+	VOICEVOXUECORE_API bool LoadVoiceModel(const FString& VvmFileName);
 	
 	/**
 	 * @fn

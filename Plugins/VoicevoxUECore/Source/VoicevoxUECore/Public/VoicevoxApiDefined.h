@@ -169,72 +169,64 @@ enum VoicevoxUserDictWordType : int32_t
   };
 
 //------------------------------------------------------------------------
-// struct
+// typedef
 //------------------------------------------------------------------------
 
 /**
- * テキスト解析器としてのOpen JTalk。
- *
+ * @typedef VoicevoxVoiceModelId
+ * @brief 音声モデルID。VoicevoxSynthesizer はこのIDをキーとして、音声モデルのロード・アンロードを行う。
+ */
+typedef const uint8_t (*VoicevoxVoiceModelId)[16];
+
+/**
+ * @typedef VoicevoxStyleId
+ * @brief スタイルID。VOICEVOXにおける、ある<i>キャラクター</i>のある<i>スタイル</i>を指す。
+ */
+typedef uint32_t VoicevoxStyleId;
+
+/**
+ * @typedef OpenJtalkRc
+ * @struct OpenJtalkRc
+ * @brief テキスト解析器としてのOpen JTalk。
  * <b>構築</b>(_construction_)は ::voicevox_open_jtalk_rc_new で行い、<b>破棄</b>(_destruction_)は ::voicevox_open_jtalk_rc_delete で行う。
- *
  * 参照カウント方式のスマートポインタ(reference-counted smart pointer)であり、
  * ::voicevox_synthesizer_new に渡されるときには参照カウンタがインクリメントされる形でオブジェクトの共有が行われる。
- *
- * \example{
- * ```c
- * OpenJtalkRc *open_jtalk;
- * voicevox_open_jtalk_rc_new("./open_jtalk_dic_utf_8-1.11", &open_jtalk);
- * // ⋮
- * voicevox_open_jtalk_rc_delete(open_jtalk);
- * ```
- * }
- *
- * \orig-impl{OpenJtalkRc}
  */
 typedef struct OpenJtalkRc OpenJtalkRc;
 
 /**
- * ONNX Runtime。
- *
- * シングルトンであり、インスタンスは高々一つ。
- *
- * ```c
- * const VoicevoxOnnxruntime *ort1;
- * voicevox_onnxruntime_load_once(
- *     voicevox_make_default_load_onnxruntime_options(), &ort1);
- * const VoicevoxOnnxruntime *ort2 = voicevox_onnxruntime_get();
- * assert(ort1 == ort2);
- * ```
- *
- * \orig-impl{VoicevoxOnnxruntime}
+ * @typedef VoicevoxOnnxruntime
+ * @struct VoicevoxOnnxruntime
+ * @brief  ONNX Runtime。シングルトンであり、インスタンスは高々一つ。
  */
 typedef struct VoicevoxOnnxruntime VoicevoxOnnxruntime;
 
 /**
- * 音声シンセサイザ。
- *
+ * @typedef VoicevoxSynthesizer
+ * @struct VoicevoxSynthesizer
+ * @brief 音声シンセサイザ。
  * <b>構築</b>(_construction_)は ::voicevox_synthesizer_new で行い、<b>破棄</b>(_destruction_)は ::voicevox_synthesizer_delete で行う。
- *
- * \orig-impl{VoicevoxSynthesizer}
  */
 typedef struct VoicevoxSynthesizer VoicevoxSynthesizer;
 
 /**
- * ユーザー辞書。
- *
- * \orig-impl{VoicevoxUserDict}
+ * @typedef VoicevoxUserDict
+ * @struct VoicevoxUserDict
+ * @brief ユーザー辞書。
  */
 typedef struct VoicevoxUserDict VoicevoxUserDict;
 
 /**
- * 音声モデルファイル。
- *
- * VVMファイルと対応する。
+ * @typedef VoicevoxVoiceModelFile
+ * @struct VoicevoxVoiceModelFile
+ * @brief 音声モデルファイル。VVMファイルと対応する。
  * <b>構築</b>(_construction_)は ::voicevox_voice_model_file_open で行い、<b>破棄</b>(_destruction_)は ::voicevox_voice_model_file_delete で行う。
- *
- * \orig-impl{VoicevoxVoiceModelFile}
  */
 typedef struct VoicevoxVoiceModelFile VoicevoxVoiceModelFile;
+
+//------------------------------------------------------------------------
+// struct
+//------------------------------------------------------------------------
 
 /**
  * @struct VoicevoxLoadOnnxruntimeOptions

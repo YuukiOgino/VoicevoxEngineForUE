@@ -122,6 +122,49 @@ public:
 };
 
 //------------------------------------------------------------------------
+// UVoicevoxLoadModelAsyncTask
+//------------------------------------------------------------------------
+
+/**
+ * @class UVoicevoxLoadModelAsyncTask
+ * @brief BlueprintでVOICEVOX CORE APIのLoadVoiceModelを実行するLatentノードクラス
+ */
+UCLASS()
+class VOICEVOXENGINE_API UVoicevoxLoadVoiceModelAsyncTask : public UVoicevoxAsyncTaskBase
+{
+	GENERATED_BODY()
+
+	//! 実行タスク
+	UE::Tasks::TTask<void> Task;
+	
+public:
+
+	/**
+	 * @brief VOICEVOX COREのVVMをロード実行
+	 * @param[in] WorldContextObject
+	 * @param[in] VvmFileName VVMファイル名
+	 * @detail
+	 * 必ずしも話者とモデルが1:1対応しているわけではない。
+	 */	
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxLoadVoiceModel", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
+	static UVoicevoxLoadVoiceModelAsyncTask* LoadVoiceModel(UObject* WorldContextObject, FString VvmFileName);
+
+	//! VVMファイル名
+	FString VvmFileName;
+
+	/**
+	 * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
+	 */
+	virtual void Activate() override;
+
+	/**
+	 * @brief BeginDestroy
+	 */
+	virtual void BeginDestroy() override;
+};
+
+
+//------------------------------------------------------------------------
 // UVoicevoxTextToSpeechAsyncTask
 //------------------------------------------------------------------------
 

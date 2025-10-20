@@ -238,6 +238,92 @@ void UVoicevoxNativeCoreSubsystem::Finalize()
 //--------------------------------
 
 /**
+ * @brief　VVMファイルのロード実行
+ */
+bool UVoicevoxNativeCoreSubsystem::LoadVoiceModel(const FString VvmFileName)
+{
+#if PLATFORM_WINDOWS
+	const FString PlatformFolderName = TEXT("Win64");
+#elif PLATFORM_MAC
+	const FString PlatformFolderName = TEXT("Mac");
+#else
+	const FString PlatformFolderName = "";
+#endif
+
+	if (PlatformFolderName.IsEmpty())
+	{
+		const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX %s Initialize Error:Not covered Platform"), *GetVoicevoxCoreName());
+		ShowVoicevoxErrorMessage(ErrorMessage);
+		return false;
+	}
+	
+	if (CoreLibraryHandle != nullptr)
+	{
+		const FString FileOpenFuncName = "voicevox_voice_model_file_open";
+		typedef const VoicevoxResultCode(*DLL_FileOpenFunction)(const char *path, VoicevoxVoiceModelFile **out_model);
+		
+		const FString LoadFuncName = "voicevox_synthesizer_load_voice_model";
+		typedef const VoicevoxResultCode(*DLL_LoadFunction)(const VoicevoxSynthesizer *synthesizer,
+														 const VoicevoxVoiceModelFile *model);
+
+		const FString FileDeleteFuncName = "voicevox_voice_model_file_delete";
+		typedef const void(*DLL_FileDeleteFunction)(VoicevoxVoiceModelFile *model);
+
+#if PLATFORM_WINDOWS
+		const auto FileOpenFuncPtr = static_cast<DLL_FileOpenFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FileOpenFuncName));
+		const auto LoadFuncPtr = static_cast<DLL_LoadFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *LoadFuncName));
+		const auto FileDeleteFuncPtr = static_cast<DLL_FileDeleteFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FileDeleteFuncName));
+#elif PLATFORM_MAC
+		const auto FileOpenFuncPtr = (DLL_FileOpenFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FileOpenFuncName);
+		const auto LoadFuncPtr = (DLL_LoadFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *LoadFuncName);
+		const auto FileDeleteFuncPtr = (DLL_LoadFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FileDeleteFuncName);
+#endif
+
+		if (!FileOpenFuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_voice_model_file_open Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return false;
+		}
+
+		if (!LoadFuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_synthesizer_load_voice_model Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return false;
+		}
+
+		if (!FileDeleteFuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_voice_model_file_delete Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return false;
+		}
+
+		VoicevoxVoiceModelFile* Model;
+		FString VVMName = VvmFileName + TEXT(".vvm");
+		const FString VmmPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, TEXT("models"), TEXT("vvms"), VVMName));
+		VoicevoxResultCode Result = FileOpenFuncPtr(TCHAR_TO_UTF8(*VmmPath), &Model);
+		if (Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		{
+			VoicevoxShowErrorResultMessage(TEXT("voicevox_voice_model_file_open"), Result);
+			return false;
+		}
+		Result = LoadFuncPtr(Synthesizer, Model);
+		if (Result != VoicevoxResultCode::VOICEVOX_RESULT_OK) {
+			VoicevoxShowErrorResultMessage(TEXT("voicevox_synthesizer_load_voice_model"), Result);
+			return false;
+		}
+		
+		FileDeleteFuncPtr(Model);
+
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * @brief モデルをロードする。
  */
 bool UVoicevoxNativeCoreSubsystem::LoadModel(const int64 SpeakerId)
