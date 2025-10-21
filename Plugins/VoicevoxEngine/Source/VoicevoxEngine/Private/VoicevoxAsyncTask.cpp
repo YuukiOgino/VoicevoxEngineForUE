@@ -101,6 +101,9 @@ UVoicevoxLoadVoiceModelAsyncTask* UVoicevoxLoadVoiceModelAsyncTask::LoadVoiceMod
 	return Task;
 }
 
+/**
+ * @brief VOICEVOX COREの全てのVVMをロード
+ */	
 UVoicevoxLoadVoiceModelAsyncTask* UVoicevoxLoadVoiceModelAsyncTask::AllLoadVoiceModel(UObject* WorldContextObject)
 {
 	UVoicevoxLoadVoiceModelAsyncTask* Task = NewObject<UVoicevoxLoadVoiceModelAsyncTask>();

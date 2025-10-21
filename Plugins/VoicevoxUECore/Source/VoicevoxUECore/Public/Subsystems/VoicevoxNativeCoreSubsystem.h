@@ -47,7 +47,7 @@ protected:
 	virtual FString GetOpenJtakeDirectoryName() { return FString(); }
 
 	/**
-	 * @brief VMファイルを開く。
+	 * @brief VVMファイルを開く。
 	 *
 	 * @param [in] Path vvmファイルへのUTF-8のファイルパス
 	 * @param [out] Model 構築先
@@ -72,6 +72,14 @@ protected:
 	 * @param [in] Model 破棄対象。nullable
 	 */
 	VOICEVOXUECORE_API void VoiceModelFileDelete(VoicevoxVoiceModelFile& Model);
+
+	/**
+	 * @brief  VoicevoxVoiceModelFile からIDを取得する。
+	 *
+	 * @param [in] Model 音声モデル
+	 * @return 音声モデルID。
+	 */
+	VOICEVOXUECORE_API TArray<uint8_t> VoiceModelFileId(const VoicevoxVoiceModelFile& Model);
 	
 	/**
 	 * @fn
