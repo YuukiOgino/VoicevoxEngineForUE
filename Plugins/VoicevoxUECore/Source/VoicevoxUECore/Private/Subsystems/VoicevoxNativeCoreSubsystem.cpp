@@ -297,7 +297,6 @@ bool UVoicevoxNativeCoreSubsystem::AllLoadVoiceModel()
 
 	const FString ModelsDirPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, TEXT("models")));
 	TArray<FString> FoundFiles;
-	// ファイルを検索
 	IFileManager::Get().FindFilesRecursive(FoundFiles, *ModelsDirPath,TEXT("*.vvm"), true, false);
 
 	for (const FString& FileName : FoundFiles)
@@ -365,7 +364,6 @@ bool UVoicevoxNativeCoreSubsystem::SynthesizerLoadVoiceModel(const VoicevoxVoice
 		const FString LoadFuncName = "voicevox_synthesizer_load_voice_model";
 		typedef const VoicevoxResultCode(*DLL_LoadFunction)(const VoicevoxSynthesizer *synthesizer,
 														 const VoicevoxVoiceModelFile *model);
-
 #if PLATFORM_WINDOWS
 		const auto LoadFuncPtr = static_cast<DLL_LoadFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *LoadFuncName));
 #elif PLATFORM_MAC

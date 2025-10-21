@@ -140,18 +140,26 @@ class VOICEVOXENGINE_API UVoicevoxLoadVoiceModelAsyncTask : public UVoicevoxAsyn
 public:
 
 	/**
-	 * @brief VOICEVOX COREのVVMをロード実行
+	 * @brief VOICEVOX COREのVVMをロード
 	 * @param[in] WorldContextObject
 	 * @param[in] VvmFileName VVMファイル名
-	 * @detail
-	 * 必ずしも話者とモデルが1:1対応しているわけではない。
 	 */	
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxLoadVoiceModel", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
 	static UVoicevoxLoadVoiceModelAsyncTask* LoadVoiceModel(UObject* WorldContextObject, FString VvmFileName);
 
+	/**
+	 * @brief VOICEVOX COREの全てのVVMをロード
+	 * @param[in] WorldContextObject
+	 */	
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxAllLoadVoiceModel", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
+	static UVoicevoxLoadVoiceModelAsyncTask* AllLoadVoiceModel(UObject* WorldContextObject);
+	
 	//! VVMファイル名
 	FString VvmFileName;
 
+	//! 全てロードするか
+	bool bAllLoad = false;
+	
 	/**
 	 * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
 	 */

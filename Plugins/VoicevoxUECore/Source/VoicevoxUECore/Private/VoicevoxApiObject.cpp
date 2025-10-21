@@ -129,6 +129,25 @@ bool UVoicevoxApiObject::LoadVoiceModel(const FString& VvmFileName)
 	return false;
 }
 
+
+/**
+ * @brief　全てのVVMファイルを開く。
+ * @returns 読み込み結果
+ */
+bool UVoicevoxApiObject::AllLoadVoiceModel()
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (const auto bIsSuccess = Subsystem->AllLoadVoiceModel(); bIsSuccess)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 /**
  * @brief モデルをロードする。
  */

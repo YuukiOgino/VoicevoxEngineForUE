@@ -103,6 +103,15 @@ bool UVoicevoxCoreSubsystem::LoadVoiceModel(const FString& VvmFileName) const
 }
 
 /**
+ * @brief　全てのVVMファイルを開く。
+ * @returns 読み込み結果
+ */
+bool UVoicevoxCoreSubsystem::AllLoadVoiceModel() const
+{
+	return NativeInstance->AllLoadVoiceModel();
+}
+
+/**
  * @brief モデルをロードする。
  */
 bool UVoicevoxCoreSubsystem::LoadModel(const int64 SpeakerId) const

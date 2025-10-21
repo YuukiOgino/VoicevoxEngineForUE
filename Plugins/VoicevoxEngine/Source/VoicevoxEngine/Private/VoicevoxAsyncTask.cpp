@@ -96,6 +96,15 @@ UVoicevoxLoadVoiceModelAsyncTask* UVoicevoxLoadVoiceModelAsyncTask::LoadVoiceMod
 {
 	UVoicevoxLoadVoiceModelAsyncTask* Task = NewObject<UVoicevoxLoadVoiceModelAsyncTask>();
 	Task->VvmFileName = VvmFileName;
+	Task->bAllLoad = false;
+	Task->RegisterWithGameInstance(WorldContextObject);
+	return Task;
+}
+
+UVoicevoxLoadVoiceModelAsyncTask* UVoicevoxLoadVoiceModelAsyncTask::AllLoadVoiceModel(UObject* WorldContextObject)
+{
+	UVoicevoxLoadVoiceModelAsyncTask* Task = NewObject<UVoicevoxLoadVoiceModelAsyncTask>();
+	Task->bAllLoad = true;
 	Task->RegisterWithGameInstance(WorldContextObject);
 	return Task;
 }
@@ -107,13 +116,27 @@ void UVoicevoxLoadVoiceModelAsyncTask::Activate()
 {
 	Task = UE::Tasks::Launch<>(TEXT("VoicevoxCoreTask"), [&]
 	{
-		if (GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->LoadVoiceModel(VvmFileName))
+		if (bAllLoad)
 		{
-			OnSuccess.Broadcast();
+			if (GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->AllLoadVoiceModel())
+			{
+				OnSuccess.Broadcast();
+			}
+			else
+			{
+				OnFail.Broadcast();
+			}
 		}
 		else
 		{
-			OnFail.Broadcast();
+			if (GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->LoadVoiceModel(VvmFileName))
+			{
+				OnSuccess.Broadcast();
+			}
+			else
+			{
+				OnFail.Broadcast();
+			}
 		}
 		SetReadyToDestroy();
 	});

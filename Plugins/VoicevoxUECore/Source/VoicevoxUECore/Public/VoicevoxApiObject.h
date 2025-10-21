@@ -110,6 +110,12 @@ class UVoicevoxApiObject : public UObject
 	 * @returns 読み込み結果
 	 */
 	VOICEVOXUECORE_API bool LoadVoiceModel(const FString& VvmFileName);
+
+	/**
+	 * @brief　全てのVVMファイルを開く。
+	 * @returns 読み込み結果
+	 */
+	VOICEVOXUECORE_API bool AllLoadVoiceModel();
 	
 	/**
 	 * @fn

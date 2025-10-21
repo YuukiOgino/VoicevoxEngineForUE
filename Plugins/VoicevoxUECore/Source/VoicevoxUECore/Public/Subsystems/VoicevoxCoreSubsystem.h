@@ -167,6 +167,12 @@ public:
 	 * @returns 読み込み結果
 	 */
 	bool LoadVoiceModel(const FString& VvmFileName) const;
+
+	/**
+	 * @brief　全てのVVMファイルを開く。
+	 * @returns 読み込み結果
+	 */
+	bool AllLoadVoiceModel() const;
 	
 	/**
 	 * @fn
