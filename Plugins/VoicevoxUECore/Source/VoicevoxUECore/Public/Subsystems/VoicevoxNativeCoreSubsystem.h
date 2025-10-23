@@ -35,6 +35,8 @@ protected:
 	
 	//!
 	const VoicevoxOnnxruntime* Onnxruntime;
+
+	TMap<FString, TArray<uint8>> ModelIdMap;
 	
 	//----------------------------------------------------------------
 	// Function

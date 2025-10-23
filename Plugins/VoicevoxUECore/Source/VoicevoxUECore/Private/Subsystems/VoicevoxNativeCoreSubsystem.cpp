@@ -269,7 +269,8 @@ bool UVoicevoxNativeCoreSubsystem::LoadVoiceModel(const FString VvmFileName)
 	{
 		return false;
 	}
-	
+
+	ModelIdMap.Add(VvmFileName, VoiceModelFileId(*Model));
 	VoiceModelFileDelete(*Model);
 
 	return true;
@@ -297,7 +298,7 @@ bool UVoicevoxNativeCoreSubsystem::AllLoadVoiceModel()
 
 	const FString ModelsDirPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, TEXT("models")));
 	TArray<FString> FoundFiles;
-	IFileManager::Get().FindFilesRecursive(FoundFiles, *ModelsDirPath,TEXT("*.vvm"), true, false);
+	IFileManager::Get().FindFilesRecursive(FoundFiles, *ModelsDirPath,TEXT("*.vvm"), true, false, false);
 
 	for (const FString& FileName : FoundFiles)
 	{
@@ -311,6 +312,9 @@ bool UVoicevoxNativeCoreSubsystem::AllLoadVoiceModel()
 		{
 			return false;
 		}
+
+		FString FileNameOnly = FPaths::GetBaseFilename(FileName);
+		ModelIdMap.Add(FileNameOnly, VoiceModelFileId(*Model));
 		
 		VoiceModelFileDelete(*Model);
 	}
