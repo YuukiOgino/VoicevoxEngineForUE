@@ -30,12 +30,16 @@ protected:
 	//! VOICEVOX COREライブラリハンドル
 	void* CoreLibraryHandle = nullptr;
 
-	//! 
+	//! 音声シンセサイザ
 	VoicevoxSynthesizer* Synthesizer;
 	
-	//!
+	//! ONNX Runtime。
 	const VoicevoxOnnxruntime* Onnxruntime;
 
+	//! テキスト解析器としてのOpen JTalk。
+	OpenJtalkRc* OpenJTalk;
+
+	//! 読み込んだモデルIDマップ 
 	TMap<FString, TArray<uint8>> ModelIdMap;
 	
 	//----------------------------------------------------------------
@@ -48,6 +52,20 @@ protected:
 	 */
 	virtual FString GetOpenJtakeDirectoryName() { return FString(); }
 
+	/**
+	 * @brief VoicevoxOnnxruntime のインスタンスが既に作られているならそれを得る。 作られていなければ`NULL`を返す。
+	 * @returns ::VoicevoxOnnxruntime のインスタンス
+	 */
+	VOICEVOXUECORE_API const VoicevoxOnnxruntime* GetOnnxruntime();
+
+	/**
+	 * @brief ONNX Runtimeを初期化する。
+	 * 一度成功したら以後は同じ参照を返す。
+	 *
+	 * @returns VoicevoxOnnxruntime のインスタンス
+	 */
+	VOICEVOXUECORE_API const VoicevoxOnnxruntime* OnxruntimeInitOcec();
+	
 	/**
 	 * @brief VVMファイルを開く。
 	 *
@@ -154,6 +172,21 @@ public:
 	 * @return デフォルト値が設定された初期化オプション
 	 */
 	VOICEVOXUECORE_API virtual VoicevoxInitializeOptions MakeDefaultInitializeOptions() override;
+
+	/**
+	 * @brief ONNX Runtimeの動的ライブラリの、バージョン付きのファイル名を取得。
+	 * WindowsとAndroidでは ::voicevox_get_onnxruntime_lib_unversioned_filename と同じ。
+	 * @return ONNX Runtimeの動的ライブラリの、バージョン付きのファイル名
+	 */
+	VOICEVOXUECORE_API FString GetOnnxruntimeLibVersionedFilename();
+
+	/**
+	 * @brief ONNX Runtimeの動的ライブラリの、バージョン無しのファイル名を取得。
+	 * @return ONNX Runtimeの動的ライブラリの、バージョン無しのファイル名。
+	 */
+	VOICEVOXUECORE_API FString GetOnnxruntimeLibUnversionedFilename();
+
+	VOICEVOXUECORE_API char* OpenJTalkRcAnalyze(FString text);
 	
 	//--------------------------------
 	// VOICEVOX CORE Finalize関連

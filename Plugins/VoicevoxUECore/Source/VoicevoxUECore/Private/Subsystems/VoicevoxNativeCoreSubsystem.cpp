@@ -99,8 +99,7 @@ bool UVoicevoxNativeCoreSubsystem::ApiInitialize(const bool bUseGPU, const int C
 			ShowVoicevoxErrorMessage(Message);
 			return false;
 		}
-
-		OpenJtalkRc* OpenJTalk;
+		
 		const FString JTalkPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, GetOpenJtakeDirectoryName()));
 		if (const VoicevoxResultCode Result = OpenJTalkRcFuncPtr(TCHAR_TO_UTF8(*JTalkPath), &OpenJTalk); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
@@ -132,7 +131,7 @@ bool UVoicevoxNativeCoreSubsystem::ApiInitialize(const bool bUseGPU, const int C
 			return false;
 		}
 
-		OpenJTalkRcDelete(OpenJTalk);
+		
 		bIsInit = true;
 		return true;
 	}
@@ -198,6 +197,157 @@ void UVoicevoxNativeCoreSubsystem::OpenJTalkRcDelete(OpenJtalkRc *OpenJTalk)
 	}
 }
 
+/**
+ * @brief ONNX Runtimeの動的ライブラリの、バージョン付きのファイル名を取得。
+ */
+FString UVoicevoxNativeCoreSubsystem::GetOnnxruntimeLibVersionedFilename()
+{
+	FString Name;
+	Name.Empty();
+	const FString FuncName = "voicevox_get_onnxruntime_lib_versioned_filename"; 
+	typedef const char*(*DLL_Function)();
+	
+	if (CoreLibraryHandle != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		if (!FuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_get_onnxruntime_lib_versioned_filename Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return Name;
+		}
+		
+		Name = UTF8_TO_TCHAR(FuncPtr());
+	}
+	return Name;
+}
+
+/**
+ * @brief ONNX Runtimeの動的ライブラリの、バージョン無しのファイル名を取得。
+ */
+FString UVoicevoxNativeCoreSubsystem::GetOnnxruntimeLibUnversionedFilename()
+{
+	FString Name;
+	Name.Empty();
+	const FString FuncName = "voicevox_get_onnxruntime_lib_unversioned_filename"; 
+	typedef const char*(*DLL_Function)();
+	
+	if (CoreLibraryHandle != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		if (!FuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_get_onnxruntime_lib_unversioned_filename Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return Name;
+		}
+		
+		Name = UTF8_TO_TCHAR(FuncPtr());
+	}
+	return Name;
+}
+
+/**
+ * @brief VoicevoxOnnxruntime のインスタンスが既に作られているならそれを得る。 作られていなければ`NULL`を返す。
+ */
+const VoicevoxOnnxruntime* UVoicevoxNativeCoreSubsystem::GetOnnxruntime()
+{
+	const FString FuncName = "voicevox_onnxruntime_get"; 
+	typedef const VoicevoxOnnxruntime*(*DLL_Function)();
+	
+	if (CoreLibraryHandle != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		if (!FuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_onnxruntime_get Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return nullptr;
+		}
+		
+		return FuncPtr();
+	}
+	return nullptr;
+}
+
+/**
+ * @brief ONNX Runtimeを初期化する。
+ */
+const VoicevoxOnnxruntime* UVoicevoxNativeCoreSubsystem::OnxruntimeInitOcec()
+{
+	const FString FuncName = "voicevox_onnxruntime_init_once"; 
+	typedef const VoicevoxResultCode(*DLL_Function)(const VoicevoxOnnxruntime **out_onnxruntime);
+	const VoicevoxOnnxruntime* Runtime;
+	if (CoreLibraryHandle != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		if (!FuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_onnxruntime_init_once Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return nullptr;
+		}
+
+		if (const VoicevoxResultCode Result = FuncPtr(&Runtime); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		{
+			VoicevoxShowErrorResultMessage(TEXT("OnxruntimeInitnOcec"), Result);
+			return nullptr;
+		}
+		
+		return Runtime;
+	}
+	return nullptr;
+}
+
+char* UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(FString text)
+{
+	const FString FuncName = "voicevox_open_jtalk_rc_analyze"; 
+	typedef const VoicevoxResultCode(*DLL_Function)(const OpenJtalkRc *open_jtalk,
+												  const char *text,
+												  char **output_accent_phrases_json);
+	
+	if (CoreLibraryHandle != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		if (!FuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_onnxruntime_init_once Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return nullptr;
+		}
+
+		char* result;
+		if (const VoicevoxResultCode Result = FuncPtr(OpenJTalk, TCHAR_TO_UTF8(*text), &result); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		{
+			VoicevoxShowErrorResultMessage(TEXT("OnxruntimeInitnOcec"), Result);
+			return nullptr;
+		}
+		JsonFree(result);
+		return result;
+	}
+	return nullptr;
+}
+
 //--------------------------------
 // VOICEVOX CORE Finalize関連
 //--------------------------------
@@ -207,6 +357,11 @@ void UVoicevoxNativeCoreSubsystem::OpenJTalkRcDelete(OpenJtalkRc *OpenJTalk)
  */
 void UVoicevoxNativeCoreSubsystem::Finalize()
 {
+	if (CoreLibraryHandle != nullptr && OpenJTalk != nullptr)
+	{
+		OpenJTalkRcDelete(OpenJTalk);
+	}
+	
 	if (CoreLibraryHandle != nullptr && Synthesizer != nullptr)
 	{
 		const FString FuncName = "voicevox_synthesizer_delete"; 
