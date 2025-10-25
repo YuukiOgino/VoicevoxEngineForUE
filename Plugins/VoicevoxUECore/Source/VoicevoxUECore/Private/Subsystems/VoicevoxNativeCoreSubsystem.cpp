@@ -75,8 +75,10 @@ bool UVoicevoxNativeCoreSubsystem::ApiInitialize(const bool bUseGPU, const int C
 			ShowVoicevoxErrorMessage(Message);
 			return false;
 		}
-		
-		if (const VoicevoxResultCode Result = LoadOnceFuncPtr(LoadOrtOptions, &Onnxruntime); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+
+		//! ONNX Runtime。
+		const VoicevoxOnnxruntime* OnnxRuntime;
+		if (const VoicevoxResultCode Result = LoadOnceFuncPtr(LoadOrtOptions, &OnnxRuntime); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(TEXT("Initialize"), Result);
 			return false;
@@ -119,7 +121,7 @@ bool UVoicevoxNativeCoreSubsystem::ApiInitialize(const bool bUseGPU, const int C
 		Option.acceleration_mode = bUseGPU ? VoicevoxAccelerationMode::VOICEVOX_ACCELERATION_MODE_GPU : VoicevoxAccelerationMode::VOICEVOX_ACCELERATION_MODE_CPU;
 		Option.cpu_num_threads = CPUNumThreads;
 
-		if (const VoicevoxResultCode Result = FuncPtr(Onnxruntime, OpenJTalk, Option, &Synthesizer); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		if (const VoicevoxResultCode Result = FuncPtr(OnnxRuntime, OpenJTalk, Option, &Synthesizer); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(TEXT("Initialize"), Result);
 			OpenJTalkRcDelete(OpenJTalk);
@@ -248,6 +250,34 @@ FString UVoicevoxNativeCoreSubsystem::GetOnnxruntimeLibUnversionedFilename()
 		Name = UTF8_TO_TCHAR(FuncPtr());
 	}
 	return Name;
+}
+
+/**
+ * @brief VoicevoxOnnxruntime のインスタンスを得る。
+ * @returns ::VoicevoxOnnxruntime のインスタンス
+ */
+const VoicevoxOnnxruntime* UVoicevoxNativeCoreSubsystem::SynthesizerGetOnnxRuntime()
+{
+	const FString FuncName = "voicevox_synthesizer_get_onnxruntime"; 
+	using DLL_Function = const VoicevoxOnnxruntime*(*)(const VoicevoxSynthesizer*);
+
+	if (CoreLibraryHandle != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		if (!FuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_onnxruntime_get Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return nullptr;
+		}
+		
+		return FuncPtr(Synthesizer);
+	}
+	return nullptr;
 }
 
 /**
@@ -1168,7 +1198,13 @@ FVoicevoxSupportedDevices UVoicevoxNativeCoreSubsystem::GetSupportedDevices()
 			return Devices;
 		}
 		char* OutputSupportedDevicesJSON;
-		if (const VoicevoxResultCode Result = FuncPtr(Onnxruntime, &OutputSupportedDevicesJSON); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		const VoicevoxOnnxruntime* OnnxRuntime = SynthesizerGetOnnxRuntime();
+		if (OnnxRuntime == nullptr)
+		{
+			return Devices;
+		}
+		
+		if (const VoicevoxResultCode Result = FuncPtr(OnnxRuntime, &OutputSupportedDevicesJSON); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(TEXT("voicevox_onnxruntime_create_supported_devices_json"), Result);
 			return Devices;

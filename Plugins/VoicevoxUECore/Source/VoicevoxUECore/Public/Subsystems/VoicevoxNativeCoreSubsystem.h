@@ -32,9 +32,6 @@ protected:
 
 	//! 音声シンセサイザ
 	VoicevoxSynthesizer* Synthesizer;
-	
-	//! ONNX Runtime。
-	const VoicevoxOnnxruntime* Onnxruntime;
 
 	//! テキスト解析器としてのOpen JTalk。
 	OpenJtalkRc* OpenJTalk;
@@ -52,6 +49,12 @@ protected:
 	 */
 	virtual FString GetOpenJtakeDirectoryName() { return FString(); }
 
+	/**
+	 * @brief VoicevoxOnnxruntime のインスタンスを得る。
+	 * @returns ::VoicevoxOnnxruntime のインスタンス
+	 */
+	VOICEVOXUECORE_API const VoicevoxOnnxruntime* SynthesizerGetOnnxRuntime();
+	
 	/**
 	 * @brief VoicevoxOnnxruntime のインスタンスが既に作られているならそれを得る。 作られていなければ`NULL`を返す。
 	 * @returns ::VoicevoxOnnxruntime のインスタンス
