@@ -176,13 +176,13 @@ enum VoicevoxUserDictWordType : int32_t
  * @typedef VoicevoxVoiceModelId
  * @brief 音声モデルID。VoicevoxSynthesizer はこのIDをキーとして、音声モデルのロード・アンロードを行う。
  */
-typedef const uint8_t (*VoicevoxVoiceModelId)[16];
+using VoicevoxVoiceModelId = const uint8_t (*)[16];
 
 /**
  * @typedef VoicevoxStyleId
  * @brief スタイルID。VOICEVOXにおける、ある<i>キャラクター</i>のある<i>スタイル</i>を指す。
  */
-typedef uint32_t VoicevoxStyleId;
+using VoicevoxStyleId = uint32_t;
 
 /**
  * @typedef OpenJtalkRc
@@ -192,14 +192,14 @@ typedef uint32_t VoicevoxStyleId;
  * 参照カウント方式のスマートポインタ(reference-counted smart pointer)であり、
  * ::voicevox_synthesizer_new に渡されるときには参照カウンタがインクリメントされる形でオブジェクトの共有が行われる。
  */
-typedef struct OpenJtalkRc OpenJtalkRc;
+using OpenJtalkRc = struct OpenJtalkRc;
 
 /**
  * @typedef VoicevoxOnnxruntime
  * @struct VoicevoxOnnxruntime
  * @brief  ONNX Runtime。シングルトンであり、インスタンスは高々一つ。
  */
-typedef struct VoicevoxOnnxruntime VoicevoxOnnxruntime;
+using VoicevoxOnnxruntime = struct VoicevoxOnnxruntime ;
 
 /**
  * @typedef VoicevoxSynthesizer
@@ -207,14 +207,14 @@ typedef struct VoicevoxOnnxruntime VoicevoxOnnxruntime;
  * @brief 音声シンセサイザ。
  * <b>構築</b>(_construction_)は ::voicevox_synthesizer_new で行い、<b>破棄</b>(_destruction_)は ::voicevox_synthesizer_delete で行う。
  */
-typedef struct VoicevoxSynthesizer VoicevoxSynthesizer;
+using VoicevoxSynthesizer = struct VoicevoxSynthesizer ;
 
 /**
  * @typedef VoicevoxUserDict
  * @struct VoicevoxUserDict
  * @brief ユーザー辞書。
  */
-typedef struct VoicevoxUserDict VoicevoxUserDict;
+using VoicevoxUserDict = struct VoicevoxUserDict ;
 
 /**
  * @typedef VoicevoxVoiceModelFile
@@ -222,7 +222,7 @@ typedef struct VoicevoxUserDict VoicevoxUserDict;
  * @brief 音声モデルファイル。VVMファイルと対応する。
  * <b>構築</b>(_construction_)は ::voicevox_voice_model_file_open で行い、<b>破棄</b>(_destruction_)は ::voicevox_voice_model_file_delete で行う。
  */
-typedef struct VoicevoxVoiceModelFile VoicevoxVoiceModelFile;
+using VoicevoxVoiceModelFile = struct VoicevoxVoiceModelFile ;
 
 //------------------------------------------------------------------------
 // struct
