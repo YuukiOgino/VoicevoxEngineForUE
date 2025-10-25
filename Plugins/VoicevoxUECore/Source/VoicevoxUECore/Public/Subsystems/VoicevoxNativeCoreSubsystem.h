@@ -113,9 +113,9 @@ protected:
 	 * @brief OpenJtalkRc を<b>破棄</b>(_destruct_)する。
 	 * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
 	 * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
-	 * @param [in] OpenJTalk 破棄対象。nullable
+	 * @param [in] Rc 破棄対象。nullable
 	 */
-	VOICEVOXUECORE_API void OpenJTalkRcDelete(OpenJtalkRc* OpenJTalk);
+	VOICEVOXUECORE_API void OpenJTalkRcDelete(OpenJtalkRc* Rc);
 
 	/**
 	 * @brief JSON文字列を解放する。
@@ -186,7 +186,12 @@ public:
 	 */
 	VOICEVOXUECORE_API FString GetOnnxruntimeLibUnversionedFilename();
 
-	VOICEVOXUECORE_API char* OpenJTalkRcAnalyze(FString text);
+	/**
+	 * @brief 日本語のテキストを解析する。
+	 * @param [in] Text 日本語テキスト
+	 * @returns 結果コード
+	 */
+	VOICEVOXUECORE_API char* OpenJTalkRcAnalyze(const FString& Text);
 	
 	//--------------------------------
 	// VOICEVOX CORE Finalize関連

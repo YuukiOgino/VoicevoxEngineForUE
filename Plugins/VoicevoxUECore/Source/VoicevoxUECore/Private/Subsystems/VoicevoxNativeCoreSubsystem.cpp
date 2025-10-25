@@ -175,7 +175,7 @@ VoicevoxInitializeOptions UVoicevoxNativeCoreSubsystem::MakeDefaultInitializeOpt
 /**
  * @brief OpenJtalkRc を<b>破棄</b>(_destruct_)する。
  */
-void UVoicevoxNativeCoreSubsystem::OpenJTalkRcDelete(OpenJtalkRc *OpenJTalk)
+void UVoicevoxNativeCoreSubsystem::OpenJTalkRcDelete(OpenJtalkRc* Rc)
 {
 	const FString FuncName = "voicevox_open_jtalk_rc_delete"; 
 	typedef const void(*DLL_Function)(OpenJtalkRc *OpenJTalk);
@@ -193,7 +193,7 @@ void UVoicevoxNativeCoreSubsystem::OpenJTalkRcDelete(OpenJtalkRc *OpenJTalk)
 			return;
 		}
 		
-		FuncPtr(OpenJTalk);
+		FuncPtr(Rc);
 	}
 }
 
@@ -315,7 +315,10 @@ const VoicevoxOnnxruntime* UVoicevoxNativeCoreSubsystem::OnxruntimeInitOcec()
 	return nullptr;
 }
 
-char* UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(FString text)
+/**
+ * @brief 日本語のテキストを解析する。
+ */
+char* UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text)
 {
 	const FString FuncName = "voicevox_open_jtalk_rc_analyze"; 
 	typedef const VoicevoxResultCode(*DLL_Function)(const OpenJtalkRc *open_jtalk,
@@ -337,7 +340,7 @@ char* UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(FString text)
 		}
 
 		char* result;
-		if (const VoicevoxResultCode Result = FuncPtr(OpenJTalk, TCHAR_TO_UTF8(*text), &result); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		if (const VoicevoxResultCode Result = FuncPtr(OpenJTalk, TCHAR_TO_UTF8(*Text), &result); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(TEXT("OnxruntimeInitnOcec"), Result);
 			return nullptr;
@@ -752,7 +755,7 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::RunTextToSpeech(const int64 SpeakerI
 	{
 		if (CoreLibraryHandle != nullptr)
 		{
-			const FString FuncName = "voicevox_synthesizer_tts"; 
+			const FString FuncName = bKana ? "voicevox_synthesizer_tts_from_kana" : "voicevox_synthesizer_tts"; 
 			typedef const VoicevoxResultCode(*DLL_Function)(const VoicevoxSynthesizer *synthesizer,
 											const char *text,
 											VoicevoxStyleId style_id,
