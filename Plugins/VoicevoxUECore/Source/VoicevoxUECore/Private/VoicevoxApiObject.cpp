@@ -295,69 +295,6 @@ VoicevoxSynthesisOptions UVoicevoxApiObject::MakeDefaultSynthesisOptions()
 	return Subsystem->MakeDefaultSynthesisOptions();
 }
 
-//--------------------------------
-// VOICEVOX CORE PhonemeLength関連
-//--------------------------------
-
-/**
- * @brief 音素列から、音素ごとの長さを求める
- */
-TArray<float> UVoicevoxApiObject::GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID)
-{
-	for (const auto Element : SubsystemClasses)
-	{
-		if (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element)); Subsystem->IsModel(SpeakerID))
-		{
-			return Subsystem->GetPhonemeLength(Length, PhonemeList, SpeakerID);
-		}
-	}
-
-	return TArray<float>();
-}
-
-//--------------------------------
-// VOICEVOX CORE Mora関連
-//--------------------------------
-
-/**
- * @brief モーラごとの音素列とアクセント情報から、モーラごとの音高を求める
- */
-TArray<float> UVoicevoxApiObject::FindPitchEachMora(int64 Length, TArray<int64> VowelPhonemeList, TArray<int64> ConsonantPhonemeList,
-										  TArray<int64> StartAccentList, TArray<int64> EndAccentList,
-										  TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
-										  int64 SpeakerID)
-{
-	for (const auto Element : SubsystemClasses)
-	{
-		if (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element)); Subsystem->IsModel(SpeakerID))
-		{
-			return Subsystem->FindPitchEachMora(Length, VowelPhonemeList, ConsonantPhonemeList, StartAccentList, EndAccentList, StartAccentPhraseList, EndAccentPhraseList, SpeakerID);
-		}
-	}
-
-	return TArray<float>();
-}
-
-//--------------------------------
-// VOICEVOX CORE DecodeForward関連
-//--------------------------------
-
-/**
- * @brief フレームごとの音素と音高から、波形を求める
- */
-TArray<float> UVoicevoxApiObject::DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID)
-{
-	for (const auto Element : SubsystemClasses)
-	{
-		if (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element)); Subsystem->IsModel(SpeakerID))
-		{
-			return Subsystem->DecodeForward(Length, PhonemeSize, F0, Phoneme, SpeakerID);
-		}
-	}
-
-	return TArray<float>();
-}
-
 /**
  * @brief 話者名や話者IDのリストを取得する
  */
