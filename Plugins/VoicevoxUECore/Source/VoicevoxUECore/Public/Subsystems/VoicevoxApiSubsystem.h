@@ -244,6 +244,15 @@ public:
 	virtual TArray<FVoicevoxMeta> GetMetaList() { return TArray<FVoicevoxMeta>(); }
 
 	/**
+	 * @fn
+	 * 指定のVoicevoxVoiceModelFileからメタ情報を取得する
+	 * @brief 話者名や話者IDのリストを取得する
+	* @param [in] VvmFileName vvmファイル名
+	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
+	 */
+	virtual TArray<FVoicevoxMeta> GetVoiceModelFileMetaList(const FString VvmFileName) { return TArray<FVoicevoxMeta>(); }
+	
+	/**
 	 * @brief サポートデバイス情報を取得する
 	 * @return サポートデバイス情報の構造体
 	 */

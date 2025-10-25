@@ -251,18 +251,26 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 /**
  * @brief 話者名や話者IDのリストを取得する
  */
-TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetMetaList()
+TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetMetaList() const
 {
 	return NativeInstance->GetMetaList();
 }
 
 /**
+ * @brief 指定のVoicevoxVoiceModelFileから話者名や話者IDのリストを取得する
+ */
+TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetVoiceModelFileMetaList(const FString& VvmFileName) const
+{
+	return NativeInstance->GetVoiceModelFileMetaList(VvmFileName);
+}
+
+/**
  * @brief 指定したSpeakerIDの名前を取得する
  */
-FString UVoicevoxCoreSubsystem::GetMetaName(const int64 SpeakerID)
+FString UVoicevoxCoreSubsystem::GetMetaName(const int64 SpeakerID) const
 {
-	TArray<FVoicevoxMeta> List = GetMetaList();
-	for  (auto [Name, Styles, Speaker_uuid, Version] : List)
+	for  (TArray<FVoicevoxMeta> List = GetMetaList();
+		auto [Name, Styles, Speaker_uuid, Version] : List)
 	{
 		for (const auto Style :Styles)
 		{

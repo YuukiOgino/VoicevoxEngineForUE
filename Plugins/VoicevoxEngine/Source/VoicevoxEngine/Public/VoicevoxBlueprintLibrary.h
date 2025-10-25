@@ -80,6 +80,16 @@ public:
 	static UPARAM(DisplayName="Metas") TArray<FVoicevoxMeta> GetMetasToList();
 
 	/**
+	 * @fn
+	 * 指定のVoicevoxVoiceModelFileからメタ情報を取得する
+	 * @brief 話者名や話者IDのリストを取得する
+	 * @param [in] VvmFileName vvmファイル名
+	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
+	 */
+	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxModelFileMetas"))
+	static UPARAM(DisplayName="Metas")  TArray<FVoicevoxMeta> GetVoiceModelFileMetaList(const FString& VvmFileName);
+	
+	/**
 	 * @brief サポートデバイス情報を取得する(Blueprint公開ノード)
 	 * @return サポートデバイス情報の構造体
 	 */

@@ -362,10 +362,7 @@ TArray<float> UVoicevoxApiObject::DecodeForward(int64 Length, int64 PhonemeSize,
 }
 
 /**
- * @fn
- * メタ情報を取得する
  * @brief 話者名や話者IDのリストを取得する
- * @return メタ情報が格納されたjson形式の構造体
  */
 TArray<FVoicevoxMeta> UVoicevoxApiObject::GetMetaList()
 {
@@ -374,6 +371,24 @@ TArray<FVoicevoxMeta> UVoicevoxApiObject::GetMetaList()
 	{
 		for (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
 			auto Meta : Subsystem->GetMetaList())
+		{
+			MetaList.Emplace(Meta);
+		}
+	}
+
+	return MetaList;
+}
+
+/**
+ * @brief 指定のVoicevoxVoiceModelFileからメタ情報を取得する
+ */
+TArray<FVoicevoxMeta> UVoicevoxApiObject::GetVoiceModelFileMetaList(const FString& VvmFileName)
+{
+	TArray<FVoicevoxMeta> MetaList;
+	for (const auto Element : SubsystemClasses)
+	{
+		for (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+			auto Meta : Subsystem->GetVoiceModelFileMetaList(VvmFileName))
 		{
 			MetaList.Emplace(Meta);
 		}

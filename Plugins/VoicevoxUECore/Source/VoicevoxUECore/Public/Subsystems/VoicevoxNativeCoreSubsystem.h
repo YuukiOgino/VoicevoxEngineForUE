@@ -100,6 +100,13 @@ protected:
 	 * @return 音声モデルID。
 	 */
 	VOICEVOXUECORE_API TArray<uint8_t> VoiceModelFileId(const VoicevoxVoiceModelFile& Model);
+
+	/**
+	 * @brief VoicevoxVoiceModelFile からメタ情報を取得する。
+	 * @param [in] Model 音声モデル
+	 * @returns VoicevoxVoiceModelFileのメタ情報
+	 */
+	VOICEVOXUECORE_API TArray<FVoicevoxMeta> VoiceModelFileCreateMetas(const VoicevoxVoiceModelFile& Model);
 	
 	/**
 	 * @fn
@@ -341,9 +348,18 @@ public:
 	 * @fn
 	 * メタ情報を取得する
 	 * @brief 話者名や話者IDのリストを取得する
-	 * @return メタ情報が格納されたjson形式の構造体
+	 * @return メタ情報が格納されたjson形式の構造体リスト
 	 */
 	VOICEVOXUECORE_API virtual TArray<FVoicevoxMeta> GetMetaList() override;
+
+	/**
+	 * @fn
+	 * 指定のVoicevoxVoiceModelFileからメタ情報を取得する
+	 * @brief 話者名や話者IDのリストを取得する
+	* @param [in] VvmFileName vvmファイル名
+	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
+	 */
+	VOICEVOXUECORE_API virtual TArray<FVoicevoxMeta> GetVoiceModelFileMetaList(const FString VvmFileName) override;
 
 	/**
 	 * @brief サポートデバイス情報を取得する

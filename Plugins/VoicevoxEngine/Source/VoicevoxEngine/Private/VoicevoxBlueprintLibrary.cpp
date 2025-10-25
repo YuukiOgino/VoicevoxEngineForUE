@@ -59,6 +59,14 @@ TArray<FVoicevoxMeta> UVoicevoxBlueprintLibrary::GetMetasToList()
 }
 
 /**
+ * @brief 指定のVoicevoxVoiceModelFileからメタ情報を取得する
+ */
+TArray<FVoicevoxMeta> UVoicevoxBlueprintLibrary::GetVoiceModelFileMetaList(const FString& VvmFileName)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetVoiceModelFileMetaList(VvmFileName);
+}
+
+/**
  * @brief サポートデバイス情報を取得する(Blueprint公開ノード)
  */
 FVoicevoxSupportedDevices UVoicevoxBlueprintLibrary::GetSupportedDevices(const FString& CoreName)

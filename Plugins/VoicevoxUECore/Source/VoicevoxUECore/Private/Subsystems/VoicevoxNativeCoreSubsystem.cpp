@@ -1055,6 +1055,76 @@ TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetMetaList()
 }
 
 /**
+ * @brief 指定のVoicevoxVoiceModelFileから話者名や話者IDのリストを取得する
+ */
+TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetVoiceModelFileMetaList(const FString VvmFileName)
+{
+
+#if PLATFORM_WINDOWS
+	const FString PlatformFolderName = TEXT("Win64");
+#elif PLATFORM_MAC
+	const FString PlatformFolderName = TEXT("Mac");
+#else
+	const FString PlatformFolderName = "";
+#endif
+
+	if (PlatformFolderName.IsEmpty())
+	{
+		const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX %s Initialize Error:Not covered Platform"), *GetVoicevoxCoreName());
+		ShowVoicevoxErrorMessage(ErrorMessage);
+		return TArray<FVoicevoxMeta>();
+	}
+	
+	VoicevoxVoiceModelFile* Model = nullptr;
+	FString VVMName = VvmFileName + TEXT(".vvm");
+	if (const FString VmmPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, TEXT("models"), TEXT("vvms"), VVMName));
+		!VoiceModelFileOpen(VmmPath, &Model))
+	{
+		return TArray<FVoicevoxMeta>();
+	}
+
+	auto Metas = VoiceModelFileCreateMetas(*Model);
+	VoiceModelFileDelete(*Model);
+
+	return Metas;
+}
+
+/**
+ * @brief VoicevoxVoiceModelFile からメタ情報を取得する。
+ * @param [in] Model 音声モデル
+ * @returns VoicevoxVoiceModelFileのメタ情報
+ */
+TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::VoiceModelFileCreateMetas(const VoicevoxVoiceModelFile& Model)
+{
+	const FString FuncName = "voicevox_voice_model_file_create_metas_json"; 
+	using DLL_Function = char*(*)(const VoicevoxVoiceModelFile*);
+	
+	if (CoreLibraryHandle != nullptr)
+	{
+#if PLATFORM_WINDOWS
+		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		if (!FuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_voice_model_file_create_metas_json Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return TArray<FVoicevoxMeta>();
+		}
+		TArray<FVoicevoxMeta> List;
+		char* Metas = FuncPtr(&Model);
+		FJsonObjectConverter::JsonArrayStringToUStruct(UTF8_TO_TCHAR(Metas), &List, 0, 0);
+		JsonFree(Metas);
+		return List;
+	}
+	
+	const FString Message =  FString::Printf(TEXT("VOICEVOX %s LoadError!!"), *GetVoicevoxCoreName());
+	ShowVoicevoxErrorMessage(Message);
+	return TArray<FVoicevoxMeta>();
+}
+
+/**
  * @brief サポートデバイス情報を取得する
  */
 FVoicevoxSupportedDevices UVoicevoxNativeCoreSubsystem::GetSupportedDevices()

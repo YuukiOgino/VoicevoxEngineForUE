@@ -300,15 +300,24 @@ public:
 	 * @brief 話者名や話者IDのリストを取得する
 	 * @return メタ情報が格納されたjson形式の構造体
 	 */
-	TArray<FVoicevoxMeta> GetMetaList();
+	TArray<FVoicevoxMeta> GetMetaList() const;
 
+	/**
+	 * @fn
+	 * 指定のVoicevoxVoiceModelFileからメタ情報を取得する
+	 * @brief 話者名や話者IDのリストを取得する
+	 * @param [in] VvmFileName vvmファイル名
+	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
+	 */
+	TArray<FVoicevoxMeta> GetVoiceModelFileMetaList(const FString& VvmFileName) const;
+	
 	/**
 	 * @fn
 	 * メタ情報から指定したSpeakerIDの名前を取得する
 	 * @brief 指定したSpeakerIDの名前を取得する
 	 * @return 指定したSpeakerIDの名前
 	 */
-	FString GetMetaName(int64 SpeakerID);
+	FString GetMetaName(int64 SpeakerID) const;
 	
 	//--------------------------------
 	// VOICEVOX CORE Version関連
