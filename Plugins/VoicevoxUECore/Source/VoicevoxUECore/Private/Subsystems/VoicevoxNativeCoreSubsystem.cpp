@@ -667,6 +667,49 @@ bool UVoicevoxNativeCoreSubsystem::IsModel(const int64 SpeakerId)
 	return false;
 }
 
+/**
+ * @breaf 音声モデルの読み込みを解除する。
+ */
+bool UVoicevoxNativeCoreSubsystem::UnloadVoiceModel(const FString VvmFileName)
+{
+	if (CoreLibraryHandle != nullptr)
+	{
+		const FString UnloadFuncName = "voicevox_synthesizer_unload_voice_model";
+		using DLL_UnloadFunction = const VoicevoxResultCode(*)(const VoicevoxSynthesizer *synthesizer,
+														   VoicevoxVoiceModelId model_id);
+
+#if PLATFORM_WINDOWS
+		const auto UnloadFuncPtr = static_cast<DLL_UnloadFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *UnloadFuncName));
+#elif PLATFORM_MAC
+		const auto UnloadFuncPtr = (DLL_UnloadFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *UnloadFuncName);
+#endif
+
+		if (!UnloadFuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_synthesizer_unload_voice_model Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return false;
+		}
+
+		if (const auto ModelId = ModelIdMap.Find(VvmFileName); ModelId != nullptr)
+		{
+			if (const VoicevoxResultCode Result = UnloadFuncPtr(Synthesizer, reinterpret_cast<VoicevoxVoiceModelId>(ModelId->GetData()));
+					Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+			{
+				VoicevoxShowErrorResultMessage(TEXT("UnloadVoiceModel"), Result);
+			}
+			else
+			{
+				ModelIdMap.Remove(VvmFileName);
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+
 //--------------------------------
 // VOICEVOX CORE AudioQuery関連
 //--------------------------------

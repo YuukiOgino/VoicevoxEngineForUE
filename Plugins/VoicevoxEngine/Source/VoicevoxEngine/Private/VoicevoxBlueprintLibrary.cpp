@@ -27,6 +27,14 @@ void UVoicevoxBlueprintLibrary::Finalize()
 }
 
 /**
+ * @breaf 音声モデルの読み込みを解除する。
+ */
+ bool UVoicevoxBlueprintLibrary::UnloadVoiceModel(const FString VvmFileName)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->UnloadVoiceModel(VvmFileName);
+}
+
+/**
  * @brief 初期化済みのVOICEVOX CORE名のリスト取得
  */
 TArray<FString> UVoicevoxBlueprintLibrary::GetCoreNameList()

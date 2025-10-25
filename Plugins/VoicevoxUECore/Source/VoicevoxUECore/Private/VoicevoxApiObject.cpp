@@ -168,6 +168,23 @@ bool UVoicevoxApiObject::LoadModel(const int64 SpeakerId)
 	return false;
 }
 
+/**
+ * @breaf 音声モデルの読み込みを解除する。
+ */
+bool UVoicevoxApiObject::UnloadVoiceModel(const FString& VvmFileName)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (const auto bIsSuccess = Subsystem->UnloadVoiceModel(VvmFileName); bIsSuccess)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 //--------------------------------
 // VOICEVOX CORE AudioQuery関連
 //--------------------------------

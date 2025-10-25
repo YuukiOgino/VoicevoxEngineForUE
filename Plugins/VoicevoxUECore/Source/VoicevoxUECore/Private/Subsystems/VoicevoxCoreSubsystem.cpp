@@ -119,6 +119,14 @@ bool UVoicevoxCoreSubsystem::LoadModel(const int64 SpeakerId) const
 	return NativeInstance->LoadModel(SpeakerId);
 }
 
+/**
+ * @breaf 音声モデルの読み込みを解除する。
+ */
+bool UVoicevoxCoreSubsystem::UnloadVoiceModel(const FString& VvmFileName) const
+{
+	return NativeInstance->UnloadVoiceModel(VvmFileName);
+}
+
 //--------------------------------
 // VOICEVOX CORE AudioQuery関連
 //--------------------------------

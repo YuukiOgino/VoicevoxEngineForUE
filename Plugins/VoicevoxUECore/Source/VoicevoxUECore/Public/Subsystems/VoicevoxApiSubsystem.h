@@ -134,8 +134,15 @@ public:
 	 * @param SpeakerId 話者番号
 	 * @return 存在したらtrue、無い場合はfalse
 	 */
-	virtual bool IsModel(int64 SpeakerId) { return true; }
+	virtual bool IsModel(int64 SpeakerId) { return false; }
 
+	/**
+	 * @breaf 音声モデルの読み込みを解除する。
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 解除処理の結果
+	 */
+	virtual bool UnloadVoiceModel(FString VvmFileName) { return false; }
+	
 	//--------------------------------
 	// VOICEVOX CORE AudioQuery関連
 	//--------------------------------

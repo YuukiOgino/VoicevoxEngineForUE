@@ -246,6 +246,13 @@ public:
 	 */
 	VOICEVOXUECORE_API virtual bool IsModel(int64 SpeakerId) override;
 
+	/**
+	 * @breaf 音声モデルの読み込みを解除する。
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 解除処理の結果
+	 */
+	VOICEVOXUECORE_API virtual bool UnloadVoiceModel(FString VvmFileName) override;
+	
 	//--------------------------------
 	// VOICEVOX CORE AudioQuery関連
 	//--------------------------------

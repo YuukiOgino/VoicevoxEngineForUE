@@ -46,6 +46,14 @@ public:
 	static void Finalize();
 
 	/**
+	 * @breaf 音声モデルの読み込みを解除する。
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 解除処理の結果
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxUnLoadVoiceModel"))
+	static bool UnloadVoiceModel(FString VvmFileName);
+	
+	/**
 	 * @fn
 	 *  初期化済みのVOICEVOX CORE名のリスト取得(Blueprint公開ノード)
 	 * @brief 初期化済みのVOICEVOX CORE名のリスト取得

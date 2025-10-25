@@ -130,6 +130,13 @@ class UVoicevoxApiObject : public UObject
 	 */
 	VOICEVOXUECORE_API bool LoadModel(int64 SpeakerId);
 
+	/**
+	 * @breaf 音声モデルの読み込みを解除する。
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 解除処理の結果
+	 */
+	VOICEVOXUECORE_API bool UnloadVoiceModel(const FString& VvmFileName);
+	
 	//--------------------------------
 	// VOICEVOX CORE AudioQuery関連
 	//--------------------------------

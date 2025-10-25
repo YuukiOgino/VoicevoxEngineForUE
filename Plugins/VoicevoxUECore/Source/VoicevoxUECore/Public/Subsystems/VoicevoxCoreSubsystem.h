@@ -186,6 +186,13 @@ public:
 	 */
 	 bool LoadModel(int64 SpeakerId) const;
 
+	/**
+	 * @breaf 音声モデルの読み込みを解除する。
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 解除処理の結果
+	 */
+	 bool UnloadVoiceModel(const FString& VvmFileName) const;
+	
 	//--------------------------------
 	// VOICEVOX CORE AudioQuery関連
 	//--------------------------------
