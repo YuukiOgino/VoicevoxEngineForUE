@@ -52,6 +52,14 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxUnLoadVoiceModel"))
 	static bool UnloadVoiceModel(FString VvmFileName);
+
+	/**
+	 * @breaf 指定したIDの音声モデルが読み込まれているか判定する。
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns モデルが読み込まれているかどうか
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxIsLoadedVoiceModel"))
+	static bool IsLoadedVoiceModel(FString VvmFileName);
 	
 	/**
 	 * @fn

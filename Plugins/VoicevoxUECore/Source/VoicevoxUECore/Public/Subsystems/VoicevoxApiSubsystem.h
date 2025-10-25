@@ -142,6 +142,13 @@ public:
 	 * @returns 解除処理の結果
 	 */
 	virtual bool UnloadVoiceModel(FString VvmFileName) { return false; }
+
+	/**
+	 * @breaf 指定したIDの音声モデルが読み込まれているか判定する。
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns モデルが読み込まれているかどうか
+	 */
+	virtual bool IsLoadedVoiceModel(FString VvmFileName) { return false; }
 	
 	//--------------------------------
 	// VOICEVOX CORE AudioQuery関連

@@ -185,6 +185,23 @@ bool UVoicevoxApiObject::UnloadVoiceModel(const FString& VvmFileName)
 	return false;
 }
 
+/**
+ * @breaf 指定したIDの音声モデルが読み込まれているか判定する。
+ */
+bool UVoicevoxApiObject::IsLoadedVoiceModel(const FString& VvmFileName)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (const auto bIsSuccess = Subsystem->IsLoadedVoiceModel(VvmFileName); bIsSuccess)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 //--------------------------------
 // VOICEVOX CORE AudioQuery関連
 //--------------------------------

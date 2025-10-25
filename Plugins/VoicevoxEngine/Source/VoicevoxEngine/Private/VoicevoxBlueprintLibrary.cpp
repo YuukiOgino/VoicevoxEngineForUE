@@ -35,6 +35,14 @@ void UVoicevoxBlueprintLibrary::Finalize()
 }
 
 /**
+ * @breaf 指定したIDの音声モデルが読み込まれているか判定する。
+ */
+bool UVoicevoxBlueprintLibrary::IsLoadedVoiceModel(const FString VvmFileName)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->IsLoadedVoiceModel(VvmFileName);
+}
+
+/**
  * @brief 初期化済みのVOICEVOX CORE名のリスト取得
  */
 TArray<FString> UVoicevoxBlueprintLibrary::GetCoreNameList()

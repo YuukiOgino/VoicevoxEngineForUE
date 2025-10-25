@@ -127,6 +127,14 @@ bool UVoicevoxCoreSubsystem::UnloadVoiceModel(const FString& VvmFileName) const
 	return NativeInstance->UnloadVoiceModel(VvmFileName);
 }
 
+/**
+ * @breaf 指定したIDの音声モデルが読み込まれているか判定する。
+ */
+bool UVoicevoxCoreSubsystem::IsLoadedVoiceModel(const FString& VvmFileName) const
+{
+	return NativeInstance->UnloadVoiceModel(VvmFileName);
+}
+
 //--------------------------------
 // VOICEVOX CORE AudioQuery関連
 //--------------------------------

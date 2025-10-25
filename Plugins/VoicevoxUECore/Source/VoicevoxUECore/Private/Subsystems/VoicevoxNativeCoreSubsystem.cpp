@@ -709,6 +709,37 @@ bool UVoicevoxNativeCoreSubsystem::UnloadVoiceModel(const FString VvmFileName)
 	return false;
 }
 
+/**
+ * @breaf 指定したIDの音声モデルが読み込まれているか判定する。
+ */
+bool UVoicevoxNativeCoreSubsystem::IsLoadedVoiceModel(const FString VvmFileName)
+{
+	if (CoreLibraryHandle != nullptr)
+	{
+		const FString IsFileLoadedFuncName = "voicevox_synthesizer_is_loaded_voice_model";
+		using DLL_IsFileLoadedFunction = const bool(*)(const VoicevoxSynthesizer*, VoicevoxVoiceModelId);
+
+#if PLATFORM_WINDOWS
+		const auto IsFileLoadedFuncPtr = static_cast<DLL_IsFileLoadedFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *IsFileLoadedFuncName));
+#elif PLATFORM_MAC
+		const auto IsFileLoadedFuncPtr = (DLL_IsFileLoadedFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FileOpenFuncName);
+#endif
+
+		if (!IsFileLoadedFuncPtr)
+		{
+			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_synthesizer_is_loaded_voice_model Function Error"), *GetVoicevoxCoreName());
+			ShowVoicevoxErrorMessage(Message);
+			return false;
+		}
+
+		if (const auto ModelId = ModelIdMap.Find(VvmFileName); ModelId != nullptr)
+		{
+			return IsFileLoadedFuncPtr(Synthesizer, reinterpret_cast<VoicevoxVoiceModelId>(ModelId->GetData()));
+		}
+	}
+	
+	return false;
+}
 
 //--------------------------------
 // VOICEVOX CORE AudioQuery関連

@@ -252,6 +252,13 @@ public:
 	 * @returns 解除処理の結果
 	 */
 	VOICEVOXUECORE_API virtual bool UnloadVoiceModel(FString VvmFileName) override;
+
+	/**
+	 * @breaf 指定したIDの音声モデルが読み込まれているか判定する。
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns モデルが読み込まれているかどうか
+	 */
+	VOICEVOXUECORE_API virtual bool IsLoadedVoiceModel(FString VvmFileName) override;
 	
 	//--------------------------------
 	// VOICEVOX CORE AudioQuery関連
