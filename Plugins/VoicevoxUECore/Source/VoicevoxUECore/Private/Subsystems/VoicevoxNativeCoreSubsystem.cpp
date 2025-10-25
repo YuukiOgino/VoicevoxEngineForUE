@@ -461,6 +461,7 @@ bool UVoicevoxNativeCoreSubsystem::AllLoadVoiceModel()
 		
 		if (!SynthesizerLoadVoiceModel(*Model))
 		{
+			VoiceModelFileDelete(*Model);
 			return false;
 		}
 
@@ -608,43 +609,59 @@ TArray<uint8_t> UVoicevoxNativeCoreSubsystem::VoiceModelFileId(const VoicevoxVoi
  */
 bool UVoicevoxNativeCoreSubsystem::LoadModel(const int64 SpeakerId)
 {
-	return true;
-	if (CoreLibraryHandle != nullptr)
-	{
-		const FString FuncName = "voicevox_load_model"; 
-		const FString CheckFuncName = "voicevox_is_model_loaded"; 
-		typedef const VoicevoxResultCode(*DLL_Function)(uint32_t SpeakerId);
-		typedef const bool(*DLL_CheckFunction)(uint32_t SpeakerId);
-
+	if (IsModel(SpeakerId)) return true;
+	
 #if PLATFORM_WINDOWS
-		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
-		const auto CheckFuncPtr = static_cast<DLL_CheckFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *CheckFuncName));
+	const FString PlatformFolderName = TEXT("Win64");
 #elif PLATFORM_MAC
-		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
-		const auto CheckFuncPtr = (DLL_CheckFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *CheckFuncName);
-#endif 
+	const FString PlatformFolderName = TEXT("Mac");
+#else
+	const FString PlatformFolderName = "";
+#endif
 
-		if (!FuncPtr || !CheckFuncPtr)
+	if (PlatformFolderName.IsEmpty())
+	{
+		const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX %s Initialize Error:Not covered Platform"), *GetVoicevoxCoreName());
+		ShowVoicevoxErrorMessage(ErrorMessage);
+		return false;
+	}
+	
+	const FString ModelsDirPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, TEXT("models")));
+	TArray<FString> FoundFiles;
+	IFileManager::Get().FindFilesRecursive(FoundFiles, *ModelsDirPath,TEXT("*.vvm"), true, false, false);
+
+	for (const FString& FileName : FoundFiles)
+	{
+		VoicevoxVoiceModelFile* Model = nullptr;
+		if (!VoiceModelFileOpen(FileName, &Model))
 		{
-			const FString Message = FString::Printf(TEXT("VOICEVOX %s voicevox_load_model Function Error"), *GetVoicevoxCoreName());
-			ShowVoicevoxErrorMessage(Message);
-			return false;
+			continue;
+		}
+
+		for (auto Metas = VoiceModelFileCreateMetas(*Model);
+			auto Meta : Metas)
+		{
+			for (auto [Name, Id]: Meta.Styles)
+			{
+				if (Id == SpeakerId)
+				{
+					if (!SynthesizerLoadVoiceModel(*Model))
+					{
+						VoiceModelFileDelete(*Model);
+						return false;
+					}
+
+					const FString FileNameOnly = FPaths::GetBaseFilename(FileName);
+					ModelIdMap.Add(FileNameOnly, VoiceModelFileId(*Model));
+					VoiceModelFileDelete(*Model);
+					return true;
+				}
+			}
 		}
 		
-		// 重い処理のため、スピーカーモデルがロードされていない場合のみロードを実行する
-		if (!CheckFuncPtr(SpeakerId))
-		{
-			if (const VoicevoxResultCode Result = FuncPtr(SpeakerId); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
-			{
-				VoicevoxShowErrorResultMessage(TEXT("voicevox_load_model"), Result);
-				return false;
-			}
-			return true;
-		}
-		return true;
+		VoiceModelFileDelete(*Model);
 	}
-	const FString Message =  FString::Printf(TEXT("VOICEVOX %s LoadError!!"), *GetVoicevoxCoreName());
-	ShowVoicevoxErrorMessage(Message);
+	
 	return false;
 }
 

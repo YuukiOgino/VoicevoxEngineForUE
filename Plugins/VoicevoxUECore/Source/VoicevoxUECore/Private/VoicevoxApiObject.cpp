@@ -155,13 +155,10 @@ bool UVoicevoxApiObject::LoadModel(const int64 SpeakerId)
 {
 	for (const auto Element : SubsystemClasses)
 	{
-		if (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element)); Subsystem->IsModel(SpeakerId))
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (const auto bIsSuccess = Subsystem->LoadModel(SpeakerId); bIsSuccess)
 		{
-			if (const auto bIsSuccess = Subsystem->LoadModel(SpeakerId); bIsSuccess)
-			{
-				return true;
-			}
-			break;
+			return true;
 		}
 	}
 
