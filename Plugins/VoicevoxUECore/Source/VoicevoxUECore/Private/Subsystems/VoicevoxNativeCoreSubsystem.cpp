@@ -35,21 +35,16 @@ bool UVoicevoxNativeCoreSubsystem::ApiInitialize(const bool bUseGPU, const int C
 	}
 	
 	const FString FuncName = "voicevox_synthesizer_new"; 
-	typedef const VoicevoxResultCode(*DLL_Function)(const VoicevoxOnnxruntime *Onnxruntime,
-											const OpenJtalkRc *OpenJtalk,
-											VoicevoxInitializeOptions Options,
-											VoicevoxSynthesizer **OutSynthesizer);
+	using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxOnnxruntime*, const OpenJtalkRc*, VoicevoxInitializeOptions, VoicevoxSynthesizer**);
 
 	const FString MakeDefaultFuncName = "voicevox_make_default_load_onnxruntime_options"; 
-	typedef const VoicevoxLoadOnnxruntimeOptions(*DLL_MakeDefaultLoadOnnxruntimeOptionsFunction)();
+	using DLL_MakeDefaultLoadOnnxruntimeOptionsFunction = const VoicevoxLoadOnnxruntimeOptions(*)();
 
 	const FString OnnxruntimeLoadOnceFuncName = "voicevox_onnxruntime_load_once"; 
-	typedef const VoicevoxResultCode(*DLL_OnnxruntimeLoadOnceFunction)(VoicevoxLoadOnnxruntimeOptions Options,
-	                                                                   const VoicevoxOnnxruntime **OutOnnxruntime);
+	using DLL_OnnxruntimeLoadOnceFunction = const VoicevoxResultCode(*)(VoicevoxLoadOnnxruntimeOptions, const VoicevoxOnnxruntime**);
 
 	const FString OpenJTalkRcNewFuncName = "voicevox_open_jtalk_rc_new"; 
-	typedef const VoicevoxResultCode(*DLL_OpenJTalkRcNewFunction)(const char *OpenJtalkDicDir,
-	                                                              OpenJtalkRc **OutOpenJtalk);
+	using DLL_OpenJTalkRcNewFunction = const VoicevoxResultCode(*)(const char*, OpenJtalkRc**);
 	
 	if (CoreLibraryHandle != nullptr)
 	{
@@ -147,7 +142,7 @@ bool UVoicevoxNativeCoreSubsystem::ApiInitialize(const bool bUseGPU, const int C
 VoicevoxInitializeOptions UVoicevoxNativeCoreSubsystem::MakeDefaultInitializeOptions()
 {
 	const FString FuncName = "voicevox_make_default_initialize_options"; 
-	typedef const VoicevoxInitializeOptions(*DLL_Function)();
+	using DLL_Function = const VoicevoxInitializeOptions(*)();
 	
 	if (CoreLibraryHandle != nullptr)
 	{
@@ -178,7 +173,7 @@ VoicevoxInitializeOptions UVoicevoxNativeCoreSubsystem::MakeDefaultInitializeOpt
 void UVoicevoxNativeCoreSubsystem::OpenJTalkRcDelete(OpenJtalkRc* Rc)
 {
 	const FString FuncName = "voicevox_open_jtalk_rc_delete"; 
-	typedef const void(*DLL_Function)(OpenJtalkRc *OpenJTalk);
+	using DLL_Function = const void(*)(OpenJtalkRc*);
 	if (CoreLibraryHandle != nullptr)
 	{
 #if PLATFORM_WINDOWS
@@ -205,7 +200,7 @@ FString UVoicevoxNativeCoreSubsystem::GetOnnxruntimeLibVersionedFilename()
 	FString Name;
 	Name.Empty();
 	const FString FuncName = "voicevox_get_onnxruntime_lib_versioned_filename"; 
-	typedef const char*(*DLL_Function)();
+	using DLL_Function = const char*(*)();
 	
 	if (CoreLibraryHandle != nullptr)
 	{
@@ -234,7 +229,7 @@ FString UVoicevoxNativeCoreSubsystem::GetOnnxruntimeLibUnversionedFilename()
 	FString Name;
 	Name.Empty();
 	const FString FuncName = "voicevox_get_onnxruntime_lib_unversioned_filename"; 
-	typedef const char*(*DLL_Function)();
+	using DLL_Function = const char*(*)();
 	
 	if (CoreLibraryHandle != nullptr)
 	{
@@ -261,7 +256,7 @@ FString UVoicevoxNativeCoreSubsystem::GetOnnxruntimeLibUnversionedFilename()
 const VoicevoxOnnxruntime* UVoicevoxNativeCoreSubsystem::GetOnnxruntime()
 {
 	const FString FuncName = "voicevox_onnxruntime_get"; 
-	typedef const VoicevoxOnnxruntime*(*DLL_Function)();
+	using DLL_Function = const VoicevoxOnnxruntime*(*)();
 	
 	if (CoreLibraryHandle != nullptr)
 	{
@@ -288,7 +283,7 @@ const VoicevoxOnnxruntime* UVoicevoxNativeCoreSubsystem::GetOnnxruntime()
 const VoicevoxOnnxruntime* UVoicevoxNativeCoreSubsystem::OnxruntimeInitOcec()
 {
 	const FString FuncName = "voicevox_onnxruntime_init_once"; 
-	typedef const VoicevoxResultCode(*DLL_Function)(const VoicevoxOnnxruntime **out_onnxruntime);
+	using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxOnnxruntime**);
 	const VoicevoxOnnxruntime* Runtime;
 	if (CoreLibraryHandle != nullptr)
 	{
@@ -321,9 +316,7 @@ const VoicevoxOnnxruntime* UVoicevoxNativeCoreSubsystem::OnxruntimeInitOcec()
 char* UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text)
 {
 	const FString FuncName = "voicevox_open_jtalk_rc_analyze"; 
-	typedef const VoicevoxResultCode(*DLL_Function)(const OpenJtalkRc *open_jtalk,
-												  const char *text,
-												  char **output_accent_phrases_json);
+	using DLL_Function = const VoicevoxResultCode(*)(const OpenJtalkRc*, const char*, char**);
 	
 	if (CoreLibraryHandle != nullptr)
 	{
@@ -342,7 +335,7 @@ char* UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text)
 		char* result;
 		if (const VoicevoxResultCode Result = FuncPtr(OpenJTalk, TCHAR_TO_UTF8(*Text), &result); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
-			VoicevoxShowErrorResultMessage(TEXT("OnxruntimeInitnOcec"), Result);
+			VoicevoxShowErrorResultMessage(TEXT("OnxruntimeInitOcec"), Result);
 			return nullptr;
 		}
 		JsonFree(result);
@@ -368,7 +361,7 @@ void UVoicevoxNativeCoreSubsystem::Finalize()
 	if (CoreLibraryHandle != nullptr && Synthesizer != nullptr)
 	{
 		const FString FuncName = "voicevox_synthesizer_delete"; 
-		typedef const void(*DLL_Function)(VoicevoxSynthesizer *synthesizer);
+		using DLL_Function = const void(*)(VoicevoxSynthesizer*);
 
 #if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
@@ -488,7 +481,7 @@ bool UVoicevoxNativeCoreSubsystem::VoiceModelFileOpen(const FString& Path, Voice
 	if (CoreLibraryHandle != nullptr)
 	{
 		const FString FileOpenFuncName = "voicevox_voice_model_file_open";
-		typedef const VoicevoxResultCode(*DLL_FileOpenFunction)(const char *path, VoicevoxVoiceModelFile **out_model);
+		using DLL_FileOpenFunction = const VoicevoxResultCode(*)(const char*, VoicevoxVoiceModelFile**);
 
 #if PLATFORM_WINDOWS
 		const auto FileOpenFuncPtr = static_cast<DLL_FileOpenFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FileOpenFuncName));
@@ -524,8 +517,7 @@ bool UVoicevoxNativeCoreSubsystem::SynthesizerLoadVoiceModel(const VoicevoxVoice
 	if (CoreLibraryHandle != nullptr)
 	{
 		const FString LoadFuncName = "voicevox_synthesizer_load_voice_model";
-		typedef const VoicevoxResultCode(*DLL_LoadFunction)(const VoicevoxSynthesizer *synthesizer,
-														 const VoicevoxVoiceModelFile *model);
+		using DLL_LoadFunction = const VoicevoxResultCode(*)(const VoicevoxSynthesizer*, const VoicevoxVoiceModelFile*);
 #if PLATFORM_WINDOWS
 		const auto LoadFuncPtr = static_cast<DLL_LoadFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *LoadFuncName));
 #elif PLATFORM_MAC
@@ -559,7 +551,7 @@ void UVoicevoxNativeCoreSubsystem::VoiceModelFileDelete(VoicevoxVoiceModelFile& 
 	if (CoreLibraryHandle != nullptr)
 	{
 		const FString FileDeleteFuncName = "voicevox_voice_model_file_delete";
-		typedef const void(*DLL_FileDeleteFunction)(VoicevoxVoiceModelFile *model);
+		using DLL_FileDeleteFunction = const void(*)(VoicevoxVoiceModelFile*);
 
 #if PLATFORM_WINDOWS
 		const auto FileDeleteFuncPtr = static_cast<DLL_FileDeleteFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FileDeleteFuncName));
@@ -587,8 +579,7 @@ TArray<uint8_t> UVoicevoxNativeCoreSubsystem::VoiceModelFileId(const VoicevoxVoi
 	if (CoreLibraryHandle != nullptr)
 	{
 		const FString FileIdFuncName = "voicevox_voice_model_file_id";
-		typedef const void(*DLL_FileIdFunction)(const VoicevoxVoiceModelFile *model,
-								  uint8_t (*output_voice_model_id)[16]);
+		using DLL_FileIdFunction = const void(*)(const VoicevoxVoiceModelFile*, uint8_t(*)[16]);
 
 #if PLATFORM_WINDOWS
 		const auto FileIdFuncPtr = static_cast<DLL_FileIdFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FileIdFuncName));
@@ -967,7 +958,7 @@ VoicevoxSynthesisOptions UVoicevoxNativeCoreSubsystem::MakeDefaultSynthesisOptio
 TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetMetaList()
 {
 	const FString FuncName = "voicevox_synthesizer_create_metas_json"; 
-	typedef char*(*DLL_Function)(const VoicevoxSynthesizer* Synthesizer);
+	using DLL_Function = char*(*)(const VoicevoxSynthesizer*);
 	
 	if (CoreLibraryHandle != nullptr)
 	{
@@ -1004,8 +995,7 @@ FVoicevoxSupportedDevices UVoicevoxNativeCoreSubsystem::GetSupportedDevices()
 	if (!bIsInit) return Devices;
 
 	const FString FuncName = "voicevox_onnxruntime_create_supported_devices_json"; 
-	typedef const VoicevoxResultCode(*DLL_Function)(const VoicevoxOnnxruntime *Onnxruntime,
-																	  char **OutputSupportedDevicesJSON);
+	using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxOnnxruntime*, char**);
 	
 	// DLLを読み込み、ポインタを取得
 	if (CoreLibraryHandle != nullptr)
@@ -1043,7 +1033,7 @@ FVoicevoxSupportedDevices UVoicevoxNativeCoreSubsystem::GetSupportedDevices()
 FString UVoicevoxNativeCoreSubsystem::GetVoicevoxVersion()
 {
 	const FString FuncName = "voicevox_get_version"; 
-	typedef const char*(*DLL_Function)();
+	using DLL_Function = const char*(*)();
 	
 	if (CoreLibraryHandle != nullptr)
 	{
@@ -1232,9 +1222,9 @@ TArray<float> UVoicevoxNativeCoreSubsystem::DecodeForward(const int64 Length, co
 	{
 		const FString FuncName = "voicevox_decode"; 
 		const FString FreeFuncName = "voicevox_decode_data_free"; 
-		typedef const VoicevoxResultCode(*DLL_Function)(uintptr_t length, uintptr_t phoneme_size, float *f0, float *phoneme_vector,
+		using DLL_Function = const VoicevoxResultCode(*)(uintptr_t length, uintptr_t phoneme_size, float *f0, float *phoneme_vector,
 														uint32_t speaker_id, uintptr_t *output_decode_data_length, float **output_decode_data);
-		typedef const void(*DLL_FreeFunction)(float* vdecode_data);
+		using DLL_FreeFunction = const void(*)(float*);
 
 #if PLATFORM_WINDOWS
 		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
@@ -1280,7 +1270,7 @@ TArray<float> UVoicevoxNativeCoreSubsystem::DecodeForward(const int64 Length, co
 void UVoicevoxNativeCoreSubsystem::VoicevoxShowErrorResultMessage(const FString& ApiName, VoicevoxResultCode ResultCode)
 {
 	const FString ErrorMessageFuncName = "voicevox_error_result_to_message";
-	typedef const char*(*DLL_ErrorFunction)(VoicevoxResultCode Result);
+	using DLL_ErrorFunction = const char*(*)(VoicevoxResultCode Result);
 #if PLATFORM_WINDOWS
 	const auto ErrorFuncPtr = static_cast<DLL_ErrorFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *ErrorMessageFuncName));
 #elif PLATFORM_MAC
@@ -1310,7 +1300,7 @@ void UVoicevoxNativeCoreSubsystem::VoicevoxShowErrorResultMessage(const FString&
 void UVoicevoxNativeCoreSubsystem::JsonFree(char* JsonData)
 {
 	const FString FuncName = "voicevox_json_free"; 
-	typedef const void(*DLL_Function)(char* Json);
+	using DLL_Function = const void(*)(char*);
 	if (CoreLibraryHandle != nullptr)
 	{
 #if PLATFORM_WINDOWS
