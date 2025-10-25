@@ -33,7 +33,7 @@ protected:
 	 * @brief OpenJtakeのディレクトリ名を取得
 	 * @return OpneJtakeのディレクトリ名
 	 */
-	virtual FString GetOpenJtakeDirectoryName() override;
+	virtual FString GetOpenJTakeDirectoryName() override;
 	
 public:
 

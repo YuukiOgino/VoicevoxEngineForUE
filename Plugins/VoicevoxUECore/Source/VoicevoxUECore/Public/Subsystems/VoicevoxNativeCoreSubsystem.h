@@ -146,7 +146,7 @@ protected:
 	 * @brief OpenJtakeのディレクトリ名を取得
 	 * @return OpneJtakeのディレクトリ名
 	 */
-	virtual FString GetOpenJtakeDirectoryName() { return FString(); }
+	virtual FString GetOpenJTakeDirectoryName() { return FString(); }
 
 	/**
 	 * @brief OpenJtalkRc を<b>破棄</b>(_destruct_)する。
@@ -357,6 +357,18 @@ protected:
 	 * @returns VoicevoxVoiceModelFileのメタ情報
 	 */
 	VOICEVOXUECORE_API TArray<FVoicevoxMeta> VoiceModelFileCreateMetas(const VoicevoxVoiceModelFile& Model);
+
+	/**
+	 * @brief コアライブラリをロード済みか
+	 * @return ローダ済みで参照可能な場合はtrue、それ以外はfalse
+	 */
+	VOICEVOXUECORE_API bool IsValidCoreLibraryHandle();
+
+	/**
+	 * @brief プラットフォームのフォルダ名を取得
+	 * @return プラットフォームのフォルダ名。空の場合は非対応
+	 */
+	VOICEVOXUECORE_API FString GetPlatformFolderName();
 	
 public:
 	/**
@@ -425,6 +437,12 @@ protected:
 	 * @param [in] ResultCode メッセージに変換するエラーコード
 	 */
 	VOICEVOXUECORE_API void VoicevoxShowErrorResultMessage(const FString& ApiName, VoicevoxResultCode ResultCode);
+
+	/**
+	 * DLL読み込み失敗をメッセージに変換して表示
+	 * @param[in] ApiName : エラーを起こしたAPI名
+	 */
+	VOICEVOXUECORE_API void ShowDllErrorMessage(const FString& ApiName);
 	
 };
 

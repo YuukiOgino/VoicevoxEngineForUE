@@ -56,7 +56,7 @@ void UCoreSubsystem::Deinitialize()
 /**
  * @brief OpenJtakeのディレクトリ名を取得
  */
-FString UCoreSubsystem::GetOpenJtakeDirectoryName()
+FString UCoreSubsystem::GetOpenJTakeDirectoryName()
 {
 	return OPEN_JTALK_DIC_NAME;
 }
