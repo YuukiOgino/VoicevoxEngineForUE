@@ -88,22 +88,22 @@ void UAudioQueryParameterElement::OnValueChanged(const float Value)
 	switch (ParamType)
 	{
 	case EAudioQueryParameter::SpeedScale:
-		EditorAudioQueryPtr->Speed_scale = Value;
+		EditorAudioQueryPtr->SpeedScale = Value;
 		break;
 	case EAudioQueryParameter::PitchScale:
-		EditorAudioQueryPtr->Pitch_scale = Value;
+		EditorAudioQueryPtr->PitchScale = Value;
 		break;
 	case EAudioQueryParameter::IntonationScale:
-		EditorAudioQueryPtr->Intonation_scale = Value;
+		EditorAudioQueryPtr->IntonationScale = Value;
 		break;
 	case EAudioQueryParameter::VolumeScale:
-		EditorAudioQueryPtr->Volume_scale = Value;
+		EditorAudioQueryPtr->VolumeScale = Value;
 		break;
 	case EAudioQueryParameter::PrePhonemeLength:
-		EditorAudioQueryPtr->Pre_phoneme_length = Value;
+		EditorAudioQueryPtr->PrePhonemeLength = Value;
 		break;
 	case EAudioQueryParameter::PostPhonemeLength:
-		EditorAudioQueryPtr->Post_phoneme_length = Value;
+		EditorAudioQueryPtr->PostPhonemeLength = Value;
 		break;
 	default:
 		break;
@@ -132,22 +132,22 @@ void UAudioQueryParameterElement::OnTextCommitted(const FText& Text, ETextCommit
 	switch (ParamType)
 	{
 	case EAudioQueryParameter::SpeedScale:
-		EditorAudioQueryPtr->Speed_scale = Value;
+		EditorAudioQueryPtr->SpeedScale = Value;
 		break;
 	case EAudioQueryParameter::PitchScale:
-		EditorAudioQueryPtr->Pitch_scale = Value;
+		EditorAudioQueryPtr->PitchScale = Value;
 		break;
 	case EAudioQueryParameter::IntonationScale:
-		EditorAudioQueryPtr->Intonation_scale = Value;
+		EditorAudioQueryPtr->IntonationScale = Value;
 		break;
 	case EAudioQueryParameter::VolumeScale:
-		EditorAudioQueryPtr->Volume_scale = Value;
+		EditorAudioQueryPtr->VolumeScale = Value;
 		break;
 	case EAudioQueryParameter::PrePhonemeLength:
-		EditorAudioQueryPtr->Pre_phoneme_length = Value;
+		EditorAudioQueryPtr->PrePhonemeLength = Value;
 		break;
 	case EAudioQueryParameter::PostPhonemeLength:
-		EditorAudioQueryPtr->Post_phoneme_length = Value;
+		EditorAudioQueryPtr->PostPhonemeLength = Value;
 		break;
 	default:
 		break;
@@ -169,17 +169,17 @@ float UAudioQueryParameterElement::GetParamValue() const
 	switch (ParamType)
 	{
 	case EAudioQueryParameter::SpeedScale:
-		return EditorAudioQueryPtr->Speed_scale;
+		return EditorAudioQueryPtr->SpeedScale;
 	case EAudioQueryParameter::PitchScale:
-		return EditorAudioQueryPtr->Pitch_scale;
+		return EditorAudioQueryPtr->PitchScale;
 	case EAudioQueryParameter::IntonationScale:
-		return EditorAudioQueryPtr->Intonation_scale, HalfFromZero;
+		return EditorAudioQueryPtr->IntonationScale, HalfFromZero;
 	case EAudioQueryParameter::VolumeScale:
-		return EditorAudioQueryPtr->Volume_scale;
+		return EditorAudioQueryPtr->VolumeScale;
 	case EAudioQueryParameter::PrePhonemeLength:
-		return EditorAudioQueryPtr->Pre_phoneme_length;
+		return EditorAudioQueryPtr->PrePhonemeLength;
 	case EAudioQueryParameter::PostPhonemeLength:
-		return EditorAudioQueryPtr->Post_phoneme_length;
+		return EditorAudioQueryPtr->PostPhonemeLength;
 	default:
 		return 0;
 	}

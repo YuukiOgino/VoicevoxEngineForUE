@@ -194,7 +194,7 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 	FruitMap.Add(TEXT("N"), ELipSyncVowelType::Non);
 	FruitMap.Add(TEXT("pau"), ELipSyncVowelType::Non);
 
-	List.Add({ELipSyncVowelType::Non, AudioQuery.Pre_phoneme_length / AudioQuery.Speed_scale, false, false});
+	List.Add({ELipSyncVowelType::Non, AudioQuery.PrePhonemeLength / AudioQuery.SpeedScale, false, false});
 	
 	for (auto [Moras, Accent, Pause_mora, Is_interrogative] : AudioQuery.Accent_phrases)
 	{
@@ -202,7 +202,7 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 		{
 			if (bIsSimple)
 			{
-				List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.Speed_scale + Consonant_length / AudioQuery.Speed_scale });
+				List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.SpeedScale + Consonant_length / AudioQuery.SpeedScale });
 			}
 			else
 			{
@@ -210,20 +210,20 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 				{
 					FString C = Consonant.ToLower();
 					bool IsLabialOrPlosive = C.Equals(TEXT("w")) || C.Equals(TEXT("m")) || C.Equals(TEXT("b")) || C.Equals(TEXT("p")) || C.Equals(TEXT("f")) || C.Equals(TEXT("v"));
-					List.Add({FruitMap[Vowel], Consonant_length / AudioQuery.Speed_scale, true, IsLabialOrPlosive});
+					List.Add({FruitMap[Vowel], Consonant_length / AudioQuery.SpeedScale, true, IsLabialOrPlosive});
 				}
-				List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.Speed_scale, false, false});
+				List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.SpeedScale, false, false});
 			}
 			
 		}
 
 		if (Pause_mora.Vowel.Equals(TEXT("pau"), ESearchCase::IgnoreCase))
 		{
-			List.Add({ELipSyncVowelType::Non, Pause_mora.Vowel_length / AudioQuery.Speed_scale, false, false});
+			List.Add({ELipSyncVowelType::Non, Pause_mora.Vowel_length / AudioQuery.SpeedScale, false, false});
 		}
 	}
 
-	List.Add({ELipSyncVowelType::Non, AudioQuery.Post_phoneme_length / AudioQuery.Speed_scale, false, false});
+	List.Add({ELipSyncVowelType::Non, AudioQuery.PostPhonemeLength / AudioQuery.SpeedScale, false, false});
 	
 	return List;
 }

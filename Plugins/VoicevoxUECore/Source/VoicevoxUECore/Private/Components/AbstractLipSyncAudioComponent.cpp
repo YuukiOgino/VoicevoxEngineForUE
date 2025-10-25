@@ -450,12 +450,12 @@ void UAbstractLipSyncAudioComponent::PlayToText(const FString Message, const boo
 
 	InitMorphNumMap();
 	AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(SpeakerId, Message, bRunKana);
-	AudioQuery.Speed_scale = SpeedScale;
-	AudioQuery.Pitch_scale = PitchScale;
-	AudioQuery.Intonation_scale = IntonationScale;
-	AudioQuery.Volume_scale = VolumeScale;
-	AudioQuery.Pre_phoneme_length = PrePhonemeLength;
-	AudioQuery.Post_phoneme_length = PostPhonemeLength;
+	AudioQuery.SpeedScale = SpeedScale;
+	AudioQuery.PitchScale = PitchScale;
+	AudioQuery.IntonationScale = IntonationScale;
+	AudioQuery.VolumeScale = VolumeScale;
+	AudioQuery.PrePhonemeLength = PrePhonemeLength;
+	AudioQuery.PostPhonemeLength = PostPhonemeLength;
 	NowLipSync = {ELipSyncVowelType::Non, -1.0f, false, false};
 	bIsPlayLipSyncSimple = bEnabledSimpleLipSync;
 	ToSoundWave(SpeakerId, bEnableInterrogativeUpspeak);

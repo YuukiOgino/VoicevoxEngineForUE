@@ -687,7 +687,7 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQuery(int64 SpeakerId,
 		{
 			if (CoreLibraryHandle != nullptr)
 			{
-				const FString FuncName = bKana ? "voicevox_synthesizer_create_audio_query" : "voicevox_synthesizer_create_audio_query_from_kana"; 
+				const FString FuncName = bKana ? "voicevox_synthesizer_create_audio_query_from_kana" : "voicevox_synthesizer_create_audio_query"; 
 				using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxSynthesizer*, const char*, VoicevoxStyleId, char**);
 
 #if PLATFORM_WINDOWS
