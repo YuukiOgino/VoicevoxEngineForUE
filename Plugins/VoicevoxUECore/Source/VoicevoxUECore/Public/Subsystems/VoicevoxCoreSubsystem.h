@@ -67,11 +67,6 @@ class VOICEVOXUECORE_API UVoicevoxCoreSubsystem : public UEngineSubsystem
 	//----------------------------------------------------------------
 	// Function
 	//----------------------------------------------------------------
-
-	//--------------------------------
-	// CORE API処理完了通知関数
-	// VoicevoxNativeObjectから呼び出し
-	//--------------------------------
 	
 	/**
 	 * @fn
@@ -158,9 +153,25 @@ public:
 	void Finalize();
 
 	//--------------------------------
-	// VOICEVOX CORE LoadModel関連
+	// VOICEVOX CORE LoadModel関連(旧API)
 	//--------------------------------
 
+	/**
+	 * @fn
+	 * VOICEVOX COREのモデルをロード実行
+	 * @brief モデルをロードする。
+	 * @param SpeakerId 話者番号
+	 * @detail
+	 * 必ずしも話者とモデルが1:1対応しているわけではない。
+	 *
+	 * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	bool LoadModel(int64 SpeakerId) const;
+
+	//--------------------------------
+	// VOICEVOX CORE VMM関連
+	//--------------------------------
+	
 	/**
 	 * @brief　VVMファイルのロード実行
 	 * @param [in] VvmFileName vvmファイル名
@@ -173,18 +184,6 @@ public:
 	 * @returns 読み込み結果
 	 */
 	bool AllLoadVoiceModel() const;
-	
-	/**
-	 * @fn
-	 * VOICEVOX COREのモデルをロード実行
-	 * @brief モデルをロードする。
-	 * @param SpeakerId 話者番号
-	 * @detail
-	 * 必ずしも話者とモデルが1:1対応しているわけではない。
-	 *
-	 * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
-	 */
-	 bool LoadModel(int64 SpeakerId) const;
 
 	/**
 	 * @breaf 音声モデルの読み込みを解除する。
@@ -194,7 +193,7 @@ public:
 	 bool UnloadVoiceModel(const FString& VvmFileName) const;
 
 	/**
-	 * @breaf 指定したIDの音声モデルが読み込まれているか判定する。
+	 * @breaf 指定したvvmファイル名が読み込まれているか判定する。
 	 * @param [in] VvmFileName vvmファイル名
 	 * @returns モデルが読み込まれているかどうか
 	 */

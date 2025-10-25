@@ -101,22 +101,9 @@ class UVoicevoxApiObject : public UObject
 	VOICEVOXUECORE_API void Finalize();
 
 	//--------------------------------
-	// VOICEVOX CORE Model関連
+	// VOICEVOX CORE Model関連(旧API)
 	//--------------------------------
 
-	/**
-	 * @brief　VVMファイルのロード実行
-	 * @param [in] VvmFileName vvmファイル名
-	 * @returns 読み込み結果
-	 */
-	VOICEVOXUECORE_API bool LoadVoiceModel(const FString& VvmFileName);
-
-	/**
-	 * @brief　全てのVVMファイルを開く。
-	 * @returns 読み込み結果
-	 */
-	VOICEVOXUECORE_API bool AllLoadVoiceModel();
-	
 	/**
 	 * @fn
 	 * VOICEVOX COREのモデルをロード実行
@@ -129,6 +116,23 @@ class UVoicevoxApiObject : public UObject
 	 * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	VOICEVOXUECORE_API bool LoadModel(int64 SpeakerId);
+
+	//--------------------------------
+	// VOICEVOX CORE VMM関連
+	//--------------------------------
+	
+	/**
+	 * @brief　VVMファイルのロード実行
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 読み込み結果
+	 */
+	VOICEVOXUECORE_API bool LoadVoiceModel(const FString& VvmFileName);
+
+	/**
+	 * @brief　全てのVVMファイルを開く。
+	 * @returns 読み込み結果
+	 */
+	VOICEVOXUECORE_API bool AllLoadVoiceModel();
 
 	/**
 	 * @breaf 音声モデルの読み込みを解除する。
@@ -184,6 +188,10 @@ class UVoicevoxApiObject : public UObject
 	 * @return テキスト音声合成オプション
 	 */
 	VOICEVOXUECORE_API VoicevoxTtsOptions MakeDefaultTtsOptions();
+
+	//--------------------------------
+	// VOICEVOX CORE Synthesis関連
+	//--------------------------------
 	
 	/**
 	 * @fn
@@ -217,6 +225,10 @@ class UVoicevoxApiObject : public UObject
 	 */
 	VOICEVOXUECORE_API VoicevoxSynthesisOptions MakeDefaultSynthesisOptions();
 
+	//--------------------------------
+	// VOICEVOX CORE Property関連
+	//--------------------------------
+	
 	/**
 	 * @fn
 	 * メタ情報を取得する

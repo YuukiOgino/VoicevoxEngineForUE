@@ -43,109 +43,7 @@ protected:
 	// Function
 	//----------------------------------------------------------------
 
-	/**
-	 * @brief OpenJtakeのディレクトリ名を取得
-	 * @return OpneJtakeのディレクトリ名
-	 */
-	virtual FString GetOpenJtakeDirectoryName() { return FString(); }
-
-	/**
-	 * @brief VoicevoxOnnxruntime のインスタンスを得る。
-	 * @returns ::VoicevoxOnnxruntime のインスタンス
-	 */
-	VOICEVOXUECORE_API const VoicevoxOnnxruntime* SynthesizerGetOnnxRuntime();
-	
-	/**
-	 * @brief VoicevoxOnnxruntime のインスタンスが既に作られているならそれを得る。 作られていなければ`NULL`を返す。
-	 * @returns ::VoicevoxOnnxruntime のインスタンス
-	 */
-	VOICEVOXUECORE_API const VoicevoxOnnxruntime* GetOnnxruntime();
-
-	/**
-	 * @brief ONNX Runtimeを初期化する。
-	 * 一度成功したら以後は同じ参照を返す。
-	 *
-	 * @returns VoicevoxOnnxruntime のインスタンス
-	 */
-	VOICEVOXUECORE_API const VoicevoxOnnxruntime* OnxruntimeInitOcec();
-	
-	/**
-	 * @brief VVMファイルを開く。
-	 *
-	 * @param [in] Path vvmファイルへのUTF-8のファイルパス
-	 * @param [out] Model 構築先
-	 *
-	 * @returns 結果
-	 */
-	VOICEVOXUECORE_API bool VoiceModelFileOpen(const FString& Path, VoicevoxVoiceModelFile** Model);
-
-	/**
-	 * 音声モデルを読み込む。
-	 * @param [in] Model 音声モデル
-	 *
-	 * @returns 結果
-	 */
-	VOICEVOXUECORE_API bool SynthesizerLoadVoiceModel(const VoicevoxVoiceModelFile& Model);
-	
-	/**
-	 * @brief VoicevoxVoiceModelFile を、所有しているファイルディスクリプタを閉じた上で<b>破棄</b>(_destruct_)する。ファイルの削除(_delete_)<b>ではない</b>。
-	 * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
-	 * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
-	 *
-	 * @param [in] Model 破棄対象。nullable
-	 */
-	VOICEVOXUECORE_API void VoiceModelFileDelete(VoicevoxVoiceModelFile& Model);
-
-	/**
-	 * @brief  VoicevoxVoiceModelFile からIDを取得する。
-	 *
-	 * @param [in] Model 音声モデル
-	 * @return 音声モデルID。
-	 */
-	VOICEVOXUECORE_API TArray<uint8_t> VoiceModelFileId(const VoicevoxVoiceModelFile& Model);
-
-	/**
-	 * @brief VoicevoxVoiceModelFile からメタ情報を取得する。
-	 * @param [in] Model 音声モデル
-	 * @returns VoicevoxVoiceModelFileのメタ情報
-	 */
-	VOICEVOXUECORE_API TArray<FVoicevoxMeta> VoiceModelFileCreateMetas(const VoicevoxVoiceModelFile& Model);
-	
-	/**
-	 * @fn
-	 * VOICEVOX COREのvoicevox_ttsで生成した音声データを開放
-	 * @brief voicevox_tts等で生成した音声データを開放する
-	 * @param Wav 開放する音声データのポインタ
-	 */
-	VOICEVOXUECORE_API void WavFree(uint8* Wav);
-
-	/**
-	 * @brief OpenJtalkRc を<b>破棄</b>(_destruct_)する。
-	 * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
-	 * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
-	 * @param [in] Rc 破棄対象。nullable
-	 */
-	VOICEVOXUECORE_API void OpenJTalkRcDelete(OpenJtalkRc* Rc);
-
-	/**
-	 * @brief JSON文字列を解放する。
-	 *
-	 * @param [in] JsonData 解放するJSON文字列。nullable
-	 */
-	VOICEVOXUECORE_API void JsonFree(char* JsonData);
-	
-	/**
-	 * エラー結果をメッセージに変換して表示
-	 * @param[in] ApiName : エラーを起こしたAPI名
-	 * @param [in] ResultCode メッセージに変換するエラーコード
-	 */
-	VOICEVOXUECORE_API void VoicevoxShowErrorResultMessage(const FString& ApiName, VoicevoxResultCode ResultCode);
-	
 public:
-
-	//----------------------------------------------------------------
-	// Function
-	//----------------------------------------------------------------
 	
 	//--------------------------------
 	// コンストラクタ
@@ -183,26 +81,6 @@ public:
 	 */
 	VOICEVOXUECORE_API virtual VoicevoxInitializeOptions MakeDefaultInitializeOptions() override;
 
-	/**
-	 * @brief ONNX Runtimeの動的ライブラリの、バージョン付きのファイル名を取得。
-	 * WindowsとAndroidでは ::voicevox_get_onnxruntime_lib_unversioned_filename と同じ。
-	 * @return ONNX Runtimeの動的ライブラリの、バージョン付きのファイル名
-	 */
-	VOICEVOXUECORE_API FString GetOnnxruntimeLibVersionedFilename();
-
-	/**
-	 * @brief ONNX Runtimeの動的ライブラリの、バージョン無しのファイル名を取得。
-	 * @return ONNX Runtimeの動的ライブラリの、バージョン無しのファイル名。
-	 */
-	VOICEVOXUECORE_API FString GetOnnxruntimeLibUnversionedFilename();
-
-	/**
-	 * @brief 日本語のテキストを解析する。
-	 * @param [in] Text 日本語テキスト
-	 * @returns 結果コード
-	 */
-	VOICEVOXUECORE_API char* OpenJTalkRcAnalyze(const FString& Text);
-	
 	//--------------------------------
 	// VOICEVOX CORE Finalize関連
 	//--------------------------------
@@ -216,24 +94,81 @@ public:
 	 * 実行せずにexitしても大抵の場合問題ないが、CUDAを利用している場合は終了処理を実行しておかないと例外が起こることがある。
 	 */
 	VOICEVOXUECORE_API virtual void Finalize() override;
-
+	
 	//--------------------------------
-	// VOICEVOX CORE Model関連
+	// VOICEVOX CORE ONNX Runtime関連
 	//--------------------------------
 	
+protected:
+	
 	/**
-	 * @brief　VVMファイルのロード実行
-	 * @param [in] VvmFileName vvmファイル名
-	 * @returns 読み込み結果
+	 * @brief VoicevoxOnnxruntime のインスタンスを得る。
+	 * @returns ::VoicevoxOnnxruntime のインスタンス
 	 */
-	VOICEVOXUECORE_API virtual bool LoadVoiceModel(const FString VvmFileName) override;
+	VOICEVOXUECORE_API const VoicevoxOnnxruntime* SynthesizerGetOnnxRuntime();
+	
+	/**
+	 * @brief VoicevoxOnnxruntime のインスタンスが既に作られているならそれを得る。 作られていなければ`NULL`を返す。
+	 * @returns ::VoicevoxOnnxruntime のインスタンス
+	 */
+	VOICEVOXUECORE_API const VoicevoxOnnxruntime* GetOnnxRuntime();
 
 	/**
-	 * @brief　全てのVVMファイルを開く。
-	 * @returns 読み込み結果
+	 * @brief ONNX Runtimeを初期化する。
+	 * 一度成功したら以後は同じ参照を返す。
+	 *
+	 * @returns VoicevoxOnnxruntime のインスタンス
 	 */
-	VOICEVOXUECORE_API virtual bool AllLoadVoiceModel() override;
+	VOICEVOXUECORE_API const VoicevoxOnnxruntime* OnnxRuntimeInitOnce();
 	
+public:
+	
+	/**
+	 * @brief ONNX Runtimeの動的ライブラリの、バージョン付きのファイル名を取得。
+	 * WindowsとAndroidでは ::voicevox_get_onnxruntime_lib_unversioned_filename と同じ。
+	 * @return ONNX Runtimeの動的ライブラリの、バージョン付きのファイル名
+	 */
+	VOICEVOXUECORE_API FString GetOnnxRuntimeLibVersionedFilename();
+
+	/**
+	 * @brief ONNX Runtimeの動的ライブラリの、バージョン無しのファイル名を取得。
+	 * @return ONNX Runtimeの動的ライブラリの、バージョン無しのファイル名。
+	 */
+	VOICEVOXUECORE_API FString GetOnnxRuntimeLibUnversionedFilename();
+
+	//--------------------------------
+	// VOICEVOX CORE OpenJtake関連
+	//--------------------------------
+	
+protected:
+	
+	/**
+	 * @brief OpenJtakeのディレクトリ名を取得
+	 * @return OpneJtakeのディレクトリ名
+	 */
+	virtual FString GetOpenJtakeDirectoryName() { return FString(); }
+
+	/**
+	 * @brief OpenJtalkRc を<b>破棄</b>(_destruct_)する。
+	 * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
+	 * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+	 * @param [in] Rc 破棄対象。nullable
+	 */
+	VOICEVOXUECORE_API void OpenJTalkRcDelete(OpenJtalkRc* Rc);
+	
+public:
+
+	/**
+	 * @brief 日本語のテキストを解析する。
+	 * @param [in] Text 日本語テキスト
+	 * @returns 結果コード
+	 */
+	VOICEVOXUECORE_API char* OpenJTalkRcAnalyze(const FString& Text);
+
+	//--------------------------------
+	// VOICEVOX CORE Model関連(旧API)
+	//--------------------------------
+
 	/**
 	 * @fn
 	 * VOICEVOX COREのモデルをロード実行
@@ -256,6 +191,67 @@ public:
 	 */
 	VOICEVOXUECORE_API virtual bool IsModel(int64 SpeakerId) override;
 
+	//--------------------------------
+	// VOICEVOX CORE VMM関連
+	//--------------------------------
+
+protected:
+	/**
+	 * @brief VVMファイルを開く。
+	 *
+	 * @param [in] Path vvmファイルへのUTF-8のファイルパス
+	 * @param [out] Model 構築先
+	 *
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool VoiceModelFileOpen(const FString& Path, VoicevoxVoiceModelFile** Model);
+
+	/**
+	 * 音声モデルを読み込む。
+	 * @param [in] Model 音声モデル
+	 *
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool SynthesizerLoadVoiceModel(const VoicevoxVoiceModelFile& Model);
+	
+	/**
+	 * @brief VoicevoxVoiceModelFile を、所有しているファイルディスクリプタを閉じた上で<b>破棄</b>(_destruct_)する。ファイルの削除(_delete_)<b>ではない</b>。
+	 * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
+	 * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+	 *
+	 * @param [in] Model 破棄対象。nullable
+	 */
+	VOICEVOXUECORE_API void VoiceModelFileDelete(VoicevoxVoiceModelFile& Model);
+
+	/**
+	 * @brief  VoicevoxVoiceModelFile からIDを取得する。
+	 *
+	 * @param [in] Model 音声モデル
+	 * @return 音声モデルID。
+	 */
+	VOICEVOXUECORE_API TArray<uint8_t> VoiceModelFileId(const VoicevoxVoiceModelFile& Model);
+
+public:
+	
+	/**
+	 * @brief　VVMファイルのロード実行
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 読み込み結果
+	 *
+	 * @detail
+	 * モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	VOICEVOXUECORE_API virtual bool LoadVoiceModel(const FString VvmFileName) override;
+
+	/**
+	 * @brief　全てのVVMファイルを開く。
+	 * @returns 読み込み結果
+	 *
+	 * @detail
+	 * メインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	VOICEVOXUECORE_API virtual bool AllLoadVoiceModel() override;
+
 	/**
 	 * @breaf 音声モデルの読み込みを解除する。
 	 * @param [in] VvmFileName vvmファイル名
@@ -269,6 +265,8 @@ public:
 	 * @returns モデルが読み込まれているかどうか
 	 */
 	VOICEVOXUECORE_API virtual bool IsLoadedVoiceModel(FString VvmFileName) override;
+
+public:
 	
 	//--------------------------------
 	// VOICEVOX CORE AudioQuery関連
@@ -310,6 +308,10 @@ public:
 	 * @return テキスト音声合成オプション
 	 */
 	VOICEVOXUECORE_API virtual VoicevoxTtsOptions MakeDefaultTtsOptions() override;
+
+	//--------------------------------
+	// VOICEVOX CORE Synthesis関連
+	//--------------------------------
 	
 	/**
 	 * @fn
@@ -347,6 +349,16 @@ public:
 	// VOICEVOX CORE Property関連
 	//--------------------------------
 	
+protected:
+
+	/**
+	 * @brief VoicevoxVoiceModelFile からメタ情報を取得する。
+	 * @param [in] Model 音声モデル
+	 * @returns VoicevoxVoiceModelFileのメタ情報
+	 */
+	VOICEVOXUECORE_API TArray<FVoicevoxMeta> VoiceModelFileCreateMetas(const VoicevoxVoiceModelFile& Model);
+	
+public:
 	/**
 	 * @fn
 	 * メタ情報を取得する
@@ -381,6 +393,39 @@ public:
 	 * @return GPUモードならtrue、そうでないならfalse
 	 */
 	VOICEVOXUECORE_API virtual bool IsGpuMode() override;
+
+	//--------------------------------
+	// VOICEVOX CORE Free関連
+	//--------------------------------
+
+protected:
+	
+	/**
+	 * @fn
+	 * VOICEVOX COREのvoicevox_ttsで生成した音声データを開放
+	 * @brief voicevox_tts等で生成した音声データを開放する
+	 * @param Wav 開放する音声データのポインタ
+	 */
+	VOICEVOXUECORE_API void WavFree(uint8* Wav);
+
+	/**
+	 * @brief JSON文字列を解放する。
+	 *
+	 * @param [in] JsonData 解放するJSON文字列。nullable
+	 */
+	VOICEVOXUECORE_API void JsonFree(char* JsonData);
+
+	//--------------------------------
+	// VOICEVOX CORE Error関連
+	//--------------------------------
+	
+	/**
+	 * エラー結果をメッセージに変換して表示
+	 * @param[in] ApiName : エラーを起こしたAPI名
+	 * @param [in] ResultCode メッセージに変換するエラーコード
+	 */
+	VOICEVOXUECORE_API void VoicevoxShowErrorResultMessage(const FString& ApiName, VoicevoxResultCode ResultCode);
+	
 };
 
 DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxNativeCore, Log, All);

@@ -98,22 +98,9 @@ public:
 	virtual void Finalize() { bIsInit = false; }
 
 	//--------------------------------
-	// VOICEVOX CORE Model関連
+	// VOICEVOX CORE Model関連(旧API)
 	//--------------------------------
 
-	/**
-	 * @brief　VVMファイルを開く。
-	 * @param [in] VvmFileName vvmファイル名
-	 * @returns 読み込み結果
-	 */
-	virtual bool LoadVoiceModel(const FString VvmFileName) { return false; }
-
-	/**
-	 * @brief　全てのVVMファイルを開く。
-	 * @returns 読み込み結果
-	 */
-	virtual bool AllLoadVoiceModel() { return false; }
-	
 	/**
 	 * @fn
 	 * VOICEVOX COREのモデルをロード実行
@@ -135,6 +122,23 @@ public:
 	 * @return 存在したらtrue、無い場合はfalse
 	 */
 	virtual bool IsModel(int64 SpeakerId) { return false; }
+
+	//--------------------------------
+	// VOICEVOX CORE VMM関連
+	//--------------------------------
+	
+	/**
+	 * @brief　VVMファイルを開く。
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 読み込み結果
+	 */
+	virtual bool LoadVoiceModel(const FString VvmFileName) { return false; }
+
+	/**
+	 * @brief　全てのVVMファイルを開く。
+	 * @returns 読み込み結果
+	 */
+	virtual bool AllLoadVoiceModel() { return false; }
 
 	/**
 	 * @breaf 音声モデルの読み込みを解除する。
@@ -190,6 +194,10 @@ public:
 	 * @return テキスト音声合成オプション
 	 */
 	virtual VoicevoxTtsOptions MakeDefaultTtsOptions() { return VoicevoxTtsOptions(); }
+
+	//--------------------------------
+	// VOICEVOX CORE Synthesis関連
+	//--------------------------------
 	
 	/**
 	 * @fn

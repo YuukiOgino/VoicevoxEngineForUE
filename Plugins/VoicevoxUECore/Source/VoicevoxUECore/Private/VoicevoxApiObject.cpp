@@ -109,7 +109,28 @@ void UVoicevoxApiObject::Finalize()
 }
 
 //--------------------------------
-// VOICEVOX CORE Model関連
+// VOICEVOX CORE Model関連(旧API)
+//--------------------------------
+
+/**
+ * @brief モデルをロードする。
+ */
+bool UVoicevoxApiObject::LoadModel(const int64 SpeakerId)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (const auto bIsSuccess = Subsystem->LoadModel(SpeakerId); bIsSuccess)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//--------------------------------
+// VOICEVOX CORE VMM関連
 //--------------------------------
 
 /**
@@ -129,7 +150,6 @@ bool UVoicevoxApiObject::LoadVoiceModel(const FString& VvmFileName)
 	return false;
 }
 
-
 /**
  * @brief　全てのVVMファイルを開く。
  * @returns 読み込み結果
@@ -140,23 +160,6 @@ bool UVoicevoxApiObject::AllLoadVoiceModel()
 	{
 		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
 		if (const auto bIsSuccess = Subsystem->AllLoadVoiceModel(); bIsSuccess)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
- * @brief モデルをロードする。
- */
-bool UVoicevoxApiObject::LoadModel(const int64 SpeakerId)
-{
-	for (const auto Element : SubsystemClasses)
-	{
-		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
-		if (const auto bIsSuccess = Subsystem->LoadModel(SpeakerId); bIsSuccess)
 		{
 			return true;
 		}
@@ -251,6 +254,10 @@ VoicevoxTtsOptions UVoicevoxApiObject::MakeDefaultTtsOptions()
 	return Subsystem->MakeDefaultTtsOptions();
 }
 
+//--------------------------------
+// VOICEVOX CORE Synthesis関連
+//--------------------------------
+
 /**
  * @brief AudioQueryを音声データに変換する。
  */
@@ -294,6 +301,10 @@ VoicevoxSynthesisOptions UVoicevoxApiObject::MakeDefaultSynthesisOptions()
 	const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
 	return Subsystem->MakeDefaultSynthesisOptions();
 }
+
+//--------------------------------
+// VOICEVOX CORE Property関連
+//--------------------------------
 
 /**
  * @brief 話者名や話者IDのリストを取得する
