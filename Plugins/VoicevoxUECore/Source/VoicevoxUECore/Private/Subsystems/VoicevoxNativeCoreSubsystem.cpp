@@ -687,28 +687,24 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQuery(int64 SpeakerId,
 		{
 			if (CoreLibraryHandle != nullptr)
 			{
-				const FString FuncName = "voicevox_audio_query"; 
-				const FString FreeFuncName = "voicevox_audio_query_json_free"; 
-				typedef const VoicevoxResultCode(*DLL_Function)(const char *Text, uint32_t Speaker_ID, char **Output_Audio_Query_JSON);
-				typedef const void(*DLL_FreeFunction)(char *Audio_Query_JSON);
+				const FString FuncName = bKana ? "voicevox_synthesizer_create_audio_query" : "voicevox_synthesizer_create_audio_query_from_kana"; 
+				using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxSynthesizer*, const char*, VoicevoxStyleId, char**);
 
 #if PLATFORM_WINDOWS
 				const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
-				const auto FreeFuncPtr = static_cast<DLL_FreeFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName));
 #elif PLATFORM_MAC
 				const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
-				const auto FreeFuncPtr = (DLL_FreeFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FreeFuncName);
 #endif 
 
-				if (!FuncPtr || !FreeFuncPtr)
+				if (!FuncPtr)
 				{
-					const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX %s voicevox_audio_query Function Error"), *GetVoicevoxCoreName());
+					const FString ErrorMessage = FString::Printf(TEXT("VOICEVOX %s %s Function Error"), *GetVoicevoxCoreName(), *FuncName);
 					ShowVoicevoxErrorMessage(ErrorMessage);
 					return AudioQuery;
 				}
 
 				char* Output = nullptr;
-				if (const VoicevoxResultCode Result = FuncPtr(TCHAR_TO_UTF8(*Message), SpeakerId, &Output);
+				if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*Message), SpeakerId, &Output);
 					Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 				{
 					VoicevoxShowErrorResultMessage(TEXT("TTS"), Result);
@@ -716,7 +712,7 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQuery(int64 SpeakerId,
 				else
 				{
 					FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(Output), &AudioQuery, 0, 0);
-					FreeFuncPtr(Output);
+					JsonFree(Output);
 				}
 			}
 			else
@@ -839,9 +835,8 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const char* AudioQueryJ
 	{
 		if (CoreLibraryHandle != nullptr)
 		{
-			const FString FuncName = "voicevox_synthesis"; 
-			typedef const VoicevoxResultCode(*DLL_Function)(const char *audio_query_json, uint32_t speaker_id, VoicevoxSynthesisOptions options,
-															uintptr_t *output_wav_length, uint8_t **output_wav);
+			const FString FuncName = "voicevox_synthesizer_synthesis"; 
+			using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxSynthesizer*, const char*, VoicevoxStyleId, VoicevoxSynthesisOptions, uintptr_t*, uint8_t**);
 #if PLATFORM_WINDOWS
 			const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 #elif PLATFORM_MAC
@@ -858,7 +853,7 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const char* AudioQueryJ
 			VoicevoxSynthesisOptions Options;
 			Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
 			uintptr_t OutPutSize = 0;
-			if (const VoicevoxResultCode Result = FuncPtr(AudioQueryJson, SpeakerId, Options, &OutPutSize, &OutputWAV);
+			if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, AudioQueryJson, SpeakerId, Options, &OutPutSize, &OutputWAV);
 				Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 			{
 				VoicevoxShowErrorResultMessage(TEXT("TTS"), Result);
