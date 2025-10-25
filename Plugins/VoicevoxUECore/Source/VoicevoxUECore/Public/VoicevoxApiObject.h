@@ -101,6 +101,17 @@ class UVoicevoxApiObject : public UObject
 	VOICEVOXUECORE_API void Finalize();
 
 	//--------------------------------
+	// VOICEVOX CORE OpenJtake関連
+	//--------------------------------
+	
+	/**
+	 * @brief 日本語のテキストを解析する。
+	 * @param [in] Text 日本語テキスト
+	 * @returns OpenJTakから解析されたデータ（FVoicevoxOpenJTalkAnalyze）
+	 */
+	VOICEVOXUECORE_API FVoicevoxOpenJTalkAnalyze OpenJTalkRcAnalyze(const FString& Text);
+	
+	//--------------------------------
 	// VOICEVOX CORE Model関連(旧API)
 	//--------------------------------
 

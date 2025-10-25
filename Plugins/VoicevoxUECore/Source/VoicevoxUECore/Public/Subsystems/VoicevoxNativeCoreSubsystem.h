@@ -194,9 +194,9 @@ public:
 	/**
 	 * @brief 日本語のテキストを解析する。
 	 * @param [in] Text 日本語テキスト
-	 * @returns 結果コード
+	 * @returns OpenJTakから解析されたデータ（FVoicevoxOpenJTalkAnalyze）
 	 */
-	VOICEVOXUECORE_API char* OpenJTalkRcAnalyze(const FString& Text);
+	VOICEVOXUECORE_API FVoicevoxOpenJTalkAnalyze OpenJTalkRcAnalyze(const FString& Text);
 
 	//--------------------------------
 	// VOICEVOX CORE Model関連(旧API)

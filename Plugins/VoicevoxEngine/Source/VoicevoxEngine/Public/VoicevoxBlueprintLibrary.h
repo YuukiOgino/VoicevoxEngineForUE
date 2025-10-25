@@ -46,6 +46,14 @@ public:
 	static void Finalize();
 
 	/**
+	 * @brief 日本語のテキストを解析する。
+	 * @param [in] Text 日本語テキスト
+	 * @returns OpenJTakから解析されたデータ（FVoicevoxOpenJTalkAnalyze）
+	 */
+	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetOpenJTalkRcAnalyze"))
+	static UPARAM(DisplayName="OpenJTalkAnalyze") FVoicevoxOpenJTalkAnalyze OpenJTalkRcAnalyze(const FString& Text);
+	
+	/**
 	 * @breaf 音声モデルの読み込みを解除する。
 	 * @param [in] VvmFileName vvmファイル名
 	 * @returns 解除処理の結果

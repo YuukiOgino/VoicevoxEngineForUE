@@ -212,6 +212,20 @@ struct FVoicevoxAudioQuery
 };
 
 /**
+ * @struct FVoicevoxOpenJTalkAnalyze
+ * @brief VOICEVOXのOpen JTalk解析情報構造体
+ */
+USTRUCT(BlueprintType)
+struct FVoicevoxOpenJTalkAnalyze
+{
+	GENERATED_USTRUCT_BODY()
+	
+	//! アクセントリスト
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	TArray<FVoicevoxAccentPhrase> AccentPhrases;
+};
+
+/**
  * @struct FVoicevoxAudioQuery
  * @brief VOICEVOXのAudioQueryからリップシンクに必要な情報をまとめた構造体
  */

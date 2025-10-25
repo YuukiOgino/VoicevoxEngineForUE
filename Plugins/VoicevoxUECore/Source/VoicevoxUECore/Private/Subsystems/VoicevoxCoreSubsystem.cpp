@@ -91,6 +91,18 @@ void UVoicevoxCoreSubsystem::Finalize()
 }
 
 //--------------------------------
+// VOICEVOX CORE OpenJtake関連
+//--------------------------------
+	
+/**
+ * @brief 日本語のテキストを解析する。
+ */
+FVoicevoxOpenJTalkAnalyze UVoicevoxCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text) const
+{
+	return NativeInstance->OpenJTalkRcAnalyze(Text);
+}
+
+//--------------------------------
 // VOICEVOX CORE LoadModel関連
 //--------------------------------
 

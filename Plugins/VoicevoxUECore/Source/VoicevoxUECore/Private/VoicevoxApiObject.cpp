@@ -109,6 +109,27 @@ void UVoicevoxApiObject::Finalize()
 }
 
 //--------------------------------
+// VOICEVOX CORE OpenJtake関連
+//--------------------------------
+	
+/**
+ * @brief 日本語のテキストを解析する。
+ */
+FVoicevoxOpenJTalkAnalyze UVoicevoxApiObject::OpenJTalkRcAnalyze(const FString& Text)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (FVoicevoxOpenJTalkAnalyze Analyze = Subsystem->OpenJTalkRcAnalyze(Text); !Analyze.AccentPhrases.IsEmpty())
+		{
+			return Analyze;
+		}
+	}
+
+	return FVoicevoxOpenJTalkAnalyze{};
+}
+
+//--------------------------------
 // VOICEVOX CORE Model関連(旧API)
 //--------------------------------
 

@@ -403,34 +403,50 @@ FString UVoicevoxNativeCoreSubsystem::GetOnnxRuntimeLibUnversionedFilename()
 /**
  * @brief 日本語のテキストを解析する。
  */
-char* UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text)
+FVoicevoxOpenJTalkAnalyze UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text)
 {
+	FVoicevoxOpenJTalkAnalyze Analyze{};
+	if (!IsValidCoreLibraryHandle()) return Analyze;
 	const FString FuncName = "voicevox_open_jtalk_rc_analyze"; 
 	using DLL_Function = const VoicevoxResultCode(*)(const OpenJtalkRc*, const char*, char**);
 	
-	if (IsValidCoreLibraryHandle())
-	{
 #if PLATFORM_WINDOWS
-		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 #elif PLATFORM_MAC
-		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
 #endif 
-		if (!FuncPtr)
-		{
-			ShowDllErrorMessage(FuncName);
-			return nullptr;
-		}
-
-		char* AccentPhrases;
-		if (const VoicevoxResultCode Result = FuncPtr(OpenJTalk, TCHAR_TO_UTF8(*Text), &AccentPhrases); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
-		{
-			VoicevoxShowErrorResultMessage(FuncName, Result);
-			return nullptr;
-		}
-		JsonFree(AccentPhrases);
-		return AccentPhrases;
+	if (!FuncPtr)
+	{
+		ShowDllErrorMessage(FuncName);
+		return Analyze;
 	}
-	return nullptr;
+
+	char* AccentPhrases;
+	if (const VoicevoxResultCode Result = FuncPtr(OpenJTalk, TCHAR_TO_UTF8(*Text), &AccentPhrases); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+	{
+		VoicevoxShowErrorResultMessage(FuncName, Result);
+		return Analyze;
+	}
+	
+	// JSONが無名配列で来るので変換する
+	const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(UTF8_TO_TCHAR(AccentPhrases));
+	if (TSharedPtr<FJsonValue> JsonValue; FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid())
+	{
+		if (const TArray<TSharedPtr<FJsonValue>>* JsonArray = nullptr; JsonValue->TryGetArray(JsonArray))
+		{
+			for (const TSharedPtr<FJsonValue>& Element : *JsonArray)
+			{
+				FVoicevoxAccentPhrase Person;
+				if (FJsonObjectConverter::JsonObjectToUStruct(Element->AsObject().ToSharedRef(), FVoicevoxAccentPhrase::StaticStruct(), &Person))
+				{
+					Analyze.AccentPhrases.Add(Person);
+				}
+			}
+		}
+	}
+		
+	JsonFree(AccentPhrases);
+	return Analyze;
 }
 
 //--------------------------------

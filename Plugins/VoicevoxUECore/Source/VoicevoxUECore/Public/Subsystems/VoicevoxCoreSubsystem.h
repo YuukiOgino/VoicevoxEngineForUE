@@ -153,6 +153,17 @@ public:
 	void Finalize();
 
 	//--------------------------------
+	// VOICEVOX CORE OpenJtake関連
+	//--------------------------------
+	
+	/**
+	 * @brief 日本語のテキストを解析する。
+	 * @param [in] Text 日本語テキスト
+	 * @returns OpenJTakから解析されたデータ（FVoicevoxOpenJTalkAnalyze）
+	 */
+	FVoicevoxOpenJTalkAnalyze OpenJTalkRcAnalyze(const FString& Text) const;
+	
+	//--------------------------------
 	// VOICEVOX CORE LoadModel関連(旧API)
 	//--------------------------------
 
