@@ -213,10 +213,8 @@ FVoicevoxAudioQuery UVoicevoxApiObject::GetAudioQuery(const int64 SpeakerId, con
 {
 	for (const auto Element : SubsystemClasses)
 	{
-		if (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element)); Subsystem->IsModel(SpeakerId))
-		{
-			return Subsystem->GetAudioQuery(SpeakerId, Message, bKana);
-		}
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (FVoicevoxAudioQuery AudioQuery = Subsystem->GetAudioQuery(SpeakerId, Message, bKana); !AudioQuery.Kana.IsEmpty()) return AudioQuery;
 	}
 
 	return FVoicevoxAudioQuery();
@@ -233,10 +231,8 @@ TArray<uint8> UVoicevoxApiObject::RunTextToSpeech(int64 SpeakerId, const FString
 {
 	for (const auto Element : SubsystemClasses)
 	{
-		if (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element)); Subsystem->IsModel(SpeakerId))
-		{
-			return Subsystem->RunTextToSpeech(SpeakerId, Message, bKana, bEnableInterrogativeUpspeak);
-		}
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (TArray<uint8> Wav = Subsystem->RunTextToSpeech(SpeakerId, Message, bKana, bEnableInterrogativeUpspeak); !Wav.IsEmpty()) return Wav;
 	}
 
 	return TArray<uint8>();
@@ -265,10 +261,8 @@ TArray<uint8> UVoicevoxApiObject::RunSynthesis(const char* AudioQueryJson, int64
 {
 	for (const auto Element : SubsystemClasses)
 	{
-		if (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element)); Subsystem->IsModel(SpeakerId))
-		{
-			return Subsystem->RunSynthesis(AudioQueryJson, SpeakerId, bEnableInterrogativeUpspeak);
-		}
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (TArray<uint8> Wav = Subsystem->RunSynthesis(AudioQueryJson, SpeakerId, bEnableInterrogativeUpspeak); !Wav.IsEmpty()) return Wav;
 	}
 
 	return TArray<uint8>();
@@ -281,10 +275,8 @@ TArray<uint8> UVoicevoxApiObject::RunSynthesis(const FVoicevoxAudioQuery& AudioQ
 {
 	for (const auto Element : SubsystemClasses)
 	{
-		if (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element)); Subsystem->IsModel(SpeakerId))
-		{
-			return Subsystem->RunSynthesis(AudioQueryJson, SpeakerId, bEnableInterrogativeUpspeak);
-		}
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (TArray<uint8> Wav = Subsystem->RunSynthesis(AudioQueryJson, SpeakerId, bEnableInterrogativeUpspeak); !Wav.IsEmpty()) return Wav;
 	}
 
 	return TArray<uint8>();

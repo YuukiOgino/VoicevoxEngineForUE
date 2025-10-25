@@ -31,10 +31,10 @@ protected:
 	void* CoreLibraryHandle = nullptr;
 
 	//! 音声シンセサイザ
-	VoicevoxSynthesizer* Synthesizer;
+	VoicevoxSynthesizer* Synthesizer = nullptr;
 
 	//! テキスト解析器としてのOpen JTalk。
-	OpenJtalkRc* OpenJTalk;
+	OpenJtalkRc* OpenJTalk = nullptr;
 
 	//! 読み込んだモデルIDマップ 
 	TMap<FString, TArray<uint8>> ModelIdMap;
@@ -69,7 +69,6 @@ public:
 	 * @detail
 	 * VOICEVOXの初期化処理は何度も実行可能。use_gpuを変更して実行しなおすことも可能。
 	 * 最後に実行したuse_gpuに従って他の関数が実行される。
-	 * 初期化処理はUE::Tasks::Launchで非同期に行われる
 	 *
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
@@ -89,30 +88,52 @@ public:
 	 * @fn
 	 * VOICEVOX CORE 終了処理
 	 * @brief 終了処理を行う。以降VOICEVOXのAPIを利用するためには再度Initializeメソッドを行う必要がある。
-	 * @detail
-	 * VOICEVOXの終了処理は何度も実行可能。
-	 * 実行せずにexitしても大抵の場合問題ないが、CUDAを利用している場合は終了処理を実行しておかないと例外が起こることがある。
 	 */
 	VOICEVOXUECORE_API virtual void Finalize() override;
+
+protected:
+
+	/**
+	 * @brief VoicevoxSynthesizer を<b>構築</b>する。
+	 * @param [in] OnnxRuntime
+	 * @param[in] bUseGPU			trueならGPU用、falseならCPU用の初期化を行う
+	 * @param[in] CPUNumThreads		推論に用いるスレッド数を設定する。0の場合論理コア数の半分か、物理コア数が設定される
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool SynthesizerNew(const VoicevoxOnnxruntime& OnnxRuntime, bool bUseGPU, int CPUNumThreads);
+	
+	/**
+	 * @brief VoicevoxSynthesizer を<b>破棄</b>する。
+	 * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
+	 * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+	 */
+	VOICEVOXUECORE_API void SynthesizerDelete();
 	
 	//--------------------------------
 	// VOICEVOX CORE ONNX Runtime関連
 	//--------------------------------
 	
-protected:
-	
 	/**
 	 * @brief VoicevoxOnnxruntime のインスタンスを得る。
-	 * @returns ::VoicevoxOnnxruntime のインスタンス
+	 * @returns VoicevoxOnnxruntime のインスタンス
 	 */
 	VOICEVOXUECORE_API const VoicevoxOnnxruntime* SynthesizerGetOnnxRuntime();
 	
 	/**
 	 * @brief VoicevoxOnnxruntime のインスタンスが既に作られているならそれを得る。 作られていなければ`NULL`を返す。
-	 * @returns ::VoicevoxOnnxruntime のインスタンス
+	 * @returns VoicevoxOnnxruntime のインスタンス
 	 */
 	VOICEVOXUECORE_API const VoicevoxOnnxruntime* GetOnnxRuntime();
 
+	/**
+	 * @brief ONNX Runtimeをロードして初期化する。
+	 * 一度成功したら、以後は引数を無視して同じ参照を返す。
+	 *
+	 * @param [in] Option オプション
+	 * @returns VoicevoxOnnxruntime のインスタンス
+	 */
+	VOICEVOXUECORE_API const VoicevoxOnnxruntime* OnnxRuntimeLoadOnce(const VoicevoxLoadOnnxruntimeOptions& Option);
+	
 	/**
 	 * @brief ONNX Runtimeを初期化する。
 	 * 一度成功したら以後は同じ参照を返す。
@@ -120,6 +141,12 @@ protected:
 	 * @returns VoicevoxOnnxruntime のインスタンス
 	 */
 	VOICEVOXUECORE_API const VoicevoxOnnxruntime* OnnxRuntimeInitOnce();
+
+	/**
+	 * @brief デフォルトのvoicevox_onnxruntime_load_once のオプションを生成する。
+	 * @return デフォルトのvoicevox_onnxruntime_load_once のオプション
+	 */
+	VOICEVOXUECORE_API VoicevoxLoadOnnxruntimeOptions MakeDefaultLoadOnnxRuntimeOptions();
 	
 public:
 	
@@ -144,10 +171,16 @@ protected:
 	
 	/**
 	 * @brief OpenJtakeのディレクトリ名を取得
-	 * @return OpneJtakeのディレクトリ名
+	 * @return OpenJtakeのディレクトリ名
 	 */
 	virtual FString GetOpenJTakeDirectoryName() { return FString(); }
 
+	/**
+	 * @brief テキスト解析器としてのOpen JTalkを作成する。
+	 * @return 取得結果
+	 */
+	VOICEVOXUECORE_API bool OpenJTalkRcNew();
+	
 	/**
 	 * @brief OpenJtalkRc を<b>破棄</b>(_destruct_)する。
 	 * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
