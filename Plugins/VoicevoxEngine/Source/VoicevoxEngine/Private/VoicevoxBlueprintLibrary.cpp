@@ -29,7 +29,7 @@ void UVoicevoxBlueprintLibrary::Finalize()
 /**
  * @brief 日本語のテキストを解析する。
  */
-FVoicevoxOpenJTalkAnalyze UVoicevoxBlueprintLibrary::OpenJTalkRcAnalyze(const FString& Text)
+FVoicevoxAccentPhraseAnalyze UVoicevoxBlueprintLibrary::OpenJTalkRcAnalyze(const FString& Text)
 {
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->OpenJTalkRcAnalyze(Text);
 }

@@ -115,18 +115,18 @@ void UVoicevoxApiObject::Finalize()
 /**
  * @brief 日本語のテキストを解析する。
  */
-FVoicevoxOpenJTalkAnalyze UVoicevoxApiObject::OpenJTalkRcAnalyze(const FString& Text)
+FVoicevoxAccentPhraseAnalyze UVoicevoxApiObject::OpenJTalkRcAnalyze(const FString& Text)
 {
 	for (const auto Element : SubsystemClasses)
 	{
 		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
-		if (FVoicevoxOpenJTalkAnalyze Analyze = Subsystem->OpenJTalkRcAnalyze(Text); !Analyze.AccentPhrases.IsEmpty())
+		if (FVoicevoxAccentPhraseAnalyze Analyze = Subsystem->OpenJTalkRcAnalyze(Text); !Analyze.AccentPhrases.IsEmpty())
 		{
 			return Analyze;
 		}
 	}
 
-	return FVoicevoxOpenJTalkAnalyze{};
+	return FVoicevoxAccentPhraseAnalyze{};
 }
 
 //--------------------------------

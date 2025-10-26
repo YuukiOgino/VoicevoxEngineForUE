@@ -403,9 +403,9 @@ FString UVoicevoxNativeCoreSubsystem::GetOnnxRuntimeLibUnversionedFilename()
 /**
  * @brief 日本語のテキストを解析する。
  */
-FVoicevoxOpenJTalkAnalyze UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text)
+FVoicevoxAccentPhraseAnalyze UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text)
 {
-	FVoicevoxOpenJTalkAnalyze Analyze{};
+	FVoicevoxAccentPhraseAnalyze Analyze{};
 	if (!IsValidCoreLibraryHandle()) return Analyze;
 	const FString FuncName = "voicevox_open_jtalk_rc_analyze"; 
 	using DLL_Function = const VoicevoxResultCode(*)(const OpenJtalkRc*, const char*, char**);

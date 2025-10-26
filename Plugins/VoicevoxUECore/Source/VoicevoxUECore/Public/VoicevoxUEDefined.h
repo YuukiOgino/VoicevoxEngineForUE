@@ -212,11 +212,11 @@ struct FVoicevoxAudioQuery
 };
 
 /**
- * @struct FVoicevoxOpenJTalkAnalyze
- * @brief VOICEVOXのOpen JTalk解析情報構造体
+ * @struct FVoicevoxAccentPhraseAnalyze
+ * @brief VOICEVOXのアクセント情報を解析した結果を格納する構造体
  */
 USTRUCT(BlueprintType)
-struct FVoicevoxOpenJTalkAnalyze
+struct FVoicevoxAccentPhraseAnalyze
 {
 	GENERATED_USTRUCT_BODY()
 	

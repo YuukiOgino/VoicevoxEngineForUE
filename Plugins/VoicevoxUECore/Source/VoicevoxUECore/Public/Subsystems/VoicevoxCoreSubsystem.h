@@ -161,7 +161,7 @@ public:
 	 * @param [in] Text 日本語テキスト
 	 * @returns OpenJTakから解析されたデータ（FVoicevoxOpenJTalkAnalyze）
 	 */
-	FVoicevoxOpenJTalkAnalyze OpenJTalkRcAnalyze(const FString& Text) const;
+	FVoicevoxAccentPhraseAnalyze OpenJTalkRcAnalyze(const FString& Text) const;
 	
 	//--------------------------------
 	// VOICEVOX CORE LoadModel関連(旧API)

@@ -97,7 +97,7 @@ void UVoicevoxCoreSubsystem::Finalize()
 /**
  * @brief 日本語のテキストを解析する。
  */
-FVoicevoxOpenJTalkAnalyze UVoicevoxCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text) const
+FVoicevoxAccentPhraseAnalyze UVoicevoxCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text) const
 {
 	return NativeInstance->OpenJTalkRcAnalyze(Text);
 }

@@ -51,7 +51,7 @@ public:
 	 * @returns OpenJTakから解析されたデータ（FVoicevoxOpenJTalkAnalyze）
 	 */
 	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetOpenJTalkRcAnalyze"))
-	static UPARAM(DisplayName="OpenJTalkAnalyze") FVoicevoxOpenJTalkAnalyze OpenJTalkRcAnalyze(const FString& Text);
+	static UPARAM(DisplayName="OpenJTalkAnalyze") FVoicevoxAccentPhraseAnalyze OpenJTalkRcAnalyze(const FString& Text);
 	
 	/**
 	 * @breaf 音声モデルの読み込みを解除する。
