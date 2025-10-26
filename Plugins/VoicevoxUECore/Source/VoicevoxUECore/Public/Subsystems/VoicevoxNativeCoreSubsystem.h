@@ -384,6 +384,17 @@ public:
 	 * @return デフォルト値が設定された `voicevox_synthesis` のオプション
 	 */
 	VOICEVOXUECORE_API virtual VoicevoxSynthesisOptions MakeDefaultSynthesisOptions() override;
+
+
+	/**
+	 * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
+	 * @param [in] StyleId スタイルID
+	 * @param [in] Text 音声データに変換する日本語テキスト
+	 * @param [in] bKana AquesTalk形式のkanaとしてテキストを解釈する
+	 * @returns AccentPhrase (アクセント句)の配列を格納した構造体（FVoicevoxAccentPhraseAnalyze）
+	 */
+	VOICEVOXUECORE_API virtual FVoicevoxAccentPhraseAnalyze SynthesizerCreateAccentPhrases(VoicevoxStyleId StyleId, const FString& Text, bool bKana) override;
+
 	
 	//--------------------------------
 	// VOICEVOX CORE Property関連

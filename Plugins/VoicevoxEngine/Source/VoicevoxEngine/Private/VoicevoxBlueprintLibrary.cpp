@@ -136,12 +136,18 @@ FVoicevoxAudioQuery UVoicevoxBlueprintLibrary::GetAudioQuery(int SpeakerType, co
 
 /**
  * @brief AccentPhraseの配列からAudioQueryを作る(Blueprint公開ノード)
- * @param [in] AccentPhrases AccentPhraseの配列
- * @return AudioQuery情報が格納されたjson形式の構造体
  */
 FVoicevoxAudioQuery UVoicevoxBlueprintLibrary::GetAudioQueryFromAccentPhrases(const TArray<FVoicevoxAccentPhrase>& AccentPhrases)
 {
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQueryFromAccentPhrases(AccentPhrases);
+}
+
+/**
+ * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。(Blueprint公開ノード)
+ */
+FVoicevoxAccentPhraseAnalyze UVoicevoxBlueprintLibrary::GetSynthesizerAccentPhrase(const int32 StyleId, const FString& Text, const bool bKana)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateAccentPhrases(StyleId, Text, bKana);
 }
 
 /**

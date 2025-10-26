@@ -294,6 +294,15 @@ public:
 	 */
 	TArray<uint8> RunSynthesis(const UVoicevoxQuery& VoicevoxQuery, bool bEnableInterrogativeUpspeak) const;
 
+	/**
+	 * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
+	 * @param [in] StyleId スタイルID
+	 * @param [in] Text 音声データに変換する日本語テキスト
+	 * @param [in] bKana AquesTalk形式のkanaとしてテキストを解釈する
+	 * @returns AccentPhrase (アクセント句)の配列を格納した構造体（FVoicevoxAccentPhraseAnalyze）
+	 */
+	FVoicevoxAccentPhraseAnalyze SynthesizerCreateAccentPhrases(VoicevoxStyleId StyleId, const FString& Text, bool bKana) const;
+	
 	//--------------------------------
 	// VOICEVOX CORE LipSync関連
 	//--------------------------------

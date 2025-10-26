@@ -319,7 +319,6 @@ TArray<uint8> UVoicevoxApiObject::RunSynthesis(const FVoicevoxAudioQuery& AudioQ
 
 /**
  * @brief デフォルトの `voicevox_synthesis` のオプションを生成する
- * @return デフォルト値が設定された `voicevox_synthesis` のオプション
  */
 VoicevoxSynthesisOptions UVoicevoxApiObject::MakeDefaultSynthesisOptions()
 {
@@ -327,6 +326,23 @@ VoicevoxSynthesisOptions UVoicevoxApiObject::MakeDefaultSynthesisOptions()
 	const auto Element = *SubsystemClasses.begin();
 	const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
 	return Subsystem->MakeDefaultSynthesisOptions();
+}
+
+/**
+ * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
+ */
+FVoicevoxAccentPhraseAnalyze UVoicevoxApiObject::SynthesizerCreateAccentPhrases(const VoicevoxStyleId StyleId, const FString& Text, const bool bKana)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (FVoicevoxAccentPhraseAnalyze Analyze = Subsystem->SynthesizerCreateAccentPhrases(StyleId, Text, bKana); !Analyze.AccentPhrases.IsEmpty())
+		{
+			return Analyze;
+		}
+	}
+
+	return FVoicevoxAccentPhraseAnalyze{};
 }
 
 //--------------------------------

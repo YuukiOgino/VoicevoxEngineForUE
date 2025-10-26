@@ -164,7 +164,7 @@ public:
 	 * @brief AudioQuery を取得する。
 	 * @param[in] SpeakerId 話者番号
 	 * @param[in] Message 音声データに変換するtextデータ
-	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
+	 * @param[in] bKana AquesTalk形式のkanaとしてテキストを解釈する
 	 * @return AudioQueryをjsonでフォーマット後、構造体へ変換したもの。
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
@@ -181,7 +181,7 @@ public:
 	 * @brief Textデータを音声データに変換する。
 	 * @param[in] SpeakerId 話者番号
 	 * @param[in] Message 音声データに変換するtextデータ
-	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
+	 * @param[in] bKana AquesTalk形式のkanaとしてテキストを解釈する
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
@@ -230,6 +230,15 @@ public:
 	 * @return デフォルト値が設定された `voicevox_synthesis` のオプション
 	 */
 	virtual VoicevoxSynthesisOptions MakeDefaultSynthesisOptions() { return VoicevoxSynthesisOptions(); }
+
+	/**
+	 * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
+	 * @param [in] StyleId スタイルID
+	 * @param [in] Text 音声データに変換する日本語テキスト
+	 * @param [in] bKana AquesTalk形式のkanaとしてテキストを解釈する
+	 * @returns AccentPhrase (アクセント句)の配列を格納した構造体（FVoicevoxAccentPhraseAnalyze）
+	 */
+	virtual FVoicevoxAccentPhraseAnalyze SynthesizerCreateAccentPhrases(VoicevoxStyleId StyleId, const FString& Text, bool bKana) { return FVoicevoxAccentPhraseAnalyze(); }
 	
 	//--------------------------------
 	// VOICEVOX CORE Property関連

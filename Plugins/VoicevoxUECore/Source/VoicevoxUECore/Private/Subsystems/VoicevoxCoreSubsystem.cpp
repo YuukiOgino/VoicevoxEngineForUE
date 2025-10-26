@@ -186,9 +186,9 @@ TArray<uint8> UVoicevoxCoreSubsystem::RunTextToSpeech(const int64 SpeakerId, con
 /**
  * @brief AudioQueryを音声データに変換する。
  */
-TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const char* AudioQueryJson, const int64 SpeakerId, bool bEnableInterrogativeUpspeak) const
+TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const char* AudioQueryJson, const int64 SpeakerId, const bool bEnableInterrogativeUpspeak) const
 {
-	return NativeInstance->RunSynthesis(AudioQueryJson, SpeakerId,  bEnableInterrogativeUpspeak);
+	return NativeInstance->RunSynthesis(AudioQueryJson, SpeakerId, bEnableInterrogativeUpspeak);
 }
 
 /**
@@ -196,15 +196,23 @@ TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const char* AudioQueryJson, c
  */
 TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQuery, const int64 SpeakerId, const bool bEnableInterrogativeUpspeak) const
 {
-	return NativeInstance->RunSynthesis(AudioQuery, SpeakerId,  bEnableInterrogativeUpspeak);
+	return NativeInstance->RunSynthesis(AudioQuery, SpeakerId, bEnableInterrogativeUpspeak);
 }
 
 /**
  * @brief AudioQueryアセットデータを音声データに変換する。
  */
-TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const UVoicevoxQuery& VoicevoxQuery, bool bEnableInterrogativeUpspeak) const
+TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const UVoicevoxQuery& VoicevoxQuery, const bool bEnableInterrogativeUpspeak) const
 {
-	return NativeInstance->RunSynthesis(VoicevoxQuery.VoicevoxAudioQuery, VoicevoxQuery.SpeakerType,  bEnableInterrogativeUpspeak);
+	return NativeInstance->RunSynthesis(VoicevoxQuery.VoicevoxAudioQuery, VoicevoxQuery.SpeakerType, bEnableInterrogativeUpspeak);
+}
+
+/**
+ * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
+ */
+FVoicevoxAccentPhraseAnalyze UVoicevoxCoreSubsystem::SynthesizerCreateAccentPhrases(const VoicevoxStyleId StyleId, const FString& Text, const bool bKana) const
+{
+	return NativeInstance->SynthesizerCreateAccentPhrases(StyleId, Text, bKana);
 }
 
 //--------------------------------

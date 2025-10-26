@@ -48,9 +48,9 @@ public:
 	/**
 	 * @brief 日本語のテキストを解析する。
 	 * @param [in] Text 日本語テキスト
-	 * @returns OpenJTakから解析されたデータ（FVoicevoxOpenJTalkAnalyze）
+	 * @returns OpenJTakから解析されたデータ（FVoicevoxAccentPhraseAnalyze）
 	 */
-	UFUNCTION(BlueprintPure, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetOpenJTalkRcAnalyze"))
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetOpenJTalkRcAnalyze"))
 	static UPARAM(DisplayName="OpenJTalkAnalyze") FVoicevoxAccentPhraseAnalyze OpenJTalkRcAnalyze(const FString& Text);
 	
 	/**
@@ -158,6 +158,16 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxAudioQueryFromAccentPhrases"))
 	static UPARAM(DisplayName="AudioQuery") FVoicevoxAudioQuery GetAudioQueryFromAccentPhrases(const TArray<FVoicevoxAccentPhrase>& AccentPhrases);
+
+	/**
+	 * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。(Blueprint公開ノード)
+	 * @param [in] StyleId スタイルID
+	 * @param [in] Text 音声データに変換する日本語テキスト
+	 * @param [in] bKana AquesTalk形式のkanaとしてテキストを解釈する
+	 * @returns AccentPhrase (アクセント句)の配列を格納した構造体（FVoicevoxAccentPhraseAnalyze）
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxAccentPhrase"))
+	static UPARAM(DisplayName="AccentPhraseAnalyze") FVoicevoxAccentPhraseAnalyze GetSynthesizerAccentPhrase(int32 StyleId, const FString& Text, bool bKana);
 	
 	/**
 	 * @brief VOICEVOX COREで取得したAudioQueryを元にSoundWaveを作成(Blueprint公開ノード)

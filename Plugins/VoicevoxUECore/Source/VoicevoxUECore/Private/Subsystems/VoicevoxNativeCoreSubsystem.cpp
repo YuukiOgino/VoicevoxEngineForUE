@@ -1049,6 +1049,60 @@ VoicevoxSynthesisOptions UVoicevoxNativeCoreSubsystem::MakeDefaultSynthesisOptio
 	return FuncPtr();
 }
 
+/**
+ * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
+ */
+FVoicevoxAccentPhraseAnalyze UVoicevoxNativeCoreSubsystem::SynthesizerCreateAccentPhrases(const VoicevoxStyleId StyleId, const FString& Text, const bool bKana)
+{
+	FVoicevoxAccentPhraseAnalyze Analyze{};
+	if (!IsValidCoreLibraryHandle()) return Analyze;
+
+	const FString FuncName = bKana ? "voicevox_synthesizer_create_accent_phrases_from_kana" : "voicevox_synthesizer_create_accent_phrases"; 
+	using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxSynthesizer*, const char*, VoicevoxStyleId, char**);
+
+#if PLATFORM_WINDOWS
+	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif
+	
+	if (!FuncPtr)
+	{
+		ShowDllErrorMessage(FuncName);
+	}
+	else
+	{
+		char* AccentPhrases;
+		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*Text), StyleId, &AccentPhrases);
+			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		{
+			VoicevoxShowErrorResultMessage(FuncName, Result);
+		}
+		else
+		{
+			// JSONが無名配列で来るので変換する
+			const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(UTF8_TO_TCHAR(AccentPhrases));
+			if (TSharedPtr<FJsonValue> JsonValue; FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid())
+			{
+				if (const TArray<TSharedPtr<FJsonValue>>* JsonArray = nullptr; JsonValue->TryGetArray(JsonArray))
+				{
+					for (const TSharedPtr<FJsonValue>& Element : *JsonArray)
+					{
+						FVoicevoxAccentPhrase AccentPhrase;
+						if (FJsonObjectConverter::JsonObjectToUStruct(Element->AsObject().ToSharedRef(), FVoicevoxAccentPhrase::StaticStruct(), &AccentPhrase))
+						{
+							Analyze.AccentPhrases.Add(AccentPhrase);
+						}
+					}
+				}
+			}
+			JsonFree(AccentPhrases);
+		}
+	}
+
+	return Analyze;
+}
+
 //--------------------------------
 // VOICEVOX CORE Property関連
 //--------------------------------
