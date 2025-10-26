@@ -241,6 +241,20 @@ FVoicevoxAudioQuery UVoicevoxApiObject::GetAudioQuery(const int64 SpeakerId, con
 	return FVoicevoxAudioQuery();
 }
 
+/**
+ * @brief  AccentPhraseの配列からAudioQueryを作る。
+ */
+FVoicevoxAudioQuery UVoicevoxApiObject::GetAudioQueryFromAccentPhrases(const TArray<FVoicevoxAccentPhrase>& AccentPhrases)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (FVoicevoxAudioQuery AudioQuery = Subsystem->GetAudioQueryFromAccentPhrases(AccentPhrases); !AudioQuery.Accent_phrases.IsEmpty()) return AudioQuery;
+	}
+
+	return FVoicevoxAudioQuery();
+}
+
 //--------------------------------
 // VOICEVOX CORE TextToSpeech関連
 //--------------------------------

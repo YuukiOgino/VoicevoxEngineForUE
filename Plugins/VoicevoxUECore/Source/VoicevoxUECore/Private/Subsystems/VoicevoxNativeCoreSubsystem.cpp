@@ -436,10 +436,10 @@ FVoicevoxOpenJTalkAnalyze UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(const
 		{
 			for (const TSharedPtr<FJsonValue>& Element : *JsonArray)
 			{
-				FVoicevoxAccentPhrase Person;
-				if (FJsonObjectConverter::JsonObjectToUStruct(Element->AsObject().ToSharedRef(), FVoicevoxAccentPhrase::StaticStruct(), &Person))
+				FVoicevoxAccentPhrase AccentPhrase;
+				if (FJsonObjectConverter::JsonObjectToUStruct(Element->AsObject().ToSharedRef(), FVoicevoxAccentPhrase::StaticStruct(), &AccentPhrase))
 				{
-					Analyze.AccentPhrases.Add(Person);
+					Analyze.AccentPhrases.Add(AccentPhrase);
 				}
 			}
 		}
@@ -819,6 +819,78 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQuery(int64 SpeakerId,
 			JsonFree(Output);
 		}
 	}
+	return AudioQuery;
+}
+
+/**
+ * @brief  AccentPhraseの配列からAudioQueryを作る。
+ */
+FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQueryFromAccentPhrases(TArray<FVoicevoxAccentPhrase> AccentPhrases)
+{
+	FVoicevoxAudioQuery AudioQuery{};
+	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
+	if (!bIsInit) return AudioQuery; 
+	
+	if (!IsValidCoreLibraryHandle()) return AudioQuery;
+
+	const FString FuncName = "voicevox_audio_query_create_from_accent_phrases"; 
+	using DLL_Function = const VoicevoxResultCode(*)(const char*, char**);
+
+#if PLATFORM_WINDOWS
+	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+
+	if (!FuncPtr)
+	{
+		ShowDllErrorMessage(FuncName);
+	}
+	else
+	{
+		// JSON値配列を作成
+		TArray<TSharedPtr<FJsonValue>> JsonArray;
+
+		for (const auto& [Moras, Accent, Pause_mora, Is_interrogative] : AccentPhrases)
+		{
+			TSharedPtr<FJsonObject> Obj = MakeShared<FJsonObject>();
+			TArray<TSharedPtr<FJsonValue>> MoraJsonArray;
+
+			for (const FVoicevoxMora& Mora : Moras)
+			{
+				TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
+				FJsonObjectConverter::UStructToJsonObject(FVoicevoxMora::StaticStruct(), &Mora, JsonObject.ToSharedRef(), 0, 0);
+				MoraJsonArray.Add(MakeShared<FJsonValueObject>(JsonObject));
+			}
+			Obj->SetArrayField(TEXT("moras"), MoraJsonArray);
+			Obj->SetNumberField(TEXT("accent"), Accent);
+
+			TSharedPtr<FJsonObject> StructObject = MakeShared<FJsonObject>();
+			FJsonObjectConverter::UStructToJsonObject(FVoicevoxMora::StaticStruct(), &Pause_mora, StructObject.ToSharedRef(), 0, 0);
+			Obj->SetObjectField(TEXT("pause_mora"), StructObject);
+			
+			Obj->SetBoolField(TEXT("is_interrogative"), Is_interrogative);
+			JsonArray.Add(MakeShared<FJsonValueObject>(Obj));
+		}
+
+		// 配列を書き出し
+		FString OutputString;
+		const auto Writer = TJsonWriterFactory<>::Create(&OutputString);
+		FJsonSerializer::Serialize(JsonArray, Writer);
+		
+		char* Output = nullptr;
+		if (const VoicevoxResultCode Result = FuncPtr(TCHAR_TO_UTF8(*OutputString), &Output);
+			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		{
+			VoicevoxShowErrorResultMessage(FuncName, Result);
+		}
+		else
+		{
+			FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(Output), &AudioQuery, 0, 0);
+			JsonFree(Output);
+		}
+	}
+
 	return AudioQuery;
 }
 

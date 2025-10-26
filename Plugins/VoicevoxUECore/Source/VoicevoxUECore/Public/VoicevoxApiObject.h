@@ -175,6 +175,13 @@ class UVoicevoxApiObject : public UObject
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
 	VOICEVOXUECORE_API FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
+
+	/**
+	 * @brief AccentPhraseの配列からAudioQueryを作る
+	 * @param [in] AccentPhrases AccentPhraseの配列
+	 * @return AudioQuery情報が格納されたjson形式の構造体
+	 */
+	VOICEVOXUECORE_API FVoicevoxAudioQuery GetAudioQueryFromAccentPhrases(const TArray<FVoicevoxAccentPhrase>& AccentPhrases);
 	
 	//--------------------------------
 	// VOICEVOX CORE TextToSpeech関連

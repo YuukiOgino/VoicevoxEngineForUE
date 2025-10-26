@@ -227,6 +227,13 @@ public:
 	 */
 	FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana) const;
 
+	/**
+	 * @brief AccentPhraseの配列からAudioQueryを作る
+	 * @param [in] AccentPhrases AccentPhraseの配列
+	 * @return AudioQuery情報が格納されたjson形式の構造体
+	 */
+	FVoicevoxAudioQuery GetAudioQueryFromAccentPhrases(const TArray<FVoicevoxAccentPhrase>& AccentPhrases) const;
+	
 	//--------------------------------
 	// VOICEVOX CORE TextToSpeech関連
 	//--------------------------------

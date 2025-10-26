@@ -154,9 +154,17 @@ bool UVoicevoxCoreSubsystem::IsLoadedVoiceModel(const FString& VvmFileName) cons
 /**
  * @brief AudioQuery を取得する。
  */
-FVoicevoxAudioQuery UVoicevoxCoreSubsystem::GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana) const
+FVoicevoxAudioQuery UVoicevoxCoreSubsystem::GetAudioQuery(const int64 SpeakerId, const FString& Message, const bool bKana) const
 {
 	return NativeInstance->GetAudioQuery(SpeakerId, Message, bKana);
+}
+
+/**
+ * @brief AccentPhraseの配列からAudioQueryを作る。
+ */
+FVoicevoxAudioQuery UVoicevoxCoreSubsystem::GetAudioQueryFromAccentPhrases(const TArray<FVoicevoxAccentPhrase>& AccentPhrases) const
+{
+	return NativeInstance->GetAudioQueryFromAccentPhrases(AccentPhrases);
 }
 
 //--------------------------------

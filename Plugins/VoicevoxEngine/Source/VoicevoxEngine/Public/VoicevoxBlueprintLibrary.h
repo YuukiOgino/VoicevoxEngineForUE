@@ -152,6 +152,14 @@ public:
 	static UPARAM(DisplayName="AudioQuery") FVoicevoxAudioQuery GetAudioQuery(int SpeakerType, FString Message, bool bRunKana = false);
 
 	/**
+	 * @brief AccentPhraseの配列からAudioQueryを作る(Blueprint公開ノード)
+	 * @param [in] AccentPhrases AccentPhraseの配列
+	 * @return AudioQuery情報が格納されたjson形式の構造体
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxAudioQueryFromAccentPhrases"))
+	static UPARAM(DisplayName="AudioQuery") FVoicevoxAudioQuery GetAudioQueryFromAccentPhrases(const TArray<FVoicevoxAccentPhrase>& AccentPhrases);
+	
+	/**
 	 * @brief VOICEVOX COREで取得したAudioQueryを元にSoundWaveを作成(Blueprint公開ノード)
 	 * @param[in] AudioQuery						AudioQuery構造体
 	 * @param[in] SpeakerType						話者番号
@@ -169,7 +177,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxQueryAssetOutput"))
 	static UPARAM(DisplayName="Sound") USoundWave* VoicevoxQueryOutput(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true);
-
+	
 	/**
 	 * @brief 生成した音声データからUSoundWaveを作成
 	 * @param[in] PCMData  音声データ

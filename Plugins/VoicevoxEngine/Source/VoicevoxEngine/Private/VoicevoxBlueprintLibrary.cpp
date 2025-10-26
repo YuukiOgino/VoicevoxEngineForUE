@@ -135,6 +135,16 @@ FVoicevoxAudioQuery UVoicevoxBlueprintLibrary::GetAudioQuery(int SpeakerType, co
 }
 
 /**
+ * @brief AccentPhraseの配列からAudioQueryを作る(Blueprint公開ノード)
+ * @param [in] AccentPhrases AccentPhraseの配列
+ * @return AudioQuery情報が格納されたjson形式の構造体
+ */
+FVoicevoxAudioQuery UVoicevoxBlueprintLibrary::GetAudioQueryFromAccentPhrases(const TArray<FVoicevoxAccentPhrase>& AccentPhrases)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQueryFromAccentPhrases(AccentPhrases);
+}
+
+/**
  * @brief VOICEVOX COREで取得したAudioQuery元にSoundWaveを作成(Blueprint公開ノード)
  */
 USoundWave* UVoicevoxBlueprintLibrary::AudioQueryOutput(const FVoicevoxAudioQuery AudioQuery, int SpeakerType, bool bEnableInterrogativeUpspeak)
