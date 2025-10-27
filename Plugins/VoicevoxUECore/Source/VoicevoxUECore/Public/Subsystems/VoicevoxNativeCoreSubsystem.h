@@ -298,8 +298,6 @@ public:
 	 * @returns モデルが読み込まれているかどうか
 	 */
 	VOICEVOXUECORE_API virtual bool IsLoadedVoiceModel(FString VvmFileName) override;
-
-public:
 	
 	//--------------------------------
 	// VOICEVOX CORE AudioQuery関連
@@ -380,13 +378,6 @@ public:
 	VOICEVOXUECORE_API virtual TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) override;
 
 	/**
-	 * @brief デフォルトの `voicevox_synthesis` のオプションを生成する
-	 * @return デフォルト値が設定された `voicevox_synthesis` のオプション
-	 */
-	VOICEVOXUECORE_API virtual VoicevoxSynthesisOptions MakeDefaultSynthesisOptions() override;
-
-
-	/**
 	 * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
 	 * @param [in] StyleId スタイルID
 	 * @param [in] Text 音声データに変換する日本語テキスト
@@ -394,7 +385,12 @@ public:
 	 * @returns AccentPhrase (アクセント句)の配列を格納した構造体（FVoicevoxAccentPhraseAnalyze）
 	 */
 	VOICEVOXUECORE_API virtual FVoicevoxAccentPhraseAnalyze SynthesizerCreateAccentPhrases(VoicevoxStyleId StyleId, const FString& Text, bool bKana) override;
-
+	
+	/**
+	 * @brief デフォルトの `voicevox_synthesis` のオプションを生成する
+	 * @return デフォルト値が設定された `voicevox_synthesis` のオプション
+	 */
+	VOICEVOXUECORE_API virtual VoicevoxSynthesisOptions MakeDefaultSynthesisOptions() override;
 	
 	//--------------------------------
 	// VOICEVOX CORE Property関連

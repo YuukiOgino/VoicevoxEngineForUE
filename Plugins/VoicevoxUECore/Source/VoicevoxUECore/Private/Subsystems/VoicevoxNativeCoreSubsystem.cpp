@@ -429,22 +429,7 @@ FVoicevoxAccentPhraseAnalyze UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(co
 	}
 	
 	// JSONが無名配列で来るので変換する
-	const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(UTF8_TO_TCHAR(AccentPhrases));
-	if (TSharedPtr<FJsonValue> JsonValue; FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid())
-	{
-		if (const TArray<TSharedPtr<FJsonValue>>* JsonArray = nullptr; JsonValue->TryGetArray(JsonArray))
-		{
-			for (const TSharedPtr<FJsonValue>& Element : *JsonArray)
-			{
-				FVoicevoxAccentPhrase AccentPhrase;
-				if (FJsonObjectConverter::JsonObjectToUStruct(Element->AsObject().ToSharedRef(), FVoicevoxAccentPhrase::StaticStruct(), &AccentPhrase))
-				{
-					Analyze.AccentPhrases.Add(AccentPhrase);
-				}
-			}
-		}
-	}
-		
+	Analyze.AccentPhrases = JsonObjectConverterToAccentPhrase(UTF8_TO_TCHAR(AccentPhrases));
 	JsonFree(AccentPhrases);
 	return Analyze;
 }
@@ -1027,29 +1012,6 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const FVoicevoxAudioQue
 }
 
 /**
- * @brief デフォルトの `voicevox_synthesis` のオプションを生成する
- */
-VoicevoxSynthesisOptions UVoicevoxNativeCoreSubsystem::MakeDefaultSynthesisOptions()
-{
-	if (!IsValidCoreLibraryHandle()) return VoicevoxSynthesisOptions{};
-	const FString FuncName = "voicevox_make_default_synthesis_options"; 
-	using DLL_Function = const VoicevoxSynthesisOptions(*)();
-	
-#if PLATFORM_WINDOWS
-	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
-#elif PLATFORM_MAC
-	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
-#endif 
-		
-	if (!FuncPtr)
-	{
-		ShowDllErrorMessage(FuncName);
-		return VoicevoxSynthesisOptions{};
-	}
-	return FuncPtr();
-}
-
-/**
  * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
  */
 FVoicevoxAccentPhraseAnalyze UVoicevoxNativeCoreSubsystem::SynthesizerCreateAccentPhrases(const VoicevoxStyleId StyleId, const FString& Text, const bool bKana)
@@ -1081,26 +1043,35 @@ FVoicevoxAccentPhraseAnalyze UVoicevoxNativeCoreSubsystem::SynthesizerCreateAcce
 		else
 		{
 			// JSONが無名配列で来るので変換する
-			const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(UTF8_TO_TCHAR(AccentPhrases));
-			if (TSharedPtr<FJsonValue> JsonValue; FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid())
-			{
-				if (const TArray<TSharedPtr<FJsonValue>>* JsonArray = nullptr; JsonValue->TryGetArray(JsonArray))
-				{
-					for (const TSharedPtr<FJsonValue>& Element : *JsonArray)
-					{
-						FVoicevoxAccentPhrase AccentPhrase;
-						if (FJsonObjectConverter::JsonObjectToUStruct(Element->AsObject().ToSharedRef(), FVoicevoxAccentPhrase::StaticStruct(), &AccentPhrase))
-						{
-							Analyze.AccentPhrases.Add(AccentPhrase);
-						}
-					}
-				}
-			}
+			Analyze.AccentPhrases = JsonObjectConverterToAccentPhrase(UTF8_TO_TCHAR(AccentPhrases));
 			JsonFree(AccentPhrases);
 		}
 	}
 
 	return Analyze;
+}
+
+/**
+ * @brief デフォルトの `voicevox_synthesis` のオプションを生成する
+ */
+VoicevoxSynthesisOptions UVoicevoxNativeCoreSubsystem::MakeDefaultSynthesisOptions()
+{
+	if (!IsValidCoreLibraryHandle()) return VoicevoxSynthesisOptions{};
+	const FString FuncName = "voicevox_make_default_synthesis_options"; 
+	using DLL_Function = const VoicevoxSynthesisOptions(*)();
+	
+#if PLATFORM_WINDOWS
+	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		
+	if (!FuncPtr)
+	{
+		ShowDllErrorMessage(FuncName);
+		return VoicevoxSynthesisOptions{};
+	}
+	return FuncPtr();
 }
 
 //--------------------------------

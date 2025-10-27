@@ -41,6 +41,12 @@ protected:
 	 */
 	VOICEVOXUECORE_API static void ShowVoicevoxErrorMessage(const FString& MessageFormat);
 
+	/**
+	 * @brief VOICEVOXから受信したAccentPhraseの無名配列のJSONを変換する
+	 * @param[in] JsonString : AccentPhraseのJSON
+	 */
+	VOICEVOXUECORE_API static TArray<FVoicevoxAccentPhrase> JsonObjectConverterToAccentPhrase(const FString& JsonString);
+	
 public:
 
 	//----------------------------------------------------------------
