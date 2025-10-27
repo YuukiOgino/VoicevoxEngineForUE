@@ -403,9 +403,9 @@ FString UVoicevoxNativeCoreSubsystem::GetOnnxRuntimeLibUnversionedFilename()
 /**
  * @brief 日本語のテキストを解析する。
  */
-FVoicevoxAccentPhraseAnalyze UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text)
+TArray<FVoicevoxAccentPhrase> UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text)
 {
-	FVoicevoxAccentPhraseAnalyze Analyze{};
+	TArray<FVoicevoxAccentPhrase> Analyze;
 	if (!IsValidCoreLibraryHandle()) return Analyze;
 	const FString FuncName = "voicevox_open_jtalk_rc_analyze"; 
 	using DLL_Function = const VoicevoxResultCode(*)(const OpenJtalkRc*, const char*, char**);
@@ -429,7 +429,7 @@ FVoicevoxAccentPhraseAnalyze UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(co
 	}
 	
 	// JSONが無名配列で来るので変換する
-	Analyze.AccentPhrases = JsonObjectConverterToAccentPhrase(UTF8_TO_TCHAR(AccentPhrases));
+	Analyze = JsonObjectConverterToAccentPhrase(UTF8_TO_TCHAR(AccentPhrases));
 	JsonFree(AccentPhrases);
 	return Analyze;
 }
@@ -1014,10 +1014,10 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const FVoicevoxAudioQue
 /**
  * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
  */
-FVoicevoxAccentPhraseAnalyze UVoicevoxNativeCoreSubsystem::SynthesizerCreateAccentPhrases(const VoicevoxStyleId StyleId, const FString& Text, const bool bKana)
+TArray<FVoicevoxAccentPhrase> UVoicevoxNativeCoreSubsystem::SynthesizerCreateAccentPhrases(const VoicevoxStyleId StyleId, const FString& Text, const bool bKana)
 {
-	FVoicevoxAccentPhraseAnalyze Analyze{};
-	if (!IsValidCoreLibraryHandle()) return Analyze;
+	TArray<FVoicevoxAccentPhrase> AccentPhrasesList;
+	if (!IsValidCoreLibraryHandle()) return AccentPhrasesList;
 
 	const FString FuncName = bKana ? "voicevox_synthesizer_create_accent_phrases_from_kana" : "voicevox_synthesizer_create_accent_phrases"; 
 	using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxSynthesizer*, const char*, VoicevoxStyleId, char**);
@@ -1043,12 +1043,12 @@ FVoicevoxAccentPhraseAnalyze UVoicevoxNativeCoreSubsystem::SynthesizerCreateAcce
 		else
 		{
 			// JSONが無名配列で来るので変換する
-			Analyze.AccentPhrases = JsonObjectConverterToAccentPhrase(UTF8_TO_TCHAR(AccentPhrases));
+			AccentPhrasesList = JsonObjectConverterToAccentPhrase(UTF8_TO_TCHAR(AccentPhrases));
 			JsonFree(AccentPhrases);
 		}
 	}
 
-	return Analyze;
+	return AccentPhrasesList;
 }
 
 /**

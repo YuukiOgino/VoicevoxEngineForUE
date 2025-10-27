@@ -115,18 +115,18 @@ void UVoicevoxApiObject::Finalize()
 /**
  * @brief 日本語のテキストを解析する。
  */
-FVoicevoxAccentPhraseAnalyze UVoicevoxApiObject::OpenJTalkRcAnalyze(const FString& Text)
+TArray<FVoicevoxAccentPhrase> UVoicevoxApiObject::OpenJTalkRcAnalyze(const FString& Text)
 {
 	for (const auto Element : SubsystemClasses)
 	{
 		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
-		if (FVoicevoxAccentPhraseAnalyze Analyze = Subsystem->OpenJTalkRcAnalyze(Text); !Analyze.AccentPhrases.IsEmpty())
+		if (TArray<FVoicevoxAccentPhrase> Analyze = Subsystem->OpenJTalkRcAnalyze(Text); !Analyze.IsEmpty())
 		{
 			return Analyze;
 		}
 	}
 
-	return FVoicevoxAccentPhraseAnalyze{};
+	return TArray<FVoicevoxAccentPhrase>();
 }
 
 //--------------------------------
@@ -331,18 +331,18 @@ VoicevoxSynthesisOptions UVoicevoxApiObject::MakeDefaultSynthesisOptions()
 /**
  * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
  */
-FVoicevoxAccentPhraseAnalyze UVoicevoxApiObject::SynthesizerCreateAccentPhrases(const VoicevoxStyleId StyleId, const FString& Text, const bool bKana)
+TArray<FVoicevoxAccentPhrase> UVoicevoxApiObject::SynthesizerCreateAccentPhrases(const VoicevoxStyleId StyleId, const FString& Text, const bool bKana)
 {
 	for (const auto Element : SubsystemClasses)
 	{
 		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
-		if (FVoicevoxAccentPhraseAnalyze Analyze = Subsystem->SynthesizerCreateAccentPhrases(StyleId, Text, bKana); !Analyze.AccentPhrases.IsEmpty())
+		if (TArray<FVoicevoxAccentPhrase> Analyze = Subsystem->SynthesizerCreateAccentPhrases(StyleId, Text, bKana); !Analyze.IsEmpty())
 		{
 			return Analyze;
 		}
 	}
 
-	return FVoicevoxAccentPhraseAnalyze{};
+	return TArray<FVoicevoxAccentPhrase>();
 }
 
 //--------------------------------

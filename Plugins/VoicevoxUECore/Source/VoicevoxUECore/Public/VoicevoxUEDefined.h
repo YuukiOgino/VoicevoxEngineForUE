@@ -212,20 +212,6 @@ struct FVoicevoxAudioQuery
 };
 
 /**
- * @struct FVoicevoxAccentPhraseAnalyze
- * @brief VOICEVOXのアクセント情報を解析した結果を格納する構造体
- */
-USTRUCT(BlueprintType)
-struct FVoicevoxAccentPhraseAnalyze
-{
-	GENERATED_USTRUCT_BODY()
-	
-	//! アクセントリスト
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	TArray<FVoicevoxAccentPhrase> AccentPhrases;
-};
-
-/**
  * @struct FVoicevoxAudioQuery
  * @brief VOICEVOXのAudioQueryからリップシンクに必要な情報をまとめた構造体
  */

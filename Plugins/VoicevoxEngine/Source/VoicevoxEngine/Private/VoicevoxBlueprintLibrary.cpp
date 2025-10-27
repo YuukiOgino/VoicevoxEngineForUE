@@ -29,7 +29,7 @@ void UVoicevoxBlueprintLibrary::Finalize()
 /**
  * @brief 日本語のテキストを解析する。
  */
-FVoicevoxAccentPhraseAnalyze UVoicevoxBlueprintLibrary::OpenJTalkRcAnalyze(const FString& Text)
+TArray<FVoicevoxAccentPhrase> UVoicevoxBlueprintLibrary::OpenJTalkRcAnalyze(const FString& Text)
 {
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->OpenJTalkRcAnalyze(Text);
 }
@@ -145,7 +145,7 @@ FVoicevoxAudioQuery UVoicevoxBlueprintLibrary::GetAudioQueryFromAccentPhrases(co
 /**
  * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。(Blueprint公開ノード)
  */
-FVoicevoxAccentPhraseAnalyze UVoicevoxBlueprintLibrary::GetSynthesizerAccentPhrase(const int32 StyleId, const FString& Text, const bool bKana)
+TArray<FVoicevoxAccentPhrase> UVoicevoxBlueprintLibrary::GetSynthesizerAccentPhrase(const int32 StyleId, const FString& Text, const bool bKana)
 {
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateAccentPhrases(StyleId, Text, bKana);
 }

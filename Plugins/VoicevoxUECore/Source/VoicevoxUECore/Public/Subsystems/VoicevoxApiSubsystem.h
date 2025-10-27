@@ -242,9 +242,9 @@ public:
 	 * @param [in] StyleId スタイルID
 	 * @param [in] Text 音声データに変換する日本語テキスト
 	 * @param [in] bKana AquesTalk形式のkanaとしてテキストを解釈する
-	 * @returns AccentPhrase (アクセント句)の配列を格納した構造体（FVoicevoxAccentPhraseAnalyze）
+	 * @returns AccentPhrase (アクセント句)の配列
 	 */
-	virtual FVoicevoxAccentPhraseAnalyze SynthesizerCreateAccentPhrases(VoicevoxStyleId StyleId, const FString& Text, bool bKana) { return FVoicevoxAccentPhraseAnalyze(); }
+	virtual TArray<FVoicevoxAccentPhrase> SynthesizerCreateAccentPhrases(VoicevoxStyleId StyleId, const FString& Text, bool bKana) { return TArray<FVoicevoxAccentPhrase>(); }
 	
 	//--------------------------------
 	// VOICEVOX CORE Property関連

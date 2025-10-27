@@ -107,9 +107,9 @@ class UVoicevoxApiObject : public UObject
 	/**
 	 * @brief 日本語のテキストを解析する。
 	 * @param [in] Text 日本語テキスト
-	 * @returns OpenJTakから解析されたデータ（FVoicevoxOpenJTalkAnalyze）
+	 * @returns OpenJTakから解析されたAccentPhrase (アクセント句)の配列
 	 */
-	VOICEVOXUECORE_API FVoicevoxAccentPhraseAnalyze OpenJTalkRcAnalyze(const FString& Text);
+	VOICEVOXUECORE_API TArray<FVoicevoxAccentPhrase> OpenJTalkRcAnalyze(const FString& Text);
 	
 	//--------------------------------
 	// VOICEVOX CORE Model関連(旧API)
@@ -248,9 +248,9 @@ class UVoicevoxApiObject : public UObject
 	 * @param [in] StyleId スタイルID
 	 * @param [in] Text 音声データに変換する日本語テキスト
 	 * @param [in] bKana AquesTalk形式のkanaとしてテキストを解釈する
-	 * @returns AccentPhrase (アクセント句)の配列を格納した構造体（FVoicevoxAccentPhraseAnalyze）
+	 * @returns AccentPhrase (アクセント句)の配列
 	 */
-	VOICEVOXUECORE_API FVoicevoxAccentPhraseAnalyze SynthesizerCreateAccentPhrases(VoicevoxStyleId StyleId, const FString& Text, bool bKana);
+	VOICEVOXUECORE_API TArray<FVoicevoxAccentPhrase> SynthesizerCreateAccentPhrases(VoicevoxStyleId StyleId, const FString& Text, bool bKana);
 	
 	//--------------------------------
 	// VOICEVOX CORE Property関連

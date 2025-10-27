@@ -97,7 +97,7 @@ void UVoicevoxCoreSubsystem::Finalize()
 /**
  * @brief 日本語のテキストを解析する。
  */
-FVoicevoxAccentPhraseAnalyze UVoicevoxCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text) const
+TArray<FVoicevoxAccentPhrase> UVoicevoxCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text) const
 {
 	return NativeInstance->OpenJTalkRcAnalyze(Text);
 }
@@ -210,7 +210,7 @@ TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const UVoicevoxQuery& Voicevo
 /**
  * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
  */
-FVoicevoxAccentPhraseAnalyze UVoicevoxCoreSubsystem::SynthesizerCreateAccentPhrases(const VoicevoxStyleId StyleId, const FString& Text, const bool bKana) const
+TArray<FVoicevoxAccentPhrase> UVoicevoxCoreSubsystem::SynthesizerCreateAccentPhrases(const VoicevoxStyleId StyleId, const FString& Text, const bool bKana) const
 {
 	return NativeInstance->SynthesizerCreateAccentPhrases(StyleId, Text, bKana);
 }
