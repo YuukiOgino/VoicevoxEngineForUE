@@ -136,12 +136,12 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxApiObject::OpenJTalkRcAnalyze(const FStri
 /**
  * @brief モデルをロードする。
  */
-bool UVoicevoxApiObject::LoadModel(const int64 SpeakerId)
+bool UVoicevoxApiObject::LoadModel(const VoicevoxStyleId StyleId)
 {
 	for (const auto Element : SubsystemClasses)
 	{
 		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
-		if (const auto bIsSuccess = Subsystem->LoadModel(SpeakerId); bIsSuccess)
+		if (const auto bIsSuccess = Subsystem->LoadModel(StyleId); bIsSuccess)
 		{
 			return true;
 		}
@@ -230,12 +230,12 @@ bool UVoicevoxApiObject::IsLoadedVoiceModel(const FString& VvmFileName)
 /**
  * @brief AudioQuery を取得する。
  */
-FVoicevoxAudioQuery UVoicevoxApiObject::GetAudioQuery(const int64 SpeakerId, const FString& Message, const bool bKana)
+FVoicevoxAudioQuery UVoicevoxApiObject::GetAudioQuery(const VoicevoxStyleId StyleId, const FString& Message, const bool bKana)
 {
 	for (const auto Element : SubsystemClasses)
 	{
 		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
-		if (FVoicevoxAudioQuery AudioQuery = Subsystem->GetAudioQuery(SpeakerId, Message, bKana); !AudioQuery.Kana.IsEmpty()) return AudioQuery;
+		if (FVoicevoxAudioQuery AudioQuery = Subsystem->GetAudioQuery(StyleId, Message, bKana); !AudioQuery.Kana.IsEmpty()) return AudioQuery;
 	}
 
 	return FVoicevoxAudioQuery();
@@ -262,12 +262,12 @@ FVoicevoxAudioQuery UVoicevoxApiObject::GetAudioQueryFromAccentPhrases(const TAr
 /**
  * @brief Textデータを音声データに変換する。
  */
-TArray<uint8> UVoicevoxApiObject::RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak)
+TArray<uint8> UVoicevoxApiObject::RunTextToSpeech(const VoicevoxStyleId StyleId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak)
 {
 	for (const auto Element : SubsystemClasses)
 	{
 		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
-		if (TArray<uint8> Wav = Subsystem->RunTextToSpeech(SpeakerId, Message, bKana, bEnableInterrogativeUpspeak); !Wav.IsEmpty()) return Wav;
+		if (TArray<uint8> Wav = Subsystem->RunTextToSpeech(StyleId, Message, bKana, bEnableInterrogativeUpspeak); !Wav.IsEmpty()) return Wav;
 	}
 
 	return TArray<uint8>();
@@ -292,12 +292,12 @@ VoicevoxTtsOptions UVoicevoxApiObject::MakeDefaultTtsOptions()
 /**
  * @brief AudioQueryを音声データに変換する。
  */
-TArray<uint8> UVoicevoxApiObject::RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak)
+TArray<uint8> UVoicevoxApiObject::RunSynthesis(const char* AudioQueryJson, const VoicevoxStyleId StyleId, bool bEnableInterrogativeUpspeak)
 {
 	for (const auto Element : SubsystemClasses)
 	{
 		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
-		if (TArray<uint8> Wav = Subsystem->RunSynthesis(AudioQueryJson, SpeakerId, bEnableInterrogativeUpspeak); !Wav.IsEmpty()) return Wav;
+		if (TArray<uint8> Wav = Subsystem->RunSynthesis(AudioQueryJson, StyleId, bEnableInterrogativeUpspeak); !Wav.IsEmpty()) return Wav;
 	}
 
 	return TArray<uint8>();
@@ -306,12 +306,12 @@ TArray<uint8> UVoicevoxApiObject::RunSynthesis(const char* AudioQueryJson, int64
 /**
  * @brief AudioQueryを音声データに変換する。
  */
-TArray<uint8> UVoicevoxApiObject::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak)
+TArray<uint8> UVoicevoxApiObject::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, const VoicevoxStyleId StyleId, bool bEnableInterrogativeUpspeak)
 {
 	for (const auto Element : SubsystemClasses)
 	{
 		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
-		if (TArray<uint8> Wav = Subsystem->RunSynthesis(AudioQueryJson, SpeakerId, bEnableInterrogativeUpspeak); !Wav.IsEmpty()) return Wav;
+		if (TArray<uint8> Wav = Subsystem->RunSynthesis(AudioQueryJson, StyleId, bEnableInterrogativeUpspeak); !Wav.IsEmpty()) return Wav;
 	}
 
 	return TArray<uint8>();

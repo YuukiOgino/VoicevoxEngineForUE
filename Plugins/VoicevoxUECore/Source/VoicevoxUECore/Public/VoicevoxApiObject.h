@@ -119,14 +119,14 @@ class UVoicevoxApiObject : public UObject
 	 * @fn
 	 * VOICEVOX COREのモデルをロード実行
 	 * @brief モデルをロードする。
-	 * @param SpeakerId 話者番号
+	 * @param StyleId スタイルID
 	 * @return 成功したらtrue、失敗したらfalse
 	 * @detail
 	 * 必ずしも話者とモデルが1:1対応しているわけではない。
 	 *
 	 * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API bool LoadModel(int64 SpeakerId);
+	VOICEVOXUECORE_API bool LoadModel(VoicevoxStyleId StyleId);
 
 	//--------------------------------
 	// VOICEVOX CORE VMM関連
@@ -167,14 +167,14 @@ class UVoicevoxApiObject : public UObject
 	 * @fn
 	 * VOICEVOX COREのvoicevox_audio_queryを取得
 	 * @brief AudioQuery を取得する。
-	 * @param[in] SpeakerId 話者番号
+	 * @param[in] StyleId スタイルID
 	 * @param[in] Message 音声データに変換するtextデータ
 	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
 	 * @return AudioQueryをjsonでフォーマット後、構造体へ変換したもの。
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
+	VOICEVOXUECORE_API FVoicevoxAudioQuery GetAudioQuery(VoicevoxStyleId StyleId, const FString& Message, bool bKana);
 
 	/**
 	 * @brief AccentPhraseの配列からAudioQueryを作る
@@ -191,7 +191,7 @@ class UVoicevoxApiObject : public UObject
 	 * @fn
 	 * VOICEVOX COREのtext to speechを実行
 	 * @brief Textデータを音声データに変換する。
-	 * @param[in] SpeakerId 話者番号
+	 * @param[in] StyleId スタイルID
 	 * @param[in] Message 音声データに変換するtextデータ
 	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
@@ -199,7 +199,7 @@ class UVoicevoxApiObject : public UObject
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak);
+	VOICEVOXUECORE_API TArray<uint8> RunTextToSpeech(VoicevoxStyleId StyleId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak);
 
 	/**
 	 * @brief デフォルトのテキスト音声合成オプションを生成する
@@ -216,26 +216,26 @@ class UVoicevoxApiObject : public UObject
 	 * VOICEVOX COREのvoicevox_synthesisを実行
 	 * @brief AudioQueryを音声データに変換する。
 	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery
-	 * @param[in] SpeakerId 話者番号
+	 * @param[in] StyleId スタイルID
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API TArray<uint8> RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
+	VOICEVOXUECORE_API TArray<uint8> RunSynthesis(const char* AudioQueryJson, VoicevoxStyleId StyleId, bool bEnableInterrogativeUpspeak);
 
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_synthesisを実行
 	 * @brief AudioQueryを音声データに変換する。
 	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery構造体
-	 * @param[in] SpeakerId 話者番号
+	 * @param[in] StyleId スタイルID
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
+	VOICEVOXUECORE_API TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, VoicevoxStyleId StyleId, bool bEnableInterrogativeUpspeak);
 
 	/**
 	 * @brief デフォルトの `voicevox_synthesis` のオプションを生成する

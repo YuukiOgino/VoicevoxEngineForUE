@@ -126,9 +126,9 @@ bool UVoicevoxCoreSubsystem::AllLoadVoiceModel() const
 /**
  * @brief モデルをロードする。
  */
-bool UVoicevoxCoreSubsystem::LoadModel(const int64 SpeakerId) const
+bool UVoicevoxCoreSubsystem::LoadModel(const VoicevoxStyleId StyleId) const
 {
-	return NativeInstance->LoadModel(SpeakerId);
+	return NativeInstance->LoadModel(StyleId);
 }
 
 /**
@@ -154,9 +154,9 @@ bool UVoicevoxCoreSubsystem::IsLoadedVoiceModel(const FString& VvmFileName) cons
 /**
  * @brief AudioQuery を取得する。
  */
-FVoicevoxAudioQuery UVoicevoxCoreSubsystem::GetAudioQuery(const int64 SpeakerId, const FString& Message, const bool bKana) const
+FVoicevoxAudioQuery UVoicevoxCoreSubsystem::GetAudioQuery(const VoicevoxStyleId StyleId, const FString& Message, const bool bKana) const
 {
-	return NativeInstance->GetAudioQuery(SpeakerId, Message, bKana);
+	return NativeInstance->GetAudioQuery(StyleId, Message, bKana);
 }
 
 /**
@@ -174,9 +174,9 @@ FVoicevoxAudioQuery UVoicevoxCoreSubsystem::GetAudioQueryFromAccentPhrases(const
 /**
  * @brief VOICEVOX COREのtext to speechを実行
  */
-TArray<uint8> UVoicevoxCoreSubsystem::RunTextToSpeech(const int64 SpeakerId, const FString& Message, const bool bKana, const bool bEnableInterrogativeUpspeak) const
+TArray<uint8> UVoicevoxCoreSubsystem::RunTextToSpeech(const VoicevoxStyleId StyleId, const FString& Message, const bool bKana, const bool bEnableInterrogativeUpspeak) const
 {
-	return NativeInstance->RunTextToSpeech(SpeakerId, Message, bKana, bEnableInterrogativeUpspeak);
+	return NativeInstance->RunTextToSpeech(StyleId, Message, bKana, bEnableInterrogativeUpspeak);
 }
 
 //--------------------------------
@@ -186,17 +186,17 @@ TArray<uint8> UVoicevoxCoreSubsystem::RunTextToSpeech(const int64 SpeakerId, con
 /**
  * @brief AudioQueryを音声データに変換する。
  */
-TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const char* AudioQueryJson, const int64 SpeakerId, const bool bEnableInterrogativeUpspeak) const
+TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const char* AudioQueryJson, const VoicevoxStyleId StyleId, const bool bEnableInterrogativeUpspeak) const
 {
-	return NativeInstance->RunSynthesis(AudioQueryJson, SpeakerId, bEnableInterrogativeUpspeak);
+	return NativeInstance->RunSynthesis(AudioQueryJson, StyleId, bEnableInterrogativeUpspeak);
 }
 
 /**
  * @brief AudioQueryを音声データに変換する。
  */
-TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQuery, const int64 SpeakerId, const bool bEnableInterrogativeUpspeak) const
+TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQuery, const VoicevoxStyleId StyleId, const bool bEnableInterrogativeUpspeak) const
 {
-	return NativeInstance->RunSynthesis(AudioQuery, SpeakerId, bEnableInterrogativeUpspeak);
+	return NativeInstance->RunSynthesis(AudioQuery, StyleId, bEnableInterrogativeUpspeak);
 }
 
 /**
@@ -204,7 +204,7 @@ TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& Au
  */
 TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const UVoicevoxQuery& VoicevoxQuery, const bool bEnableInterrogativeUpspeak) const
 {
-	return NativeInstance->RunSynthesis(VoicevoxQuery.VoicevoxAudioQuery, VoicevoxQuery.SpeakerType, bEnableInterrogativeUpspeak);
+	return NativeInstance->RunSynthesis(VoicevoxQuery.VoicevoxAudioQuery, VoicevoxQuery.StyleId, bEnableInterrogativeUpspeak);
 }
 
 /**
@@ -301,16 +301,16 @@ TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetVoiceModelFileMetaList(const FS
 }
 
 /**
- * @brief 指定したSpeakerIDの名前を取得する
+ * @brief 指定したStyleIDの名前を取得する
  */
-FString UVoicevoxCoreSubsystem::GetMetaName(const int64 SpeakerID) const
+FString UVoicevoxCoreSubsystem::GetMetaName(const VoicevoxStyleId StyleId) const
 {
 	for  (TArray<FVoicevoxMeta> List = GetMetaList();
 		auto [Name, Styles, Speaker_uuid, Version] : List)
 	{
 		for (const auto Style :Styles)
 		{
-			if (Style.Id == SpeakerID)
+			if (Style.Id == StyleId)
 			{
 				return FString::Printf(TEXT("%s(%s)"), *Name, *Style.Name);
 			}

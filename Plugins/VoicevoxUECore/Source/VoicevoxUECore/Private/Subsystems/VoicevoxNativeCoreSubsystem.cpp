@@ -470,9 +470,9 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(c
 /**
  * @brief モデルをロードする。
  */
-bool UVoicevoxNativeCoreSubsystem::LoadModel(const int64 SpeakerId)
+bool UVoicevoxNativeCoreSubsystem::LoadModel(const VoicevoxStyleId StyleId)
 {
-	if (IsModel(SpeakerId)) return true;
+	if (IsModel(StyleId)) return true;
 	
 	const FString PlatformFolderName = GetPlatformFolderName();
 	if (PlatformFolderName.IsEmpty())
@@ -498,7 +498,7 @@ bool UVoicevoxNativeCoreSubsystem::LoadModel(const int64 SpeakerId)
 			const auto i = Meta.Styles.IndexOfByPredicate(
 			[&](const FVoicevoxStyle& Item)
 			{
-				return Item.Id == SpeakerId;
+				return Item.Id == StyleId;
 			});
 
 			if (i >= 0)
@@ -525,14 +525,14 @@ bool UVoicevoxNativeCoreSubsystem::LoadModel(const int64 SpeakerId)
 /**
  * @brief 使用するCOREにスピーカーモデルが存在するか
  */
-bool UVoicevoxNativeCoreSubsystem::IsModel(const int64 SpeakerId)
+bool UVoicevoxNativeCoreSubsystem::IsModel(const VoicevoxStyleId StyleId)
 {
 	for (auto [Name, Styles, Speaker_uuid, Version] : GetMetaList())
 	{
 		const auto i = Styles.IndexOfByPredicate(
 			[&](const FVoicevoxStyle& Item)
 			{
-				return Item.Id == SpeakerId;
+				return Item.Id == StyleId;
 			});
 		
 		if (i >= 0) return true;
@@ -798,7 +798,7 @@ bool UVoicevoxNativeCoreSubsystem::IsLoadedVoiceModel(const FString VvmFileName)
  * @details
  * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
  */
-FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQuery(const int64 SpeakerId, const FString& Message, const bool bKana)
+FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQuery(const VoicevoxStyleId StyleId, const FString& Message, const bool bKana)
 {
 	FVoicevoxAudioQuery AudioQuery{};
 	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
@@ -822,7 +822,7 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQuery(const int64 Spea
 	else
 	{
 		char* Output = nullptr;
-		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*Message), SpeakerId, &Output);
+		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*Message), StyleId, &Output);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(FuncName, Result);
@@ -887,7 +887,7 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQueryFromAccentPhrases
 /**
  * @brief VOICEVOX COREのtext to speechを実行
  */
-TArray<uint8> UVoicevoxNativeCoreSubsystem::RunTextToSpeech(const int64 SpeakerId, const FString& Message, const bool bKana, const bool bEnableInterrogativeUpspeak)
+TArray<uint8> UVoicevoxNativeCoreSubsystem::RunTextToSpeech(const VoicevoxStyleId StyleId, const FString& Message, const bool bKana, const bool bEnableInterrogativeUpspeak)
 {
 	TArray<uint8> PCMData;
 	PCMData.Empty();
@@ -914,7 +914,7 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::RunTextToSpeech(const int64 SpeakerI
 		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
 		uintptr_t OutPutSize = 0;
 		
-		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*Message), SpeakerId, Options, &OutPutSize, &OutputWAV);
+		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*Message), StyleId, Options, &OutPutSize, &OutputWAV);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(FuncName, Result);
@@ -960,7 +960,7 @@ VoicevoxTtsOptions UVoicevoxNativeCoreSubsystem::MakeDefaultTtsOptions()
 /**
  * @brief AudioQueryを音声データに変換する。
  */
-TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const char* AudioQueryJson, const int64 SpeakerId, bool bEnableInterrogativeUpspeak)
+TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const char* AudioQueryJson, const VoicevoxStyleId StyleId, const bool bEnableInterrogativeUpspeak)
 {
 	TArray<uint8> PCMData;
 	PCMData.Empty();
@@ -984,7 +984,7 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const char* AudioQueryJ
 		VoicevoxSynthesisOptions Options;
 		Options.enable_interrogative_upspeak = bEnableInterrogativeUpspeak;
 		uintptr_t OutPutSize = 0;
-		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, AudioQueryJson, SpeakerId, Options, &OutPutSize, &OutputWAV);
+		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, AudioQueryJson, StyleId, Options, &OutPutSize, &OutputWAV);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(FuncName, Result);
@@ -1003,12 +1003,12 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const char* AudioQueryJ
 /**
  * @brief AudioQueryを音声データに変換する。
  */
-TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, const int64 SpeakerId, const bool bEnableInterrogativeUpspeak)
+TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, const VoicevoxStyleId StyleId, const bool bEnableInterrogativeUpspeak)
 {
 	FString OutputJson = "";
 	FJsonObjectConverter::UStructToJsonObjectString(AudioQueryJson, OutputJson, 0, 0, 0, nullptr, false);
 	
-	TArray<uint8> OutputWAV = RunSynthesis(TCHAR_TO_UTF8(*OutputJson), SpeakerId, bEnableInterrogativeUpspeak);
+	TArray<uint8> OutputWAV = RunSynthesis(TCHAR_TO_UTF8(*OutputJson), StyleId, bEnableInterrogativeUpspeak);
 	return OutputWAV;
 }
 

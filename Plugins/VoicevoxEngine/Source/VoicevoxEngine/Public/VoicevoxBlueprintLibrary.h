@@ -120,36 +120,36 @@ public:
 	
 	/**
 	 * @brief VOICEVOX COREで変換した音声データを元にSoundWaveを生成(Blueprint公開ノード)
-	 * @param[in] SpeakerType						話者番号
+	 * @param[in] StyleId							スタイルID
 	 * @param[in] Message							音声データに変換するtextデータ
 	 * @param[in] bRunKana							AquesTalkライクな記法で実行するか
 	 * @param[in] bEnableInterrogativeUpspeak		疑問文の調整を有効にする
 	 * @return TextToSpeechで作成された音楽データが格納されたUSoundWave
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxTextToSpeechOutput"))
-	static UPARAM(DisplayName="Sound") USoundWave* TextToSpeechOutput(int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
+	static UPARAM(DisplayName="Sound") USoundWave* TextToSpeechOutput(int32 StyleId, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
 	
 	/**
 	 * @brief 入力したテキストをVOICEVOX COREでAudioQueryに変換後、SoundWaveを生成(Blueprint公開ノード)
-	 * @param[in] SpeakerType						話者番号
+	 * @param[in] StyleId							スタイルID
 	 * @param[in] Message							音声データに変換するtextデータ
 	 * @param[in] bRunKana							AquesTalkライクな記法で実行するか
 	 * @param[in] bEnableInterrogativeUpspeak		疑問文の調整を有効にする
 	 * @return AudioQuery情報を元に作成された音楽データが格納されたUSoundWave
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxToTextAudioQueryOutput"))
-	static UPARAM(DisplayName="Sound") USoundWave* TextToAudioQueryOutput(int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
+	static UPARAM(DisplayName="Sound") USoundWave* TextToAudioQueryOutput(int32 StyleId, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
 	
 	/**
 	 * @fn
 	 *  VOICEVOX COREで変換したAudioQueryを取得する(Blueprint公開ノード)
-	 * @param[in] SpeakerType	話者番号
+	 * @param[in] StyleId		スタイルID
 	 * @param[in] Message		音声データに変換するtextデータ
 	 * @param[in] bRunKana		AquesTalkライクな記法で実行するか
 	 * @return AudioQuery情報が格納されたjson形式の構造体
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxAudioQuery"))
-	static UPARAM(DisplayName="AudioQuery") FVoicevoxAudioQuery GetAudioQuery(int SpeakerType, FString Message, bool bRunKana = false);
+	static UPARAM(DisplayName="AudioQuery") FVoicevoxAudioQuery GetAudioQuery(int32 StyleId, FString Message, bool bRunKana = false);
 
 	/**
 	 * @brief AccentPhraseの配列からAudioQueryを作る(Blueprint公開ノード)
@@ -182,12 +182,12 @@ public:
 	/**
 	 * @brief VOICEVOX COREで取得したAudioQueryを元にSoundWaveを作成(Blueprint公開ノード)
 	 * @param[in] AudioQuery						AudioQuery構造体
-	 * @param[in] SpeakerType						話者番号
+	 * @param[in] StyleId							スタイルID
 	 * @param[in] bEnableInterrogativeUpspeak		疑問文の調整を有効にする
 	 * @return AudioQuery情報を元に作成された音楽データが格納されたUSoundWave
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxAudioQueryOutput"))
-	static UPARAM(DisplayName="Sound") USoundWave* AudioQueryOutput(FVoicevoxAudioQuery AudioQuery, int SpeakerType, bool bEnableInterrogativeUpspeak = true);
+	static UPARAM(DisplayName="Sound") USoundWave* AudioQueryOutput(FVoicevoxAudioQuery AudioQuery, int32 StyleId, bool bEnableInterrogativeUpspeak = true);
 
 	/**
 	 * @brief AudioQueryアセットからSoundWaveを作成(Blueprint公開ノード)

@@ -212,23 +212,23 @@ public:
 	 * @fn
 	 * VOICEVOX COREのモデルをロード実行
 	 * @brief モデルをロードする。
-	 * @param SpeakerId 話者番号
+	 * @param StyleId スタイルID
 	 * @return 成功したらtrue、失敗したらfalse
 	 * @detail
 	 * 必ずしも話者とモデルが1:1対応しているわけではない。
 	 *
 	 * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API virtual bool LoadModel(int64 SpeakerId) override;
+	VOICEVOXUECORE_API virtual bool LoadModel(VoicevoxStyleId StyleId) override;
 
 	/**
 	 * @fn
 	 * VOICEVOX COREに該当のスピーカーモデルが存在するか
 	 * @brief 使用するCOREにスピーカーモデルが存在するか
-	 * @param SpeakerId 話者番号
+	 * @param StyleId スタイルID
 	 * @return 存在したらtrue、無い場合はfalse
 	 */
-	VOICEVOXUECORE_API virtual bool IsModel(int64 SpeakerId) override;
+	VOICEVOXUECORE_API virtual bool IsModel(VoicevoxStyleId StyleId) override;
 
 	//--------------------------------
 	// VOICEVOX CORE VMM関連
@@ -313,14 +313,14 @@ public:
 	 * @fn
 	 * VOICEVOX COREのvoicevox_audio_queryを取得
 	 * @brief AudioQuery を取得する。
-	 * @param[in] SpeakerId 話者番号
+	 * @param[in] StyleId スタイルID
 	 * @param[in] Message 音声データに変換するtextデータ
 	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
 	 * @return AudioQueryをjsonでフォーマット後、構造体へ変換したもの。
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API virtual FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana) override;
+	VOICEVOXUECORE_API virtual FVoicevoxAudioQuery GetAudioQuery(VoicevoxStyleId StyleId, const FString& Message, bool bKana) override;
 
 	/**
 	 * @brief AccentPhraseの配列からAudioQueryを作る
@@ -337,7 +337,7 @@ public:
 	 * @fn
 	 * VOICEVOX COREのtext to speechを実行
 	 * @brief Textデータを音声データに変換する。
-	 * @param[in] SpeakerId 話者番号
+	 * @param[in] StyleId スタイルID
 	 * @param[in] Message 音声データに変換するtextデータ
 	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
@@ -345,7 +345,7 @@ public:
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API virtual TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak) override;
+	VOICEVOXUECORE_API virtual TArray<uint8> RunTextToSpeech(VoicevoxStyleId StyleId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak) override;
 
 	/**
 	 * @brief デフォルトのテキスト音声合成オプションを生成する
@@ -362,26 +362,26 @@ public:
 	 * VOICEVOX COREのvoicevox_synthesisを実行
 	 * @brief AudioQueryを音声データに変換する。
 	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery
-	 * @param[in] SpeakerId 話者番号
+	 * @param[in] StyleId スタイルID
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API virtual TArray<uint8> RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) override;
+	VOICEVOXUECORE_API virtual TArray<uint8> RunSynthesis(const char* AudioQueryJson, VoicevoxStyleId StyleId, bool bEnableInterrogativeUpspeak) override;
 
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_synthesisを実行
 	 * @brief AudioQueryを音声データに変換する。
 	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery構造体
-	 * @param[in] SpeakerId 話者番号
+	 * @param[in] StyleId スタイルID
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API virtual TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak) override;
+	VOICEVOXUECORE_API virtual TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, VoicevoxStyleId StyleId, bool bEnableInterrogativeUpspeak) override;
 
 	/**
 	 * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
@@ -493,6 +493,8 @@ protected:
 	// VOICEVOX CORE Dict関連
 	//--------------------------------
 
+public:
+	
 	/**
 	 * @brief VoicevoxUserDictWordを最低限のパラメータで作成する。
 	 * @param [in] Surface 表記
@@ -502,6 +504,8 @@ protected:
 	 */
 	VOICEVOXUECORE_API VoicevoxUserDictWord UserDictWordMake(const FString& Surface, const FString& Pronunciation, uintptr_t AccentType);
 
+protected:
+	
 	/**
 	 * @brief ユーザー辞書を構築する。
 	 * @returns VoicevoxUserDict

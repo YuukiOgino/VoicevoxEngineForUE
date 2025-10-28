@@ -105,15 +105,15 @@ public:
 	/**
 	 * @brief VOICEVOX COREのモデルをロード実行
 	 * @param[in] WorldContextObject
-	 * @param[in] SpeakerType 話者番号
+	 * @param[in] StyleId スタイルID
 	 * @detail
 	 * 必ずしも話者とモデルが1:1対応しているわけではない。
 	 */	
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxLoadModel", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
-	static UVoicevoxLoadModelAsyncTask* LoadModel(UObject* WorldContextObject, int SpeakerType);
+	static UVoicevoxLoadModelAsyncTask* LoadModel(UObject* WorldContextObject, int32 StyleId);
 
-	//! 話者番号
-	int64 SpeakerId = 0;
+	//! スタイルID
+	int32 StyleId = 0;
 
 	/**
 	 * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
@@ -201,27 +201,27 @@ public:
 	/**
 	 * @brief 非同期でVOICEVOX COERで変換した音声データを取得(Blueprint公開ノード)
 	 * @param[in] WorldContextObject
-	 * @param[in] SpeakerType	話者番号
+	 * @param[in] StyleId		スタイルID
 	 * @param[in] Message		音声データに変換するtextデータ
 	 * @param[in] bRunKana		AquesTalkライクな記法で実行するか
 	 * @param[in] bEnableInterrogativeUpspeak		疑問文の調整を有効にする
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxTextToSpeechOutputAsync", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
-	static UVoicevoxTextToSpeechAsyncTask* TextToSpeech(UObject* WorldContextObject, int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
+	static UVoicevoxTextToSpeechAsyncTask* TextToSpeech(UObject* WorldContextObject, int32 StyleId, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
 
 	/**
 	 * @brief 非同期で入力したテキストをVOICEVOX COREでAudioQueryに変換後、SoundWaveを生成(Blueprint公開ノード)
 	* @param[in] WorldContextObject
-	 * @param[in] SpeakerType						話者番号
+	 * @param[in] StyleId							スタイルID
 	 * @param[in] Message							音声データに変換するtextデータ
 	 * @param[in] bRunKana							AquesTalkライクな記法で実行するか
 	 * @param[in] bEnableInterrogativeUpspeak		疑問文の調整を有効にする
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxToTextAudioQueryOutputAsync", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
-	static UVoicevoxTextToSpeechAsyncTask* TextToAudioQuery(UObject* WorldContextObject, int SpeakerType, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
+	static UVoicevoxTextToSpeechAsyncTask* TextToAudioQuery(UObject* WorldContextObject, int32 StyleId, FString Message, bool bRunKana = false, bool bEnableInterrogativeUpspeak = true);
 	
-	//! 話者番号
-	int64 SpeakerId = 0;
+	//! スタイルID
+	int32 StyleId = 0;
 	//! 音声データに変換するtextデータ
 	FString Message = "";
 	//! AquesTalkライクな記法で実行するか
@@ -271,12 +271,12 @@ public:
 	/**
 	 * @brief 非同期でVOICEVOX COREで取得したAudioQueryを元に音声データを取得(Blueprint公開ノード)
 	 * @param[in] WorldContextObject
-	 * @param[in] SpeakerType	話者番号
+	 * @param[in] StyleId							スタイルID
 	 * @param[in] AudioQuery						AudioQuery構造体
 	 * @param[in] bEnableInterrogativeUpspeak		疑問文の調整を有効にする
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxAudioQueryOutputAsync", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
-	static UVoicevoxAudioQueryToSpeechAsyncTask* AudioQueryOutput(UObject* WorldContextObject, int SpeakerType, FVoicevoxAudioQuery AudioQuery, bool bEnableInterrogativeUpspeak = true);
+	static UVoicevoxAudioQueryToSpeechAsyncTask* AudioQueryOutput(UObject* WorldContextObject, int32 StyleId, FVoicevoxAudioQuery AudioQuery, bool bEnableInterrogativeUpspeak = true);
 
 	/**
 	 * @brief 非同期でVOICEVOX COERで変換した音声データを取得(Blueprint公開ノード)
@@ -287,8 +287,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxQueryAssetOutputAsync", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
 	static UVoicevoxAudioQueryToSpeechAsyncTask* VoicevoxQueryOutput(UObject* WorldContextObject, UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak = true);
 	
-	//! 話者番号
-	int64 SpeakerId = 0;
+	//! スタイルID
+	int32 StyleId = 0;
 	//! AudioQuery
 	FVoicevoxAudioQuery AudioQuery;
 	//! 疑問文の調整を有効

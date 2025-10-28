@@ -37,7 +37,7 @@ void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(const int64 SpeakerType,
     UVoicevoxQueryFactory* Factory = NewObject<UVoicevoxQueryFactory>();
     Factory->EditAudioQuery = NewObject<UVoicevoxQuery>();
     Factory->EditAudioQuery->VoicevoxAudioQuery = EditorAudioQueryPtr;
-    Factory->EditAudioQuery->SpeakerType = SpeakerType;
+    Factory->EditAudioQuery->StyleId = SpeakerType;
     Factory->EditAudioQuery->Text = Text;
     Factory->EditAudioQuery->YomikataText = Yomikata;
     Factory->AddToRoot();
@@ -138,7 +138,7 @@ void UVoicevoxEditorUtilityWidget::LoadAudioQueryAssets()
                if(const UVoicevoxQuery* Query = Cast<UVoicevoxQuery>(Obj))
                {
                    EditorAudioQueryPtr = Query->VoicevoxAudioQuery;
-                   OnLoadAudioQuery(Query->SpeakerType, Query->Text, Query->YomikataText);
+                   OnLoadAudioQuery(Query->StyleId, Query->Text, Query->YomikataText);
                }
             }
         });
