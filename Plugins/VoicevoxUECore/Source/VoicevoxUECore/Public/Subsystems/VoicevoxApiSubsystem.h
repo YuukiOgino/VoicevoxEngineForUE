@@ -247,12 +247,13 @@ public:
 	virtual TArray<FVoicevoxAccentPhrase> SynthesizerCreateAccentPhrases(VoicevoxStyleId StyleId, const FString& Text, bool bKana) { return TArray<FVoicevoxAccentPhrase>(); }
 
 	/**
-	 * @brief AccentPhraseの配列の音高・音素長を、特定の声で生成しなおす。
+	 * @brief AccentPhraseの配列の指定パラメータを、特定の声で生成しなおす。
+	 * @param [in] ReplaceType 実行する再生成APIのタイプ
 	 * @param [in] AccentPhrases AccentPhraseの配列
 	 * @param [in] StyleId スタイルID
 	 * @returns AccentPhrase (アクセント句)の配列
 	 */
-	virtual TArray<FVoicevoxAccentPhrase> SynthesizerReplaceMoraData(TArray<FVoicevoxAccentPhrase> AccentPhrases, VoicevoxStyleId StyleId) { return TArray<FVoicevoxAccentPhrase>(); }
+	virtual TArray<FVoicevoxAccentPhrase> SynthesizerReplace(EReplaceType ReplaceType, TArray<FVoicevoxAccentPhrase> AccentPhrases, VoicevoxStyleId StyleId) { return TArray<FVoicevoxAccentPhrase>(); }
 	
 	//--------------------------------
 	// VOICEVOX CORE Property関連

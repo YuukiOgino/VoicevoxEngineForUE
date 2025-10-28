@@ -216,11 +216,11 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxCoreSubsystem::SynthesizerCreateAccentPhr
 }
 
 /**
- * @brief AccentPhraseの配列の音高・音素長を、特定の声で生成しなおす。
+ * @brief AccentPhraseの配列の指定パラメータを、特定の声で生成しなおす。
  */
-TArray<FVoicevoxAccentPhrase> UVoicevoxCoreSubsystem::SynthesizerReplaceMoraData(const TArray<FVoicevoxAccentPhrase>& AccentPhrases, const VoicevoxStyleId StyleId) const
+TArray<FVoicevoxAccentPhrase> UVoicevoxCoreSubsystem::SynthesizerReplace(const EReplaceType ReplaceType, const TArray<FVoicevoxAccentPhrase>& AccentPhrases, const VoicevoxStyleId StyleId) const
 {
-	return NativeInstance->SynthesizerReplaceMoraData(AccentPhrases, StyleId);
+	return NativeInstance->SynthesizerReplace(ReplaceType, AccentPhrases, StyleId);
 }
 
 //--------------------------------

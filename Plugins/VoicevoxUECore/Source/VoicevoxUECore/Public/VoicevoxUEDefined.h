@@ -31,6 +31,19 @@ enum class ELipSyncVowelType : uint8
 	Non		UMETA(DisplayName = "無音",		ToolTip = "無音（句読点の待機時間）"),
 };
 
+/**
+ * @enum EReplaceType
+ * @brief 再変換の実行APIを示す列挙体
+ */
+UENUM(BlueprintType)
+enum class EReplaceType : uint8
+{
+	MoraData		UMETA(DisplayName = "音高・音素長",	ToolTip = "音高・音素長を、特定の声で生成しなおす"),
+	PhonemeLength	UMETA(DisplayName = "音素長",		ToolTip = "音素長を、特定の声で生成しなおす"),
+	MoraPitch		UMETA(DisplayName = "音高",			ToolTip = "音高を、特定の声で生成しなおす。"),
+};
+
+
 //------------------------------------------------------------------------
 // struct
 //------------------------------------------------------------------------

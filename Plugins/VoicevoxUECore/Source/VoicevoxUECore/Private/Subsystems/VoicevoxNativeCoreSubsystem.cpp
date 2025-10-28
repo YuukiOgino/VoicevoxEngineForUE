@@ -1052,14 +1052,27 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxNativeCoreSubsystem::SynthesizerCreateAcc
 }
 
 /**
- * @brief AccentPhraseの配列の音高・音素長を、特定の声で生成しなおす。
+ * @brief AccentPhraseの配列の指定パラメータを、特定の声で生成しなおす。
  */
-TArray<FVoicevoxAccentPhrase> UVoicevoxNativeCoreSubsystem::SynthesizerReplaceMoraData(TArray<FVoicevoxAccentPhrase> AccentPhrases, const VoicevoxStyleId StyleId)
+TArray<FVoicevoxAccentPhrase> UVoicevoxNativeCoreSubsystem::SynthesizerReplace(const EReplaceType ReplaceType, TArray<FVoicevoxAccentPhrase> AccentPhrases, const VoicevoxStyleId StyleId)
 {
 	TArray<FVoicevoxAccentPhrase> AccentPhrasesList;
 	if (!IsValidCoreLibraryHandle()) return AccentPhrasesList;
 
-	const FString FuncName = "voicevox_synthesizer_replace_mora_data"; 
+	FString FuncName; 
+	switch (ReplaceType)
+	{
+	case EReplaceType::MoraData:
+		FuncName = "voicevox_synthesizer_replace_mora_data"; 
+		break;
+	case EReplaceType::PhonemeLength:
+		FuncName = "voicevox_synthesizer_replace_phoneme_length"; 
+		break;
+	case EReplaceType::MoraPitch:
+		FuncName = "voicevox_synthesizer_replace_mora_pitch"; 
+		break;
+	}
+	
 	using DLL_Function = VoicevoxResultCode(*)(const VoicevoxSynthesizer*, const char*, VoicevoxStyleId, char**);
 
 #if PLATFORM_WINDOWS
