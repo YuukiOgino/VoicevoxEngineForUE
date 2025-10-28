@@ -185,9 +185,15 @@ protected:
 	 * @brief OpenJtalkRc を<b>破棄</b>(_destruct_)する。
 	 * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
 	 * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
-	 * @param [in] Rc 破棄対象。nullable
 	 */
-	VOICEVOXUECORE_API void OpenJTalkRcDelete(OpenJtalkRc* Rc);
+	VOICEVOXUECORE_API void OpenJTalkRcDelete();
+
+	/**
+	 * @brief OpenJtalkの使うユーザー辞書を設定する。
+	 * この関数を呼び出した後にユーザー辞書を変更した場合、再度この関数を呼び出す必要がある。
+	 * @param [in] UserDict ユーザー辞書
+	 */
+	VOICEVOXUECORE_API bool OpenJTalkRcUseUserDict(const VoicevoxUserDict* UserDict);
 	
 public:
 
@@ -321,7 +327,7 @@ public:
 	 * @param [in] AccentPhrases AccentPhraseの配列
 	 * @return AudioQuery情報が格納されたjson形式の構造体
 	 */
-	VOICEVOXUECORE_API FVoicevoxAudioQuery GetAudioQueryFromAccentPhrases(TArray<FVoicevoxAccentPhrase> AccentPhrases);
+	VOICEVOXUECORE_API FVoicevoxAudioQuery GetAudioQueryFromAccentPhrases(const TArray<FVoicevoxAccentPhrase>& AccentPhrases);
 	
 	//--------------------------------
 	// VOICEVOX CORE TextToSpeech関連

@@ -64,7 +64,7 @@ void UVoicevoxNativeCoreSubsystem::Finalize()
 	
 	if (OpenJTalk != nullptr)
 	{
-		OpenJTalkRcDelete(OpenJTalk);
+		OpenJTalkRcDelete();
 	}
 	
 	if (Synthesizer != nullptr)
@@ -103,7 +103,7 @@ bool UVoicevoxNativeCoreSubsystem::SynthesizerNew(const VoicevoxOnnxruntime& Onn
 	if (const VoicevoxResultCode Result = FuncPtr(&OnnxRuntime, OpenJTalk, Option, &Synthesizer); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 	{
 		VoicevoxShowErrorResultMessage(FuncName, Result);
-		OpenJTalkRcDelete(OpenJTalk);
+		OpenJTalkRcDelete();
 		return false;
 	}
 
@@ -175,27 +175,56 @@ bool UVoicevoxNativeCoreSubsystem::OpenJTalkRcNew()
 }
 
 /**
+ * @brief OpenJtalkの使うユーザー辞書を設定する。
+ */
+bool UVoicevoxNativeCoreSubsystem::OpenJTalkRcUseUserDict(const VoicevoxUserDict* UserDict)
+{
+	if (!IsValidCoreLibraryHandle() || !OpenJTalk) return false;
+	
+	const FString OpenJTalkRcUseUserDictFuncName = "voicevox_open_jtalk_rc_use_user_dict"; 
+	using DLL_OpenJTalkRcUseUserDictFunction = const VoicevoxResultCode(*)(const OpenJtalkRc*, const VoicevoxUserDict*);
+
+#if PLATFORM_WINDOWS
+	const auto OpenJTalkRcUseUserDictFuncPtr = static_cast<DLL_OpenJTalkRcUseUserDictFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *OpenJTalkRcUseUserDictFuncName));
+#elif PLATFORM_MAC
+	const auto OpenJTalkRcUseUserDictFuncPtr = (DLL_OpenJTalkRcUseUserDictFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *OpenJTalkRcUseUserDictFuncName);
+#endif
+
+	if (!OpenJTalkRcUseUserDictFuncPtr)
+	{
+		ShowDllErrorMessage(OpenJTalkRcUseUserDictFuncName);
+		return false;
+	}
+	
+	if (const VoicevoxResultCode Result = OpenJTalkRcUseUserDictFuncPtr(OpenJTalk, UserDict); Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+	{
+		VoicevoxShowErrorResultMessage(OpenJTalkRcUseUserDictFuncName, Result);
+		return false;
+	}
+
+	return true;
+}
+
+/**
  * @brief OpenJtalkRc を<b>破棄</b>(_destruct_)する。
  */
-void UVoicevoxNativeCoreSubsystem::OpenJTalkRcDelete(OpenJtalkRc* Rc)
+void UVoicevoxNativeCoreSubsystem::OpenJTalkRcDelete()
 {
+	if (!IsValidCoreLibraryHandle()) return;
+	
 	const FString FuncName = "voicevox_open_jtalk_rc_delete"; 
 	using DLL_Function = const void(*)(OpenJtalkRc*);
-	if (IsValidCoreLibraryHandle())
-	{
 #if PLATFORM_WINDOWS
-		const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
 #elif PLATFORM_MAC
-		const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
 #endif 
-		if (!FuncPtr)
-		{
-			ShowDllErrorMessage(FuncName);
-			return;
-		}
-		
-		FuncPtr(Rc);
+	if (!FuncPtr)
+	{
+		ShowDllErrorMessage(FuncName);
+		return;
 	}
+	FuncPtr(OpenJTalk);
 }
 
 //--------------------------------
@@ -406,7 +435,7 @@ FString UVoicevoxNativeCoreSubsystem::GetOnnxRuntimeLibUnversionedFilename()
 TArray<FVoicevoxAccentPhrase> UVoicevoxNativeCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text)
 {
 	TArray<FVoicevoxAccentPhrase> Analyze;
-	if (!IsValidCoreLibraryHandle()) return Analyze;
+	if (!IsValidCoreLibraryHandle() || !OpenJTalk) return Analyze;
 	const FString FuncName = "voicevox_open_jtalk_rc_analyze"; 
 	using DLL_Function = const VoicevoxResultCode(*)(const OpenJtalkRc*, const char*, char**);
 	
@@ -810,7 +839,7 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQuery(int64 SpeakerId,
 /**
  * @brief  AccentPhraseの配列からAudioQueryを作る。
  */
-FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQueryFromAccentPhrases(TArray<FVoicevoxAccentPhrase> AccentPhrases)
+FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQueryFromAccentPhrases(const TArray<FVoicevoxAccentPhrase>& AccentPhrases)
 {
 	FVoicevoxAudioQuery AudioQuery{};
 	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
