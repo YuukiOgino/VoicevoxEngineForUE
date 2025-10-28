@@ -43,9 +43,17 @@ protected:
 
 	/**
 	 * @brief VOICEVOXから受信したAccentPhraseの無名配列のJSONを変換する
-	 * @param[in] JsonString : AccentPhraseのJSON
+	 * @param [in] JsonString : AccentPhraseのJSON
+	 * @retun AccentPhrase (アクセント句)の配列
 	 */
 	VOICEVOXUECORE_API static TArray<FVoicevoxAccentPhrase> JsonObjectConverterToAccentPhrase(const FString& JsonString);
+
+	/**
+	 * @brief AccentPhraseの配列を無名配列のJSONに変換する
+	 * @param [in] AccentPhrases : AccentPhrase (アクセント句)の配列
+	 * @return AccentPhraseのJSON
+	 */
+	VOICEVOXUECORE_API static FString AccentPhraseConverterToJsonString(TArray<FVoicevoxAccentPhrase> AccentPhrases);
 	
 public:
 

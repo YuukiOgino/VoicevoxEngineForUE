@@ -833,60 +833,18 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQueryFromAccentPhrases
 	}
 	else
 	{
-		// JSON値配列を作成
-		TArray<TSharedPtr<FJsonValue>> JsonArray;
-
-		for (const auto& [Moras, Accent, Pause_mora, Is_interrogative] : AccentPhrases)
-		{
-			TSharedPtr<FJsonObject> Obj = MakeShared<FJsonObject>();
-			TArray<TSharedPtr<FJsonValue>> MoraJsonArray;
-
-			for (const FVoicevoxMora& Mora : Moras)
-			{
-				TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
-				FJsonObjectConverter::UStructToJsonObject(FVoicevoxMora::StaticStruct(), &Mora, JsonObject.ToSharedRef(), 0, 0);
-				MoraJsonArray.Add(MakeShared<FJsonValueObject>(JsonObject));
-			}
-			Obj->SetArrayField(TEXT("moras"), MoraJsonArray);
-			Obj->SetNumberField(TEXT("accent"), Accent);
-
-			if (Pause_mora.Text.IsEmpty())
-			{
-				Obj->SetObjectField(TEXT("pause_mora"), nullptr);
-			}
-			else
-			{
-				// pause_moraは子音のパラメータ（consonant、consonant_length）にnull以外が入るとインデックス範囲外エラーが起きるため、UStructToJsonObjectは使用しない
-				TSharedPtr<FJsonObject> StructObject = MakeShared<FJsonObject>();
-				StructObject->SetStringField(TEXT("text"),  Pause_mora.Text);
-				StructObject->SetObjectField(TEXT("consonant"),  nullptr);
-				StructObject->SetObjectField(TEXT("consonant_length"),  nullptr);
-				StructObject->SetStringField(TEXT("vowel"),  Pause_mora.Vowel);
-				StructObject->SetNumberField(TEXT("vowel_length"),  0);
-				StructObject->SetNumberField(TEXT("pitch"),  0);
-				
-				Obj->SetObjectField(TEXT("pause_mora"), StructObject);
-			}
-			
-			Obj->SetBoolField(TEXT("is_interrogative"), Is_interrogative);
-			JsonArray.Add(MakeShared<FJsonValueObject>(Obj));
-		}
-
-		// 配列を書き出し
-		FString OutputString;
-		const auto Writer = TJsonWriterFactory<>::Create(&OutputString);
-		FJsonSerializer::Serialize(JsonArray, Writer);
-		
-		char* Output = nullptr;
-		if (const VoicevoxResultCode Result = FuncPtr(TCHAR_TO_UTF8(*OutputString), &Output);
+		// 無名配列のJSONを作成
+		const FString OutputString = AccentPhraseConverterToJsonString(AccentPhrases);
+		char* AccentPhrasesJSON = nullptr;
+		if (const VoicevoxResultCode Result = FuncPtr(TCHAR_TO_UTF8(*OutputString), &AccentPhrasesJSON);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(FuncName, Result);
 		}
 		else
 		{
-			FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(Output), &AudioQuery, 0, 0);
-			JsonFree(Output);
+			FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(AccentPhrasesJSON), &AudioQuery, 0, 0);
+			JsonFree(AccentPhrasesJSON);
 		}
 	}
 
@@ -1101,50 +1059,8 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxNativeCoreSubsystem::SynthesizerReplace(c
 	}
 	else
 	{
-		// JSON値配列を作成
-		TArray<TSharedPtr<FJsonValue>> JsonArray;
-
-		for (const auto& [Moras, Accent, Pause_mora, Is_interrogative] : AccentPhrases)
-		{
-			TSharedPtr<FJsonObject> Obj = MakeShared<FJsonObject>();
-			TArray<TSharedPtr<FJsonValue>> MoraJsonArray;
-
-			for (const FVoicevoxMora& Mora : Moras)
-			{
-				TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
-				FJsonObjectConverter::UStructToJsonObject(FVoicevoxMora::StaticStruct(), &Mora, JsonObject.ToSharedRef(), 0, 0);
-				MoraJsonArray.Add(MakeShared<FJsonValueObject>(JsonObject));
-			}
-			Obj->SetArrayField(TEXT("moras"), MoraJsonArray);
-			Obj->SetNumberField(TEXT("accent"), Accent);
-
-			if (Pause_mora.Text.IsEmpty())
-			{
-				Obj->SetObjectField(TEXT("pause_mora"), nullptr);
-			}
-			else
-			{
-				// pause_moraは子音のパラメータ（consonant、consonant_length）にnull以外が入るとインデックス範囲外エラーが起きるため、UStructToJsonObjectは使用しない
-				TSharedPtr<FJsonObject> StructObject = MakeShared<FJsonObject>();
-				StructObject->SetStringField(TEXT("text"),  Pause_mora.Text);
-				StructObject->SetObjectField(TEXT("consonant"),  nullptr);
-				StructObject->SetObjectField(TEXT("consonant_length"),  nullptr);
-				StructObject->SetStringField(TEXT("vowel"),  Pause_mora.Vowel);
-				StructObject->SetNumberField(TEXT("vowel_length"),  0);
-				StructObject->SetNumberField(TEXT("pitch"),  0);
-				
-				Obj->SetObjectField(TEXT("pause_mora"), StructObject);
-			}
-			
-			Obj->SetBoolField(TEXT("is_interrogative"), Is_interrogative);
-			JsonArray.Add(MakeShared<FJsonValueObject>(Obj));
-		}
-
-		// 配列を書き出し
-		FString OutputString;
-		const auto Writer = TJsonWriterFactory<>::Create(&OutputString);
-		FJsonSerializer::Serialize(JsonArray, Writer);
-		
+		// 無名配列のJSONを作成
+		const FString OutputString = AccentPhraseConverterToJsonString(AccentPhrases);
 		char* AccentPhrasesJSON = nullptr;
 		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*OutputString), StyleId, &AccentPhrasesJSON);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
