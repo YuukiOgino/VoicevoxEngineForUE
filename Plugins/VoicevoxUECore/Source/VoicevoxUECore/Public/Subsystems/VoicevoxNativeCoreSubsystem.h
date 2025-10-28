@@ -445,7 +445,7 @@ public:
 	 * @fn
 	 * 指定のVoicevoxVoiceModelFileからメタ情報を取得する
 	 * @brief 話者名や話者IDのリストを取得する
-	* @param [in] VvmFileName vvmファイル名
+	 * @param [in] VvmFileName vvmファイル名
 	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
 	 */
 	VOICEVOXUECORE_API virtual TArray<FVoicevoxMeta> GetVoiceModelFileMetaList(const FString VvmFileName) override;
@@ -493,6 +493,80 @@ protected:
 	// VOICEVOX CORE Dict関連
 	//--------------------------------
 
+	/**
+	 * @brief VoicevoxUserDictWordを最低限のパラメータで作成する。
+	 * @param [in] Surface 表記
+	 * @param [in] Pronunciation 読み
+	 * @param [in] AccentType アクセント型
+	 * @returns VoicevoxUserDictWord
+	 */
+	VOICEVOXUECORE_API VoicevoxUserDictWord UserDictWordMake(const FString& Surface, const FString& Pronunciation, uintptr_t AccentType);
+
+	/**
+	 * @brief ユーザー辞書を構築する。
+	 * @returns VoicevoxUserDict
+	 */
+	VOICEVOXUECORE_API VoicevoxUserDict* UserDictNew();
+
+	/**
+	 * @brief ユーザー辞書にファイルを読み込ませる。
+	 * @param [in] UserDict ユーザー辞書
+	 * @param [in] DictPath 読み込む辞書ファイルのパス
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool UserDictLoad(const VoicevoxUserDict* UserDict, const FString& DictPath);
+
+	/**
+	 * @brief ユーザー辞書に単語を追加する。
+	 *
+	 * @param [in] UserDict ユーザー辞書
+	 * @param [in] Word 追加する単語
+	 * @returns 追加した単語のUUID
+	 */
+	VOICEVOXUECORE_API TArray<uint8_t> UserDictAddWord(const VoicevoxUserDict* UserDict, const VoicevoxUserDictWord* Word);
+
+	/**
+	 * @brief ユーザー辞書の単語を更新する。
+	 *
+	 * @param [in] UserDict ユーザー辞書
+	 * @param [in] WordUuid 更新する単語のUUID
+	 * @param [in] Word 新しい単語のデータ
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool UserDictUpdateWord(const VoicevoxUserDict* UserDict, const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord *Word);
+
+	/**
+	 * @brief ユーザー辞書から単語を削除する。
+	 *
+	 * @param [in] UserDict ユーザー辞書
+	 * @param [in] WordUuid 削除する単語のUUID
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool UserDictRemoveWord(const VoicevoxUserDict* UserDict, const TArray<uint8_t>& WordUuid);
+	
+	/**
+	 * @brief ユーザー辞書の単語をJSON形式で出力する。
+	 * @param [in] UserDict ユーザー辞書
+	 * @returns output_json
+	 */
+	VOICEVOXUECORE_API FString UserDictToJson(const VoicevoxUserDict* UserDict);
+
+	/**
+	 * @brief 他のユーザー辞書をインポートする。
+	 * @param [in] UserDict ユーザー辞書
+	 * @param [in] OtherDict インポートするユーザー辞書
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool UserDictImport(const VoicevoxUserDict* UserDict, const  VoicevoxUserDict* OtherDict);
+
+	/**
+	 * @brief ユーザー辞書をファイルに保存する。
+	 * @param [in] UserDict ユーザー辞書
+	 * @param [in] Path 保存先のファイルパス
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool UserDictSave(const VoicevoxUserDict* UserDict, const FString& Path);
+	
 	/**
 	 * @brief ユーザー辞書を<b>破棄</b>する。
 	 * @param [in] UserDict 破棄対象。nullable
