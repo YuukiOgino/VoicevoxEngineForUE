@@ -1349,11 +1349,36 @@ void UVoicevoxNativeCoreSubsystem::JsonFree(char* JsonData)
 }
 
 //--------------------------------
+// VOICEVOX CORE Dict関連
+//--------------------------------
+
+/**
+ * @brief ユーザー辞書を<b>破棄</b>する。
+ */
+void UVoicevoxNativeCoreSubsystem::UserDictDelete(VoicevoxUserDict* UserDict)
+{
+	if (!IsValidCoreLibraryHandle()) return;
+	const FString FuncName = "voicevox_user_dict_delete"; 
+	using DLL_Function = const void(*)(VoicevoxUserDict*);
+#if PLATFORM_WINDOWS
+	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+	if (!FuncPtr)
+	{
+		ShowDllErrorMessage(FuncName);
+		return;
+	}
+	FuncPtr(UserDict);
+}
+
+//--------------------------------
 // VOICEVOX CORE Error関連
 //--------------------------------
 
 /**
- * エラー結果をメッセージに変換して表示
+ * @brief エラー結果をメッセージに変換して表示
  */
 void UVoicevoxNativeCoreSubsystem::VoicevoxShowErrorResultMessage(const FString& ApiName, const VoicevoxResultCode ResultCode)
 {
@@ -1382,7 +1407,7 @@ void UVoicevoxNativeCoreSubsystem::VoicevoxShowErrorResultMessage(const FString&
 }
 
 /**
- * DLL読み込み失敗をメッセージに変換して表示
+ * @brief DLL読み込み失敗をメッセージに変換して表示
  */
 void UVoicevoxNativeCoreSubsystem::ShowDllErrorMessage(const FString& ApiName)
 {

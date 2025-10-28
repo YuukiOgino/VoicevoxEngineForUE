@@ -484,18 +484,28 @@ protected:
 	VOICEVOXUECORE_API void JsonFree(char* JsonData);
 
 	//--------------------------------
+	// VOICEVOX CORE Dict関連
+	//--------------------------------
+
+	/**
+	 * @brief ユーザー辞書を<b>破棄</b>する。
+	 * @param [in] UserDict 破棄対象。nullable
+	 */
+	VOICEVOXUECORE_API void UserDictDelete(VoicevoxUserDict* UserDict);
+	
+	//--------------------------------
 	// VOICEVOX CORE Error関連
 	//--------------------------------
 	
 	/**
-	 * エラー結果をメッセージに変換して表示
+	 * @brief エラー結果をメッセージに変換して表示
 	 * @param[in] ApiName : エラーを起こしたAPI名
 	 * @param [in] ResultCode メッセージに変換するエラーコード
 	 */
 	VOICEVOXUECORE_API void VoicevoxShowErrorResultMessage(const FString& ApiName, VoicevoxResultCode ResultCode);
 
 	/**
-	 * DLL読み込み失敗をメッセージに変換して表示
+	 * @brief DLL読み込み失敗をメッセージに変換して表示
 	 * @param[in] ApiName : エラーを起こしたAPI名
 	 */
 	VOICEVOXUECORE_API void ShowDllErrorMessage(const FString& ApiName);
