@@ -225,6 +225,7 @@ void UVoicevoxNativeCoreSubsystem::OpenJTalkRcDelete()
 		return;
 	}
 	FuncPtr(OpenJTalk);
+	OpenJTalk = nullptr;
 }
 
 //--------------------------------
