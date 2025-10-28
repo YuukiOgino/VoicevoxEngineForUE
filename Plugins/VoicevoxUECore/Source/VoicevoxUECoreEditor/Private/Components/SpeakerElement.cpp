@@ -6,7 +6,7 @@
  */
 
 #include "Components/SpeakerElement.h"
-#include "Subsystems/VoicevoxCoreSubsystem.h"
+#include "Subsystems/VoicevoxEditorSubsystem.h"
 
 /**
  * @brief NativeConstruct override
@@ -15,6 +15,6 @@ void USpeakerElement::NativeConstruct()
 {
 	if (SpeakerLabel)
 	{
-		SpeakerLabel->SetText(FText::AsCultureInvariant(GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetMetaName(Speaker)));
+		SpeakerLabel->SetText(FText::AsCultureInvariant(GEditor->GetEditorSubsystem<UVoicevoxEditorSubsystem>()->GetMetaName(Speaker)));
 	}
 }
