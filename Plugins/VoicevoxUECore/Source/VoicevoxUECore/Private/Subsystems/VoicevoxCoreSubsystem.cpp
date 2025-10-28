@@ -215,6 +215,14 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxCoreSubsystem::SynthesizerCreateAccentPhr
 	return NativeInstance->SynthesizerCreateAccentPhrases(StyleId, Text, bKana);
 }
 
+/**
+ * @brief AccentPhraseの配列の音高・音素長を、特定の声で生成しなおす。
+ */
+TArray<FVoicevoxAccentPhrase> UVoicevoxCoreSubsystem::SynthesizerReplaceMoraData(const TArray<FVoicevoxAccentPhrase>& AccentPhrases, const VoicevoxStyleId StyleId) const
+{
+	return NativeInstance->SynthesizerReplaceMoraData(AccentPhrases, StyleId);
+}
+
 //--------------------------------
 // VOICEVOX CORE LipSync関連
 //--------------------------------

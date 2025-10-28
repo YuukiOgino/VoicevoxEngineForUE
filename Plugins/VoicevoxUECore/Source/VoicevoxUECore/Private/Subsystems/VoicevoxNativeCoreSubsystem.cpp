@@ -1052,6 +1052,83 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxNativeCoreSubsystem::SynthesizerCreateAcc
 }
 
 /**
+ * @brief AccentPhraseの配列の音高・音素長を、特定の声で生成しなおす。
+ */
+TArray<FVoicevoxAccentPhrase> UVoicevoxNativeCoreSubsystem::SynthesizerReplaceMoraData(TArray<FVoicevoxAccentPhrase> AccentPhrases, const VoicevoxStyleId StyleId)
+{
+	TArray<FVoicevoxAccentPhrase> AccentPhrasesList;
+	if (!IsValidCoreLibraryHandle()) return AccentPhrasesList;
+
+	const FString FuncName = "voicevox_synthesizer_replace_mora_data"; 
+	using DLL_Function = VoicevoxResultCode(*)(const VoicevoxSynthesizer*, const char*, VoicevoxStyleId, char**);
+
+#if PLATFORM_WINDOWS
+	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif
+
+	if (!FuncPtr)
+	{
+		ShowDllErrorMessage(FuncName);
+	}
+	else
+	{
+		// JSON値配列を作成
+		TArray<TSharedPtr<FJsonValue>> JsonArray;
+
+		for (const auto& [Moras, Accent, Pause_mora, Is_interrogative] : AccentPhrases)
+		{
+			TSharedPtr<FJsonObject> Obj = MakeShared<FJsonObject>();
+			TArray<TSharedPtr<FJsonValue>> MoraJsonArray;
+
+			for (const FVoicevoxMora& Mora : Moras)
+			{
+				TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
+				FJsonObjectConverter::UStructToJsonObject(FVoicevoxMora::StaticStruct(), &Mora, JsonObject.ToSharedRef(), 0, 0);
+				MoraJsonArray.Add(MakeShared<FJsonValueObject>(JsonObject));
+			}
+			Obj->SetArrayField(TEXT("moras"), MoraJsonArray);
+			Obj->SetNumberField(TEXT("accent"), Accent);
+
+			if (Pause_mora.Text.IsEmpty())
+			{
+				Obj->SetObjectField(TEXT("pause_mora"), nullptr);
+			}
+			else
+			{
+				TSharedPtr<FJsonObject> StructObject = MakeShared<FJsonObject>();
+				FJsonObjectConverter::UStructToJsonObject(FVoicevoxMora::StaticStruct(), &Pause_mora, StructObject.ToSharedRef(), 0, 0);
+				Obj->SetObjectField(TEXT("pause_mora"), StructObject);
+			}
+			
+			Obj->SetBoolField(TEXT("is_interrogative"), Is_interrogative);
+			JsonArray.Add(MakeShared<FJsonValueObject>(Obj));
+		}
+
+		// 配列を書き出し
+		FString OutputString;
+		const auto Writer = TJsonWriterFactory<>::Create(&OutputString);
+		FJsonSerializer::Serialize(JsonArray, Writer);
+		
+		char* AccentPhrasesJSON = nullptr;
+		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*OutputString), StyleId, &AccentPhrasesJSON);
+			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		{
+			VoicevoxShowErrorResultMessage(FuncName, Result);
+		}
+		else
+		{
+			// JSONが無名配列で来るので変換する
+			AccentPhrasesList = JsonObjectConverterToAccentPhrase(UTF8_TO_TCHAR(AccentPhrasesJSON));
+			JsonFree(AccentPhrasesJSON);
+		}
+	}
+
+	return AccentPhrasesList;
+}
+
+/**
  * @brief デフォルトの `voicevox_synthesis` のオプションを生成する
  */
 VoicevoxSynthesisOptions UVoicevoxNativeCoreSubsystem::MakeDefaultSynthesisOptions()

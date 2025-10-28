@@ -168,6 +168,15 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxAccentPhrase"))
 	static UPARAM(DisplayName="AccentPhraseAnalyze") TArray<FVoicevoxAccentPhrase> GetSynthesizerAccentPhrase(int32 StyleId, const FString& Text, bool bKana);
+
+	/**
+	 * @brief AccentPhraseの配列の音高・音素長を、特定の声で生成しなおす。
+	 * @param [in] AccentPhrases AccentPhraseの配列
+	 * @param [in] StyleId スタイルID
+	 * @returns AccentPhrase (アクセント句)の配列
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxReplaceMora"))
+	static UPARAM(DisplayName="AccentPhraseAnalyze") TArray<FVoicevoxAccentPhrase> SynthesizerReplaceMoraData(const TArray<FVoicevoxAccentPhrase>& AccentPhrases, int32 StyleId);
 	
 	/**
 	 * @brief VOICEVOX COREで取得したAudioQueryを元にSoundWaveを作成(Blueprint公開ノード)
