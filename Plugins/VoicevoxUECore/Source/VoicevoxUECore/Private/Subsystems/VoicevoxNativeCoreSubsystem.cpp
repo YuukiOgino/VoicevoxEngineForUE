@@ -1178,7 +1178,7 @@ FString UVoicevoxNativeCoreSubsystem::GetPlatformFolderName()
  */
 TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetMetaList()
 {
-	if (!IsValidCoreLibraryHandle()) return TArray<FVoicevoxMeta>();
+	if (!IsValidCoreLibraryHandle() || !Synthesizer) return TArray<FVoicevoxMeta>();
 	
 	const FString FuncName = "voicevox_synthesizer_create_metas_json"; 
 	using DLL_Function = char*(*)(const VoicevoxSynthesizer*);
@@ -1222,6 +1222,39 @@ TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetVoiceModelFileMetaList(co
 	VoiceModelFileDelete(*Model);
 
 	return Metas;
+}
+
+/**
+ * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
+ */
+TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetAllVoiceModelFileMetaList()
+{
+	const FString PlatformFolderName = GetPlatformFolderName();
+	if (PlatformFolderName.IsEmpty())
+	{
+		return TArray<FVoicevoxMeta>();
+	}
+
+	TArray<FVoicevoxMeta> AllMetaList;
+	
+	const FString ModelsDirPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, TEXT("models")));
+	TArray<FString> FoundFiles;
+	IFileManager::Get().FindFilesRecursive(FoundFiles, *ModelsDirPath,TEXT("*.vvm"), true, false, false);
+
+	for (const FString& FileName : FoundFiles)
+	{
+		VoicevoxVoiceModelFile* Model = nullptr;
+		if (!VoiceModelFileOpen(FileName, &Model))
+		{
+			continue;
+		}
+
+		auto Metas = VoiceModelFileCreateMetas(*Model);
+		AllMetaList.Append(Metas);
+		VoiceModelFileDelete(*Model);
+	}
+	
+	return AllMetaList;
 }
 
 /**

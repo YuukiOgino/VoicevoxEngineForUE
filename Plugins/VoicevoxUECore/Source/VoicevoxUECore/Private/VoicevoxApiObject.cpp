@@ -401,3 +401,21 @@ TArray<FVoicevoxMeta> UVoicevoxApiObject::GetVoiceModelFileMetaList(const FStrin
 
 	return MetaList;
 }
+
+/**
+ * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
+ */
+TArray<FVoicevoxMeta> UVoicevoxApiObject::GetAllVoiceModelFileMetaList()
+{
+	TArray<FVoicevoxMeta> MetaList;
+	for (const auto Element : SubsystemClasses)
+	{
+		for (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+			auto Meta : Subsystem->GetAllVoiceModelFileMetaList())
+		{
+			MetaList.Emplace(Meta);
+		}
+	}
+
+	return MetaList;
+}

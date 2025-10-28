@@ -301,11 +301,20 @@ TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetVoiceModelFileMetaList(const FS
 }
 
 /**
+ * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
+ * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
+ */
+TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetAllVoiceModelFileMetaList() const
+{
+	return NativeInstance->GetAllVoiceModelFileMetaList();
+}
+
+/**
  * @brief 指定したStyleIDの名前を取得する
  */
 FString UVoicevoxCoreSubsystem::GetMetaName(const VoicevoxStyleId StyleId) const
 {
-	for  (TArray<FVoicevoxMeta> List = GetMetaList();
+	for  (TArray<FVoicevoxMeta> List = GetAllVoiceModelFileMetaList();
 		auto [Name, Styles, Speaker_uuid, Version] : List)
 	{
 		for (const auto Style :Styles)

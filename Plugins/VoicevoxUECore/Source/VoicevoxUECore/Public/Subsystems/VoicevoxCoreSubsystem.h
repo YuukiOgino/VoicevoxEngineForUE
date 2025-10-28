@@ -345,6 +345,12 @@ public:
 	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
 	 */
 	TArray<FVoicevoxMeta> GetVoiceModelFileMetaList(const FString& VvmFileName) const;
+
+	/**
+	 * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
+	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
+	 */
+	TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList() const;
 	
 	/**
 	 * @fn

@@ -281,6 +281,12 @@ class UVoicevoxApiObject : public UObject
 	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
 	 */
 	VOICEVOXUECORE_API TArray<FVoicevoxMeta> GetVoiceModelFileMetaList(const FString& VvmFileName);
+
+	/**
+	 * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
+	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
+	 */
+	VOICEVOXUECORE_API TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList();
 	
 public:
 

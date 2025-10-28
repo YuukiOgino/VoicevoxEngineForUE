@@ -291,6 +291,12 @@ public:
 	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
 	 */
 	virtual TArray<FVoicevoxMeta> GetVoiceModelFileMetaList(const FString VvmFileName) { return TArray<FVoicevoxMeta>(); }
+
+	/**
+	 * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
+	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
+	 */
+	virtual TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList() { return TArray<FVoicevoxMeta>(); }
 	
 	/**
 	 * @brief サポートデバイス情報を取得する
