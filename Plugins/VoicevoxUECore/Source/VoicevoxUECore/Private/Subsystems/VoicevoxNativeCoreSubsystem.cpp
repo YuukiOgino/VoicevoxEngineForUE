@@ -850,9 +850,23 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQueryFromAccentPhrases
 			Obj->SetArrayField(TEXT("moras"), MoraJsonArray);
 			Obj->SetNumberField(TEXT("accent"), Accent);
 
-			TSharedPtr<FJsonObject> StructObject = MakeShared<FJsonObject>();
-			FJsonObjectConverter::UStructToJsonObject(FVoicevoxMora::StaticStruct(), &Pause_mora, StructObject.ToSharedRef(), 0, 0);
-			Obj->SetObjectField(TEXT("pause_mora"), StructObject);
+			if (Pause_mora.Text.IsEmpty())
+			{
+				Obj->SetObjectField(TEXT("pause_mora"), nullptr);
+			}
+			else
+			{
+				// pause_moraは子音のパラメータ（consonant、consonant_length）にnull以外が入るとインデックス範囲外エラーが起きるため、UStructToJsonObjectは使用しない
+				TSharedPtr<FJsonObject> StructObject = MakeShared<FJsonObject>();
+				StructObject->SetStringField(TEXT("text"),  Pause_mora.Text);
+				StructObject->SetObjectField(TEXT("consonant"),  nullptr);
+				StructObject->SetObjectField(TEXT("consonant_length"),  nullptr);
+				StructObject->SetStringField(TEXT("vowel"),  Pause_mora.Vowel);
+				StructObject->SetNumberField(TEXT("vowel_length"),  0);
+				StructObject->SetNumberField(TEXT("pitch"),  0);
+				
+				Obj->SetObjectField(TEXT("pause_mora"), StructObject);
+			}
 			
 			Obj->SetBoolField(TEXT("is_interrogative"), Is_interrogative);
 			JsonArray.Add(MakeShared<FJsonValueObject>(Obj));
@@ -1110,8 +1124,15 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxNativeCoreSubsystem::SynthesizerReplace(c
 			}
 			else
 			{
+				// pause_moraは子音のパラメータ（consonant、consonant_length）にnull以外が入るとインデックス範囲外エラーが起きるため、UStructToJsonObjectは使用しない
 				TSharedPtr<FJsonObject> StructObject = MakeShared<FJsonObject>();
-				FJsonObjectConverter::UStructToJsonObject(FVoicevoxMora::StaticStruct(), &Pause_mora, StructObject.ToSharedRef(), 0, 0);
+				StructObject->SetStringField(TEXT("text"),  Pause_mora.Text);
+				StructObject->SetObjectField(TEXT("consonant"),  nullptr);
+				StructObject->SetObjectField(TEXT("consonant_length"),  nullptr);
+				StructObject->SetStringField(TEXT("vowel"),  Pause_mora.Vowel);
+				StructObject->SetNumberField(TEXT("vowel_length"),  0);
+				StructObject->SetNumberField(TEXT("pitch"),  0);
+				
 				Obj->SetObjectField(TEXT("pause_mora"), StructObject);
 			}
 			
