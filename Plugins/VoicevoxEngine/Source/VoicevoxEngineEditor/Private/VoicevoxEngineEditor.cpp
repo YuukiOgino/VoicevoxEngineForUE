@@ -28,7 +28,7 @@ void FVoicevoxEngineEditorModule::StartupModule()
 	FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
 	const TSharedPtr<FExtender> MenuExtender = MakeShareable(new FExtender());
 	MenuExtender->AddMenuExtension(
-		"WindowLayout",
+		"Tools",
 		EExtensionHook::After,
 		nullptr,
 		FMenuExtensionDelegate::CreateRaw(this, &FVoicevoxEngineEditorModule::AddMenuEntry)
