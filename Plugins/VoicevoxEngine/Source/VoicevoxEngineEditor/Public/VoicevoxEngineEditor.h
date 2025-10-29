@@ -20,6 +20,22 @@
  */
 class FVoicevoxEngineEditorModule : public IModuleInterface
 {
+	/**
+	 * @brief メインメニューに登録
+	 */
+	void RegisterMenus() const;
+
+	/**
+	 * @brief 既存メニューに追加
+	 * @param MenuBuilder 
+	 */
+	void AddMenuEntry(FMenuBuilder& MenuBuilder);
+
+	/**
+	 * @brief VOICEVOX Editorを開く
+	 */
+	void OpenVoicevoxEditor() const;
+
 public:
     /**
      * @brief StartupModule
