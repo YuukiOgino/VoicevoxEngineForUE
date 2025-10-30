@@ -45,7 +45,7 @@ void SVoicevoxMetaListWidget::Construct(const FArguments& InArgs)
 		.AutoHeight()
 		[
 			SNew(STextBlock)
-			.Text(FText::FromString(TEXT("No VOICEVOX Meta data available.")))
+			.Text(FText::FromString(TEXT("No VOICEVOX CORE Speaker data available.")))
 		];
 	}
 
