@@ -359,6 +359,12 @@ public:
 	 * @return 指定したStyleId名前
 	 */
 	FString GetMetaName(VoicevoxStyleId StyleId) const;
+
+	/**
+	 * @brief StyleIdをキーとした全てのVoicevoxVoiceModelFile名を格納したTMapを取得
+	 * @return StyleIdをキーとしたVoicevoxVoiceModelFile名のTMap
+	 */
+	TMap<int, FString> GetVvmFileNameMapToStyleId() const;
 	
 	//--------------------------------
 	// VOICEVOX CORE Version関連

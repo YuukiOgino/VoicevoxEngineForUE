@@ -8,6 +8,7 @@
 #include "Components/AudioCellElement.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
+#include "Subsystems/VoicevoxEditorSubsystem.h"
 
 /**
  * @brief SpeakerTypeをセットする
@@ -17,7 +18,13 @@ void UAudioCellElement::SetSpeakerType(const int64 SpeakerType)
 	Speaker = SpeakerType;
 	if (!IsLoadData)
 	{
-		OnAudioQueryChanged.Broadcast(GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(Speaker, AudioEditableText->GetText().ToString(), false));
+		const FString FileName = GEditor->GetEditorSubsystem<UVoicevoxEditorSubsystem>()->GetVvmFileName(SpeakerType);
+		const UVoicevoxCoreSubsystem* Subsystem = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>();
+		if (!Subsystem->IsLoadedVoiceModel(FileName))
+		{
+			if (!Subsystem->LoadVoiceModel(FileName)) return;
+		}
+		OnAudioQueryChanged.Broadcast(Subsystem->GetAudioQuery(Speaker, AudioEditableText->GetText().ToString(), false));
 	}
 	else
 	{
@@ -63,7 +70,13 @@ void UAudioCellElement::NativeConstruct()
  */
 void UAudioCellElement::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	OnAudioQueryChanged.Broadcast(GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(Speaker, Text.ToString(), false));
+	const FString FileName = GEditor->GetEditorSubsystem<UVoicevoxEditorSubsystem>()->GetVvmFileName(Speaker);
+	const UVoicevoxCoreSubsystem* Subsystem = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>();
+	if (!Subsystem->IsLoadedVoiceModel(FileName))
+	{
+		if (!Subsystem->LoadVoiceModel(FileName)) return;
+	}
+	OnAudioQueryChanged.Broadcast(Subsystem->GetAudioQuery(Speaker, Text.ToString(), false));
 	YomikataEditableText->SetText(FText::GetEmpty());
 }
 
@@ -75,5 +88,11 @@ void UAudioCellElement::OnTextCommitted(const FText& Text, ETextCommit::Type Com
 void UAudioCellElement::OnYomikataTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	if (Text.IsEmpty() || AudioEditableText->GetText().IsEmpty()) return;
-	OnAudioQueryChanged.Broadcast(GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAudioQuery(Speaker, Text.ToString(), false));
+	const FString FileName = GEditor->GetEditorSubsystem<UVoicevoxEditorSubsystem>()->GetVvmFileName(Speaker);
+	const UVoicevoxCoreSubsystem* Subsystem = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>();
+	if (!Subsystem->IsLoadedVoiceModel(FileName))
+	{
+		if (!Subsystem->LoadVoiceModel(FileName)) return;
+	}
+	OnAudioQueryChanged.Broadcast(Subsystem->GetAudioQuery(Speaker, Text.ToString(), false));
 }

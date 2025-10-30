@@ -302,7 +302,6 @@ TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetVoiceModelFileMetaList(const FS
 
 /**
  * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
- * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
  */
 TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetAllVoiceModelFileMetaList() const
 {
@@ -327,6 +326,14 @@ FString UVoicevoxCoreSubsystem::GetMetaName(const VoicevoxStyleId StyleId) const
 	}
 	
 	return TEXT("");
+}
+
+/**
+ * @brief StyleIdをキーとした全てのVoicevoxVoiceModelFile名を格納したTMapを取得
+ */
+TMap<int, FString> UVoicevoxCoreSubsystem::GetVvmFileNameMapToStyleId() const
+{
+	return NativeInstance->GetVvmFileNameMapToStyleId();
 }
 
 //--------------------------------

@@ -63,7 +63,7 @@ struct FVoicevoxStyle
 
 	//! スピーカーID
 	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
-	int64 Id;
+	int32 Id;
 };
 
 /**

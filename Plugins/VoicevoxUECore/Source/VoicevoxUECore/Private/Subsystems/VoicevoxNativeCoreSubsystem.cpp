@@ -487,6 +487,12 @@ bool UVoicevoxNativeCoreSubsystem::LoadModel(const VoicevoxStyleId StyleId)
 
 	for (const FString& FileName : FoundFiles)
 	{
+		// ソング機能のVVMファイルは特殊な編集が必要になるため、除外する
+		if (FString FileNameOnly = FPaths::GetBaseFilename(FileName); FileNameOnly.StartsWith(TEXT("s")))
+		{
+			continue;
+		}
+		
 		VoicevoxVoiceModelFile* Model = nullptr;
 		if (!VoiceModelFileOpen(FileName, &Model))
 		{
@@ -592,6 +598,12 @@ bool UVoicevoxNativeCoreSubsystem::AllLoadVoiceModel()
 
 	for (const FString& FileName : FoundFiles)
 	{
+		// ソング機能のVVMファイルは特殊な編集が必要になるため、除外する
+		if (FString FileNameOnly = FPaths::GetBaseFilename(FileName); FileNameOnly.StartsWith(TEXT("s")))
+		{
+			continue;
+		}
+		
 		VoicevoxVoiceModelFile* Model = nullptr;
 		if (!VoiceModelFileOpen(FileName, &Model))
 		{
@@ -1243,18 +1255,87 @@ TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetAllVoiceModelFileMetaList
 
 	for (const FString& FileName : FoundFiles)
 	{
+		// ソング機能のVVMファイルは特殊な編集が必要になるため、除外する
+		if (FString FileNameOnly = FPaths::GetBaseFilename(FileName); FileNameOnly.StartsWith(TEXT("s")))
+		{
+			continue;
+		}
+		
 		VoicevoxVoiceModelFile* Model = nullptr;
 		if (!VoiceModelFileOpen(FileName, &Model))
 		{
 			continue;
 		}
 
-		auto Metas = VoiceModelFileCreateMetas(*Model);
-		AllMetaList.Append(Metas);
+		for (auto Metas = VoiceModelFileCreateMetas(*Model); const auto& Meta : Metas)
+		{
+			FVoicevoxMeta* FoundItem = AllMetaList.FindByPredicate(
+				[Meta](const FVoicevoxMeta& Item)
+				{
+					return Item.Speaker_uuid == Meta.Speaker_uuid;
+				}
+			);
+
+			if (FoundItem)
+			{
+				FoundItem->Styles.Append(Meta.Styles);
+			}
+			else
+			{
+				AllMetaList.Add(Meta);
+			}
+		}
+		
 		VoiceModelFileDelete(*Model);
 	}
 	
 	return AllMetaList;
+}
+
+/**
+ * @brief StyleIdをキーとした全てのVoicevoxVoiceModelFile名を格納したTMapを取得
+ */
+TMap<int, FString> UVoicevoxNativeCoreSubsystem::GetVvmFileNameMapToStyleId()
+{
+	TMap<int, FString> Map;
+
+	const FString PlatformFolderName = GetPlatformFolderName();
+	if (PlatformFolderName.IsEmpty())
+	{
+		return Map;
+	}
+
+	const FString ModelsDirPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries"), PlatformFolderName, TEXT("models")));
+	TArray<FString> FoundFiles;
+	IFileManager::Get().FindFilesRecursive(FoundFiles, *ModelsDirPath,TEXT("*.vvm"), true, false, false);
+
+	for (const FString& FileName : FoundFiles)
+	{
+		// ソング機能のVVMファイルは特殊な編集が必要になるため、除外する
+		if (FString FileNameOnly = FPaths::GetBaseFilename(FileName); FileNameOnly.StartsWith(TEXT("s")))
+		{
+			continue;
+		}
+		
+		VoicevoxVoiceModelFile* Model = nullptr;
+		if (!VoiceModelFileOpen(FileName, &Model))
+		{
+			continue;
+		}
+
+		for (auto Metas = VoiceModelFileCreateMetas(*Model); const auto& Meta : Metas)
+		{
+			for (auto [Name, Id]: Meta.Styles)
+			{
+				FString FileNameOnly = FPaths::GetBaseFilename(FileName);
+				Map.Add(Id, FileNameOnly);
+			}
+		}
+		
+		VoiceModelFileDelete(*Model);
+	}
+
+	return Map;
 }
 
 /**

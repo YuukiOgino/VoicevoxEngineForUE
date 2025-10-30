@@ -419,3 +419,18 @@ TArray<FVoicevoxMeta> UVoicevoxApiObject::GetAllVoiceModelFileMetaList()
 
 	return MetaList;
 }
+
+/**
+ * @brief StyleIdをキーとした全てのVoicevoxVoiceModelFile名を格納したTMapを取得
+ */
+TMap<int, FString> UVoicevoxApiObject::GetVvmFileNameMapToStyleId()
+{
+	TMap<int, FString> Map;
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		Map.Append(Subsystem->GetVvmFileNameMapToStyleId());
+	}
+
+	return Map;
+}

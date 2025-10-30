@@ -19,6 +19,7 @@ void UVoicevoxEditorSubsystem::LoadAllVvmMetaList()
 {
 	MetaList.Empty();
 	MetaList = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAllVoiceModelFileMetaList();
+	VvmFileNameMapToStyleId = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetVvmFileNameMapToStyleId();
 }
 
 /**
@@ -35,6 +36,19 @@ FString UVoicevoxEditorSubsystem::GetMetaName(const VoicevoxStyleId StyleId) con
 				return FString::Printf(TEXT("%s(%s)"), *Name, *Style.Name);
 			}
 		}
+	}
+	
+	return TEXT("");
+}
+
+/**
+ * @brief 指定したStyleIdからVVMファイル名を取得する
+ */
+FString UVoicevoxEditorSubsystem::GetVvmFileName(const VoicevoxStyleId StyleId) const
+{
+	if (VvmFileNameMapToStyleId.Contains(StyleId))
+	{
+		return VvmFileNameMapToStyleId[StyleId];
 	}
 	
 	return TEXT("");

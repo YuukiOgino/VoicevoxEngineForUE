@@ -29,6 +29,9 @@ class VOICEVOXUECOREEDITOR_API UVoicevoxEditorSubsystem : public UEditorSubsyste
 	//! メタリスト
 	TArray<FVoicevoxMeta> MetaList;
 
+	//! StyleIdをキーとしたVVMファイル名Map
+	TMap<int, FString> VvmFileNameMapToStyleId;
+	
 public:
 
 	//--------------------------------
@@ -54,8 +57,14 @@ public:
 	 * @fn
 	 * メタ情報から指定したStyleIdの名前を取得する
 	 * @brief 指定したStyleIdの名前を取得する
-	 * @return 指定したStyleId名前
+	 * @return 指定したStyleIdのモデル名
 	 */
 	FString GetMetaName(VoicevoxStyleId StyleId) const;
+
+	/**
+	 * @brief 指定したStyleIdからVVMファイル名を取得する
+	 * @return 指定したStyleIdが格納されたVVMファイル名
+	 */
+	FString GetVvmFileName(VoicevoxStyleId StyleId) const;
 	
 };
