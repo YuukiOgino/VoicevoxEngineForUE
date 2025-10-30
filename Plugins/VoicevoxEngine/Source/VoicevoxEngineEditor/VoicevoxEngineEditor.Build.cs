@@ -35,6 +35,7 @@ public class VoicevoxEngineEditor : ModuleRules
                 "JsonUtilities",
                 "ToolMenus",
                 "EditorStyle",
+                "ApplicationCore"
             }
         );
     }

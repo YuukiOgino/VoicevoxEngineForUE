@@ -9,7 +9,6 @@
 #include "VoicevoxMetaWidget.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Text/STextBlock.h"
-#include "Widgets/Layout/SBox.h"
 #include "Widgets/Layout/SBorder.h"
 
 /**

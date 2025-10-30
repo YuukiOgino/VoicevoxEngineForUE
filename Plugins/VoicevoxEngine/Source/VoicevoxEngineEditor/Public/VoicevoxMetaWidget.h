@@ -20,6 +20,8 @@ class SVoicevoxMetaWidget : public SCompoundWidget
 {
 	//! メタ情報
 	const FVoicevoxMeta* MetaData = nullptr;
+
+	FString CopiedMessage; 
 	
 public:
 	SLATE_BEGIN_ARGS(SVoicevoxMetaWidget) {}
@@ -31,5 +33,7 @@ SLATE_END_ARGS()
 	 * @param InArgs 
 	 */
 	void Construct(const FArguments& InArgs);
+
+	void ClearCopiedMessage();
 	
 };
