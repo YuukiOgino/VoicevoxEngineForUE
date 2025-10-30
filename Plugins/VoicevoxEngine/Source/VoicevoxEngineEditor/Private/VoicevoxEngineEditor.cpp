@@ -73,10 +73,10 @@ void FVoicevoxEngineEditorModule::RegisterMenus() const
 			);
 
 			SubSection.AddMenuEntry(
-				"OpenVoicevoxSpeakerList",
-				LOCTEXT("OpenVoicevoxEditor", "Speaker List"),
-				LOCTEXT("OpenVoicevoxSpeakerList_Tooltip", "Open the VOICEVOX Speaker List"),
-				FSlateIcon("EditorStyle", "LevelEditor.Tabs.Details"),
+				"OpenVoicevoxCoreSpeakerList",
+				LOCTEXT("OpenVoicevoxSpeakerList", "VOICEVOX CORE Speaker List"),
+				LOCTEXT("OpenVoicevoxSpeakerList_Tooltip", "Open the VOICEVOX CORE Speaker List"),
+				FSlateIcon("EditorStyle", "LevelEditor.Audit"),
 				FUIAction(FExecuteAction::CreateRaw(this, &FVoicevoxEngineEditorModule::OpenVoicevoxMetaList))
 			);
 		}),
@@ -103,9 +103,9 @@ void FVoicevoxEngineEditorModule::AddMenuEntry(FMenuBuilder& MenuBuilder)
 			);
 
 			Builder.AddMenuEntry(
-				LOCTEXT("OpenVoicevoxEditor", "Speaker List"),
-				LOCTEXT("OpenVoicevoxSpeakerList_Tooltip", "Open the VOICEVOX Speaker List"),
-				FSlateIcon("EditorStyle", "LevelEditor.Tabs.Details"),
+				LOCTEXT("OpenVoicevoxSpeakerList", "VOICEVOX CORE Speaker List"),
+				LOCTEXT("OpenVoicevoxSpeakerList_Tooltip", "Open the VOICEVOX CORE Speaker List"),
+				FSlateIcon("EditorStyle", "LevelEditor.Audit"),
 				FUIAction(FExecuteAction::CreateRaw(this, &FVoicevoxEngineEditorModule::OpenVoicevoxMetaList))
 			);
 		}),
@@ -142,7 +142,7 @@ void FVoicevoxEngineEditorModule::OpenVoicevoxMetaList() const
 {
 	const auto List = GEditor->GetEditorSubsystem<UVoicevoxEditorSubsystem>()->GetMetaList();
 	const TSharedRef<SWindow> Window = SNew(SWindow)
-	.Title(FText::FromString(TEXT("Voicevox Speaker Info")))
+	.Title(FText::FromString(TEXT("VOICEVOX CORE Speaker Info")))
 	.ClientSize(FVector2D(700, 600))
 	[
 		SNew(SVoicevoxMetaListWidget)
