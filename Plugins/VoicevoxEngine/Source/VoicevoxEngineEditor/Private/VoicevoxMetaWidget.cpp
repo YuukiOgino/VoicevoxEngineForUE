@@ -32,7 +32,7 @@ void SVoicevoxMetaWidget::Construct(const FArguments& InArgs)
 				.MaxWidth(160.0f)
 				[
 					SNew(STextBlock)
-					.Text(FText::FromString(FString::Printf(TEXT(" - %s (Id=%d)"), *Style.Name, Style.Id)))
+					.Text(FText::FromString(FString::Printf(TEXT(" - %s (ID=%d)"), *Style.Name, Style.Id)))
 				]
 				+ SHorizontalBox::Slot()
 				.AutoWidth()
@@ -78,7 +78,11 @@ void SVoicevoxMetaWidget::Construct(const FArguments& InArgs)
 				]
 			];
 	}
-	
+	auto NameTextStyle = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>( "NormalText" );
+	NameTextStyle.SetFontSize(20.f);
+
+	auto StyleTextStyle = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>( "NormalText" );
+	StyleTextStyle.SetFontSize(18.f);
 	ChildSlot
 	[
 		SNew(SBorder)
@@ -89,18 +93,22 @@ void SVoicevoxMetaWidget::Construct(const FArguments& InArgs)
 			.AutoHeight()
 			[
 				SNew(STextBlock)
-				.Text(FText::FromString(FString::Printf(TEXT("%s (Version: %s)"), *MetaData->Name, *MetaData->Version)))
+				.TextStyle(&NameTextStyle)
+				.Text(FText::FromString(FString::Printf(TEXT("%s"), *MetaData->Name)))
 			]
 			+ SVerticalBox::Slot()
+			.Padding(5, 3)
 			.AutoHeight()
 			[
 				SNew(STextBlock)
-				.Text(FText::FromString(FString::Printf(TEXT("UUID: %s"), *MetaData->Speaker_uuid)))
+				.Text(FText::FromString(FString::Printf(TEXT("UUID: %s  Version: %s"), *MetaData->Speaker_uuid, *MetaData->Version)))
 			]
 			+ SVerticalBox::Slot()
+			.Padding(0, 3)
 			.AutoHeight()
 			[
 				SNew(STextBlock)
+				.TextStyle(&StyleTextStyle)
 				.Text(FText::FromString(TEXT("Styles:")))
 			]
 			+ SVerticalBox::Slot()
