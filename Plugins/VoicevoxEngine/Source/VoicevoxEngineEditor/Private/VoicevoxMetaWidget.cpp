@@ -11,14 +11,13 @@
 #include "Widgets/Text/STextBlock.h"
 #include "HAL/PlatformApplicationMisc.h"
 
-
 /**
  * @brief Construct
  */
 void SVoicevoxMetaWidget::Construct(const FArguments& InArgs)
 {
 	MetaData = InArgs._MetaData;
-	CopiedMessage = TEXT("");
+	CopyId = -1;
 
 	const TSharedRef<SVerticalBox> StylesBox = SNew(SVerticalBox);
 
@@ -29,34 +28,33 @@ void SVoicevoxMetaWidget::Construct(const FArguments& InArgs)
 			.Padding(10, 2)
 			[
 				SNew(SHorizontalBox)
-				+ SHorizontalBox::Slot().AutoWidth()
+				+ SHorizontalBox::Slot()
+				.MaxWidth(160.0f)
 				[
 					SNew(STextBlock)
 					.Text(FText::FromString(FString::Printf(TEXT(" - %s (Id=%d)"), *Style.Name, Style.Id)))
 				]
-				+ SHorizontalBox::Slot().AutoWidth()
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
 				.Padding(8, 0)
 				[
 					SNew(SButton)
 					.Text(FText::FromString("Copy"))
-					.OnClicked_Lambda([Style, this]()
+					.OnClicked_Lambda([Style, this]
 					{
 						const FString IdString = FString::FromInt(Style.Id);
 						FPlatformApplicationMisc::ClipboardCopy(*IdString);
 						UE_LOG(LogTemp, Log, TEXT("Copied Style ID: %s"), *IdString);
 
-						// メッセージ更新
-						CopiedMessage = FString::Printf(TEXT("Copied: %d"), Style.Id);
-						Invalidate(EInvalidateWidgetReason::Layout);
+						CopyId = Style.Id;
 
 						if (const UWorld* World = GEditor->GetEditorWorldContext().World())
 						{
 							// 数秒後にメッセージを消去
 							FTimerHandle TimerHandle;
-							World->GetTimerManager().SetTimer(TimerHandle, [this]()
+							World->GetTimerManager().SetTimer(TimerHandle, [this]
 							{
-								CopiedMessage = TEXT("");
-								Invalidate(EInvalidateWidgetReason::Layout);
+								CopyId = -1;
 							}, 2.0f, false);
 						}
 						
@@ -64,12 +62,18 @@ void SVoicevoxMetaWidget::Construct(const FArguments& InArgs)
 					})
 					.ToolTipText(FText::FromString("Copy this Style ID to clipboard"))
 				]
-				// Copied メッセージ
 				+ SHorizontalBox::Slot().AutoWidth()
 				.Padding(8, 0)
 				[
 					SNew(STextBlock)
-					.Text(FText::FromString(CopiedMessage))
+					.Text_Lambda([Style, this]()
+					{
+						if (Style.Id == CopyId)
+						{
+							return FText::FromString(FString::Printf(TEXT("Copied: %d"), Style.Id));
+						}
+						return FText::FromString("");
+					})
 					.ColorAndOpacity(FLinearColor::Green)
 				]
 			];
@@ -110,9 +114,4 @@ void SVoicevoxMetaWidget::Construct(const FArguments& InArgs)
 			]
 		]
 	];
-}
-
-void SVoicevoxMetaWidget::ClearCopiedMessage()
-{
-	CopiedMessage = TEXT("");
 }

@@ -73,9 +73,9 @@ void FVoicevoxEngineEditorModule::RegisterMenus() const
 			);
 
 			SubSection.AddMenuEntry(
-				"OpenVoicevoxMetaList",
-				LOCTEXT("OpenVoicevoxEditor", "VOICEVOX Meta List"),
-				LOCTEXT("OpenVoicevoxEditor_Tooltip", "Open the VOICEVOX Meta List"),
+				"OpenVoicevoxSpeakerList",
+				LOCTEXT("OpenVoicevoxEditor", "Speaker List"),
+				LOCTEXT("OpenVoicevoxSpeakerList_Tooltip", "Open the VOICEVOX Speaker List"),
 				FSlateIcon("EditorStyle", "LevelEditor.Tabs.Details"),
 				FUIAction(FExecuteAction::CreateRaw(this, &FVoicevoxEngineEditorModule::OpenVoicevoxMetaList))
 			);
@@ -103,8 +103,8 @@ void FVoicevoxEngineEditorModule::AddMenuEntry(FMenuBuilder& MenuBuilder)
 			);
 
 			Builder.AddMenuEntry(
-				LOCTEXT("OpenVoicevoxEditor", "VOICEVOX Meta List"),
-				LOCTEXT("OpenVoicevoxEditor_Tooltip", "Open the VOICEVOX Meta List"),
+				LOCTEXT("OpenVoicevoxEditor", "Speaker List"),
+				LOCTEXT("OpenVoicevoxSpeakerList_Tooltip", "Open the VOICEVOX Speaker List"),
 				FSlateIcon("EditorStyle", "LevelEditor.Tabs.Details"),
 				FUIAction(FExecuteAction::CreateRaw(this, &FVoicevoxEngineEditorModule::OpenVoicevoxMetaList))
 			);
@@ -135,12 +135,15 @@ void FVoicevoxEngineEditorModule::OpenVoicevoxEditor() const
 	}
 }
 
+/**
+ * @brief VOICEVOX Speaker Listを開く
+ */
 void FVoicevoxEngineEditorModule::OpenVoicevoxMetaList() const
 {
 	const auto List = GEditor->GetEditorSubsystem<UVoicevoxEditorSubsystem>()->GetMetaList();
-	TSharedRef<SWindow> Window = SNew(SWindow)
-	.Title(FText::FromString(TEXT("Voicevox Info")))
-	.ClientSize(FVector2D(400, 600))
+	const TSharedRef<SWindow> Window = SNew(SWindow)
+	.Title(FText::FromString(TEXT("Voicevox Speaker Info")))
+	.ClientSize(FVector2D(700, 600))
 	[
 		SNew(SVoicevoxMetaListWidget)
 		.MetaArray(&List)
