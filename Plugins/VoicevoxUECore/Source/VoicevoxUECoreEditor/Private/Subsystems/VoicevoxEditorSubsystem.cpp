@@ -53,3 +53,11 @@ FString UVoicevoxEditorSubsystem::GetVvmFileName(const VoicevoxStyleId StyleId) 
 	
 	return TEXT("");
 }
+
+/**
+ * @brief Subsystemが保持しているメタ情報を取得する
+ */
+TArray<FVoicevoxMeta> UVoicevoxEditorSubsystem::GetMetaList()
+{
+	return MetaList;
+}

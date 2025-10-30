@@ -66,5 +66,11 @@ public:
 	 * @return 指定したStyleIdが格納されたVVMファイル名
 	 */
 	FString GetVvmFileName(VoicevoxStyleId StyleId) const;
+
+	/**
+	 * @brief ubsystemが保持しているメタ情報を取得する
+	 * @return meta list
+	 */
+	TArray<FVoicevoxMeta> GetMetaList();
 	
 };

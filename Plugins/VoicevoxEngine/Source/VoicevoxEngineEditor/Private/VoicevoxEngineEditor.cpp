@@ -11,6 +11,8 @@
 #include "EditorUtilityWidgetBlueprint.h"
 #include "LevelEditor.h"
 #include "ToolMenus.h"
+#include "VoicevoxMetaListWidget.h"
+#include "Subsystems/VoicevoxEditorSubsystem.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxEngineEditorModule"
 
@@ -61,7 +63,7 @@ void FVoicevoxEngineEditorModule::RegisterMenus() const
 		LOCTEXT("VoicevoxSMenuTooltip", "VOICEVOX Editor Tools"),
 		FNewToolMenuDelegate::CreateLambda([this](UToolMenu* VoicevoxSubMenu)
 		{
-			FToolMenuSection& SubSection = VoicevoxSubMenu->AddSection("WidgetSection", LOCTEXT("WidgetSection", "Editor"));
+			FToolMenuSection& SubSection = VoicevoxSubMenu->AddSection("WidgetSection", LOCTEXT("WidgetSection", "VOICEVOX"));
 			SubSection.AddMenuEntry(
 				"OpenVoicevoxEditor",
 				LOCTEXT("OpenVoicevoxEditor", "VOICEVOX Editor"),
@@ -69,11 +71,18 @@ void FVoicevoxEngineEditorModule::RegisterMenus() const
 				FSlateIcon("EditorStyle", "LevelEditor.Tabs.Details"),
 				FUIAction(FExecuteAction::CreateRaw(this, &FVoicevoxEngineEditorModule::OpenVoicevoxEditor))
 			);
+
+			SubSection.AddMenuEntry(
+				"OpenVoicevoxMetaList",
+				LOCTEXT("OpenVoicevoxEditor", "VOICEVOX Meta List"),
+				LOCTEXT("OpenVoicevoxEditor_Tooltip", "Open the VOICEVOX Meta List"),
+				FSlateIcon("EditorStyle", "LevelEditor.Tabs.Details"),
+				FUIAction(FExecuteAction::CreateRaw(this, &FVoicevoxEngineEditorModule::OpenVoicevoxMetaList))
+			);
 		}),
 		false, 
 		FSlateIcon()
 	);
-
 	ToolsSection.AddEntry(SubMenu);
 }
 
@@ -91,6 +100,13 @@ void FVoicevoxEngineEditorModule::AddMenuEntry(FMenuBuilder& MenuBuilder)
 				LOCTEXT("OpenVoicevoxEditor_Tooltip", "Open the VOICEVOX Editor"),
 				FSlateIcon("EditorStyle", "LevelEditor.Tabs.Details"),
 				FUIAction(FExecuteAction::CreateRaw(this, &FVoicevoxEngineEditorModule::OpenVoicevoxEditor))
+			);
+
+			Builder.AddMenuEntry(
+				LOCTEXT("OpenVoicevoxEditor", "VOICEVOX Meta List"),
+				LOCTEXT("OpenVoicevoxEditor_Tooltip", "Open the VOICEVOX Meta List"),
+				FSlateIcon("EditorStyle", "LevelEditor.Tabs.Details"),
+				FUIAction(FExecuteAction::CreateRaw(this, &FVoicevoxEngineEditorModule::OpenVoicevoxMetaList))
 			);
 		}),
 		false, 
@@ -117,6 +133,20 @@ void FVoicevoxEngineEditorModule::OpenVoicevoxEditor() const
 			UE_LOG(LogTemp, Warning, TEXT("Failed to load EUW: %s"), *WidgetPath);
 		}
 	}
+}
+
+void FVoicevoxEngineEditorModule::OpenVoicevoxMetaList() const
+{
+	const auto List = GEditor->GetEditorSubsystem<UVoicevoxEditorSubsystem>()->GetMetaList();
+	TSharedRef<SWindow> Window = SNew(SWindow)
+	.Title(FText::FromString(TEXT("Voicevox Info")))
+	.ClientSize(FVector2D(400, 600))
+	[
+		SNew(SVoicevoxMetaListWidget)
+		.MetaArray(&List)
+	];
+
+	FSlateApplication::Get().AddWindow(Window);
 }
 
 #undef LOCTEXT_NAMESPACE

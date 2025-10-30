@@ -35,6 +35,7 @@ class FVoicevoxEngineEditorModule : public IModuleInterface
 	 * @brief VOICEVOX Editorを開く
 	 */
 	void OpenVoicevoxEditor() const;
+	void OpenVoicevoxMetaList() const;
 
 public:
     /**
