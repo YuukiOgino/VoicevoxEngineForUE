@@ -405,4 +405,67 @@ public:
 	 * @return 初期化済みのネイティブコア名のリスト
 	 */
 	TArray<FString> GetCoreNameList();
+	
+	//--------------------------------
+	// VOICEVOX CORE Dict関連
+	//--------------------------------
+	
+	/**
+	 * @brief VoicevoxUserDictWordを最低限のパラメータで作成する。
+	 * @param [in] Surface 表記
+	 * @param [in] Pronunciation 読み
+	 * @param [in] AccentType アクセント型
+	 * @returns VoicevoxUserDictWord
+	 */
+	VoicevoxUserDictWord UserDictWordMake(const FString& Surface, const FString& Pronunciation, uintptr_t AccentType) const;
+	
+	/**
+	 * @brief ユーザー辞書を構築する。
+	 * @param [in] DictPath 読み込む辞書ファイルのパス
+	 * @returns 初期化が成功したか
+	 */
+	bool UserDictInitialize(const FString& DictPath = TEXT("")) const;
+	
+	/**
+	 * @brief ユーザー辞書に単語を追加する。
+	 *
+	 * @param [in] Word 追加する単語
+	 * @returns 追加した単語のUUID
+	 */
+	TArray<uint8_t> UserDictAddWord(const VoicevoxUserDictWord* Word) const;
+
+	/**
+	 * @brief ユーザー辞書の単語を更新する。
+	 *
+	 * @param [in] WordUuid 更新する単語のUUID
+	 * @param [in] Word 新しい単語のデータ
+	 * @returns 結果
+	 */
+	bool RewriteUserDictWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord *Word) const;
+
+	/**
+	 * @brief ユーザー辞書から単語を削除する。
+	 *
+	 * @param [in] WordUuid 削除する単語のUUID
+	 * @returns 結果
+	 */
+	bool DeleteUserDictWord(const TArray<uint8_t>& WordUuid) const;
+	
+	/**
+	 * @brief ユーザー辞書の単語をJSON形式で出力する。
+	 * @returns output_json
+	 */
+	FString GetUserDictWord() const;
+
+	/**
+	 * @brief ユーザー辞書をファイルに保存する。
+	 * @param [in] Path 保存先のファイルパス
+	 * @returns 結果
+	 */
+	bool UserDictSave(const FString& Path) const;
+	
+	/**
+	 * @brief ユーザー辞書を破棄する。
+	 */
+	void UserDictDelete() const;
 };

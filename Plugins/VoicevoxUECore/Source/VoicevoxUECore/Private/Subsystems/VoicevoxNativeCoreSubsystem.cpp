@@ -1342,8 +1342,6 @@ TMap<int, FString> UVoicevoxNativeCoreSubsystem::GetVvmFileNameMapToStyleId()
 
 /**
  * @brief VoicevoxVoiceModelFile からメタ情報を取得する。
- * @param [in] Model 音声モデル
- * @returns VoicevoxVoiceModelFileのメタ情報
  */
 TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::VoiceModelFileCreateMetas(const VoicevoxVoiceModelFile& Model)
 {
@@ -1523,6 +1521,62 @@ VoicevoxUserDictWord UVoicevoxNativeCoreSubsystem::UserDictWordMake(const FStrin
 /**
  * @brief ユーザー辞書を構築する。
  */
+bool UVoicevoxNativeCoreSubsystem::UserDictInitialize(const FString& DictPath, const VoicevoxUserDict* ParentUserDict)
+{
+	NativeUserDict = UserDictNew();
+	// 他のネイティブプラグインで初期化済みの場合はインポートを実行
+	if (ParentUserDict != nullptr)
+	{
+		return UserDictImport(NativeUserDict, ParentUserDict);
+	}
+	
+	// パスがある場合は読み込む
+	if (!DictPath.IsEmpty())
+	{
+		return UserDictLoad(NativeUserDict, DictPath);
+	}
+	
+	return true;
+}
+
+/**
+ * @brief 生成したユーザー辞書を構築する。
+ */
+VoicevoxUserDict* UVoicevoxNativeCoreSubsystem::GetNativeUserDict() const
+{
+	return NativeUserDict;
+}
+
+/**
+ * @brief 生成したユーザー辞書を破棄する。
+ */
+void UVoicevoxNativeCoreSubsystem::NativeUserDictDelete()
+{
+	if (NativeUserDict != nullptr)
+	{
+		UserDictDelete(NativeUserDict);
+		NativeUserDict = nullptr;
+	}
+}
+
+/**
+ * @brief ユーザー辞書に単語を追加する。
+ */
+TArray<uint8_t> UVoicevoxNativeCoreSubsystem::AddUserDictWord(const VoicevoxUserDictWord* Word, const VoicevoxUserDict* ParentUserDict)
+{
+	// 他のネイティブプラグインで初期化済みの場合はインポートを実行
+	if (ParentUserDict != nullptr)
+	{
+		UserDictImport(NativeUserDict, ParentUserDict);
+		return TArray<uint8_t>();
+	}
+	
+	return UserDictAddWord(Word);
+}
+
+/**
+ * @brief ユーザー辞書を構築する。
+ */
 VoicevoxUserDict* UVoicevoxNativeCoreSubsystem::UserDictNew()
 {
 	if (!IsValidCoreLibraryHandle()) return nullptr;
@@ -1576,10 +1630,10 @@ bool UVoicevoxNativeCoreSubsystem::UserDictLoad(const VoicevoxUserDict* UserDict
 /**
  * @brief ユーザー辞書に単語を追加する。
  */
-TArray<uint8_t> UVoicevoxNativeCoreSubsystem::UserDictAddWord(const VoicevoxUserDict* UserDict, const VoicevoxUserDictWord* Word)
+TArray<uint8_t> UVoicevoxNativeCoreSubsystem::UserDictAddWord(const VoicevoxUserDictWord* Word)
 {
 	TArray<uint8_t> Output;
-	if (!IsValidCoreLibraryHandle()) return Output;
+	if (!IsValidCoreLibraryHandle() || !NativeUserDict) return Output;
 	const FString FuncName = "voicevox_user_dict_add_word";
 	using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxUserDict*, const VoicevoxUserDictWord*, uint8_t(*)[16]);
 
@@ -1596,7 +1650,7 @@ TArray<uint8_t> UVoicevoxNativeCoreSubsystem::UserDictAddWord(const VoicevoxUser
 	else
 	{
 		uint8_t WordUuid[16];
-		if (const VoicevoxResultCode Result = FuncPtr(UserDict, Word, &WordUuid);
+		if (const VoicevoxResultCode Result = FuncPtr(NativeUserDict, Word, &WordUuid);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(FuncName, Result);
@@ -1613,9 +1667,9 @@ TArray<uint8_t> UVoicevoxNativeCoreSubsystem::UserDictAddWord(const VoicevoxUser
 /**
  * @brief ユーザー辞書の単語を更新する。
  */
-bool UVoicevoxNativeCoreSubsystem::UserDictUpdateWord(const VoicevoxUserDict* UserDict, const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord* Word)
+bool UVoicevoxNativeCoreSubsystem::UserDictUpdateWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord* Word)
 {
-	if (!IsValidCoreLibraryHandle()) return false;
+	if (!IsValidCoreLibraryHandle() || !NativeUserDict) return false;
 	const FString FuncName = "voicevox_user_dict_update_word"; 
 	using DLL_Function = VoicevoxResultCode(*)(const VoicevoxUserDict*, const uint8_t(*)[16], const VoicevoxUserDictWord*);
 #if PLATFORM_WINDOWS
@@ -1629,7 +1683,7 @@ bool UVoicevoxNativeCoreSubsystem::UserDictUpdateWord(const VoicevoxUserDict* Us
 	}
 	else 
 	{
-		if (const VoicevoxResultCode Result = FuncPtr(UserDict, reinterpret_cast<const uint8_t(*)[16]>(WordUuid.GetData()), Word);
+		if (const VoicevoxResultCode Result = FuncPtr(NativeUserDict, reinterpret_cast<const uint8_t(*)[16]>(WordUuid.GetData()), Word);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(FuncName, Result);
@@ -1645,9 +1699,9 @@ bool UVoicevoxNativeCoreSubsystem::UserDictUpdateWord(const VoicevoxUserDict* Us
 /**
  * @brief ユーザー辞書から単語を削除する。
  */
-bool UVoicevoxNativeCoreSubsystem::UserDictRemoveWord(const VoicevoxUserDict* UserDict, const TArray<uint8_t>& WordUuid)
+bool UVoicevoxNativeCoreSubsystem::UserDictRemoveWord(const TArray<uint8_t>& WordUuid)
 {
-	if (!IsValidCoreLibraryHandle()) return false;
+	if (!IsValidCoreLibraryHandle() || !NativeUserDict) return false;
 	const FString FuncName = "voicevox_user_dict_remove_word"; 
 	using DLL_Function = VoicevoxResultCode(*)(const VoicevoxUserDict*, const uint8_t(*)[16]);
 #if PLATFORM_WINDOWS
@@ -1661,7 +1715,7 @@ bool UVoicevoxNativeCoreSubsystem::UserDictRemoveWord(const VoicevoxUserDict* Us
 	}
 	else 
 	{
-		if (const VoicevoxResultCode Result = FuncPtr(UserDict, reinterpret_cast<const uint8_t(*)[16]>(WordUuid.GetData()));
+		if (const VoicevoxResultCode Result = FuncPtr(NativeUserDict, reinterpret_cast<const uint8_t(*)[16]>(WordUuid.GetData()));
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(FuncName, Result);
@@ -1675,11 +1729,20 @@ bool UVoicevoxNativeCoreSubsystem::UserDictRemoveWord(const VoicevoxUserDict* Us
 }
 
 /**
+ * @brief ユーザー辞書の単語を取得する。
+ * @returns output_json
+ */
+FString UVoicevoxNativeCoreSubsystem::GetUserDictWord()
+{
+	return UserDictToJson();
+}
+
+/**
  * @brief ユーザー辞書の単語をJSON形式で出力する。
  */
-FString UVoicevoxNativeCoreSubsystem::UserDictToJson(const VoicevoxUserDict* UserDict)
+FString UVoicevoxNativeCoreSubsystem::UserDictToJson()
 {
-	if (!IsValidCoreLibraryHandle()) return FString();;
+	if (!IsValidCoreLibraryHandle() || !NativeUserDict) return FString();;
 	const FString FuncName = "voicevox_user_dict_to_json"; 
 	using DLL_Function = VoicevoxResultCode(*)(const VoicevoxUserDict*, char**);
 #if PLATFORM_WINDOWS
@@ -1694,7 +1757,7 @@ FString UVoicevoxNativeCoreSubsystem::UserDictToJson(const VoicevoxUserDict* Use
 	else 
 	{
 		char* OutputJSON;
-		if (const VoicevoxResultCode Result = FuncPtr(UserDict, &OutputJSON);
+		if (const VoicevoxResultCode Result = FuncPtr(NativeUserDict, &OutputJSON);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(FuncName, Result);
@@ -1744,9 +1807,9 @@ bool UVoicevoxNativeCoreSubsystem::UserDictImport(const VoicevoxUserDict* UserDi
 /**
  * @brief ユーザー辞書をファイルに保存する。
  */
-bool UVoicevoxNativeCoreSubsystem::UserDictSave(const VoicevoxUserDict* UserDict, const FString& Path)
+bool UVoicevoxNativeCoreSubsystem::UserDictSave(const FString& Path)
 {
-	if (!IsValidCoreLibraryHandle()) return false;
+	if (!IsValidCoreLibraryHandle() || !NativeUserDict) return false;
 	const FString FuncName = "voicevox_user_dict_save"; 
 	using DLL_Function = VoicevoxResultCode(*)(const VoicevoxUserDict*, const char*);
 #if PLATFORM_WINDOWS
@@ -1760,7 +1823,7 @@ bool UVoicevoxNativeCoreSubsystem::UserDictSave(const VoicevoxUserDict* UserDict
 	}
 	else 
 	{
-		if (const VoicevoxResultCode Result = FuncPtr(UserDict, TCHAR_TO_UTF8(*Path));
+		if (const VoicevoxResultCode Result = FuncPtr(NativeUserDict, TCHAR_TO_UTF8(*Path));
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
 		{
 			VoicevoxShowErrorResultMessage(FuncName, Result);

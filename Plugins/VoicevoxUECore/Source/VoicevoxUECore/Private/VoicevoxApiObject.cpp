@@ -435,3 +435,149 @@ TMap<int, FString> UVoicevoxApiObject::GetVvmFileNameMapToStyleId()
 
 	return Map;
 }
+
+//--------------------------------
+// VOICEVOX CORE Dict関連
+//--------------------------------
+
+/**
+ * @brief VoicevoxUserDictWordを最低限のパラメータで作成する。
+ */
+VoicevoxUserDictWord UVoicevoxApiObject::UserDictWordMake(const FString& Surface, const FString& Pronunciation, uintptr_t AccentType)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		return Subsystem->UserDictWordMake(Surface, Pronunciation, AccentType);
+	}
+
+	return VoicevoxUserDictWord{};
+}
+	
+/**
+ * @brief ユーザー辞書を構築する。
+ */
+bool UVoicevoxApiObject::UserDictInitialize(const FString& DictPath)
+{
+	const VoicevoxUserDict* ParentUserDict = nullptr;
+	for (const auto Element : SubsystemClasses)
+	{
+		if (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element)); 
+			Subsystem->UserDictInitialize(DictPath, ParentUserDict))
+		{
+			if (!ParentUserDict)
+			{
+				ParentUserDict = Subsystem->GetNativeUserDict();
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+/**
+ * @brief ユーザー辞書に単語を追加する。
+ */
+TArray<uint8_t> UVoicevoxApiObject::UserDictAddWord(const VoicevoxUserDictWord* Word)
+{
+	TArray<uint8_t> UUID;
+	const VoicevoxUserDict* ParentUserDict = nullptr;
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (ParentUserDict != nullptr)
+		{
+			//　他のネイティブプラグインはユーザー辞書をインポートする
+			Subsystem->AddUserDictWord(Word, ParentUserDict);
+		}
+		else
+		{
+			UUID = Subsystem->AddUserDictWord(Word);
+			// 登録失敗した場合は即時に空の配列を返す
+			if (UUID.IsEmpty()) return TArray<uint8_t>();
+			ParentUserDict = Subsystem->GetNativeUserDict();
+		}
+	}
+	return UUID;
+}
+
+/**
+ * @brief ユーザー辞書の単語を更新する。
+ *
+ * @param [in] WordUuid 更新する単語のUUID
+ * @param [in] Word 新しい単語のデータ
+ * @returns 結果
+ */
+ bool UVoicevoxApiObject::RewriteUserDictWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord *Word)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		if (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element)); 
+			!Subsystem->UserDictUpdateWord(WordUuid, Word))
+		{
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+/**
+ * @brief ユーザー辞書から単語を削除する。
+ */
+bool UVoicevoxApiObject::DeleteUserDictWord(const TArray<uint8_t>& WordUuid)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		if (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element)); 
+			!Subsystem->UserDictRemoveWord(WordUuid))
+		{
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+/**
+ * @brief ユーザー辞書の単語をJSON形式で出力する。
+ */
+FString UVoicevoxApiObject::GetUserDictWord()
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		return Subsystem->GetUserDictWord();
+	}
+	
+	return FString();
+}
+
+/**
+ * @brief ユーザー辞書をファイルに保存する。
+ */
+bool UVoicevoxApiObject::UserDictSave(const FString& Path)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		return Subsystem->UserDictSave(Path);
+	}
+	
+	return false;
+}
+	
+/**
+ * @brief ユーザー辞書を破棄する。
+ */
+void UVoicevoxApiObject::UserDictDelete()
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		return Subsystem->NativeUserDictDelete();
+	}
+}

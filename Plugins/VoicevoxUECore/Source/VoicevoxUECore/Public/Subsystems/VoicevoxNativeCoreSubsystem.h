@@ -39,6 +39,9 @@ protected:
 	//! 読み込んだモデルIDマップ 
 	TMap<FString, TArray<uint8>> ModelIdMap;
 	
+	//! ネイティブ用ユーザ辞書ポインタ
+	VoicevoxUserDict* NativeUserDict = nullptr;
+	
 	//----------------------------------------------------------------
 	// Function
 	//----------------------------------------------------------------
@@ -516,6 +519,34 @@ public:
 	 */
 	VOICEVOXUECORE_API VoicevoxUserDictWord UserDictWordMake(const FString& Surface, const FString& Pronunciation, uintptr_t AccentType);
 
+	/**
+	 * @brief ユーザー辞書を構築する。
+	 * @param [in] DictPath 読み込む辞書ファイルのパス
+	 * @param [in] ParentUserDict コピーする別のライブラリのユーザー辞書ポインタ
+	 * @returns 初期化が成功したか
+	 */
+	VOICEVOXUECORE_API bool UserDictInitialize(const FString& DictPath = TEXT(""), const VoicevoxUserDict* ParentUserDict = nullptr);
+	
+	/**
+	 * @brief 生成したユーザー辞書を構築する。
+	 * @returns VoicevoxUserDict
+	 */
+	VOICEVOXUECORE_API VoicevoxUserDict* GetNativeUserDict() const;
+	
+	/**
+	 * @brief 生成したユーザー辞書を破棄する。
+	 */
+	VOICEVOXUECORE_API void NativeUserDictDelete();
+
+	/**
+	 * @brief ユーザー辞書に単語を追加する。
+	 *
+	 * @param [in] Word 追加する単語
+	 * @param [in] ParentUserDict コピーする別のライブラリのユーザー辞書ポインタ
+	 * @returns 追加した単語のUUID
+	 */
+	VOICEVOXUECORE_API TArray<uint8_t> AddUserDictWord(const VoicevoxUserDictWord* Word, const VoicevoxUserDict* ParentUserDict = nullptr);
+	
 protected:
 	
 	/**
@@ -531,42 +562,48 @@ protected:
 	 * @returns 結果
 	 */
 	VOICEVOXUECORE_API bool UserDictLoad(const VoicevoxUserDict* UserDict, const FString& DictPath);
-
+	
 	/**
 	 * @brief ユーザー辞書に単語を追加する。
 	 *
-	 * @param [in] UserDict ユーザー辞書
 	 * @param [in] Word 追加する単語
 	 * @returns 追加した単語のUUID
 	 */
-	VOICEVOXUECORE_API TArray<uint8_t> UserDictAddWord(const VoicevoxUserDict* UserDict, const VoicevoxUserDictWord* Word);
+	VOICEVOXUECORE_API TArray<uint8_t> UserDictAddWord(const VoicevoxUserDictWord* Word);
 
+public:
+	
 	/**
 	 * @brief ユーザー辞書の単語を更新する。
 	 *
-	 * @param [in] UserDict ユーザー辞書
 	 * @param [in] WordUuid 更新する単語のUUID
 	 * @param [in] Word 新しい単語のデータ
 	 * @returns 結果
 	 */
-	VOICEVOXUECORE_API bool UserDictUpdateWord(const VoicevoxUserDict* UserDict, const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord *Word);
+	VOICEVOXUECORE_API bool UserDictUpdateWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord *Word);
 
 	/**
 	 * @brief ユーザー辞書から単語を削除する。
 	 *
-	 * @param [in] UserDict ユーザー辞書
 	 * @param [in] WordUuid 削除する単語のUUID
 	 * @returns 結果
 	 */
-	VOICEVOXUECORE_API bool UserDictRemoveWord(const VoicevoxUserDict* UserDict, const TArray<uint8_t>& WordUuid);
+	VOICEVOXUECORE_API bool UserDictRemoveWord(const TArray<uint8_t>& WordUuid);
+	
+	/**
+	 * @brief ユーザー辞書の単語を取得する。
+	 * @returns output_json
+	 */
+	VOICEVOXUECORE_API FString GetUserDictWord();
+	
+protected:
 	
 	/**
 	 * @brief ユーザー辞書の単語をJSON形式で出力する。
-	 * @param [in] UserDict ユーザー辞書
 	 * @returns output_json
 	 */
-	VOICEVOXUECORE_API FString UserDictToJson(const VoicevoxUserDict* UserDict);
-
+	VOICEVOXUECORE_API FString UserDictToJson();
+	
 	/**
 	 * @brief 他のユーザー辞書をインポートする。
 	 * @param [in] UserDict ユーザー辞書
@@ -575,13 +612,16 @@ protected:
 	 */
 	VOICEVOXUECORE_API bool UserDictImport(const VoicevoxUserDict* UserDict, const  VoicevoxUserDict* OtherDict);
 
+public:
+	
 	/**
 	 * @brief ユーザー辞書をファイルに保存する。
-	 * @param [in] UserDict ユーザー辞書
 	 * @param [in] Path 保存先のファイルパス
 	 * @returns 結果
 	 */
-	VOICEVOXUECORE_API bool UserDictSave(const VoicevoxUserDict* UserDict, const FString& Path);
+	VOICEVOXUECORE_API bool UserDictSave(const FString& Path);
+	
+protected:
 	
 	/**
 	 * @brief ユーザー辞書を<b>破棄</b>する。

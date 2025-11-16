@@ -294,6 +294,69 @@ class UVoicevoxApiObject : public UObject
 	 */
 	VOICEVOXUECORE_API TMap<int, FString> GetVvmFileNameMapToStyleId();
 	
+	//--------------------------------
+	// VOICEVOX CORE Dict関連
+	//--------------------------------
+	
+	/**
+	 * @brief VoicevoxUserDictWordを最低限のパラメータで作成する。
+	 * @param [in] Surface 表記
+	 * @param [in] Pronunciation 読み
+	 * @param [in] AccentType アクセント型
+	 * @returns VoicevoxUserDictWord
+	 */
+	VOICEVOXUECORE_API VoicevoxUserDictWord UserDictWordMake(const FString& Surface, const FString& Pronunciation, uintptr_t AccentType);
+	
+	/**
+	 * @brief ユーザー辞書を構築する。
+	 * @param [in] DictPath 読み込む辞書ファイルのパス
+	 * @returns 初期化が成功したか
+	 */
+	VOICEVOXUECORE_API bool UserDictInitialize(const FString& DictPath = TEXT(""));
+	
+	/**
+	 * @brief ユーザー辞書に単語を追加する。
+	 *
+	 * @param [in] Word 追加する単語
+	 * @returns 追加した単語のUUID
+	 */
+	VOICEVOXUECORE_API TArray<uint8_t> UserDictAddWord(const VoicevoxUserDictWord* Word);
+
+	/**
+	 * @brief ユーザー辞書の単語を更新する。
+	 *
+	 * @param [in] WordUuid 更新する単語のUUID
+	 * @param [in] Word 新しい単語のデータ
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool RewriteUserDictWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord *Word);
+
+	/**
+	 * @brief ユーザー辞書から単語を削除する。
+	 *
+	 * @param [in] WordUuid 削除する単語のUUID
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool DeleteUserDictWord(const TArray<uint8_t>& WordUuid);
+	
+	/**
+	 * @brief ユーザー辞書の単語をJSON形式で出力する。
+	 * @returns output_json
+	 */
+	VOICEVOXUECORE_API FString GetUserDictWord();
+
+	/**
+	 * @brief ユーザー辞書をファイルに保存する。
+	 * @param [in] Path 保存先のファイルパス
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool UserDictSave(const FString& Path);
+	
+	/**
+	 * @brief ユーザー辞書を<b>破棄</b>する。
+	 */
+	VOICEVOXUECORE_API void UserDictDelete();
+	
 public:
 
 	//----------------------------------------------------------------

@@ -398,3 +398,72 @@ TArray<FString> UVoicevoxCoreSubsystem::GetCoreNameList()
 {
 	return CoreNameList;
 }
+
+//--------------------------------
+// VOICEVOX CORE Dict関連
+//--------------------------------
+
+/**
+ * @brief VoicevoxUserDictWordを最低限のパラメータで作成する。
+ */
+VoicevoxUserDictWord UVoicevoxCoreSubsystem::UserDictWordMake(const FString& Surface, const FString& Pronunciation, const uintptr_t AccentType) const
+{
+	return NativeInstance->UserDictWordMake(Surface, Pronunciation, AccentType);
+}
+	
+/**
+ * @brief ユーザー辞書を構築する。
+ */
+bool UVoicevoxCoreSubsystem::UserDictInitialize(const FString& DictPath) const
+{
+	return NativeInstance->UserDictInitialize(DictPath);
+}
+	
+/**
+ * @brief ユーザー辞書に単語を追加する。
+ */
+TArray<uint8_t> UVoicevoxCoreSubsystem::UserDictAddWord(const VoicevoxUserDictWord* Word) const
+{
+	return NativeInstance->UserDictAddWord(Word);
+}
+
+/**
+ * @brief ユーザー辞書の単語を更新する。
+ */
+bool UVoicevoxCoreSubsystem::RewriteUserDictWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord *Word) const
+{
+	return NativeInstance->RewriteUserDictWord(WordUuid, Word);
+}
+
+/**
+ * @brief ユーザー辞書から単語を削除する。
+ */
+bool UVoicevoxCoreSubsystem::DeleteUserDictWord(const TArray<uint8_t>& WordUuid) const
+{
+	return NativeInstance->DeleteUserDictWord(WordUuid);
+}
+	
+/**
+ * @brief ユーザー辞書の単語をJSON形式で出力する。
+ * @returns output_json
+ */
+FString UVoicevoxCoreSubsystem::GetUserDictWord() const
+{
+	return NativeInstance->GetUserDictWord();
+}
+
+/**
+ * @brief ユーザー辞書をファイルに保存する。
+ */
+bool UVoicevoxCoreSubsystem::UserDictSave(const FString& Path) const
+{
+	return NativeInstance->UserDictSave(Path);
+}
+	
+/**
+ * @brief ユーザー辞書を破棄する。
+ */
+void UVoicevoxCoreSubsystem::UserDictDelete() const
+{
+	NativeInstance->UserDictDelete();
+}
