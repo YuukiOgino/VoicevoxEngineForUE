@@ -98,7 +98,7 @@ public class VoicevoxCore : ModuleRules
 			
 			// Ensure that the DLL is staged along with the executable
 			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/libvoicevox_core.dylib", Path.Combine(ModuleDirectory, platformName, "libvoicevox_core.dylib"));
-			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/libonnxruntime.1.13.1.dylib", Path.Combine(ModuleDirectory, platformName, "libonnxruntime.1.13.1.dylib"));
+			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/llibvoicevox_onnxruntime.1.17.3.dylib", Path.Combine(ModuleDirectory, platformName, "libvoicevox_onnxruntime.1.17.3.dylib"));
 			
 			// Open JTalkライブラリフォルダもコピーする
 			AddRuntimeDependenciesDirectory(OpenJtalkDicName, platformName, binPlatformName, true);
