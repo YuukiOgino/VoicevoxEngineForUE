@@ -103,7 +103,7 @@ public class VoicevoxCore : ModuleRules
 			// Open JTalkライブラリフォルダもコピーする
 			AddRuntimeDependenciesDirectory(OpenJtalkDicName, platformName, binPlatformName, true);
 			// modelフォルダもコピーする
-			AddRuntimeDependenciesThirdPartyDirectory("model", platformName, binPlatformName, true);
+			AddRuntimeDependenciesThirdPartyDirectory("models", platformName, binPlatformName, true);
 		}
 		
 		PublicDefinitions.Add($"OPEN_JTALK_DIC_NAME=\"{OpenJtalkDicName}\"");
