@@ -32,7 +32,11 @@ void SVoicevoxMetaListWidget::Construct(const FArguments& InArgs)
 			[
 				SNew(SBorder)
 				.Padding(8)
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION > 0)
 				.BorderImage(FAppStyle::GetBrush("ToolPanel.GroupBorder"))
+#else
+				.BorderImage(FEditorStyle::GetBrush("ToolPanel.GroupBorder"))
+#endif
 				[
 					SNew(SVoicevoxMetaWidget)
 					.MetaData(&Meta)
