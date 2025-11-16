@@ -698,7 +698,7 @@ void UVoicevoxNativeCoreSubsystem::VoiceModelFileDelete(VoicevoxVoiceModelFile& 
 #if PLATFORM_WINDOWS
 	const auto FileDeleteFuncPtr = static_cast<DLL_FileDeleteFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FileDeleteFuncName));
 #elif PLATFORM_MAC
-	const auto FileDeleteFuncPtr = (DLL_LoadFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FileDeleteFuncName);
+	const auto FileDeleteFuncPtr = (DLL_FileDeleteFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FileDeleteFuncName);
 #endif
 
 	if (!FileDeleteFuncPtr)
@@ -789,7 +789,7 @@ bool UVoicevoxNativeCoreSubsystem::IsLoadedVoiceModel(const FString VvmFileName)
 #if PLATFORM_WINDOWS
 	const auto IsFileLoadedFuncPtr = static_cast<DLL_IsFileLoadedFunction>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *IsFileLoadedFuncName));
 #elif PLATFORM_MAC
-	const auto IsFileLoadedFuncPtr = (DLL_IsFileLoadedFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FileOpenFuncName);
+	const auto IsFileLoadedFuncPtr = (DLL_IsFileLoadedFunction)FPlatformProcess::GetDllExport(CoreLibraryHandle, *IsFileLoadedFuncName);
 #endif
 
 	if (!IsFileLoadedFuncPtr)
