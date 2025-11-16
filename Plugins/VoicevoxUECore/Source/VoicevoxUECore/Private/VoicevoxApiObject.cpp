@@ -8,6 +8,7 @@
 #include "VoicevoxApiObject.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 #include "Subsystems/VoicevoxNativeCoreSubsystem.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 /**
  * @brief サブシステム管理オブジェクト初期化

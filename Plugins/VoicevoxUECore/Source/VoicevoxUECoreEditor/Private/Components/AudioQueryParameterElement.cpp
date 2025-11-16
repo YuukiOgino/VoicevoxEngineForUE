@@ -8,6 +8,7 @@
 
 #include "Components/AudioQueryParameterElement.h"
 #include "Kismet/KismetTextLibrary.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 /**
  * @breif 編集したいAudioQueryを参照でセット

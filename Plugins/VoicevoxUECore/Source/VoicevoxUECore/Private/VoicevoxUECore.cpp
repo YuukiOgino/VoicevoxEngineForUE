@@ -6,6 +6,9 @@
  */
 
 #include "VoicevoxUECore.h"
+
+#include "Engine/Engine.h"
+#include "Misc/CoreDelegates.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxUECoreModule"

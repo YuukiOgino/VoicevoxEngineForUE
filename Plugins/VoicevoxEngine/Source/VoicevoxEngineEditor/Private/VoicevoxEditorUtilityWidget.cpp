@@ -16,7 +16,10 @@
 #include "Factories/VoicevoxQueryFactory.h"
 #include "Factories/VoicevoxSoundWaveFactory.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Engine/Engine.h"
+#include "HAL/PlatformFileManager.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 DEFINE_LOG_CATEGORY(LogVoicevoxEditor);
 

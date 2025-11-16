@@ -11,6 +11,8 @@
  * @author Yuuki Ogino
  */
 #include "Components/AbstractLipSyncAudioComponent.h"
+
+#include "Engine/Engine.h"
 #include "Sound/SoundWaveProcedural.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 

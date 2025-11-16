@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Subsystems/VoicevoxNativeCoreSubsystem.h"
+#include "Subsystems/SubsystemCollection.h"
 
 class UVoicevoxApiObject;
 
@@ -18,7 +19,7 @@ class UVoicevoxApiObject;
  */
 class FVoicevoxSubsystemCollection final : public FSubsystemCollectionBase
 {
-
+	
 	//----------------------------------------------------------------
 	// friend class
 	//----------------------------------------------------------------

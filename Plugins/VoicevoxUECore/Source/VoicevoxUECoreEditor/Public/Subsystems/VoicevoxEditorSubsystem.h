@@ -9,6 +9,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EditorSubsystem.h"
 #include "VoicevoxApiDefined.h"
 #include "VoicevoxUEDefined.h"
 #include "VoicevoxEditorSubsystem.generated.h"

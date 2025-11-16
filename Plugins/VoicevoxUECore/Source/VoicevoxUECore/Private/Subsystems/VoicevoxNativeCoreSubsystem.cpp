@@ -7,6 +7,8 @@
 
 #include "Subsystems/VoicevoxNativeCoreSubsystem.h"
 #include "JsonObjectConverter.h"
+#include "HAL/FileManager.h"
+#include "Misc/Paths.h"
 
 DEFINE_LOG_CATEGORY(LogVoicevoxNativeCore);
 

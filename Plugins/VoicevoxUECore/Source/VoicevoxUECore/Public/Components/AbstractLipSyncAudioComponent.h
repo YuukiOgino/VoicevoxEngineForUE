@@ -12,6 +12,7 @@
 #include "VoicevoxQuery.h"
 #include "VoicevoxUEDefined.h"
 #include "Components/AudioComponent.h"
+#include "Tasks/Task.h"
 #include "AbstractLipSyncAudioComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCreateSoundWave);

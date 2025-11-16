@@ -6,6 +6,8 @@
  */
 
 #include "VoicevoxMetaListWidget.h"
+
+#include "EditorStyleSet.h"
 #include "VoicevoxMetaWidget.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Text/STextBlock.h"

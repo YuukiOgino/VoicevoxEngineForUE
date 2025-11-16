@@ -8,6 +8,7 @@
 #include "VoicevoxAsyncTask.h"
 
 #include "VoicevoxBlueprintLibrary.h"
+#include "Engine/Engine.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 
 //------------------------------------------------------------------------
