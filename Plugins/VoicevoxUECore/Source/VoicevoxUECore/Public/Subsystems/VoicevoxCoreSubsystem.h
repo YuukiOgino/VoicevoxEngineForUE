@@ -452,10 +452,10 @@ public:
 	bool DeleteUserDictWord(const TArray<uint8_t>& WordUuid) const;
 	
 	/**
-	 * @brief ユーザー辞書の単語をJSON形式で出力する。
-	 * @returns output_json
+	 * @brief ユーザー辞書の単語を取得する。
+	 * @returns 登録したユーザー辞書の単語マップ
 	 */
-	FString GetUserDictWord() const;
+	TMap<FString, FVoicevoxRegisteredUserDictWord> GetUserDictWord() const;
 
 	/**
 	 * @brief ユーザー辞書をファイルに保存する。

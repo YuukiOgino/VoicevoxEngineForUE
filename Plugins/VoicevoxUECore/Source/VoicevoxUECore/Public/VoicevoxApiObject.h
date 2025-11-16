@@ -340,10 +340,10 @@ class UVoicevoxApiObject : public UObject
 	VOICEVOXUECORE_API bool DeleteUserDictWord(const TArray<uint8_t>& WordUuid);
 	
 	/**
-	 * @brief ユーザー辞書の単語をJSON形式で出力する。
-	 * @returns output_json
+	 * @brief ユーザー辞書の単語を取得する。
+	 * @returns 登録したユーザー辞書の単語マップ
 	 */
-	VOICEVOXUECORE_API FString GetUserDictWord();
+	VOICEVOXUECORE_API TMap<FString, FVoicevoxRegisteredUserDictWord> GetUserDictWord();
 
 	/**
 	 * @brief ユーザー辞書をファイルに保存する。

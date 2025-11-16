@@ -303,9 +303,10 @@ bool UVoicevoxBlueprintLibrary::DeleteUserDictWord(const TArray<uint8>& WordUuid
 }
 	
 /**
- * @brief ユーザー辞書の単語をJSON形式で出力する。(Blueprint公開ノード)
+ * @brief ユーザー辞書の単語を取得する。(Blueprint公開ノード)
+ * @returns 登録したユーザー辞書の単語マップ
  */
-FString UVoicevoxBlueprintLibrary::GetUserDictWord()
+TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxBlueprintLibrary::GetUserDictWord()
 {
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetUserDictWord();
 }

@@ -543,9 +543,9 @@ bool UVoicevoxApiObject::DeleteUserDictWord(const TArray<uint8_t>& WordUuid)
 }
 
 /**
- * @brief ユーザー辞書の単語をJSON形式で出力する。
+ * @brief ユーザー辞書の単語を取得する。
  */
-FString UVoicevoxApiObject::GetUserDictWord()
+TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxApiObject::GetUserDictWord()
 {
 	for (const auto Element : SubsystemClasses)
 	{
@@ -553,7 +553,7 @@ FString UVoicevoxApiObject::GetUserDictWord()
 		return Subsystem->GetUserDictWord();
 	}
 	
-	return FString();
+	return TMap<FString, FVoicevoxRegisteredUserDictWord>();
 }
 
 /**

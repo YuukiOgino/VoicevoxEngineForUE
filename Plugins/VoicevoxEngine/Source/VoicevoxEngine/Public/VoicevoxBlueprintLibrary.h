@@ -271,11 +271,11 @@ public:
 	static bool DeleteUserDictWord(const TArray<uint8>& WordUuid);
 	
 	/**
-	 * @brief ユーザー辞書の単語をJSON形式で出力する。(Blueprint公開ノード)
-	 * @returns output_json
+	 * @brief ユーザー辞書の単語を取得する。(Blueprint公開ノード)
+	 * @returns 登録したユーザー辞書の単語マップ
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxUserDictWord"))
-	static FString GetUserDictWord();
+	static TMap<FString, FVoicevoxRegisteredUserDictWord> GetUserDictWord();
 
 	/**
 	 * @brief ユーザー辞書をファイルに保存する。(Blueprint公開ノード)

@@ -1730,11 +1730,12 @@ bool UVoicevoxNativeCoreSubsystem::UserDictRemoveWord(const TArray<uint8_t>& Wor
 
 /**
  * @brief ユーザー辞書の単語を取得する。
- * @returns output_json
  */
-FString UVoicevoxNativeCoreSubsystem::GetUserDictWord()
+TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxNativeCoreSubsystem::GetUserDictWord()
 {
-	return UserDictToJson();
+	const FString Result = UserDictToJson();
+	TMap<FString, FVoicevoxRegisteredUserDictWord> Map = JsonObjectConverterToRegisteredUserDictWord(Result);
+	return Map;
 }
 
 /**
@@ -1742,7 +1743,7 @@ FString UVoicevoxNativeCoreSubsystem::GetUserDictWord()
  */
 FString UVoicevoxNativeCoreSubsystem::UserDictToJson()
 {
-	if (!IsValidCoreLibraryHandle() || !NativeUserDict) return FString();;
+	if (!IsValidCoreLibraryHandle() || !NativeUserDict) return FString();
 	const FString FuncName = "voicevox_user_dict_to_json"; 
 	using DLL_Function = VoicevoxResultCode(*)(const VoicevoxUserDict*, char**);
 #if PLATFORM_WINDOWS

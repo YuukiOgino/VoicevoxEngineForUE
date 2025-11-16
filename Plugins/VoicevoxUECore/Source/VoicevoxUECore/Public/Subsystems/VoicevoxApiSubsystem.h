@@ -55,6 +55,12 @@ protected:
 	 */
 	VOICEVOXUECORE_API static FString AccentPhraseConverterToJsonString(TArray<FVoicevoxAccentPhrase> AccentPhrases);
 	
+	/**
+	 * @brief VOICEVOXから受信したRegisteredUserDictWordの連想配列のJSONを変換する
+	 * @param [in] JsonString : RegisteredUserDictWordのJSON
+	 * @retun ユーザ辞書に登録した単語データのMap
+	 */
+	VOICEVOXUECORE_API static TMap<FString, FVoicevoxRegisteredUserDictWord> JsonObjectConverterToRegisteredUserDictWord(const FString& JsonString);
 public:
 
 	//----------------------------------------------------------------
