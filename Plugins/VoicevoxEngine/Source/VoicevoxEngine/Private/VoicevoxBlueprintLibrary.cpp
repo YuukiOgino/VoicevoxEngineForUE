@@ -8,6 +8,8 @@
 #include "VoicevoxBlueprintLibrary.h"
 #include <Sound/SoundWaveProcedural.h>
 
+#include "Audio.h"
+#include "Engine/Engine.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 
 /**
@@ -185,7 +187,7 @@ USoundWave* UVoicevoxBlueprintLibrary::AudioQueryOutput(const FVoicevoxAudioQuer
  * @param[in] bEnableInterrogativeUpspeak		疑問文の調整を有効にする
  * @return AudioQuery情報を元に作成された音楽データが格納されたUSoundWave
  */
-USoundWave* UVoicevoxBlueprintLibrary::VoicevoxQueryOutput(UVoicevoxQuery* VoicevoxQuery, bool bEnableInterrogativeUpspeak)
+USoundWave* UVoicevoxBlueprintLibrary::VoicevoxQueryOutput(UVoicevoxQuery* VoicevoxQuery, const bool bEnableInterrogativeUpspeak)
 {
 	if (VoicevoxQuery == nullptr) return nullptr;
 	
