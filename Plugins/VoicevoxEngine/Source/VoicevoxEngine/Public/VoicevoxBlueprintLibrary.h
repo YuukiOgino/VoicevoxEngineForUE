@@ -232,7 +232,7 @@ public:
 	 * @returns VoicevoxUserDictWord
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxUserDictWordMake"))
-	static FVoicevoxCorePUserDictWord UserDictWordMake(const FString& Surface, const FString& Pronunciation, int64 AccentType);
+	static UPARAM(DisplayName="UserDictWord")  FVoicevoxCoreUserDictWord UserDictWordMake(const FString& Surface, const FString& Pronunciation, int64 AccentType);
 	
 	/**
 	 * @brief ユーザー辞書を構築する。(Blueprint公開ノード)
@@ -249,7 +249,7 @@ public:
 	 * @returns 追加した単語のUUID
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxUserDictAddWord"))
-	static TArray<uint8> UserDictAddWord(const FVoicevoxCorePUserDictWord Word);
+	static UPARAM(DisplayName="UUID") TArray<uint8> UserDictAddWord(const FVoicevoxCoreUserDictWord Word);
 
 	/**
 	 * @brief ユーザー辞書の単語を更新する。(Blueprint公開ノード)
@@ -259,7 +259,7 @@ public:
 	 * @returns 結果
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxRewriteUserDictWord"))
-	static bool RewriteUserDictWord(const TArray<uint8>& WordUuid, const FVoicevoxCorePUserDictWord Word);
+	static bool RewriteUserDictWord(const TArray<uint8>& WordUuid, const FVoicevoxCoreUserDictWord Word);
 
 	/**
 	 * @brief ユーザー辞書から単語を削除する。(Blueprint公開ノード)

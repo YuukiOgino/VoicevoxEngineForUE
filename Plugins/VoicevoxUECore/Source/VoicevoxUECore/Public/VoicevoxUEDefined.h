@@ -74,7 +74,7 @@ struct FVoicevoxStyle
 	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
 	FString Name;
 
-	//! スピーカーID
+	//! スタイルID
 	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
 	int32 Id;
 };
@@ -286,11 +286,11 @@ struct FVoicevoxCoreProperty
 };
 
 /**
- * @struct FVoicevoxCorePUserDictWord
+ * @struct FVoicevoxCoreUserDictWord
  * @brief ユーザー辞書の単語。(blueprint用)
  */
 USTRUCT(BlueprintType)
-struct FVoicevoxCorePUserDictWord
+struct FVoicevoxCoreUserDictWord
 {
 	GENERATED_USTRUCT_BODY()
 	
@@ -313,4 +313,59 @@ struct FVoicevoxCorePUserDictWord
 	//! 優先度
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	int Priority;
-} ;
+};
+
+/**
+ * @struct FVoicevoxRegisteredUserDictWord
+ * @brief ユーザー辞書に登録済み単語。
+ */
+USTRUCT(BlueprintType)
+struct FVoicevoxRegisteredUserDictWord
+{
+	GENERATED_USTRUCT_BODY()
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Surface;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int Priority;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int Context_ID;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Part_Of_Speech;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Part_Of_Speech_Detail_1;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Part_Of_Speech_Detail_2;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Part_Of_Speech_Detail_3;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Inflectional_Type;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Inflectional_Form;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Stem;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Yomi;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Pronunciation;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int Accent_Type;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int Mora_Count;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Accent_Associative_Rule;
+};

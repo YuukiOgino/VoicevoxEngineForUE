@@ -244,9 +244,9 @@ TArray<FVoicevoxLipSync> UVoicevoxBlueprintLibrary::GetLipSyncList(const FVoicev
 /**
  * @brief VoicevoxUserDictWordを最低限のパラメータで作成する。(Blueprint公開ノード)
  */
-FVoicevoxCorePUserDictWord UVoicevoxBlueprintLibrary::UserDictWordMake(const FString& Surface, const FString& Pronunciation, const int64 AccentType)
+FVoicevoxCoreUserDictWord UVoicevoxBlueprintLibrary::UserDictWordMake(const FString& Surface, const FString& Pronunciation, const int64 AccentType)
 {
-	FVoicevoxCorePUserDictWord DictWord;
+	FVoicevoxCoreUserDictWord DictWord;
 	auto [surface, pronunciation, accent_type, word_type, priority] = 
 		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->UserDictWordMake(Surface, Pronunciation, static_cast<uintptr_t>(AccentType));
 	DictWord.Pronunciation = UTF8_TO_TCHAR(pronunciation);
@@ -268,7 +268,7 @@ bool UVoicevoxBlueprintLibrary::UserDictInitialize(const FString& DictPath)
 /**
  * @brief ユーザー辞書に単語を追加する。(Blueprint公開ノード)
  */
-TArray<uint8> UVoicevoxBlueprintLibrary::UserDictAddWord(const FVoicevoxCorePUserDictWord Word)
+TArray<uint8> UVoicevoxBlueprintLibrary::UserDictAddWord(const FVoicevoxCoreUserDictWord Word)
 {
 	VoicevoxUserDictWord DictWord;
 	DictWord.priority = static_cast<uint32_t>(Word.Priority);
@@ -283,7 +283,7 @@ TArray<uint8> UVoicevoxBlueprintLibrary::UserDictAddWord(const FVoicevoxCorePUse
 /**
  * @brief ユーザー辞書の単語を更新する。(Blueprint公開ノード)
  */
-bool UVoicevoxBlueprintLibrary::RewriteUserDictWord(const TArray<uint8>& WordUuid, const FVoicevoxCorePUserDictWord Word)
+bool UVoicevoxBlueprintLibrary::RewriteUserDictWord(const TArray<uint8>& WordUuid, const FVoicevoxCoreUserDictWord Word)
 {
 	VoicevoxUserDictWord DictWord;
 	DictWord.priority = static_cast<uint32_t>(Word.Priority);
