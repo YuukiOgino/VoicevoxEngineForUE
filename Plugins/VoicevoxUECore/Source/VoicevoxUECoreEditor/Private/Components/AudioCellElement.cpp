@@ -70,7 +70,7 @@ void UAudioCellElement::NativeConstruct()
 /**
  * @brief テキストの値が編集された際に呼ばれるデリゲート関数
  */
-void UAudioCellElement::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod) const
+void UAudioCellElement::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	const FString FileName = GEditor->GetEditorSubsystem<UVoicevoxEditorSubsystem>()->GetVvmFileName(Speaker);
 	const UVoicevoxCoreSubsystem* Subsystem = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>();
