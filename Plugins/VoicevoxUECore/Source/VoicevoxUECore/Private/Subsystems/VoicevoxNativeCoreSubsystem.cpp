@@ -1527,15 +1527,26 @@ bool UVoicevoxNativeCoreSubsystem::UserDictInitialize(const FString& DictPath, c
 	// 他のネイティブプラグインで初期化済みの場合はインポートを実行
 	if (ParentUserDict != nullptr)
 	{
-		return UserDictImport(NativeUserDict, ParentUserDict);
+		if (UserDictImport(NativeUserDict, ParentUserDict))
+		{
+			OpenJTalkRcUseUserDict(NativeUserDict);
+			return true;
+		}
+		return false;
 	}
 	
 	// パスがある場合は読み込む
 	if (!DictPath.IsEmpty())
 	{
-		return UserDictLoad(NativeUserDict, DictPath);
+		if (UserDictLoad(NativeUserDict, DictPath))
+		{
+			OpenJTalkRcUseUserDict(NativeUserDict);
+			return true;
+		}
+		return false;
 	}
 	
+	OpenJTalkRcUseUserDict(NativeUserDict);
 	return true;
 }
 
@@ -1568,10 +1579,17 @@ TArray<uint8_t> UVoicevoxNativeCoreSubsystem::AddUserDictWord(const VoicevoxUser
 	if (ParentUserDict != nullptr)
 	{
 		UserDictImport(NativeUserDict, ParentUserDict);
+		OpenJTalkRcUseUserDict(NativeUserDict);
 		return TArray<uint8_t>();
 	}
 	
-	return UserDictAddWord(Word);
+	TArray<uint8_t> UUID = UserDictAddWord(Word);
+	if (!UUID.IsEmpty())
+	{
+		OpenJTalkRcUseUserDict(NativeUserDict);
+	}
+	
+	return UUID;
 }
 
 /**
@@ -1690,6 +1708,7 @@ bool UVoicevoxNativeCoreSubsystem::UserDictUpdateWord(const TArray<uint8_t>& Wor
 		}
 		else
 		{
+			OpenJTalkRcUseUserDict(NativeUserDict);
 			return true;
 		}
 	}
@@ -1722,6 +1741,7 @@ bool UVoicevoxNativeCoreSubsystem::UserDictRemoveWord(const TArray<uint8_t>& Wor
 		}
 		else
 		{
+			OpenJTalkRcUseUserDict(NativeUserDict);
 			return true;
 		}
 	}
