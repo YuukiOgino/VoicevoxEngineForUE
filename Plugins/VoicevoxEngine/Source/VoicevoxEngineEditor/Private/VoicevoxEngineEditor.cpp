@@ -12,6 +12,7 @@
 #include "LevelEditor.h"
 #include "ToolMenus.h"
 #include "VoicevoxMetaListWidget.h"
+#include "Framework/Application/SlateApplication.h"
 #include "Subsystems/VoicevoxEditorSubsystem.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxEngineEditorModule"

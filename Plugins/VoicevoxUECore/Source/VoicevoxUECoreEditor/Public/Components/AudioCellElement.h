@@ -100,7 +100,7 @@ protected:
       * @param [in] CommitMethod
       */
      UFUNCTION()
-     void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+     void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod) const;
 
     /**
      * @brief 読み方テキストの値が編集された際に呼ばれるデリゲート関数

@@ -8,6 +8,7 @@
 #include "Subsystems/VoicevoxApiSubsystem.h"
 
 #include "JsonObjectConverter.h"
+#include "Engine/Engine.h"
 
 DEFINE_LOG_CATEGORY(LogVoicevoxApi);
 

@@ -6,10 +6,13 @@
  */
 
 #include "VoicevoxMetaWidget.h"
+
+#include "Editor.h"
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Text/STextBlock.h"
 #include "HAL/PlatformApplicationMisc.h"
+#include "Widgets/Input/SButton.h"
 
 /**
  * @brief Construct

@@ -6,6 +6,8 @@
  */
 
 #include "Components/SpeakerElement.h"
+
+#include "Editor.h"
 #include "Subsystems/VoicevoxEditorSubsystem.h"
 
 /**

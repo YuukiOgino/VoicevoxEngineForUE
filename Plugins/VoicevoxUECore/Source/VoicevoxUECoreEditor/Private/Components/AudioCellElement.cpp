@@ -6,6 +6,8 @@
  */
 
 #include "Components/AudioCellElement.h"
+
+#include "Editor.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 #include "Subsystems/VoicevoxEditorSubsystem.h"
@@ -68,7 +70,7 @@ void UAudioCellElement::NativeConstruct()
 /**
  * @brief テキストの値が編集された際に呼ばれるデリゲート関数
  */
-void UAudioCellElement::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+void UAudioCellElement::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod) const
 {
 	const FString FileName = GEditor->GetEditorSubsystem<UVoicevoxEditorSubsystem>()->GetVvmFileName(Speaker);
 	const UVoicevoxCoreSubsystem* Subsystem = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>();

@@ -6,6 +6,8 @@
  */
 
 #include "Subsystems/VoicevoxEditorSubsystem.h"
+
+#include "Engine/Engine.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 
 //--------------------------------
