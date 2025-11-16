@@ -74,10 +74,21 @@ UObject* UVoicevoxSoundWaveFactory::FactoryCreateNew(UClass* InClass, UObject* I
 		Sound->SetTimecodeInfo(FSoundWaveTimecodeInfo{});
 #endif
 
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION < 5)
+		// UE5.5より、IsCurrentPlatformUsingStreamCachingは常にtrueを返すようになってしまったため使用する意味がないとのこと
 		const bool bRebuildStreamingChunks = FPlatformCompressionUtilities::IsCurrentPlatformUsingStreamCaching();
 		Sound->InvalidateCompressedData(true, bRebuildStreamingChunks);
-#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION > 0)
+#else
+		Sound->InvalidateCompressedData(true, true);
+#endif
+		
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION > 0  && ENGINE_MINOR_VERSION < 5)
 		if (bRebuildStreamingChunks && Sound->IsStreaming(nullptr))
+		{
+			Sound->LoadZerothChunk();
+		}
+#elif (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION > 4)
+		if (Sound->IsStreaming(nullptr))
 		{
 			Sound->LoadZerothChunk();
 		}
