@@ -7,7 +7,7 @@
 
 #include "VoicevoxBlueprintLibrary.h"
 #include <Sound/SoundWaveProcedural.h>
-
+#include "VoicevoxApiDefined.h"
 #include "Audio.h"
 #include "Engine/Engine.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
@@ -235,4 +235,93 @@ USoundWave* UVoicevoxBlueprintLibrary::CreateSoundWave(TArray<uint8> PCMData)
 TArray<FVoicevoxLipSync> UVoicevoxBlueprintLibrary::GetLipSyncList(const FVoicevoxAudioQuery AudioQuery)
 {
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetLipSyncList(AudioQuery);
+}
+
+//--------------------------------
+// VOICEVOX CORE Dict関連
+//--------------------------------
+	
+/**
+ * @brief VoicevoxUserDictWordを最低限のパラメータで作成する。(Blueprint公開ノード)
+ */
+FVoicevoxCorePUserDictWord UVoicevoxBlueprintLibrary::UserDictWordMake(const FString& Surface, const FString& Pronunciation, const int64 AccentType)
+{
+	FVoicevoxCorePUserDictWord DictWord;
+	auto [surface, pronunciation, accent_type, word_type, priority] = 
+		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->UserDictWordMake(Surface, Pronunciation, static_cast<uintptr_t>(AccentType));
+	DictWord.Pronunciation = UTF8_TO_TCHAR(pronunciation);
+	DictWord.Surface = UTF8_TO_TCHAR(surface);
+	DictWord.Priority = static_cast<int>(priority);
+	DictWord.AccentType = static_cast<int64>(accent_type);
+	DictWord.WordType = static_cast<EVoicevoxCoreUserDictWordType>(word_type);
+	return DictWord;
+}
+
+/**
+ * @brief ユーザー辞書を構築する。(Blueprint公開ノード)
+ */
+bool UVoicevoxBlueprintLibrary::UserDictInitialize(const FString& DictPath)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->UserDictInitialize(DictPath);
+}
+	
+/**
+ * @brief ユーザー辞書に単語を追加する。(Blueprint公開ノード)
+ */
+TArray<uint8> UVoicevoxBlueprintLibrary::UserDictAddWord(const FVoicevoxCorePUserDictWord Word)
+{
+	VoicevoxUserDictWord DictWord;
+	DictWord.priority = static_cast<uint32_t>(Word.Priority);
+	DictWord.accent_type = static_cast<uintptr_t>(Word.AccentType);
+	DictWord.pronunciation = TCHAR_TO_UTF8(*Word.Pronunciation);
+	DictWord.surface = TCHAR_TO_UTF8(*Word.Surface);
+	DictWord.word_type = static_cast<VoicevoxUserDictWordType>(Word.WordType);
+	TArray<uint8_t> UUID = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->UserDictAddWord(&DictWord);
+	return UUID;
+}
+
+/**
+ * @brief ユーザー辞書の単語を更新する。(Blueprint公開ノード)
+ */
+bool UVoicevoxBlueprintLibrary::RewriteUserDictWord(const TArray<uint8>& WordUuid, const FVoicevoxCorePUserDictWord Word)
+{
+	VoicevoxUserDictWord DictWord;
+	DictWord.priority = static_cast<uint32_t>(Word.Priority);
+	DictWord.accent_type = static_cast<uintptr_t>(Word.AccentType);
+	DictWord.pronunciation = TCHAR_TO_UTF8(*Word.Pronunciation);
+	DictWord.surface = TCHAR_TO_UTF8(*Word.Surface);
+	DictWord.word_type = static_cast<VoicevoxUserDictWordType>(Word.WordType);
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RewriteUserDictWord(WordUuid, &DictWord);
+}
+
+/**
+ * @brief ユーザー辞書から単語を削除する。(Blueprint公開ノード)
+ */
+bool UVoicevoxBlueprintLibrary::DeleteUserDictWord(const TArray<uint8>& WordUuid)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->DeleteUserDictWord(WordUuid);
+}
+	
+/**
+ * @brief ユーザー辞書の単語をJSON形式で出力する。(Blueprint公開ノード)
+ */
+FString UVoicevoxBlueprintLibrary::GetUserDictWord()
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetUserDictWord();
+}
+
+/**
+ * @brief ユーザー辞書をファイルに保存する。(Blueprint公開ノード)
+ */
+bool UVoicevoxBlueprintLibrary::UserDictSave(const FString& Path)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->UserDictSave(Path);
+}
+	
+/**
+ * @brief ユーザー辞書を破棄する。(Blueprint公開ノード)
+ */
+void UVoicevoxBlueprintLibrary::UserDictDelete()
+{
+	GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->UserDictDelete();
 }

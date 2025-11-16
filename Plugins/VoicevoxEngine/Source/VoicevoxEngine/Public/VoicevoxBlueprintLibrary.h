@@ -219,4 +219,75 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxLipSyncList"))
 	static UPARAM(DisplayName="LipSyncList") TArray<FVoicevoxLipSync> GetLipSyncList(FVoicevoxAudioQuery AudioQuery);
+	
+	//--------------------------------
+	// VOICEVOX CORE Dict関連
+	//--------------------------------
+	
+	/**
+	 * @brief VoicevoxUserDictWordを最低限のパラメータで作成する。(Blueprint公開ノード)
+	 * @param [in] Surface 表記
+	 * @param [in] Pronunciation 読み
+	 * @param [in] AccentType アクセント型
+	 * @returns VoicevoxUserDictWord
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxUserDictWordMake"))
+	static FVoicevoxCorePUserDictWord UserDictWordMake(const FString& Surface, const FString& Pronunciation, int64 AccentType);
+	
+	/**
+	 * @brief ユーザー辞書を構築する。(Blueprint公開ノード)
+	 * @param [in] DictPath 読み込む辞書ファイルのパス
+	 * @returns 初期化が成功したか
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxCoreUserDictInitialize"))
+	static bool UserDictInitialize(const FString& DictPath = TEXT(""));
+	
+	/**
+	 * @brief ユーザー辞書に単語を追加する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Word 追加する単語
+	 * @returns 追加した単語のUUID
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxUserDictAddWord"))
+	static TArray<uint8> UserDictAddWord(const FVoicevoxCorePUserDictWord Word);
+
+	/**
+	 * @brief ユーザー辞書の単語を更新する。(Blueprint公開ノード)
+	 *
+	 * @param [in] WordUuid 更新する単語のUUID
+	 * @param [in] Word 新しい単語のデータ
+	 * @returns 結果
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxRewriteUserDictWord"))
+	static bool RewriteUserDictWord(const TArray<uint8>& WordUuid, const FVoicevoxCorePUserDictWord Word);
+
+	/**
+	 * @brief ユーザー辞書から単語を削除する。(Blueprint公開ノード)
+	 *
+	 * @param [in] WordUuid 削除する単語のUUID
+	 * @returns 結果
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxDeleteUserDictWord"))
+	static bool DeleteUserDictWord(const TArray<uint8>& WordUuid);
+	
+	/**
+	 * @brief ユーザー辞書の単語をJSON形式で出力する。(Blueprint公開ノード)
+	 * @returns output_json
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxUserDictWord"))
+	static FString GetUserDictWord();
+
+	/**
+	 * @brief ユーザー辞書をファイルに保存する。(Blueprint公開ノード)
+	 * @param [in] Path 保存先のファイルパス
+	 * @returns 結果
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxCoreUserDictSave"))
+	static bool UserDictSave(const FString& Path);
+	
+	/**
+	 * @brief ユーザー辞書を破棄する。(Blueprint公開ノード)
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxCoreUserDictDelete"))
+    static void UserDictDelete();
 };

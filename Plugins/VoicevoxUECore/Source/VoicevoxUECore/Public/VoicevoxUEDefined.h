@@ -43,6 +43,19 @@ enum class EReplaceType : uint8
 	MoraPitch		UMETA(DisplayName = "音高",			ToolTip = "音高を、特定の声で生成しなおす。"),
 };
 
+/**
+ * @enum VoicevoxUserDictWordType
+ * @brief ユーザー辞書の単語の種類。
+ */
+UENUM(BlueprintType)
+enum class EVoicevoxCoreUserDictWordType : uint8
+{
+	ProperNoun		UMETA(DisplayName = "固有名詞",	ToolTip = "固有名詞"),
+	CommonNoun 		UMETA(DisplayName = "一般名詞",	ToolTip = "一般名詞"),
+	Verb 			UMETA(DisplayName = "動詞",		ToolTip = "動詞"),
+	Adjective 		UMETA(DisplayName = "形容詞",	ToolTip = "形容詞"),
+	Suffix 			UMETA(DisplayName = "接尾辞",	ToolTip = "接尾辞"),
+};
 
 //------------------------------------------------------------------------
 // struct
@@ -271,3 +284,33 @@ struct FVoicevoxCoreProperty
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	bool IsGpuMode;
 };
+
+/**
+ * @struct FVoicevoxCorePUserDictWord
+ * @brief ユーザー辞書の単語。(blueprint用)
+ */
+USTRUCT(BlueprintType)
+struct FVoicevoxCorePUserDictWord
+{
+	GENERATED_USTRUCT_BODY()
+	
+	//! 表記
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Surface;
+	
+	//! 読み
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Pronunciation;
+	
+	//! アクセント型
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int64 AccentType;
+	
+	//! 単語の種類
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	EVoicevoxCoreUserDictWordType WordType;
+	
+	//! 優先度
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int Priority;
+} ;
