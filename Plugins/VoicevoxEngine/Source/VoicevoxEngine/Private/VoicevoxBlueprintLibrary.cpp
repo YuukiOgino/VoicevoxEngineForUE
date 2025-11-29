@@ -249,8 +249,10 @@ FVoicevoxCoreUserDictWord UVoicevoxBlueprintLibrary::UserDictWordMake(const FStr
 	FVoicevoxCoreUserDictWord DictWord;
 	auto [surface, pronunciation, accent_type, word_type, priority] = 
 		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->UserDictWordMake(Surface, Pronunciation, static_cast<uintptr_t>(AccentType));
-	DictWord.Pronunciation = UTF8_TO_TCHAR(pronunciation);
-	DictWord.Surface = UTF8_TO_TCHAR(surface);
+	const FUTF8ToTCHAR PronunciationConvert(pronunciation);
+	DictWord.Pronunciation = PronunciationConvert.Get();
+	const FUTF8ToTCHAR SurfaceConvert(surface);
+	DictWord.Surface = SurfaceConvert.Get();
 	DictWord.Priority = static_cast<int>(priority);
 	DictWord.AccentType = static_cast<int64>(accent_type);
 	DictWord.WordType = static_cast<EVoicevoxCoreUserDictWordType>(word_type);
@@ -273,8 +275,10 @@ TArray<uint8> UVoicevoxBlueprintLibrary::UserDictAddWord(const FVoicevoxCoreUser
 	VoicevoxUserDictWord DictWord;
 	DictWord.priority = static_cast<uint32_t>(Word.Priority);
 	DictWord.accent_type = static_cast<uintptr_t>(Word.AccentType);
-	DictWord.pronunciation = TCHAR_TO_UTF8(*Word.Pronunciation);
-	DictWord.surface = TCHAR_TO_UTF8(*Word.Surface);
+	const FTCHARToUTF8 PronunciationConvert(*Word.Pronunciation);
+	DictWord.pronunciation = const_cast<ANSICHAR*>(PronunciationConvert.Get());
+	const FTCHARToUTF8 SurfaceConvert(*Word.Surface);
+	DictWord.surface = const_cast<ANSICHAR*>(SurfaceConvert.Get());
 	DictWord.word_type = static_cast<VoicevoxUserDictWordType>(Word.WordType);
 	TArray<uint8_t> UUID = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->UserDictAddWord(&DictWord);
 	return UUID;
@@ -288,8 +292,10 @@ bool UVoicevoxBlueprintLibrary::RewriteUserDictWord(const TArray<uint8>& WordUui
 	VoicevoxUserDictWord DictWord;
 	DictWord.priority = static_cast<uint32_t>(Word.Priority);
 	DictWord.accent_type = static_cast<uintptr_t>(Word.AccentType);
-	DictWord.pronunciation = TCHAR_TO_UTF8(*Word.Pronunciation);
-	DictWord.surface = TCHAR_TO_UTF8(*Word.Surface);
+	const FTCHARToUTF8 PronunciationConvert(*Word.Pronunciation);
+	DictWord.pronunciation = const_cast<ANSICHAR*>(PronunciationConvert.Get());
+	const FTCHARToUTF8 SurfaceConvert(*Word.Surface);
+	DictWord.surface = const_cast<ANSICHAR*>(SurfaceConvert.Get());
 	DictWord.word_type = static_cast<VoicevoxUserDictWordType>(Word.WordType);
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RewriteUserDictWord(WordUuid, &DictWord);
 }
