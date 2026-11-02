@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 4,
-	"VersionName": "1.3",
+	"Version": 5,
+	"VersionName": "2.0",
 	"FriendlyName": "VoicevoxUECore",
 	"Description": "Voicevox Core for UnrealEngine",
 	"Category": "TextToSpeech",

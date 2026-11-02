@@ -56,7 +56,7 @@ void UNemoCoreSubsystem::Deinitialize()
 /**
  * @brief OpenJtakeのディレクトリ名を取得
  */
-FString UNemoCoreSubsystem::GetOpenJtakeDirectoryName()
+FString UNemoCoreSubsystem::GetOpenJTakeDirectoryName()
 {
 	return OPEN_JTALK_DIC_NAME;
 }

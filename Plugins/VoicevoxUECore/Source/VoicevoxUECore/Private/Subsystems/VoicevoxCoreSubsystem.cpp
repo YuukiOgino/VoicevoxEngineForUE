@@ -6,7 +6,7 @@
  */
 
 #include "Subsystems/VoicevoxCoreSubsystem.h"
-#include "VoicevoxNativeObject.h"
+#include "VoicevoxApiObject.h"
 
 //--------------------------------
 // override
@@ -19,8 +19,8 @@ void UVoicevoxCoreSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	const UClass* NativeClass = UVoicevoxNativeObject::StaticClass();
-	NativeInstance = NewObject<UVoicevoxNativeObject>(this, NativeClass);
+	const UClass* NativeClass = UVoicevoxApiObject::StaticClass();
+	NativeInstance = NewObject<UVoicevoxApiObject>(this, NativeClass);
 }
 
 /**
@@ -58,7 +58,6 @@ void UVoicevoxCoreSubsystem::NativeInitialize() const
  */
 bool UVoicevoxCoreSubsystem::Initialize(const bool bUseGPU, const int CPUNumThreads, const bool bLoadAllModels)
 {
-	MetaList.Empty();
 	SupportedDevicesMap.Empty();
 	VoicevoxCoreVersionMap.Empty();
 	CoreNameList.Empty();
@@ -84,7 +83,6 @@ bool UVoicevoxCoreSubsystem::GetIsInitialize() const
  */
 void UVoicevoxCoreSubsystem::Finalize()
 {
-	MetaList.Empty();
 	SupportedDevicesMap.Empty();
 	VoicevoxCoreVersionMap.Empty();
 	CoreNameList.Empty();
@@ -93,15 +91,60 @@ void UVoicevoxCoreSubsystem::Finalize()
 }
 
 //--------------------------------
+// VOICEVOX CORE OpenJtake関連
+//--------------------------------
+	
+/**
+ * @brief 日本語のテキストを解析する。
+ */
+TArray<FVoicevoxAccentPhrase> UVoicevoxCoreSubsystem::OpenJTalkRcAnalyze(const FString& Text) const
+{
+	return NativeInstance->OpenJTalkRcAnalyze(Text);
+}
+
+//--------------------------------
 // VOICEVOX CORE LoadModel関連
 //--------------------------------
 
 /**
+ * @brief　VVMファイルのロード実行
+ */
+bool UVoicevoxCoreSubsystem::LoadVoiceModel(const FString& VvmFileName) const
+{
+	return NativeInstance->LoadVoiceModel(VvmFileName);
+}
+
+/**
+ * @brief　全てのVVMファイルを開く。
+ * @returns 読み込み結果
+ */
+bool UVoicevoxCoreSubsystem::AllLoadVoiceModel() const
+{
+	return NativeInstance->AllLoadVoiceModel();
+}
+
+/**
  * @brief モデルをロードする。
  */
-bool UVoicevoxCoreSubsystem::LoadModel(const int64 SpeakerId) const
+bool UVoicevoxCoreSubsystem::LoadModel(const VoicevoxStyleId StyleId) const
 {
-	return NativeInstance->LoadModel(SpeakerId);
+	return NativeInstance->LoadModel(StyleId);
+}
+
+/**
+ * @breaf 音声モデルの読み込みを解除する。
+ */
+bool UVoicevoxCoreSubsystem::UnloadVoiceModel(const FString& VvmFileName) const
+{
+	return NativeInstance->UnloadVoiceModel(VvmFileName);
+}
+
+/**
+ * @breaf 指定したvvmファイル名が読み込まれているか判定する。
+ */
+bool UVoicevoxCoreSubsystem::IsLoadedVoiceModel(const FString& VvmFileName) const
+{
+	return NativeInstance->IsLoadedVoiceModel(VvmFileName);
 }
 
 //--------------------------------
@@ -111,9 +154,17 @@ bool UVoicevoxCoreSubsystem::LoadModel(const int64 SpeakerId) const
 /**
  * @brief AudioQuery を取得する。
  */
-FVoicevoxAudioQuery UVoicevoxCoreSubsystem::GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana) const
+FVoicevoxAudioQuery UVoicevoxCoreSubsystem::GetAudioQuery(const VoicevoxStyleId StyleId, const FString& Message, const bool bKana) const
 {
-	return NativeInstance->GetAudioQuery(SpeakerId, Message, bKana);
+	return NativeInstance->GetAudioQuery(StyleId, Message, bKana);
+}
+
+/**
+ * @brief AccentPhraseの配列からAudioQueryを作る。
+ */
+FVoicevoxAudioQuery UVoicevoxCoreSubsystem::GetAudioQueryFromAccentPhrases(const TArray<FVoicevoxAccentPhrase>& AccentPhrases) const
+{
+	return NativeInstance->GetAudioQueryFromAccentPhrases(AccentPhrases);
 }
 
 //--------------------------------
@@ -123,9 +174,9 @@ FVoicevoxAudioQuery UVoicevoxCoreSubsystem::GetAudioQuery(int64 SpeakerId, const
 /**
  * @brief VOICEVOX COREのtext to speechを実行
  */
-TArray<uint8> UVoicevoxCoreSubsystem::RunTextToSpeech(const int64 SpeakerId, const FString& Message, const bool bKana, const bool bEnableInterrogativeUpspeak) const
+TArray<uint8> UVoicevoxCoreSubsystem::RunTextToSpeech(const VoicevoxStyleId StyleId, const FString& Message, const bool bKana, const bool bEnableInterrogativeUpspeak) const
 {
-	return NativeInstance->RunTextToSpeech(SpeakerId, Message, bKana, bEnableInterrogativeUpspeak);
+	return NativeInstance->RunTextToSpeech(StyleId, Message, bKana, bEnableInterrogativeUpspeak);
 }
 
 //--------------------------------
@@ -135,25 +186,41 @@ TArray<uint8> UVoicevoxCoreSubsystem::RunTextToSpeech(const int64 SpeakerId, con
 /**
  * @brief AudioQueryを音声データに変換する。
  */
-TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const char* AudioQueryJson, const int64 SpeakerId, bool bEnableInterrogativeUpspeak) const
+TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const char* AudioQueryJson, const VoicevoxStyleId StyleId, const bool bEnableInterrogativeUpspeak) const
 {
-	return NativeInstance->RunSynthesis(AudioQueryJson, SpeakerId,  bEnableInterrogativeUpspeak);
+	return NativeInstance->RunSynthesis(AudioQueryJson, StyleId, bEnableInterrogativeUpspeak);
 }
 
 /**
  * @brief AudioQueryを音声データに変換する。
  */
-TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQuery, const int64 SpeakerId, const bool bEnableInterrogativeUpspeak) const
+TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQuery, const VoicevoxStyleId StyleId, const bool bEnableInterrogativeUpspeak) const
 {
-	return NativeInstance->RunSynthesis(AudioQuery, SpeakerId,  bEnableInterrogativeUpspeak);
+	return NativeInstance->RunSynthesis(AudioQuery, StyleId, bEnableInterrogativeUpspeak);
 }
 
 /**
  * @brief AudioQueryアセットデータを音声データに変換する。
  */
-TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const UVoicevoxQuery& VoicevoxQuery, bool bEnableInterrogativeUpspeak) const
+TArray<uint8> UVoicevoxCoreSubsystem::RunSynthesis(const UVoicevoxQuery& VoicevoxQuery, const bool bEnableInterrogativeUpspeak) const
 {
-	return NativeInstance->RunSynthesis(VoicevoxQuery.VoicevoxAudioQuery, VoicevoxQuery.SpeakerType,  bEnableInterrogativeUpspeak);
+	return NativeInstance->RunSynthesis(VoicevoxQuery.VoicevoxAudioQuery, VoicevoxQuery.StyleId, bEnableInterrogativeUpspeak);
+}
+
+/**
+ * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
+ */
+TArray<FVoicevoxAccentPhrase> UVoicevoxCoreSubsystem::SynthesizerCreateAccentPhrases(const VoicevoxStyleId StyleId, const FString& Text, const bool bKana) const
+{
+	return NativeInstance->SynthesizerCreateAccentPhrases(StyleId, Text, bKana);
+}
+
+/**
+ * @brief AccentPhraseの配列の指定パラメータを、特定の声で生成しなおす。
+ */
+TArray<FVoicevoxAccentPhrase> UVoicevoxCoreSubsystem::SynthesizerReplace(const EReplaceType ReplaceType, const TArray<FVoicevoxAccentPhrase>& AccentPhrases, const VoicevoxStyleId StyleId) const
+{
+	return NativeInstance->SynthesizerReplace(ReplaceType, AccentPhrases, StyleId);
 }
 
 //--------------------------------
@@ -179,7 +246,7 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 	FruitMap.Add(TEXT("N"), ELipSyncVowelType::Non);
 	FruitMap.Add(TEXT("pau"), ELipSyncVowelType::Non);
 
-	List.Add({ELipSyncVowelType::Non, AudioQuery.Pre_phoneme_length / AudioQuery.Speed_scale, false, false});
+	List.Add({ELipSyncVowelType::Non, AudioQuery.PrePhonemeLength / AudioQuery.SpeedScale, false, false});
 	
 	for (auto [Moras, Accent, Pause_mora, Is_interrogative] : AudioQuery.Accent_phrases)
 	{
@@ -187,7 +254,7 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 		{
 			if (bIsSimple)
 			{
-				List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.Speed_scale + Consonant_length / AudioQuery.Speed_scale });
+				List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.SpeedScale + Consonant_length / AudioQuery.SpeedScale });
 			}
 			else
 			{
@@ -195,20 +262,20 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 				{
 					FString C = Consonant.ToLower();
 					bool IsLabialOrPlosive = C.Equals(TEXT("w")) || C.Equals(TEXT("m")) || C.Equals(TEXT("b")) || C.Equals(TEXT("p")) || C.Equals(TEXT("f")) || C.Equals(TEXT("v"));
-					List.Add({FruitMap[Vowel], Consonant_length / AudioQuery.Speed_scale, true, IsLabialOrPlosive});
+					List.Add({FruitMap[Vowel], Consonant_length / AudioQuery.SpeedScale, true, IsLabialOrPlosive});
 				}
-				List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.Speed_scale, false, false});
+				List.Add({FruitMap[Vowel], Vowel_length / AudioQuery.SpeedScale, false, false});
 			}
 			
 		}
 
 		if (Pause_mora.Vowel.Equals(TEXT("pau"), ESearchCase::IgnoreCase))
 		{
-			List.Add({ELipSyncVowelType::Non, Pause_mora.Vowel_length / AudioQuery.Speed_scale, false, false});
+			List.Add({ELipSyncVowelType::Non, Pause_mora.Vowel_length / AudioQuery.SpeedScale, false, false});
 		}
 	}
 
-	List.Add({ELipSyncVowelType::Non, AudioQuery.Post_phoneme_length / AudioQuery.Speed_scale, false, false});
+	List.Add({ELipSyncVowelType::Non, AudioQuery.PostPhonemeLength / AudioQuery.SpeedScale, false, false});
 	
 	return List;
 }
@@ -220,22 +287,38 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 /**
  * @brief 話者名や話者IDのリストを取得する
  */
-TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetMetaList()
+TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetMetaList() const
 {
-	return MetaList;
+	return NativeInstance->GetMetaList();
 }
 
 /**
- * @brief 指定したSpeakerIDの名前を取得する
+ * @brief 指定のVoicevoxVoiceModelFileから話者名や話者IDのリストを取得する
  */
-FString UVoicevoxCoreSubsystem::GetMetaName(const int64 SpeakerID)
+TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetVoiceModelFileMetaList(const FString& VvmFileName) const
 {
-	TArray<FVoicevoxMeta> List = GetMetaList();
-	for  (auto [Name, Styles, Speaker_uuid, Version] : List)
+	return NativeInstance->GetVoiceModelFileMetaList(VvmFileName);
+}
+
+/**
+ * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
+ */
+TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetAllVoiceModelFileMetaList() const
+{
+	return NativeInstance->GetAllVoiceModelFileMetaList();
+}
+
+/**
+ * @brief 指定したStyleIDの名前を取得する
+ */
+FString UVoicevoxCoreSubsystem::GetMetaName(const VoicevoxStyleId StyleId) const
+{
+	for  (TArray<FVoicevoxMeta> List = GetAllVoiceModelFileMetaList();
+		auto [Name, Styles, Speaker_uuid, Version] : List)
 	{
 		for (const auto Style :Styles)
 		{
-			if (Style.Id == SpeakerID)
+			if (Style.Id == StyleId)
 			{
 				return FString::Printf(TEXT("%s(%s)"), *Name, *Style.Name);
 			}
@@ -243,6 +326,14 @@ FString UVoicevoxCoreSubsystem::GetMetaName(const int64 SpeakerID)
 	}
 	
 	return TEXT("");
+}
+
+/**
+ * @brief StyleIdをキーとした全てのVoicevoxVoiceModelFile名を格納したTMapを取得
+ */
+TMap<int, FString> UVoicevoxCoreSubsystem::GetVvmFileNameMapToStyleId() const
+{
+	return NativeInstance->GetVvmFileNameMapToStyleId();
 }
 
 //--------------------------------
@@ -288,12 +379,8 @@ FVoicevoxSupportedDevices UVoicevoxCoreSubsystem::GetSupportedDevices(const FStr
 /**
  * @brief 各VOICEVOX COREの話者名や話者IDのリスト、サポートデバイス、バージョン情報を各変数へ追加
  */
-void UVoicevoxCoreSubsystem::AddVoicevoxConfigData(const FString& CoreName, TArray<FVoicevoxMeta> List, FVoicevoxSupportedDevices SupportedDevices, const FString& Version, const bool bIsGpuMode)
+void UVoicevoxCoreSubsystem::AddVoicevoxConfigData(const FString& CoreName, FVoicevoxSupportedDevices SupportedDevices, const FString& Version, const bool bIsGpuMode)
 {
-	for (auto Element : List)
-	{
-		MetaList.Emplace(Element);
-	}
 	CoreNameList.Add(CoreName);
 	SupportedDevicesMap.Add(CoreName, SupportedDevices);
 	VoicevoxCoreVersionMap.Add(CoreName, Version);
@@ -313,40 +400,69 @@ TArray<FString> UVoicevoxCoreSubsystem::GetCoreNameList()
 }
 
 //--------------------------------
-// VOICEVOX CORE PhonemeLength関連
+// VOICEVOX CORE Dict関連
 //--------------------------------
 
 /**
- * @brief 音素列から、音素ごとの長さを求める
+ * @brief VoicevoxUserDictWordを最低限のパラメータで作成する。
  */
-TArray<float> UVoicevoxCoreSubsystem::GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID) const
+VoicevoxUserDictWord UVoicevoxCoreSubsystem::UserDictWordMake(const FString& Surface, const FString& Pronunciation, const uintptr_t AccentType) const
 {
-	return NativeInstance->GetPhonemeLength(Length, PhonemeList,  SpeakerID);
+	return NativeInstance->UserDictWordMake(Surface, Pronunciation, AccentType);
 }
-
-//--------------------------------
-// VOICEVOX CORE Mora関連
-//--------------------------------
-
-/**
- * @brief モーラごとの音素列とアクセント情報から、モーラごとの音高を求める
- */
-TArray<float> UVoicevoxCoreSubsystem::FindPitchEachMora(int64 Length, TArray<int64> VowelPhonemeList, TArray<int64> ConsonantPhonemeList,
-										  TArray<int64> StartAccentList, TArray<int64> EndAccentList,
-										  TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
-										  int64 SpeakerID) const
-{
-	return NativeInstance->FindPitchEachMora(Length, VowelPhonemeList,  ConsonantPhonemeList, StartAccentList, EndAccentList, StartAccentPhraseList, EndAccentPhraseList, SpeakerID);
-}
-
-//--------------------------------
-// VOICEVOX CORE DecodeForward関連
-//--------------------------------
 	
 /**
- * @brief フレームごとの音素と音高から、波形を求める
+ * @brief ユーザー辞書を構築する。
  */
-TArray<float> UVoicevoxCoreSubsystem::DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID) const
+bool UVoicevoxCoreSubsystem::UserDictInitialize(const FString& DictPath) const
 {
-	return NativeInstance->DecodeForward(Length, PhonemeSize, F0, Phoneme, SpeakerID);
+	return NativeInstance->UserDictInitialize(DictPath);
+}
+	
+/**
+ * @brief ユーザー辞書に単語を追加する。
+ */
+TArray<uint8_t> UVoicevoxCoreSubsystem::UserDictAddWord(const VoicevoxUserDictWord* Word) const
+{
+	return NativeInstance->UserDictAddWord(Word);
+}
+
+/**
+ * @brief ユーザー辞書の単語を更新する。
+ */
+bool UVoicevoxCoreSubsystem::RewriteUserDictWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord *Word) const
+{
+	return NativeInstance->RewriteUserDictWord(WordUuid, Word);
+}
+
+/**
+ * @brief ユーザー辞書から単語を削除する。
+ */
+bool UVoicevoxCoreSubsystem::DeleteUserDictWord(const TArray<uint8_t>& WordUuid) const
+{
+	return NativeInstance->DeleteUserDictWord(WordUuid);
+}
+	
+/**
+ * @brief ユーザー辞書の単語を取得する。
+ */
+TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxCoreSubsystem::GetUserDictWord() const
+{
+	return NativeInstance->GetUserDictWord();
+}
+
+/**
+ * @brief ユーザー辞書をファイルに保存する。
+ */
+bool UVoicevoxCoreSubsystem::UserDictSave(const FString& Path) const
+{
+	return NativeInstance->UserDictSave(Path);
+}
+	
+/**
+ * @brief ユーザー辞書を破棄する。
+ */
+void UVoicevoxCoreSubsystem::UserDictDelete() const
+{
+	NativeInstance->UserDictDelete();
 }

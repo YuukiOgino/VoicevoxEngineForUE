@@ -32,7 +32,10 @@ public class VoicevoxEngineEditor : ModuleRules
                 "SlateCore",
                 "DesktopPlatform",
                 "Json",
-                "JsonUtilities"
+                "JsonUtilities",
+                "ToolMenus",
+                "EditorStyle",
+                "ApplicationCore"
             }
         );
     }

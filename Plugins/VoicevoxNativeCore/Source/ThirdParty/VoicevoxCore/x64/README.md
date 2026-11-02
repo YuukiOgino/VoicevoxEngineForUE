@@ -21,13 +21,13 @@
 
 > [!WARNING]
 > ダウンローダーの最新版(Latest)はVOICEVOX CORE 0.16.ｘ以上のダウンロードに対応しており、15.9以下のバージョンはフォルダ構造の違いからダウンロードできません。<br/>
-> ダウンローダーは必ず15.ｘから使用してください。<br/>
-> https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.7
+> ダウンローダーは必ず16.ｘから使用してください。<br/>
+> https://github.com/VOICEVOX/voicevox_core/releases/tag/0.16.0
 
 ダウンローダー　DirectML版コマンド例
 ```PowerShell
-Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/download/0.15.7/download-windows-x64.exe -OutFile ./download.exe
-./download.exe -v 0.15.7 --device directml
+Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/download/0.16.0/download-windows-x64.exe -OutFile ./download.exe
+./download.exe -v 0.16.0 --device directml
 ```
 
 ### DirectML版

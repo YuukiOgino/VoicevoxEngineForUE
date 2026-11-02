@@ -15,7 +15,8 @@ public class VoicevoxUECoreEditor : ModuleRules
                 "Core",
                 "UMG",
                 "UMGEditor",
-                "VoicevoxUECore"
+                "VoicevoxUECore",
+                "EditorSubsystem" 
             }
         );
 

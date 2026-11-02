@@ -7,6 +7,8 @@
  */
 #pragma once
 
+#include "Modules/ModuleInterface.h"
+
 /**
  * @class FVoicevoxEngineModule
  * @brief VoicevoxEngineモジュール

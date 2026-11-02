@@ -9,8 +9,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "VoicevoxUEDefined.h"
-#include "VoicevoxNativeDefined.h"
+#include "VoicevoxApiSubsystem.h"
 #include "Subsystems/Subsystem.h"
 #include "VoicevoxNativeCoreSubsystem.generated.h"
 
@@ -18,8 +17,8 @@
  * @class UVoicevoxNativeCoreSubsystem
  * @brief VOICEVOX COREのネイティブライブラリのAPIを実行する基礎Subsystemクラス
  */
-UCLASS(Abstract,  MinimalAPI)
-class UVoicevoxNativeCoreSubsystem : public USubsystem
+UCLASS(Abstract, MinimalAPI)
+class UVoicevoxNativeCoreSubsystem : public UVoicevoxApiSubsystem
 {
 	GENERATED_BODY()
 protected:
@@ -27,49 +26,27 @@ protected:
 	//----------------------------------------------------------------
 	// Variable
 	//----------------------------------------------------------------
-	
-	//! 初期化処理実施済みか
-	bool bIsInit = false;
 
 	//! VOICEVOX COREライブラリハンドル
 	void* CoreLibraryHandle = nullptr;
+
+	//! 音声シンセサイザ
+	VoicevoxSynthesizer* Synthesizer = nullptr;
+
+	//! テキスト解析器としてのOpen JTalk。
+	OpenJtalkRc* OpenJTalk = nullptr;
+
+	//! 読み込んだモデルIDマップ 
+	TMap<FString, TArray<uint8>> ModelIdMap;
+	
+	//! ネイティブ用ユーザ辞書ポインタ
+	VoicevoxUserDict* NativeUserDict = nullptr;
 	
 	//----------------------------------------------------------------
 	// Function
 	//----------------------------------------------------------------
-	
-	/**
-	 * @brief VOICEVOXから受信したエラーメッセージを表示
-	 * @param[in] MessageFormat : エラーメッセージのフォーマット
-	 */
-	VOICEVOXUECORE_API static void ShowVoicevoxErrorMessage(const FString& MessageFormat);
 
-	/**
-	 * @brief OpenJtakeのディレクトリ名を取得
-	 * @return OpneJtakeのディレクトリ名
-	 */
-	virtual FString GetOpenJtakeDirectoryName() { return FString(); }
-	
-	/**
-	 * @fn
-	 * VOICEVOX COREのvoicevox_ttsで生成した音声データを開放
-	 * @brief voicevox_tts等で生成した音声データを開放する
-	 * @param Wav 開放する音声データのポインタ
-	 */
-	VOICEVOXUECORE_API void WavFree(uint8* Wav);
-
-	/**
-	 * エラー結果をメッセージに変換して表示
-	 * @param[in] ApiName : エラーを起こしたAPI名
-	 * @param [in] ResultCode メッセージに変換するエラーコード
-	 */
-	VOICEVOXUECORE_API void VoicevoxShowErrorResultMessage(const FString& ApiName, VoicevoxResultCode ResultCode);
-	
 public:
-
-	//----------------------------------------------------------------
-	// Function
-	//----------------------------------------------------------------
 	
 	//--------------------------------
 	// コンストラクタ
@@ -95,18 +72,17 @@ public:
 	 * @detail
 	 * VOICEVOXの初期化処理は何度も実行可能。use_gpuを変更して実行しなおすことも可能。
 	 * 最後に実行したuse_gpuに従って他の関数が実行される。
-	 * 初期化処理はUE::Tasks::Launchで非同期に行われる
 	 *
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API bool CoreInitialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false);
+	VOICEVOXUECORE_API virtual bool ApiInitialize(bool bUseGPU, int CPUNumThreads = 0, bool bLoadAllModels = false) override;
 
 	/**
 	 * @brief デフォルトの初期化オプションを生成する
 	 * @return デフォルト値が設定された初期化オプション
 	 */
-	VOICEVOXUECORE_API VoicevoxInitializeOptions MakeDefaultInitializeOptions();
-	
+	VOICEVOXUECORE_API virtual VoicevoxInitializeOptions MakeDefaultInitializeOptions() override;
+
 	//--------------------------------
 	// VOICEVOX CORE Finalize関連
 	//--------------------------------
@@ -115,38 +91,223 @@ public:
 	 * @fn
 	 * VOICEVOX CORE 終了処理
 	 * @brief 終了処理を行う。以降VOICEVOXのAPIを利用するためには再度Initializeメソッドを行う必要がある。
-	 * @detail
-	 * VOICEVOXの終了処理は何度も実行可能。
-	 * 実行せずにexitしても大抵の場合問題ないが、CUDAを利用している場合は終了処理を実行しておかないと例外が起こることがある。
 	 */
-	VOICEVOXUECORE_API void Finalize();
+	VOICEVOXUECORE_API virtual void Finalize() override;
 
+protected:
+
+	/**
+	 * @brief VoicevoxSynthesizer を<b>構築</b>する。
+	 * @param [in] OnnxRuntime
+	 * @param[in] bUseGPU			trueならGPU用、falseならCPU用の初期化を行う
+	 * @param[in] CPUNumThreads		推論に用いるスレッド数を設定する。0の場合論理コア数の半分か、物理コア数が設定される
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool SynthesizerNew(const VoicevoxOnnxruntime& OnnxRuntime, bool bUseGPU, int CPUNumThreads);
+	
+	/**
+	 * @brief VoicevoxSynthesizer を<b>破棄</b>する。
+	 * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
+	 * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+	 */
+	VOICEVOXUECORE_API void SynthesizerDelete();
+	
 	//--------------------------------
-	// VOICEVOX CORE Model関連
+	// VOICEVOX CORE ONNX Runtime関連
 	//--------------------------------
 	
+	/**
+	 * @brief VoicevoxOnnxruntime のインスタンスを得る。
+	 * @returns VoicevoxOnnxruntime のインスタンス
+	 */
+	VOICEVOXUECORE_API const VoicevoxOnnxruntime* SynthesizerGetOnnxRuntime();
+	
+	/**
+	 * @brief VoicevoxOnnxruntime のインスタンスが既に作られているならそれを得る。 作られていなければ`NULL`を返す。
+	 * @returns VoicevoxOnnxruntime のインスタンス
+	 */
+	VOICEVOXUECORE_API const VoicevoxOnnxruntime* GetOnnxRuntime();
+
+	/**
+	 * @brief ONNX Runtimeをロードして初期化する。
+	 * 一度成功したら、以後は引数を無視して同じ参照を返す。
+	 *
+	 * @param [in] Option オプション
+	 * @returns VoicevoxOnnxruntime のインスタンス
+	 */
+	VOICEVOXUECORE_API const VoicevoxOnnxruntime* OnnxRuntimeLoadOnce(const VoicevoxLoadOnnxruntimeOptions& Option);
+	
+	/**
+	 * @brief ONNX Runtimeを初期化する。
+	 * 一度成功したら以後は同じ参照を返す。
+	 *
+	 * @returns VoicevoxOnnxruntime のインスタンス
+	 */
+	VOICEVOXUECORE_API const VoicevoxOnnxruntime* OnnxRuntimeInitOnce();
+
+	/**
+	 * @brief デフォルトのvoicevox_onnxruntime_load_once のオプションを生成する。
+	 * @return デフォルトのvoicevox_onnxruntime_load_once のオプション
+	 */
+	VOICEVOXUECORE_API VoicevoxLoadOnnxruntimeOptions MakeDefaultLoadOnnxRuntimeOptions();
+	
+public:
+	
+	/**
+	 * @brief ONNX Runtimeの動的ライブラリの、バージョン付きのファイル名を取得。
+	 * WindowsとAndroidでは ::voicevox_get_onnxruntime_lib_unversioned_filename と同じ。
+	 * @return ONNX Runtimeの動的ライブラリの、バージョン付きのファイル名
+	 */
+	VOICEVOXUECORE_API FString GetOnnxRuntimeLibVersionedFilename();
+
+	/**
+	 * @brief ONNX Runtimeの動的ライブラリの、バージョン無しのファイル名を取得。
+	 * @return ONNX Runtimeの動的ライブラリの、バージョン無しのファイル名。
+	 */
+	VOICEVOXUECORE_API FString GetOnnxRuntimeLibUnversionedFilename();
+
+	//--------------------------------
+	// VOICEVOX CORE OpenJtake関連
+	//--------------------------------
+	
+protected:
+	
+	/**
+	 * @brief OpenJtakeのディレクトリ名を取得
+	 * @return OpenJtakeのディレクトリ名
+	 */
+	virtual FString GetOpenJTakeDirectoryName() { return FString(); }
+
+	/**
+	 * @brief テキスト解析器としてのOpen JTalkを作成する。
+	 * @return 取得結果
+	 */
+	VOICEVOXUECORE_API bool OpenJTalkRcNew();
+	
+	/**
+	 * @brief OpenJtalkRc を<b>破棄</b>(_destruct_)する。
+	 * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
+	 * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+	 */
+	VOICEVOXUECORE_API void OpenJTalkRcDelete();
+
+	/**
+	 * @brief OpenJtalkの使うユーザー辞書を設定する。
+	 * この関数を呼び出した後にユーザー辞書を変更した場合、再度この関数を呼び出す必要がある。
+	 * @param [in] UserDict ユーザー辞書
+	 */
+	VOICEVOXUECORE_API bool OpenJTalkRcUseUserDict(const VoicevoxUserDict* UserDict);
+	
+public:
+
+	/**
+	 * @brief 日本語のテキストを解析する。
+	 * @param [in] Text 日本語テキスト
+	 * @returns OpenJTakから解析されたAccentPhrase (アクセント句)の配列
+	 */
+	VOICEVOXUECORE_API TArray<FVoicevoxAccentPhrase> OpenJTalkRcAnalyze(const FString& Text);
+
+	//--------------------------------
+	// VOICEVOX CORE Model関連(旧API)
+	//--------------------------------
+
 	/**
 	 * @fn
 	 * VOICEVOX COREのモデルをロード実行
 	 * @brief モデルをロードする。
-	 * @param SpeakerId 話者番号
+	 * @param StyleId スタイルID
 	 * @return 成功したらtrue、失敗したらfalse
 	 * @detail
 	 * 必ずしも話者とモデルが1:1対応しているわけではない。
 	 *
 	 * ※モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API bool LoadModel(int64 SpeakerId);
+	VOICEVOXUECORE_API virtual bool LoadModel(VoicevoxStyleId StyleId) override;
 
 	/**
 	 * @fn
 	 * VOICEVOX COREに該当のスピーカーモデルが存在するか
 	 * @brief 使用するCOREにスピーカーモデルが存在するか
-	 * @param SpeakerId 話者番号
+	 * @param StyleId スタイルID
 	 * @return 存在したらtrue、無い場合はfalse
 	 */
-	VOICEVOXUECORE_API bool IsModel(int64 SpeakerId);
+	VOICEVOXUECORE_API virtual bool IsModel(VoicevoxStyleId StyleId) override;
 
+	//--------------------------------
+	// VOICEVOX CORE VMM関連
+	//--------------------------------
+
+protected:
+	/**
+	 * @brief VVMファイルを開く。
+	 *
+	 * @param [in] Path vvmファイルへのUTF-8のファイルパス
+	 * @param [out] Model 構築先
+	 *
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool VoiceModelFileOpen(const FString& Path, VoicevoxVoiceModelFile** Model);
+
+	/**
+	 * 音声モデルを読み込む。
+	 * @param [in] Model 音声モデル
+	 *
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool SynthesizerLoadVoiceModel(const VoicevoxVoiceModelFile& Model);
+	
+	/**
+	 * @brief VoicevoxVoiceModelFile を、所有しているファイルディスクリプタを閉じた上で<b>破棄</b>(_destruct_)する。ファイルの削除(_delete_)<b>ではない</b>。
+	 * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
+	 * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+	 *
+	 * @param [in] Model 破棄対象。nullable
+	 */
+	VOICEVOXUECORE_API void VoiceModelFileDelete(VoicevoxVoiceModelFile& Model);
+
+	/**
+	 * @brief  VoicevoxVoiceModelFile からIDを取得する。
+	 *
+	 * @param [in] Model 音声モデル
+	 * @return 音声モデルID。
+	 */
+	VOICEVOXUECORE_API TArray<uint8_t> VoiceModelFileId(const VoicevoxVoiceModelFile& Model);
+
+public:
+	
+	/**
+	 * @brief　VVMファイルのロード実行
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 読み込み結果
+	 *
+	 * @detail
+	 * モデルによってはメインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	VOICEVOXUECORE_API virtual bool LoadVoiceModel(const FString VvmFileName) override;
+
+	/**
+	 * @brief　全てのVVMファイルを開く。
+	 * @returns 読み込み結果
+	 *
+	 * @detail
+	 * メインスレッドが暫く止まるほど重いので、その場合は非同期で処理してください。（UE::Tasks::Launch等）
+	 */
+	VOICEVOXUECORE_API virtual bool AllLoadVoiceModel() override;
+
+	/**
+	 * @breaf 音声モデルの読み込みを解除する。
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns 解除処理の結果
+	 */
+	VOICEVOXUECORE_API virtual bool UnloadVoiceModel(FString VvmFileName) override;
+
+	/**
+	 * @breaf 指定したIDの音声モデルが読み込まれているか判定する。
+	 * @param [in] VvmFileName vvmファイル名
+	 * @returns モデルが読み込まれているかどうか
+	 */
+	VOICEVOXUECORE_API virtual bool IsLoadedVoiceModel(FString VvmFileName) override;
+	
 	//--------------------------------
 	// VOICEVOX CORE AudioQuery関連
 	//--------------------------------
@@ -155,20 +316,21 @@ public:
 	 * @fn
 	 * VOICEVOX COREのvoicevox_audio_queryを取得
 	 * @brief AudioQuery を取得する。
-	 * @param[in] SpeakerId 話者番号
+	 * @param[in] StyleId スタイルID
 	 * @param[in] Message 音声データに変換するtextデータ
 	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
 	 * @return AudioQueryをjsonでフォーマット後、構造体へ変換したもの。
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API FVoicevoxAudioQuery GetAudioQuery(int64 SpeakerId, const FString& Message, bool bKana);
+	VOICEVOXUECORE_API virtual FVoicevoxAudioQuery GetAudioQuery(VoicevoxStyleId StyleId, const FString& Message, bool bKana) override;
 
 	/**
-	 * @brief デフォルトの AudioQuery のオプションを生成する
-	 * @return デフォルト値が設定された AudioQuery オプション
+	 * @brief AccentPhraseの配列からAudioQueryを作る
+	 * @param [in] AccentPhrases AccentPhraseの配列
+	 * @return AudioQuery情報が格納されたjson形式の構造体
 	 */
-	VOICEVOXUECORE_API VoicevoxAudioQueryOptions MakeDefaultAudioQueryOptions();
+	VOICEVOXUECORE_API FVoicevoxAudioQuery GetAudioQueryFromAccentPhrases(const TArray<FVoicevoxAccentPhrase>& AccentPhrases);
 	
 	//--------------------------------
 	// VOICEVOX CORE TextToSpeech関連
@@ -178,7 +340,7 @@ public:
 	 * @fn
 	 * VOICEVOX COREのtext to speechを実行
 	 * @brief Textデータを音声データに変換する。
-	 * @param[in] SpeakerId 話者番号
+	 * @param[in] StyleId スタイルID
 	 * @param[in] Message 音声データに変換するtextデータ
 	 * @param[in] bKana aquestalk形式のkanaとしてテキストを解釈する
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
@@ -186,144 +348,304 @@ public:
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API TArray<uint8> RunTextToSpeech(int64 SpeakerId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak);
+	VOICEVOXUECORE_API virtual TArray<uint8> RunTextToSpeech(VoicevoxStyleId StyleId, const FString& Message, bool bKana, bool bEnableInterrogativeUpspeak) override;
 
 	/**
 	 * @brief デフォルトのテキスト音声合成オプションを生成する
 	 * @return テキスト音声合成オプション
 	 */
-	VOICEVOXUECORE_API VoicevoxTtsOptions MakeDefaultTtsOptions();
+	VOICEVOXUECORE_API virtual VoicevoxTtsOptions MakeDefaultTtsOptions() override;
+
+	//--------------------------------
+	// VOICEVOX CORE Synthesis関連
+	//--------------------------------
 	
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_synthesisを実行
 	 * @brief AudioQueryを音声データに変換する。
 	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery
-	 * @param[in] SpeakerId 話者番号
+	 * @param[in] StyleId スタイルID
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API TArray<uint8> RunSynthesis(const char* AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
+	VOICEVOXUECORE_API virtual TArray<uint8> RunSynthesis(const char* AudioQueryJson, VoicevoxStyleId StyleId, bool bEnableInterrogativeUpspeak) override;
 
 	/**
 	 * @fn
 	 * VOICEVOX COREのvoicevox_synthesisを実行
 	 * @brief AudioQueryを音声データに変換する。
 	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery構造体
-	 * @param[in] SpeakerId 話者番号
+	 * @param[in] StyleId スタイルID
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, int64 SpeakerId, bool bEnableInterrogativeUpspeak);
+	VOICEVOXUECORE_API virtual TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, VoicevoxStyleId StyleId, bool bEnableInterrogativeUpspeak) override;
 
+	/**
+	 * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
+	 * @param [in] StyleId スタイルID
+	 * @param [in] Text 音声データに変換する日本語テキスト
+	 * @param [in] bKana AquesTalk形式のkanaとしてテキストを解釈する
+	 * @returns AccentPhrase (アクセント句)の配列
+	 */
+	VOICEVOXUECORE_API virtual TArray<FVoicevoxAccentPhrase> SynthesizerCreateAccentPhrases(VoicevoxStyleId StyleId, const FString& Text, bool bKana) override;
+
+	/**
+	 * @brief AccentPhraseの配列の指定パラメータを、特定の声で生成しなおす。
+	 * @param [in] ReplaceType 実行する再生成APIのタイプ
+	 * @param [in] AccentPhrases AccentPhraseの配列
+	 * @param [in] StyleId スタイルID
+	 * @returns AccentPhrase (アクセント句)の配列
+	 */
+	VOICEVOXUECORE_API virtual TArray<FVoicevoxAccentPhrase> SynthesizerReplace(EReplaceType ReplaceType, TArray<FVoicevoxAccentPhrase> AccentPhrases, VoicevoxStyleId StyleId) override;
+	
 	/**
 	 * @brief デフォルトの `voicevox_synthesis` のオプションを生成する
 	 * @return デフォルト値が設定された `voicevox_synthesis` のオプション
 	 */
-	VOICEVOXUECORE_API VoicevoxSynthesisOptions MakeDefaultSynthesisOptions();
+	VOICEVOXUECORE_API virtual VoicevoxSynthesisOptions MakeDefaultSynthesisOptions() override;
 	
 	//--------------------------------
 	// VOICEVOX CORE Property関連
 	//--------------------------------
 	
+protected:
+
 	/**
-	 * @fn
-	 *  VOICEVOX CORE名取得
-	 * @brief VOICEVOX COREの名前取得
-	 * @return VOICEVOX COREの名前取得
+	 * @brief VoicevoxVoiceModelFile からメタ情報を取得する。
+	 * @param [in] Model 音声モデル
+	 * @returns VoicevoxVoiceModelFileのメタ情報
 	 */
-	virtual FString GetVoicevoxCoreName() { return FString(""); }
+	VOICEVOXUECORE_API TArray<FVoicevoxMeta> VoiceModelFileCreateMetas(const VoicevoxVoiceModelFile& Model);
+
+	/**
+	 * @brief コアライブラリをロード済みか
+	 * @return ローダ済みで参照可能な場合はtrue、それ以外はfalse
+	 */
+	VOICEVOXUECORE_API bool IsValidCoreLibraryHandle();
+
+	/**
+	 * @brief プラットフォームのフォルダ名を取得
+	 * @return プラットフォームのフォルダ名。空の場合は非対応
+	 */
+	VOICEVOXUECORE_API FString GetPlatformFolderName();
 	
+public:
 	/**
 	 * @fn
 	 * メタ情報を取得する
 	 * @brief 話者名や話者IDのリストを取得する
-	 * @return メタ情報が格納されたjson形式の構造体
+	 * @return メタ情報が格納されたjson形式の構造体リスト
 	 */
-	VOICEVOXUECORE_API TArray<FVoicevoxMeta> GetMetaList();
+	VOICEVOXUECORE_API virtual TArray<FVoicevoxMeta> GetMetaList() override;
 
+	/**
+	 * @fn
+	 * 指定のVoicevoxVoiceModelFileからメタ情報を取得する
+	 * @brief 話者名や話者IDのリストを取得する
+	 * @param [in] VvmFileName vvmファイル名
+	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
+	 */
+	VOICEVOXUECORE_API virtual TArray<FVoicevoxMeta> GetVoiceModelFileMetaList(const FString VvmFileName) override;
+
+	/**
+	 * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
+	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
+	 */
+	VOICEVOXUECORE_API virtual TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList() override;
+
+	/**
+	 * @brief StyleIdをキーとした全てのVoicevoxVoiceModelFile名を格納したTMapを取得
+	 * @return StyleIdをキーとしたVoicevoxVoiceModelFile名のTMap
+	 */
+	VOICEVOXUECORE_API virtual TMap<int, FString> GetVvmFileNameMapToStyleId();
+	
 	/**
 	 * @brief サポートデバイス情報を取得する
 	 * @return サポートデバイス情報の構造体
 	 */
-	VOICEVOXUECORE_API FVoicevoxSupportedDevices GetSupportedDevices();
+	VOICEVOXUECORE_API virtual FVoicevoxSupportedDevices GetSupportedDevices() override;
 
 	/**
 	 * @brief VOICEVOX COREのバージョンを取得する
 	 * @return SemVerでフォーマットされたバージョン
 	 */
-	VOICEVOXUECORE_API FString GetVoicevoxVersion();
+	VOICEVOXUECORE_API virtual FString GetVoicevoxVersion() override;
 
 	/**
 	 * @brief ハードウェアアクセラレーションがGPUモードか判定する
 	 * @return GPUモードならtrue、そうでないならfalse
 	 */
-	VOICEVOXUECORE_API bool IsGpuMode();
+	VOICEVOXUECORE_API virtual bool IsGpuMode() override;
 
 	//--------------------------------
-	// VOICEVOX CORE PhonemeLength関連
+	// VOICEVOX CORE Free関連
 	//--------------------------------
+
+protected:
 	
 	/**
 	 * @fn
-	 * 音素ごとの長さを求める
-	 * @brief 音素列から、音素ごとの長さを求める
-	 * @param[in] Length 音素列の長さ
-	 * @param[in] PhonemeList 音素列
-	 * @param[in] SpeakerID 話者番号
-	 * @return 音素ごとの長さ
-	 *
-	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
+	 * VOICEVOX COREのvoicevox_ttsで生成した音声データを開放
+	 * @brief voicevox_tts等で生成した音声データを開放する
+	 * @param Wav 開放する音声データのポインタ
 	 */
-	VOICEVOXUECORE_API TArray<float> GetPhonemeLength(int64 Length, TArray<int64> PhonemeList, int64 SpeakerID);
+	VOICEVOXUECORE_API void WavFree(uint8* Wav);
+
+	/**
+	 * @brief JSON文字列を解放する。
+	 *
+	 * @param [in] JsonData 解放するJSON文字列。nullable
+	 */
+	VOICEVOXUECORE_API void JsonFree(char* JsonData);
 
 	//--------------------------------
-	// VOICEVOX CORE Mora関連
+	// VOICEVOX CORE Dict関連
+	//--------------------------------
+
+public:
+	
+	/**
+	 * @brief VoicevoxUserDictWordを最低限のパラメータで作成する。
+	 * @param [in] Surface 表記
+	 * @param [in] Pronunciation 読み
+	 * @param [in] AccentType アクセント型
+	 * @returns VoicevoxUserDictWord
+	 */
+	VOICEVOXUECORE_API VoicevoxUserDictWord UserDictWordMake(const FString& Surface, const FString& Pronunciation, uintptr_t AccentType);
+
+	/**
+	 * @brief ユーザー辞書を構築する。
+	 * @param [in] DictPath 読み込む辞書ファイルのパス
+	 * @param [in] ParentUserDict コピーする別のライブラリのユーザー辞書ポインタ
+	 * @returns 初期化が成功したか
+	 */
+	VOICEVOXUECORE_API bool UserDictInitialize(const FString& DictPath = TEXT(""), const VoicevoxUserDict* ParentUserDict = nullptr);
+	
+	/**
+	 * @brief 生成したユーザー辞書を構築する。
+	 * @returns VoicevoxUserDict
+	 */
+	VOICEVOXUECORE_API VoicevoxUserDict* GetNativeUserDict() const;
+	
+	/**
+	 * @brief 生成したユーザー辞書を破棄する。
+	 */
+	VOICEVOXUECORE_API void NativeUserDictDelete();
+
+	/**
+	 * @brief ユーザー辞書に単語を追加する。
+	 *
+	 * @param [in] Word 追加する単語
+	 * @param [in] ParentUserDict コピーする別のライブラリのユーザー辞書ポインタ
+	 * @returns 追加した単語のUUID
+	 */
+	VOICEVOXUECORE_API TArray<uint8_t> AddUserDictWord(const VoicevoxUserDictWord* Word, const VoicevoxUserDict* ParentUserDict = nullptr);
+	
+protected:
+	
+	/**
+	 * @brief ユーザー辞書を構築する。
+	 * @returns VoicevoxUserDict
+	 */
+	VOICEVOXUECORE_API VoicevoxUserDict* UserDictNew();
+
+	/**
+	 * @brief ユーザー辞書にファイルを読み込ませる。
+	 * @param [in] UserDict ユーザー辞書
+	 * @param [in] DictPath 読み込む辞書ファイルのパス
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool UserDictLoad(const VoicevoxUserDict* UserDict, const FString& DictPath);
+	
+	/**
+	 * @brief ユーザー辞書に単語を追加する。
+	 *
+	 * @param [in] Word 追加する単語
+	 * @returns 追加した単語のUUID
+	 */
+	VOICEVOXUECORE_API TArray<uint8_t> UserDictAddWord(const VoicevoxUserDictWord* Word);
+
+public:
+	
+	/**
+	 * @brief ユーザー辞書の単語を更新する。
+	 *
+	 * @param [in] WordUuid 更新する単語のUUID
+	 * @param [in] Word 新しい単語のデータ
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool UserDictUpdateWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord *Word);
+
+	/**
+	 * @brief ユーザー辞書から単語を削除する。
+	 *
+	 * @param [in] WordUuid 削除する単語のUUID
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool UserDictRemoveWord(const TArray<uint8_t>& WordUuid);
+	
+	/**
+	 * @brief ユーザー辞書の単語を取得する。
+	 * @returns 登録したユーザー辞書の単語マップ
+	 */
+	VOICEVOXUECORE_API TMap<FString, FVoicevoxRegisteredUserDictWord> GetUserDictWord();
+	
+protected:
+	
+	/**
+	 * @brief ユーザー辞書の単語をJSON形式で出力する。
+	 * @returns output_json
+	 */
+	VOICEVOXUECORE_API FString UserDictToJson();
+	
+	/**
+	 * @brief 他のユーザー辞書をインポートする。
+	 * @param [in] UserDict ユーザー辞書
+	 * @param [in] OtherDict インポートするユーザー辞書
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool UserDictImport(const VoicevoxUserDict* UserDict, const  VoicevoxUserDict* OtherDict);
+
+public:
+	
+	/**
+	 * @brief ユーザー辞書をファイルに保存する。
+	 * @param [in] Path 保存先のファイルパス
+	 * @returns 結果
+	 */
+	VOICEVOXUECORE_API bool UserDictSave(const FString& Path);
+	
+protected:
+	
+	/**
+	 * @brief ユーザー辞書を<b>破棄</b>する。
+	 * @param [in] UserDict 破棄対象。nullable
+	 */
+	VOICEVOXUECORE_API void UserDictDelete(VoicevoxUserDict* UserDict);
+	
+	//--------------------------------
+	// VOICEVOX CORE Error関連
 	//--------------------------------
 	
 	/**
-	 * @fn
-	 * モーラごとの音高を求める
-	 * @brief モーラごとの音素列とアクセント情報から、モーラごとの音高を求める
-	 * @param[in] Length モーラ列の長さ
-	 * @param[in] VowelPhonemeList 母音の音素列
-	 * @param[in] ConsonantPhonemeList 子音の音素列
-	 * @param[in] StartAccentList アクセントの開始位置
-	 * @param[in] EndAccentList アクセントの終了位置
-	 * @param[in] StartAccentPhraseList アクセント句の開始位置
-	 * @param[in] EndAccentPhraseList アクセント句の終了位置
-	 * @param[in] SpeakerID 話者番号
-	 * @return モーラごとの音高
-	 *
-	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
+	 * @brief エラー結果をメッセージに変換して表示
+	 * @param[in] ApiName : エラーを起こしたAPI名
+	 * @param [in] ResultCode メッセージに変換するエラーコード
 	 */
-	VOICEVOXUECORE_API TArray<float> FindPitchEachMora(int64 Length, TArray<int64> VowelPhonemeList, TArray<int64> ConsonantPhonemeList,
-											  TArray<int64> StartAccentList, TArray<int64> EndAccentList,
-											  TArray<int64> StartAccentPhraseList, TArray<int64> EndAccentPhraseList,
-											  int64 SpeakerID);
+	VOICEVOXUECORE_API void VoicevoxShowErrorResultMessage(const FString& ApiName, VoicevoxResultCode ResultCode);
 
-	//--------------------------------
-	// VOICEVOX CORE DecodeForward関連
-	//--------------------------------
-	
 	/**
-	 * @fn
-	 * 波形を求める
-	 * @brief フレームごとの音素と音高から、波形を求める
-	 * @param[in] Length フレームの長さ
-	 * @param[in] PhonemeSize 音素の種類数
-	 * @param[in] F0 フレームごとの音高
-	 * @param[in] Phoneme フレームごとの音素
-	 * @param[in] SpeakerID 話者番号
-	 * @return 音声波形
-	 *
-	 * @warning 動作確認が取れていないため、クラッシュ、もしくは予期せぬ動作をする可能性が高いです。
+	 * @brief DLL読み込み失敗をメッセージに変換して表示
+	 * @param[in] ApiName : エラーを起こしたAPI名
 	 */
-	VOICEVOXUECORE_API TArray<float> DecodeForward(int64 Length, int64 PhonemeSize, TArray<float> F0, TArray<float> Phoneme, int64 SpeakerID);
+	VOICEVOXUECORE_API void ShowDllErrorMessage(const FString& ApiName);
+	
 };
 
 DECLARE_LOG_CATEGORY_EXTERN(LogVoicevoxNativeCore, Log, All);

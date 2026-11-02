@@ -1,0 +1,37 @@
+{
+	"FileVersion": 3,
+	"Version": 4,
+	"VersionName": "1.3",
+	"FriendlyName": "VoicevoxUECore",
+	"Description": "Voicevox Core for UnrealEngine",
+	"Category": "TextToSpeech",
+	"CreatedBy": "YuukiOgino",
+	"CreatedByURL": "https://x.com/YuukiOgino",
+	"DocsURL": "https://github.com/YuukiOgino/VoicevoxEngineForUE#readme",
+	"MarketplaceURL": "",
+	"SupportURL": "https://github.com/YuukiOgino/VoicevoxEngineForUE/issues",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "VoicevoxUECore",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen",
+			"PlatformAllowList": [
+				"Win64",
+				"Mac"
+			]
+		},
+		{
+			"Name": "VoicevoxUECoreEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PreLoadingScreen",
+			"PlatformAllowList": [
+				"Win64",
+				"Mac"
+			]
+		}
+	]
+}

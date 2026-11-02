@@ -24,9 +24,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX CORE")
 	FVoicevoxAudioQuery VoicevoxAudioQuery;
 
-	//! 話者番号
+	//! スタイルID
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX CORE")
-	int64 SpeakerType = 3;
+	int32 StyleId = 3;
 
 	//! 入力したテキスト
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX CORE")

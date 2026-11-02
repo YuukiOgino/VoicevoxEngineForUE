@@ -7,6 +7,9 @@
 
 #include "Components/VoicecoxCharacterLipSyncAudioComponent.h"
 
+#include "Components/SkeletalMeshComponent.h"
+#include "Engine/Engine.h"
+
 /**
  * @brief リップシンク対象のスケルタルメッシュをセット
  */

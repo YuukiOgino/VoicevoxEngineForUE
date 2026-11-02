@@ -8,6 +8,7 @@
 #include "VoicevoxUECoreEditor.h"
 #include "AssetToolsModule.h"
 #include "AssetTypeActions/VoicevoxQueryTypeActions.h"
+#include "Subsystems/VoicevoxEditorSubsystem.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxUECoreEditorModule"
 
@@ -23,6 +24,11 @@ void FVoicevoxUECoreEditorModule::StartupModule()
 		const auto Actions = MakeShareable(new FVoicevoxQueryTypeActions(AssetCategoryBit));
 		AssetTools.RegisterAssetTypeActions(Actions);
 	}
+
+	FCoreDelegates::OnFEngineLoopInitComplete.AddLambda([]
+	{
+		GEditor->GetEditorSubsystem<UVoicevoxEditorSubsystem>()->LoadAllVvmMetaList();
+	});
 }
 
 /**

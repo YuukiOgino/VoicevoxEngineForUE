@@ -31,6 +31,32 @@ enum class ELipSyncVowelType : uint8
 	Non		UMETA(DisplayName = "無音",		ToolTip = "無音（句読点の待機時間）"),
 };
 
+/**
+ * @enum EReplaceType
+ * @brief 再変換の実行APIを示す列挙体
+ */
+UENUM(BlueprintType)
+enum class EReplaceType : uint8
+{
+	MoraData		UMETA(DisplayName = "音高・音素長",	ToolTip = "音高・音素長を、特定の声で生成しなおす"),
+	PhonemeLength	UMETA(DisplayName = "音素長",		ToolTip = "音素長を、特定の声で生成しなおす"),
+	MoraPitch		UMETA(DisplayName = "音高",			ToolTip = "音高を、特定の声で生成しなおす。"),
+};
+
+/**
+ * @enum VoicevoxUserDictWordType
+ * @brief ユーザー辞書の単語の種類。
+ */
+UENUM(BlueprintType)
+enum class EVoicevoxCoreUserDictWordType : uint8
+{
+	ProperNoun		UMETA(DisplayName = "固有名詞",	ToolTip = "固有名詞"),
+	CommonNoun 		UMETA(DisplayName = "一般名詞",	ToolTip = "一般名詞"),
+	Verb 			UMETA(DisplayName = "動詞",		ToolTip = "動詞"),
+	Adjective 		UMETA(DisplayName = "形容詞",	ToolTip = "形容詞"),
+	Suffix 			UMETA(DisplayName = "接尾辞",	ToolTip = "接尾辞"),
+};
+
 //------------------------------------------------------------------------
 // struct
 //------------------------------------------------------------------------
@@ -48,9 +74,9 @@ struct FVoicevoxStyle
 	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
 	FString Name;
 
-	//! スピーカーID
+	//! スタイルID
 	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
-	int64 Id;
+	int32 Id;
 };
 
 /**
@@ -176,35 +202,35 @@ struct FVoicevoxAudioQuery
 
 	//! 話速
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "0.5", ClampMax = "2.0", UIMin = "0.5", UIMax = "2.0"))
-	float Speed_scale;
+	float SpeedScale;
 	
 	//! 音高
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "-0.15", ClampMax = "0.15", UIMin = "-0.15", UIMax = "0.15"))
-	float Pitch_scale;
+	float PitchScale;
 
 	//! 抑揚
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "0", ClampMax = "2.0", UIMin = "0", UIMax = "2.0"))
-	float Intonation_scale;
+	float IntonationScale;
 
 	//! 音量
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "0", ClampMax = "2.0", UIMin = "0", UIMax = "2.0"))
-	float Volume_scale;
+	float VolumeScale;
 
 	//! 開始無音
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine",  meta = (ClampMin = "0", ClampMax = "1.5", UIMin = "0", UIMax = "1.5"))
-	float Pre_phoneme_length;
+	float PrePhonemeLength;
 
 	//! 終了無音
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "0", ClampMax = "1.5", UIMin = "0", UIMax = "1.5"))
-	float Post_phoneme_length;
+	float PostPhonemeLength;
 
 	//! 出力サンプリングレート
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	int Output_sampling_rate;
+	int OutputSamplingRate;
 
 	//! 出力時にステレオにするか
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	bool Output_stereo;
+	bool outputStereo;
 
 	//! カナ（AquesTalkライクな記法）
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
@@ -257,4 +283,89 @@ struct FVoicevoxCoreProperty
 	//! GPUモードフラグ
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	bool IsGpuMode;
+};
+
+/**
+ * @struct FVoicevoxCoreUserDictWord
+ * @brief ユーザー辞書の単語。(blueprint用)
+ */
+USTRUCT(BlueprintType)
+struct FVoicevoxCoreUserDictWord
+{
+	GENERATED_USTRUCT_BODY()
+	
+	//! 表記
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Surface;
+	
+	//! 読み
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Pronunciation;
+	
+	//! アクセント型
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int64 AccentType;
+	
+	//! 単語の種類
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	EVoicevoxCoreUserDictWordType WordType;
+	
+	//! 優先度
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int Priority;
+};
+
+/**
+ * @struct FVoicevoxRegisteredUserDictWord
+ * @brief ユーザー辞書に登録済み単語。
+ */
+USTRUCT(BlueprintType)
+struct FVoicevoxRegisteredUserDictWord
+{
+	GENERATED_USTRUCT_BODY()
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Surface;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int Priority;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int Context_ID;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Part_Of_Speech;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Part_Of_Speech_Detail_1;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Part_Of_Speech_Detail_2;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Part_Of_Speech_Detail_3;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Inflectional_Type;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Inflectional_Form;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Stem;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Yomi;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Pronunciation;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int Accent_Type;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int Mora_Count;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Accent_Associative_Rule;
 };

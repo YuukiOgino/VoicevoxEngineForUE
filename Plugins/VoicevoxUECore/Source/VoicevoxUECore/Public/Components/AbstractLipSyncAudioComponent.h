@@ -12,6 +12,7 @@
 #include "VoicevoxQuery.h"
 #include "VoicevoxUEDefined.h"
 #include "Components/AudioComponent.h"
+#include "Tasks/Task.h"
 #include "AbstractLipSyncAudioComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCreateSoundWave);
@@ -138,9 +139,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, EditFixedSize, Category="Voicevox|LipSync")
 	TMap<ELipSyncVowelType, FName> LipSyncMorphNameMap;
 
-	//! 再生するスピーカーID
+	//! 再生するスタイルID
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Voicevox|LipSync")
-	int64 SpeakerId = 3;
+	int32 StyleId = 3;
 
 	//! リップシンクの実行速度（最大値までの時間、0だとリップシンク実行が行われない）
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Voicevox|LipSync", meta=(ClampMin = "0.1", ClampMax = "2.0", UIMin = "0.1", UIMax = "2.0"))

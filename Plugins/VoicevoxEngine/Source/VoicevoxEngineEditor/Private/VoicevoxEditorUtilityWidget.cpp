@@ -16,7 +16,10 @@
 #include "Factories/VoicevoxQueryFactory.h"
 #include "Factories/VoicevoxSoundWaveFactory.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Engine/Engine.h"
+#include "HAL/PlatformFileManager.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 DEFINE_LOG_CATEGORY(LogVoicevoxEditor);
 
@@ -37,7 +40,7 @@ void UVoicevoxEditorUtilityWidget::SaveAudioQueryAssets(const int64 SpeakerType,
     UVoicevoxQueryFactory* Factory = NewObject<UVoicevoxQueryFactory>();
     Factory->EditAudioQuery = NewObject<UVoicevoxQuery>();
     Factory->EditAudioQuery->VoicevoxAudioQuery = EditorAudioQueryPtr;
-    Factory->EditAudioQuery->SpeakerType = SpeakerType;
+    Factory->EditAudioQuery->StyleId = SpeakerType;
     Factory->EditAudioQuery->Text = Text;
     Factory->EditAudioQuery->YomikataText = Yomikata;
     Factory->AddToRoot();
@@ -121,7 +124,7 @@ void UVoicevoxEditorUtilityWidget::LoadAudioQueryAssets()
     FOpenAssetDialogConfig OpenAssetDialogConfig;
     OpenAssetDialogConfig.DialogTitleOverride = FText::FromString(TEXT("Open Voicevox Audio Query"));
     OpenAssetDialogConfig.DefaultPath = "/Game";
-#if (ENGINE_MINOR_VERSION == 0)
+#if (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION == 0)
     OpenAssetDialogConfig.AssetClassNames.Add(UVoicevoxQuery::StaticClass()->GetFName());
 #else
     OpenAssetDialogConfig.AssetClassNames.Add(UVoicevoxQuery::StaticClass()->GetClassPathName());
@@ -138,7 +141,7 @@ void UVoicevoxEditorUtilityWidget::LoadAudioQueryAssets()
                if(const UVoicevoxQuery* Query = Cast<UVoicevoxQuery>(Obj))
                {
                    EditorAudioQueryPtr = Query->VoicevoxAudioQuery;
-                   OnLoadAudioQuery(Query->SpeakerType, Query->Text, Query->YomikataText);
+                   OnLoadAudioQuery(Query->StyleId, Query->Text, Query->YomikataText);
                }
             }
         });
