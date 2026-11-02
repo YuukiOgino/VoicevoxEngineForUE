@@ -28,7 +28,7 @@ chmod +x download
 * open_jtalk_dic_utf_8-1.11フォルダ
 * modelフォルダ
 * libvoicevox_core.dylib
-* libonnxruntime.1.13.1.dylib
+* libvoicevox_onnxruntime.1.17.3.dylib
 
 ## GPUモードの場合
 

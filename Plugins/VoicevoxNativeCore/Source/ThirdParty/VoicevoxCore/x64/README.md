@@ -11,8 +11,8 @@
 * modelフォルダ
 * voicevox_core.dll
 * voicevox_core.lib
-* onnxruntime.dll
-* onnxruntime_providers_shared.dll
+* voicevox_onnxruntime.dll
+* voicevox_onnxruntime.lib
 
 ## GPUモードの場合
 
