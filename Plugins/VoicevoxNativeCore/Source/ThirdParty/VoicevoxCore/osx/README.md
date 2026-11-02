@@ -13,9 +13,9 @@
 また、ターミナルで以下のコマンドを実施すれば、ダウンローダー経由からライブラリを入手できます。
 
 ```
-curl -sSfL https://github.com/VOICEVOX/voicevox_core/releases/0.16.0/download/download-osx-arm64 -o download
+curl -sSfL https://github.com/VOICEVOX/voicevox_core/releases/download/0.16.4/download-osx-arm64 -o download
 chmod +x download
-./download -v 0.16.0
+./download --c-api-version 0.16.0
 ```
 
 > [!WARNING]
