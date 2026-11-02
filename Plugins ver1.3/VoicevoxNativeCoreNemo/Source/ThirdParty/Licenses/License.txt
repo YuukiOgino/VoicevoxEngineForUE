@@ -1,0 +1,2 @@
+VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコードの公開が不要な別ライセンスのデュアルライセンスとなります。
+It inherits the license of VOICEVOX ENGINE and is dual licensed under LGPL v3 and a separate license that does not require the source code to be disclosed.
