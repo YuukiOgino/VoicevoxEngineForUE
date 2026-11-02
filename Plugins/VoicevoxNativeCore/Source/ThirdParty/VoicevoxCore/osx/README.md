@@ -1,7 +1,7 @@
 # VOICEVOX CORE、Open JTalkをこのフォルダに配置してください。
 
 - 格納例<br/>
-<img width="726" alt="スクリーンショット 2024-11-15 2 46 03" src="https://github.com/user-attachments/assets/11ac1bd9-24f6-49c4-9ff6-176cf04c2230">
+<img width="674" height="326" alt="スクリーンショット 2026-11-03 8 54 42" src="https://github.com/user-attachments/assets/fcc43ee4-551e-4920-8c98-e5c1c5388639" />
 
 
 ## CPUモードの場合
@@ -21,7 +21,7 @@ chmod +x download
 > [!WARNING]
 > ダウンローダーの最新版(Latest)はVOICEVOX CORE 0.16.ｘ以上のダウンロードに対応しており、15.9以下のバージョンはフォルダ構造の違いからダウンロードできません。<br/>
 > ダウンローダーは必ず16.ｘから使用してください。<br/>
-> https://github.com/VOICEVOX/voicevox_core/releases/tag/0.16.0
+> https://github.com/VOICEVOX/voicevox_core/releases/tag/0.16.4
 
 以下のdylib及びファイルを格納してください。
 
