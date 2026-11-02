@@ -9,18 +9,21 @@
 
 ## Windows
 
-* UnrealEngine5.0～5.5
+* UnrealEngine5.0～5.7
 * Windows10以上
 * VisualStudio2022もしくはJetBrains Rider
 
 ## Mac
 
-* UnrealEngine5.2～5.5(Apple シリコン)
+* UnrealEngine5.2～5.7(Apple シリコン)
 * 12.5 Monterey 以降
 * XCode14.1～15.4
 
 > [!NOTE]
-> UE5.6からモデルデータの読み込みに必ず失敗してしまうため、UE5.6以降は当面の間サポート対象外とさせていただきます。<br/>
+> VOICEVOX NEMO COREは16がリリースされてないため、ver2.0以上から非対応になります。
+
+> [!NOTE]
+> Ver1.xで使用しているVOICEVOX CORE15.xはUE5.6からモデルデータの読み込みに必ず失敗してしまうため、Ver1.xを使用する場合はUE5.5以下を使用してください。<br/>
 > ↓原因と思われる現象<br/>
 > https://github.com/onnx/onnx/issues/6313<br/>
 > https://github.com/Hiroshiba/vv_core_inference/issues/27
@@ -36,13 +39,13 @@ VOICEVOXのマルチエンジン機能をUEで実現させるために、プラ�
 - C++のみ
   - VoicevoxUECoreプラグイン
   - VoicevoxNativeCoreプラグイン
-  - VoicevoxNativeCoreNemoプラグイン（NEMOを使用する場合）
+  - VoicevoxNativeCoreNemoプラグイン（NEMOを使用する場合、かつVer1.3のみ）
 
 - Blueprint＋C++
   - VoicevoxUECoreプラグイン
   - VoicevoxEngineプラグイン
   - VoicevoxNativeCoreプラグイン
-  - VoicevoxNativeCoreNemoプラグイン（NEMOを使用する場合）
+  - VoicevoxNativeCoreNemoプラグイン（NEMOを使用する場合、かつVer1.3のみ）
 
 ## VoicevoxUECoreプラグイン
 
@@ -71,6 +74,7 @@ VOICEVOXのマルチエンジン機能をUEで実現させるために、プラ�
 
 - VOICEVOX NEMO COREライブラリを読み込むためのプラグインです。
 - VOICEVOX製品版におけるプラグイン機能を再現しています。
+- Ver1.3のみ使用可能です。
 - VOICEVOX NEMO CORE製品版をこのフォルダに配置します。
   - COREで共通使用する動的ライブラリ及びOpenJtakはVoicevoxNativeCoreプラグインで行っています。
   - 上記仕様のため、VoicevoxNativeCoreNemoプラグイン単体では動作しません。
@@ -80,10 +84,9 @@ VOICEVOXのマルチエンジン機能をUEで実現させるために、プラ�
 VOICEVOX COREのReadMEに従って、CPUモード、もしくはGPUモードの動作に必要なライブラリを取得します。
 
 > [!NOTE]
+> v2.0は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
+> [VOICEVOX CORE 0.16.0](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.16.0)<br/><br/>
 > v1.3は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
-> [VOICEVOX CORE 0.14.6](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.14.6)<br/>
-> [VOICEVOX NEMO CORE 0.14.0](https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.14.0)<br/>
-> 
 > [VOICEVOX CORE 0.15.7](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.7)<br/>
 > [VOICEVOX NEMO CORE 0.15.0](https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.15.0)<br/>
 
@@ -187,8 +190,9 @@ sh "/Users/Shared/Epic Games/UE_5.2/Engine/Build/BatchFiles/Mac/GenerateProjectF
 
 # 各クラスについて
 
-v1.0で破壊的変更を行ったため、記事を再度作成しています。
-もうしばらくお待ちください。
+[ver2.0はZennに記事を公開しています。](https://zenn.dev/yuukiogino/articles/8159c04cc86f48)
+
+ver1.3に関してはVOICEVOX　NEMO CORE以外では使用しないため、クラス説明に関してはソースコードで確認をお願いします。
 
 基本的にUVoicevoxCoreSubsystemを経由して各COREライブラリのAPIにアクセスします。
 
@@ -211,10 +215,10 @@ v1.2で追加されたリップシンクコンポーネントは以下の記事�
 
 # 現在判明している不具合
 
-- UE5.6からmodelフォルダにある各binファイルの読み込みに失敗してしまう。
-  - 以下のissuesに対応方法が書かれていますが、検証していないので動作保証はしません。
-    - https://github.com/Hiroshiba/vv_core_inference/issues/27
-  - VOICEVOX CORE 0.16.xを使用することで修正される可能性あり？
+- ~~UE5.6からmodelフォルダにある各binファイルの読み込みに失敗してしまう。~~（解決済）
+  - ~~以下のissuesに対応方法が書かれていますが、検証していないので動作保証はしません。~~
+    - ~~https://github.com/Hiroshiba/vv_core_inference/issues/27~~
+  - VOICEVOX CORE 0.16.0以上で修正されたため、ver2.0以上であれば正常に動作します。（v2.0）
 
 - ~~COREのAPIを非同期で行った場合、特にRunTextToSpeechからの戻りを待たずにプレイ終了したり、続けてRunTextToSpeechを実行するとクラッシュします。~~（解決済）
   - 修正しました。（v1.2）
@@ -245,6 +249,8 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 
 # 更新履歴
 
+- 2026/11/03
+  - 2.0 大型アップデートを実施。以下、更新内容要約。<br/>・VOICEVOX CORE 0.16.0対応。<br/>・UE5.6対応。<br/>・UE5.7対応。<br/>・メニュー追加。<br/>・ユーザー辞書対応。
 - 2025/07/31
   - 1.3 パッケージングができない不具合を修正。
 - 2025/06/29
