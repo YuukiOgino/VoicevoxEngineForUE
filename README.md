@@ -84,7 +84,7 @@ VOICEVOXのマルチエンジン機能をUEで実現させるために、プラ�
 VOICEVOX COREのReadMEに従って、CPUモード、もしくはGPUモードの動作に必要なライブラリを取得します。
 
 > [!NOTE]
-> v2.0は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
+> v2.1は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
 > [VOICEVOX CORE 0.16.0](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.16.0)<br/><br/>
 > v1.3は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
 > [VOICEVOX CORE 0.15.7](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.7)<br/>
@@ -95,10 +95,10 @@ VOICEVOX COREのReadMEに従って、CPUモード、もしくはGPUモードの�
 v1.0以上の場合、各プラグインのREADMEに詳しい説明を記載したので、そちらを見てください。
 
 [Windows VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/README.md)<br/>
-[Windows VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/x64/README.md)
- 
+[Windows VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins%20ver1.3/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/x64/README.md)
+
 [Mac VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/README.md)<br/>
-[Mac VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/osx/README.md)
+[Mac VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins%20ver1.3/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/osx/README.md)
 
 <details>
 <summary>v0.2～0.6の場合</summary>
@@ -128,10 +128,10 @@ VOICEVOX CORE 0.14.6はONNX Runtimeが含まれているため、別途ダウン
 v1.0以上の場合、各プラグインのREADMEに詳しい説明を記載したので、そちらを見てください。
 
 [Windows VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/x64/README.md)<br/>
-[Windows VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/x64/README.md)
+[Windows VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins%20ver1.3/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/x64/README.md)
  
 [Mac VOICEVOX CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/osx/README.md)<br/>
-[Mac VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/osx/README.md)
+[Mac VOICEVOX NEMO CORE設置場所のReadME](https://github.com/YuukiOgino/VoicevoxEngineForUE/blob/main/Plugins%20ver1.3/VoicevoxNativeCoreNemo/Source/ThirdParty/VoicevoxCoreNemo/osx/README.md)
 
 <details>
 <summary>v0.6以下の場合</summary>
@@ -249,6 +249,8 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 
 # 更新履歴
 
+- 2026/11/03
+  - 2.1 VOICEVOX CORE 0.16.0 CUDA版の対応が漏れていたため、修正。
 - 2026/11/03
   - 2.0 大型アップデートを実施。以下、更新内容要約。<br/>・VOICEVOX CORE 0.16.0対応。<br/>・UE5.6対応。<br/>・UE5.7対応。<br/>・メニュー追加。<br/>・ユーザー辞書対応。
 - 2025/07/31
