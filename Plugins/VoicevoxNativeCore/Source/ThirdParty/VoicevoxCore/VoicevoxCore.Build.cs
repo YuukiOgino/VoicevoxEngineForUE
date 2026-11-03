@@ -30,6 +30,7 @@ public class VoicevoxCore : ModuleRules
 			
 			// Add the import library
 			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "voicevox_core.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "voicevox_onnxruntime.lib"));
 
 			// Delay-load the DLL, so we can load it from the right place first
 			PublicDelayLoadDLLs.Add("voicevox_core.dll");
@@ -39,31 +40,40 @@ public class VoicevoxCore : ModuleRules
 			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/voicevox_core.dll", Path.Combine(ModuleDirectory, platformName, "voicevox_core.dll"));
 			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/voicevox_onnxruntime.dll", Path.Combine(ModuleDirectory, platformName, "voicevox_onnxruntime.dll"));
 
-			var providerSharedPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_shared.dll");
+			var providerSharedLibPath = Path.Combine(ModuleDirectory, platformName, "voicevox_onnxruntime_providers_shared.lib");
+			if (File.Exists(providerSharedLibPath))
+			{
+				PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "voicevox_onnxruntime_providers_shared.lib"));
+			}
+			
+			var providerSharedPath = Path.Combine(ModuleDirectory, platformName, "voicevox_onnxruntime_providers_shared.dll");
 			if (File.Exists(providerSharedPath))
 			{
-				PublicDelayLoadDLLs.Add("onnxruntime_providers_shared.dll");
-				RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/onnxruntime_providers_shared.dll", providerSharedPath);
+				PublicDelayLoadDLLs.Add("voicevox_onnxruntime_providers_shared.dll");
+				RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/voicevox_onnxruntime_providers_shared.dll", providerSharedPath);
 			}
 			
 			// onnxruntimeのCUDE関連DLLが存在する場合は必要なDLL一式すべてコピーする
-			var cudaPath = Path.Combine(ModuleDirectory, platformName, "onnxruntime_providers_cuda.dll");
+			var cudaPath = Path.Combine(ModuleDirectory, platformName, "voicevox_onnxruntime_providers_cuda.dll");
 			if (File.Exists(cudaPath))
 			{
+				// VOICEVOX CORE 16からlibが追加
+				PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "voicevox_onnxruntime_providers_cuda.lib"));
+				PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "zlibwapi.lib"));
+				
 				var cudaDllList = new[]
 				{
-					"onnxruntime_providers_cuda.dll",
-					"onnxruntime_providers_shared.dll",
-					"onnxruntime_providers_tensorrt.dll",
-					"cublas64_11.dll",
-					"cublasLt64_11.dll",
-					"cudart64_110.dll",
+					"voicevox_onnxruntime_providers_cuda.dll",
+					"cublas64_12.dll",
+					"cublasLt64_12.dll",
+					"cudart64_12.dll",
 					"cudnn_adv_infer64_8.dll",
 					"cudnn_cnn_infer64_8.dll",
 					"cudnn_ops_infer64_8.dll",
 					"cudnn64_8.dll",
-					"cufft64_10.dll",
-					"curand64_10.dll"
+					"cufft64_11.dll",
+					"curand64_10.dll",
+					"zlibwapi.dll"
 				};
 				foreach (var variable in cudaDllList)
 				{
