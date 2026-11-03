@@ -248,7 +248,7 @@ struct FVoicevoxLipSync
 
 	//! 母音
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	ELipSyncVowelType VowelType;
+	ELipSyncVowelType VowelType = ELipSyncVowelType::Non;
 	
 	//! 長さ
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
@@ -308,7 +308,7 @@ struct FVoicevoxCoreUserDictWord
 	
 	//! 単語の種類
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	EVoicevoxCoreUserDictWordType WordType;
+	EVoicevoxCoreUserDictWordType WordType = EVoicevoxCoreUserDictWordType::ProperNoun;
 	
 	//! 優先度
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
