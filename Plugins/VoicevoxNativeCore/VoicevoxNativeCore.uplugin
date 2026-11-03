@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 6,
-	"VersionName": "2.1",
+	"Version": 7,
+	"VersionName": "2.2",
 	"FriendlyName": "VoicevoxNativeCore",
 	"Description": "VOICEVOX CORE Native Library",
 	"Category": "TextToSpeech",
