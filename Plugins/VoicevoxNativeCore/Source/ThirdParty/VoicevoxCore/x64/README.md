@@ -66,3 +66,13 @@ Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/download/0.
 * cudnn64_8.dll
 * cufft64_11.dll
 * curand64_10.dll
+* zlibwapi.dll
+* zlibwapi.lib
+
+### CUDA版でGPUを有効にしてクラッシュした場合
+
+zlibwapiのダウンロードが、セキュリティソフトなど何かしらの理由で失敗していると思われます。
+
+[[GHA] Windows CUDA用のzlibwapiが消滅している](http://github.com/VOICEVOX/voicevox_engine/issues/1761)
+
+上記issueを参考に手動でzlibwapiをダウンロードしてください。2026/11時点ではwinmergeのリンクからダウンロードできるのを確認しています。
