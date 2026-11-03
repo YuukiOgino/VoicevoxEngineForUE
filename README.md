@@ -9,15 +9,15 @@
 
 ## Windows
 
-* UnrealEngine5.0～5.7
+* UnrealEngine5.0～5.8
 * Windows10以上
 * VisualStudio2022もしくはJetBrains Rider
 
 ## Mac
 
-* UnrealEngine5.2～5.7(Apple シリコン)
+* UnrealEngine5.2～5.8(Apple シリコン)
 * 12.5 Monterey 以降
-* XCode14.1～15.4
+* XCode14.1～27.2もしくはJetBrains Rider
 
 > [!NOTE]
 > VOICEVOX NEMO COREは16がリリースされてないため、ver2.0以上から非対応になります。
@@ -84,7 +84,7 @@ VOICEVOXのマルチエンジン機能をUEで実現させるために、プラ�
 VOICEVOX COREのReadMEに従って、CPUモード、もしくはGPUモードの動作に必要なライブラリを取得します。
 
 > [!NOTE]
-> v2.1は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
+> v2.2は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
 > [VOICEVOX CORE 0.16.0](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.16.0)<br/><br/>
 > v1.3は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
 > [VOICEVOX CORE 0.15.7](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.7)<br/>
@@ -192,7 +192,7 @@ sh "/Users/Shared/Epic Games/UE_5.2/Engine/Build/BatchFiles/Mac/GenerateProjectF
 
 [ver2.0はZennに記事を公開しています。](https://zenn.dev/yuukiogino/articles/8159c04cc86f48)
 
-ver1.3に関してはVOICEVOX　NEMO CORE以外では使用しないため、クラス説明に関してはソースコードで確認をお願いします。
+ver1.3に関してはVOICEVOX NEMO CORE以外では使用しないため、クラス説明に関してはソースコードで確認をお願いします。
 
 基本的にUVoicevoxCoreSubsystemを経由して各COREライブラリのAPIにアクセスします。
 
@@ -249,6 +249,8 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 
 # 更新履歴
 
+- 2026/11/04
+  - 2.2 UE5.8対応、Macで一部ライブラリの読み込みに失敗してしまう不具合修正。
 - 2026/11/03
   - 2.1 VOICEVOX CORE 0.16.0 CUDA版の対応が漏れていたため、修正。
 - 2026/11/03
