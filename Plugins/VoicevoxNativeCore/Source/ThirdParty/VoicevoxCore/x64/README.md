@@ -27,7 +27,7 @@
 ダウンローダー　DirectML版コマンド例
 ```PowerShell
 Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/download/0.16.0/download-windows-x64.exe -OutFile ./download.exe
-./download.exe -v 0.16.0 --device directml
+./download.exe --c-api-version 0.16.0 --exclude c-api --devices directml
 ```
 
 ### DirectML版
@@ -38,8 +38,8 @@ Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/download/0.
 * modelフォルダ
 * voicevox_core.dll
 * voicevox_core.lib
-* onnxruntime.dll
-* onnxruntime_providers_shared.dll
+* voicevox_onnxruntime.dll
+* voicevox_onnxruntime.lib
 * DirectML.dll
 
 ### CUDA版
@@ -50,8 +50,8 @@ Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/download/0.
 * modelフォルダ
 * voicevox_core.dll
 * voicevox_core.lib
-* onnxruntime.dll
-* onnxruntime_providers_shared.dll
+* voicevox_onnxruntime.dll
+* voicevox_onnxruntime.lib
 * onnxruntime_providers_cuda.dll
 * onnxruntime_providers_shared.dll
 * onnxruntime_providers_tensorrt.dll
