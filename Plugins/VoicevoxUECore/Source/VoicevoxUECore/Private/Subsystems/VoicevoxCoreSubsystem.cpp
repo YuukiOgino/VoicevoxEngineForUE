@@ -224,6 +224,62 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxCoreSubsystem::SynthesizerReplace(const E
 }
 
 //--------------------------------
+// VOICEVOX CORE Sing関連
+//--------------------------------
+
+/**
+ * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+ */
+FFrameAudioQuery UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameAudioQuery(const FScore& Score, VoicevoxStyleId StyleId) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameAudioQuery(Score, StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+ */
+TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameF0(const FScore& Score, const FFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameF0(Score, FrameAudioQuery, StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+ */
+TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameVolume(const FScore& Score, const FFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameVolume(Score, FrameAudioQuery, StyleId);
+}
+
+/**
+ * @brief 歌唱音声合成を行う。
+ */
+TArray<uint8> UVoicevoxCoreSubsystem::SynthesizerFrameSynthesis(const FFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const
+{
+	return NativeInstance->SynthesizerFrameSynthesis(FrameAudioQuery, StyleId);
+}
+
+//--------------------------------
+// VOICEVOX CORE validate関連
+//--------------------------------
+	
+/**
+ * @brief 与えられたJSONが指定した型として不正であるときエラーを返す。
+ */
+VoicevoxResultCode UVoicevoxCoreSubsystem::VoicevoxValidate(const EVoicevoxCoreValidateType Type, const FString& Json) const
+{
+	return NativeInstance->VoicevoxValidate(Type, Json);
+}
+
+/**
+ * @brief 与えられた2つのJSONの組み合わせが不正であるときエラーを返す。
+ */
+VoicevoxResultCode UVoicevoxCoreSubsystem::VoicevoxValidate(EVoicevoxCoreMultiValidateType Type, const FString& Json, const FString& Json2) const
+{
+	return NativeInstance->VoicevoxValidate(Type, Json, Json2);
+}
+
+//--------------------------------
 // VOICEVOX CORE LipSync関連
 //--------------------------------
 	
@@ -271,11 +327,11 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 
 		if (Pause_mora.Vowel.Equals(TEXT("pau"), ESearchCase::IgnoreCase))
 		{
-			List.Add({ELipSyncVowelType::Non, Pause_mora.Vowel_length / AudioQuery.SpeedScale, false, false});
+			List.Add({.VowelType = ELipSyncVowelType::Non, .Length = Pause_mora.Vowel_length / AudioQuery.SpeedScale, .IsConsonant = false, .IsLabialOrPlosive = false});
 		}
 	}
 
-	List.Add({ELipSyncVowelType::Non, AudioQuery.PostPhonemeLength / AudioQuery.SpeedScale, false, false});
+	List.Add({.VowelType = ELipSyncVowelType::Non, .Length = AudioQuery.PostPhonemeLength / AudioQuery.SpeedScale, .IsConsonant = false, .IsLabialOrPlosive = false});
 	
 	return List;
 }

@@ -366,6 +366,107 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxApiObject::SynthesizerReplace(const ERepl
 }
 
 //--------------------------------
+// VOICEVOX CORE Sing関連
+//--------------------------------
+
+/**
+ * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+ */
+FFrameAudioQuery UVoicevoxApiObject::SynthesizerCreateSingFrameAudioQuery(const FScore& Score, const VoicevoxStyleId StyleId)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (FFrameAudioQuery FrameAudioQuery = Subsystem->SynthesizerCreateSingFrameAudioQuery(Score, StyleId); FrameAudioQuery.OutputSamplingRate != 0)
+		{
+			return FrameAudioQuery;
+		}
+	}
+
+	return FFrameAudioQuery{};
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+ */
+TArray<float> UVoicevoxApiObject::SynthesizerCreateSingFrameF0(const FScore& Score, const FFrameAudioQuery& FrameAudioQuery, const VoicevoxStyleId StyleId)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (TArray<float> F0 = Subsystem->SynthesizerCreateSingFrameF0(Score, FrameAudioQuery, StyleId); !F0.IsEmpty())
+		{
+			return F0;
+		}
+	}
+
+	return  TArray<float>();
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+ */
+TArray<float> UVoicevoxApiObject::SynthesizerCreateSingFrameVolume(const FScore& Score, const FFrameAudioQuery& FrameAudioQuery, const VoicevoxStyleId StyleId)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (TArray<float> Volumes = Subsystem->SynthesizerCreateSingFrameVolume(Score, FrameAudioQuery, StyleId); !Volumes.IsEmpty())
+		{
+			return Volumes;
+		}
+	}
+
+	return  TArray<float>();
+}
+
+/**
+ * @brief 歌唱音声合成を行う。
+ */
+TArray<uint8> UVoicevoxApiObject::SynthesizerFrameSynthesis(const FFrameAudioQuery& FrameAudioQuery, const VoicevoxStyleId StyleId)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (TArray<uint8> Wav = Subsystem->SynthesizerFrameSynthesis(FrameAudioQuery, StyleId); !Wav.IsEmpty()) return Wav;
+	}
+
+	return TArray<uint8>();
+}
+	
+//--------------------------------
+// VOICEVOX CORE validate関連
+//--------------------------------
+
+/**
+ * @brief 与えられたJSONが指定した型として不正であるときエラーを返す。
+ */
+VoicevoxResultCode UVoicevoxApiObject::VoicevoxValidate(const EVoicevoxCoreValidateType Type, const FString& Json)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (const VoicevoxResultCode Code = Subsystem->VoicevoxValidate(Type, Json); Code != VoicevoxResultCode::VOICEVOX_RESULT_ANALYZE_TEXT_ERROR) return Code;
+	}
+
+	return VoicevoxResultCode::VOICEVOX_RESULT_ANALYZE_TEXT_ERROR;
+}
+
+/**
+ * @brief 与えられた2つのJSONの組み合わせが不正であるときエラーを返す。
+ */
+VoicevoxResultCode UVoicevoxApiObject::VoicevoxValidate(const EVoicevoxCoreMultiValidateType Type, const FString& Json, const FString& Json2)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (const VoicevoxResultCode Code = Subsystem->VoicevoxValidate(Type, Json, Json2); Code != VoicevoxResultCode::VOICEVOX_RESULT_ANALYZE_TEXT_ERROR) return Code;
+	}
+
+	return VoicevoxResultCode::VOICEVOX_RESULT_ANALYZE_TEXT_ERROR;
+}
+
+//--------------------------------
 // VOICEVOX CORE Property関連
 //--------------------------------
 
