@@ -411,6 +411,75 @@ public:
 	VOICEVOXUECORE_API virtual VoicevoxSynthesisOptions MakeDefaultSynthesisOptions() override;
 	
 	//--------------------------------
+	// VOICEVOX CORE Sing関連
+	//--------------------------------
+	
+	/**
+	 * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+	 *
+	 * @param [in] Score  楽譜情報
+	 * @param [in] StyleId スタイルID
+	 *
+	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
+	 */
+	VOICEVOXUECORE_API virtual FFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(FScore Score, VoicevoxStyleId StyleId) override;
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	VOICEVOXUECORE_API virtual TArray<float> SynthesizerCreateSingFrameF0(FScore Score, FFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) override;
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID
+	 *
+	 * @returns フレームごとの音量
+	 */
+	VOICEVOXUECORE_API virtual TArray<float> SynthesizerCreateSingFrameVolume(FScore Score, FFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) override;
+
+	/**
+	 * @brief 歌唱音声合成を行う。
+	 *
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID
+	 *
+	 * @returns 音声データを出力する先のポインタ。
+	 */
+	VOICEVOXUECORE_API virtual TArray<uint8> SynthesizerFrameSynthesis(FFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) override;
+	
+	//--------------------------------
+	// VOICEVOX CORE validate関連
+	//--------------------------------
+	
+	/**
+	 * @brief 与えられたJSONが指定した型として不正であるときエラーを返す。
+	 * @param [in] Type チェックしたい型の種類
+	 * @param [in] Json JSON文字列
+	 *
+	 * @returns 成功時には ::VOICEVOX_RESULT_OK 、失敗時には対応するエラーコード
+	 */
+	VOICEVOXUECORE_API VoicevoxResultCode VoicevoxValidate(EVoicevoxCoreValidateType Type, const FString& Json);
+
+	/**
+	 * @brief 与えられた2つのJSONの組み合わせが不正であるときエラーを返す。
+	 * @param [in] Type チェックしたい組み合わせの種類
+	 * @param [in] Json JSON文字列（16.4時点では`Score`型のJSONのみ）
+	 * @param [in] Json2 JSON文字列 その２（16.4時点では`FrameAudioQuery`型のJSONのみ）
+	 *
+	 * @returns 成功時には ::VOICEVOX_RESULT_OK 、失敗時には対応するエラーコード
+	 */
+	VOICEVOXUECORE_API VoicevoxResultCode VoicevoxValidate(EVoicevoxCoreMultiValidateType Type, const FString& Json, const FString& Json2);
+	
+	//--------------------------------
 	// VOICEVOX CORE Property関連
 	//--------------------------------
 	

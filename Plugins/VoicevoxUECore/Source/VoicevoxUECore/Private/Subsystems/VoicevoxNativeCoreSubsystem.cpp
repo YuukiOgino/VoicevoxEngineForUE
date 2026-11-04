@@ -1146,6 +1146,301 @@ VoicevoxSynthesisOptions UVoicevoxNativeCoreSubsystem::MakeDefaultSynthesisOptio
 }
 
 //--------------------------------
+// VOICEVOX CORE Sing関連
+//--------------------------------
+	
+/**
+ * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+ */
+FFrameAudioQuery UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameAudioQuery(const FScore Score, const VoicevoxStyleId StyleId)
+{
+	FFrameAudioQuery AudioQuery{};
+	
+	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
+	if (!bIsInit) return AudioQuery; 
+	if (!IsValidCoreLibraryHandle()) return AudioQuery;
+		
+	const FString FuncName = "voicevox_synthesizer_create_sing_frame_audio_query"; 
+	using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxSynthesizer*, const char*, VoicevoxStyleId, char**);
+
+#if PLATFORM_WINDOWS
+	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+
+	if (!FuncPtr)
+	{
+		ShowDllErrorMessage(FuncName);
+	}
+	else
+	{
+		const FString OutputJson = ScoreConverterToJsonString(Score);
+		char* Output = nullptr;
+		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*OutputJson), StyleId, &Output);
+			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		{
+			VoicevoxShowErrorResultMessage(FuncName, Result);
+		}
+		else
+		{
+			FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(Output), &AudioQuery, 0, 0);
+			JsonFree(Output);
+		}
+	}
+	return AudioQuery;
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+ */
+TArray<float> UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameF0(const FScore Score, const FFrameAudioQuery FrameAudioQuery, const VoicevoxStyleId StyleId)
+{
+	TArray<float> F0;
+	F0.Empty();
+	
+	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
+	if (!bIsInit) return F0; 
+	if (!IsValidCoreLibraryHandle()) return F0;
+	
+	const FString FuncName = "voicevox_synthesizer_create_sing_frame_f0"; 
+	using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxSynthesizer*, const char*, const char*, VoicevoxStyleId, char**);
+
+#if PLATFORM_WINDOWS
+	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+
+	if (!FuncPtr)
+	{
+		ShowDllErrorMessage(FuncName);
+	}
+	else
+	{
+		char* Output = nullptr;
+		const FString OutputScoreJson = ScoreConverterToJsonString(Score);
+		const FString OutputFrameJson = FrameAudioQueryConverterToJsonString(FrameAudioQuery);
+		
+		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*OutputScoreJson), TCHAR_TO_UTF8(*OutputFrameJson), StyleId, &Output);
+			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		{
+			VoicevoxShowErrorResultMessage(FuncName, Result);
+		}
+		else
+		{
+			const FString JsonString = UTF8_TO_TCHAR(Output);
+			const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
+			if (TSharedPtr<FJsonValue> JsonValue; FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid())
+			{
+				if (const TArray<TSharedPtr<FJsonValue>>* JsonArray = nullptr; JsonValue->TryGetArray(JsonArray))
+				{
+					for (const TSharedPtr<FJsonValue>& Element : *JsonArray)
+					{
+						F0.Add(Element->AsNumber());
+					}
+				}
+			}
+		}
+	}
+	
+	return F0;
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+ */
+TArray<float> UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameVolume(const FScore Score, const FFrameAudioQuery FrameAudioQuery, const VoicevoxStyleId StyleId)
+{
+	TArray<float> Volumes;
+	Volumes.Empty();
+	
+	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
+	if (!bIsInit) return Volumes; 
+	if (!IsValidCoreLibraryHandle()) return Volumes;
+	
+	const FString FuncName = "voicevox_synthesizer_create_sing_frame_volume"; 
+	using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxSynthesizer*, const char*, const char*, VoicevoxStyleId, char**);
+
+#if PLATFORM_WINDOWS
+	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+
+	if (!FuncPtr)
+	{
+		ShowDllErrorMessage(FuncName);
+	}
+	else
+	{
+		char* Output = nullptr;
+		const FString OutputScoreJson = ScoreConverterToJsonString(Score);
+		const FString OutputFrameJson = FrameAudioQueryConverterToJsonString(FrameAudioQuery);
+		
+		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*OutputScoreJson), TCHAR_TO_UTF8(*OutputFrameJson), StyleId, &Output);
+			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		{
+			VoicevoxShowErrorResultMessage(FuncName, Result);
+		}
+		else
+		{
+			const FString JsonString = UTF8_TO_TCHAR(Output);
+			const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
+			if (TSharedPtr<FJsonValue> JsonValue; FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid())
+			{
+				if (const TArray<TSharedPtr<FJsonValue>>* JsonArray = nullptr; JsonValue->TryGetArray(JsonArray))
+				{
+					for (const TSharedPtr<FJsonValue>& Element : *JsonArray)
+					{
+						Volumes.Add(Element->AsNumber());
+					}
+				}
+			}
+		}
+	}
+	
+	return Volumes;
+}
+
+/**
+ * @brief 歌唱音声合成を行う。
+ *
+ * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+ * @param [in] StyleId スタイルID
+ *
+ * @returns 音声データを出力する先のポインタ。
+ */
+TArray<uint8> UVoicevoxNativeCoreSubsystem::SynthesizerFrameSynthesis(FFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId)
+{
+	TArray<uint8> PCMData;
+	PCMData.Empty();
+	
+	if (!IsValidCoreLibraryHandle()) return PCMData;
+	
+	const FString FuncName = "voicevox_synthesizer_frame_synthesis"; 
+	using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxSynthesizer*, const char*, VoicevoxStyleId, uintptr_t*, uint8_t**);
+
+#if PLATFORM_WINDOWS
+	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+
+	if (!FuncPtr)
+	{
+		ShowDllErrorMessage(FuncName);
+	}
+	else
+	{
+		uint8* OutputWAV = nullptr;
+		uintptr_t OutPutSize = 0;
+		const FString OutputFrameJson = FrameAudioQueryConverterToJsonString(FrameAudioQuery);
+		
+		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*OutputFrameJson), StyleId, &OutPutSize, &OutputWAV);
+			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
+		{
+			VoicevoxShowErrorResultMessage(FuncName, Result);
+		}
+		else
+		{
+			PCMData.Init(0, OutPutSize);
+			FMemory::Memcpy(PCMData.GetData(), OutputWAV, OutPutSize);
+			WavFree(OutputWAV);
+		}
+	}
+	
+	return PCMData;
+}
+
+//--------------------------------
+// VOICEVOX CORE validate関連
+//--------------------------------
+	
+/**
+ * @brief 与えられたJSONが指定した型として不正であるときエラーを返す。
+ */
+VoicevoxResultCode UVoicevoxNativeCoreSubsystem::VoicevoxValidate(const EVoicevoxCoreValidateType Type, const FString& Json)
+{
+	if (!IsValidCoreLibraryHandle()) return VoicevoxResultCode::VOICEVOX_RESULT_ANALYZE_TEXT_ERROR;
+	
+	FString FuncName; 
+	switch (Type)
+	{
+	case EVoicevoxCoreValidateType::AudioQuery:
+		FuncName = "voicevox_audio_query_validate"; 
+		break;
+	case EVoicevoxCoreValidateType::AccentPhrase:
+		FuncName = "voicevox_accent_phrase_validate"; 
+		break;
+	case EVoicevoxCoreValidateType::Mora:
+		FuncName = "voicevox_mora_validate"; 
+		break;
+	case EVoicevoxCoreValidateType::Score:
+		FuncName = "voicevox_score_validate"; 
+		break;
+	case EVoicevoxCoreValidateType::Note:
+		FuncName = "voicevox_note_validate"; 
+		break;
+	case EVoicevoxCoreValidateType::FrameAudioQuery:
+		FuncName = "voicevox_frame_audio_query_validate"; 
+		break;
+	case EVoicevoxCoreValidateType::FramePhoneme:
+		FuncName = "voicevox_frame_phoneme_validate"; 
+		break;
+	}
+	
+	using DLL_Function = VoicevoxResultCode(*)(const char*);
+#if PLATFORM_WINDOWS
+	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		
+	if (!FuncPtr)
+	{
+		ShowDllErrorMessage(FuncName);
+		return VoicevoxResultCode::VOICEVOX_RESULT_ANALYZE_TEXT_ERROR;;
+	}
+	return FuncPtr(TCHAR_TO_UTF8(*Json));
+}
+
+/**
+ * @brief 与えられた2つのJSONの組み合わせが不正であるときエラーを返す。
+ * @param [in] Type チェックしたい組み合わせの種類
+ * @param [in] Json JSON文字列
+ * @param [in] Json2 JSON文字列 その２
+ *
+ * @returns 成功時には ::VOICEVOX_RESULT_OK 、失敗時には ::VOICEVOX_RESULT_INVALID_AUDIO_QUERY_ERROR
+ */
+VoicevoxResultCode UVoicevoxNativeCoreSubsystem::VoicevoxValidate(const EVoicevoxCoreMultiValidateType Type, const FString& Json, const FString& Json2)
+{
+	if (!IsValidCoreLibraryHandle()) return VoicevoxResultCode::VOICEVOX_RESULT_ANALYZE_TEXT_ERROR;
+	
+	FString FuncName; 
+	switch (Type)
+	{
+	case EVoicevoxCoreMultiValidateType::EnsureCompatible:
+		FuncName = "voicevox_ensure_compatible"; // `Score`型のJSONとFrameAudioQuery`型のJSONの組み合わせ
+		break;
+	}
+	
+	using DLL_Function = VoicevoxResultCode(*)(const char*, const char*);
+#if PLATFORM_WINDOWS
+	const auto FuncPtr = static_cast<DLL_Function>(FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName));
+#elif PLATFORM_MAC
+	const auto FuncPtr = (DLL_Function)FPlatformProcess::GetDllExport(CoreLibraryHandle, *FuncName);
+#endif 
+		
+	if (!FuncPtr)
+	{
+		ShowDllErrorMessage(FuncName);
+		return VoicevoxResultCode::VOICEVOX_RESULT_ANALYZE_TEXT_ERROR;;
+	}
+	return FuncPtr(TCHAR_TO_UTF8(*Json), TCHAR_TO_UTF8(*Json2));
+}
+
+//--------------------------------
 // VOICEVOX CORE Property関連
 //--------------------------------
 

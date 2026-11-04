@@ -266,11 +266,11 @@ struct FVoicevoxAudioQuery
 };
 
 /**
- * @struct FNote
+ * @struct FSingNote
  * @brief VOICEVOXのNote構造体
  */
 USTRUCT(BlueprintType)
-struct  FNote
+struct FSingNote
 {
 	GENERATED_USTRUCT_BODY()
 	
@@ -302,7 +302,7 @@ struct  FScore
 	
 	//! 音符のリスト
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	TArray<FNote> Notes;
+	TArray<FSingNote> Notes;
 };
 
 /**

@@ -130,3 +130,99 @@ TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxApiSubsystem::JsonObject
 	
 	return Result;
 }
+
+/**
+ * @brief AccentPhraseの配列を無名配列のJSONに変換する
+ */
+FString UVoicevoxApiSubsystem::ScoreConverterToJsonString(FScore Score)
+{
+	const TSharedRef<FJsonObject> Obj = MakeShared<FJsonObject>();
+	TArray<TSharedPtr<FJsonValue>> NoteJsonArray;
+	
+	for (const auto& [ID, Key, Frame_Length, Lyric] : Score.Notes)
+	{
+		TSharedPtr<FJsonObject> NoteObj = MakeShared<FJsonObject>();
+		
+		// IDにnullか文字列を入れる必要があるため、UStructToJsonObjectは使用しない
+		if (ID.IsEmpty())
+		{
+			NoteObj->SetObjectField(TEXT("id"), nullptr);
+		}
+		else
+		{
+			NoteObj->SetStringField(TEXT("id"),  ID);
+		}
+		
+		NoteObj->SetNumberField(TEXT("key"),  Key);
+		NoteObj->SetNumberField(TEXT("frame_length"),  Frame_Length);
+		NoteObj->SetStringField(TEXT("lyric"),  Lyric);
+		
+		NoteJsonArray.Add(MakeShared<FJsonValueObject>(NoteObj));
+	}
+	
+	Obj->SetArrayField(TEXT("notes"), NoteJsonArray);
+	
+	FString OutputString;
+	const auto Writer = TJsonWriterFactory<>::Create(&OutputString);
+	FJsonSerializer::Serialize(Obj, Writer);
+	
+	return OutputString;
+}
+
+/**
+ * @brief 楽譜情報をJSONに変換する
+ * @param [in] FrameAudioQuery : フレームごとの音声合成用のクエリ
+ * @return FrameAudioQueryのJSON
+ */
+FString UVoicevoxApiSubsystem::FrameAudioQueryConverterToJsonString(FFrameAudioQuery FrameAudioQuery)
+{
+	const TSharedRef<FJsonObject> Obj = MakeShared<FJsonObject>();
+	
+	TArray<TSharedPtr<FJsonValue>> F0JsonArray;
+	for (const float& f : FrameAudioQuery.F0)
+	{
+		F0JsonArray.Add(MakeShared<FJsonValueNumber>(f));
+	}
+	
+	Obj->SetArrayField(TEXT("f0"), F0JsonArray);
+	
+	TArray<TSharedPtr<FJsonValue>> VolumeJsonArray;
+	for (const float& v : FrameAudioQuery.Volume)
+	{
+		VolumeJsonArray.Add(MakeShared<FJsonValueNumber>(v));
+	}
+	
+	Obj->SetArrayField(TEXT("volume"), VolumeJsonArray);
+	
+	TArray<TSharedPtr<FJsonValue>> PhonemeJsonArray;
+	for (const auto& [Phoneme, Frame_Length, Note_ID] : FrameAudioQuery.Phoneme)
+	{
+		TSharedPtr<FJsonObject> FramePhonemeObj = MakeShared<FJsonObject>();
+		
+		// note_idにnullか文字列を入れる必要があるため、UStructToJsonObjectは使用しない
+		if (Note_ID.IsEmpty())
+		{
+			FramePhonemeObj->SetObjectField(TEXT("note_id"), nullptr);
+		}
+		else
+		{
+			FramePhonemeObj->SetStringField(TEXT("note_id"),  Note_ID);
+		}
+		
+		FramePhonemeObj->SetStringField(TEXT("phoneme"),  Phoneme);
+		FramePhonemeObj->SetNumberField(TEXT("frame_length"),  Frame_Length);
+		
+		PhonemeJsonArray.Add(MakeShared<FJsonValueObject>(FramePhonemeObj));
+	}
+	
+	Obj->SetArrayField(TEXT("phonemes"), PhonemeJsonArray);
+	Obj->SetNumberField(TEXT("volumeScale"), FrameAudioQuery.VolumeScale);
+	Obj->SetNumberField(TEXT("outputSamplingRate"), FrameAudioQuery.OutputSamplingRate);
+	Obj->SetBoolField(TEXT("outputStereo"), FrameAudioQuery.bOutputStereo);
+	
+	FString OutputString;
+	const auto Writer = TJsonWriterFactory<>::Create(&OutputString);
+	FJsonSerializer::Serialize(Obj, Writer);
+		
+	return OutputString;
+}
