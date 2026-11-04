@@ -59,7 +59,6 @@ public class VoicevoxCore : ModuleRules
 			{
 				// VOICEVOX CORE 16からlibが追加
 				PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "voicevox_onnxruntime_providers_cuda.lib"));
-				PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "zlibwapi.lib"));
 				
 				var cudaDllList = new[]
 				{
