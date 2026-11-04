@@ -6,6 +6,8 @@
  */
 
 #include "VoicevoxApiObject.h"
+
+#include "Engine/Engine.h"
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 #include "Subsystems/VoicevoxNativeCoreSubsystem.h"
 #include "Runtime/Launch/Resources/Version.h"

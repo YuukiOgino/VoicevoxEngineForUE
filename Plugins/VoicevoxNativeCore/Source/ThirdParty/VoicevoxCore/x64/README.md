@@ -67,7 +67,6 @@ Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/download/0.
 * cufft64_11.dll
 * curand64_10.dll
 * zlibwapi.dll
-* zlibwapi.lib
 
 ### CUDA版でGPUを有効にしてクラッシュした場合
 

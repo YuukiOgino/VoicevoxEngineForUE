@@ -59,7 +59,6 @@ public class VoicevoxCore : ModuleRules
 			{
 				// VOICEVOX CORE 16からlibが追加
 				PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "voicevox_onnxruntime_providers_cuda.lib"));
-				PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, platformName, "zlibwapi.lib"));
 				
 				var cudaDllList = new[]
 				{
@@ -108,7 +107,7 @@ public class VoicevoxCore : ModuleRules
 			
 			// Ensure that the DLL is staged along with the executable
 			RuntimeDependencies.Add($"$(PluginDir)/Binaries/ThirdParty/{thirdPartyName}/{binPlatformName}/libvoicevox_core.dylib", Path.Combine(ModuleDirectory, platformName, "libvoicevox_core.dylib"));
-			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/llibvoicevox_onnxruntime.1.17.3.dylib", Path.Combine(ModuleDirectory, platformName, "libvoicevox_onnxruntime.1.17.3.dylib"));
+			RuntimeDependencies.Add($"$(ProjectDir)/Binaries/{binPlatformName}/libvoicevox_onnxruntime.1.17.3.dylib", Path.Combine(ModuleDirectory, platformName, "libvoicevox_onnxruntime.1.17.3.dylib"));
 			
 			// Open JTalkライブラリフォルダもコピーする
 			AddRuntimeDependenciesDirectory(OpenJtalkDicName, platformName, binPlatformName, true);

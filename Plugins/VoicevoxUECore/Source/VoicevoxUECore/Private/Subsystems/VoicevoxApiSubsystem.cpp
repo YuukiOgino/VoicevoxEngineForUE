@@ -116,7 +116,7 @@ TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxApiSubsystem::JsonObject
 	
 	for (const auto& Pair : RootObject->Values)
 	{
-		FString Key = Pair.Key;
+		FString Key = GetData(Pair.Key);
 
 		TSharedPtr<FJsonObject> EntryObj = Pair.Value->AsObject();
 		if (!EntryObj.IsValid()) continue;
