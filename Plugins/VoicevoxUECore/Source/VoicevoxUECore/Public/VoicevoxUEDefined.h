@@ -44,7 +44,7 @@ enum class EReplaceType : uint8
 };
 
 /**
- * @enum VoicevoxUserDictWordType
+ * @enum EVoicevoxCoreUserDictWordType
  * @brief ユーザー辞書の単語の種類。
  */
 UENUM(BlueprintType)
@@ -55,6 +55,34 @@ enum class EVoicevoxCoreUserDictWordType : uint8
 	Verb 			UMETA(DisplayName = "動詞",		ToolTip = "動詞"),
 	Adjective 		UMETA(DisplayName = "形容詞",	ToolTip = "形容詞"),
 	Suffix 			UMETA(DisplayName = "接尾辞",	ToolTip = "接尾辞"),
+};
+
+
+
+/**
+ * @enum EVoicevoxCoreValidateType
+ * @brief 型チェックの種類
+ */
+UENUM(BlueprintType)
+enum class EVoicevoxCoreValidateType : uint8
+{
+	AudioQuery			UMETA(DisplayName = "AudioQuery型",			ToolTip = "AudioQuery型"),
+	AccentPhrase 		UMETA(DisplayName = "AccentPhrase型",		ToolTip = "AccentPhrase型"),
+	Mora 				UMETA(DisplayName = "Mora型",				ToolTip = "Mora型"),
+	Score 				UMETA(DisplayName = "Score型",				ToolTip = "Score型"),
+	Note 				UMETA(DisplayName = "Note型",				ToolTip = "Note型"),
+	FrameAudioQuery 	UMETA(DisplayName = "FrameAudioQuery型",	ToolTip = "FrameAudioQuery型"),
+	FramePhoneme		UMETA(DisplayName = "FramePhoneme型",		ToolTip = "FramePhoneme型"),
+};
+
+/**
+ * @enum EVoicevoxCoreMultiValidateType
+ * @brief 組み合わせチェックの種類
+ */
+UENUM(BlueprintType)
+enum class EVoicevoxCoreMultiValidateType : uint8
+{
+	EnsureCompatible		UMETA(DisplayName = "楽譜と歌唱合成",		ToolTip = "楽譜と歌唱合成用クエリの組み合わせ"),
 };
 
 //------------------------------------------------------------------------
@@ -235,6 +263,102 @@ struct FVoicevoxAudioQuery
 	//! カナ（AquesTalkライクな記法）
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Kana;
+};
+
+/**
+ * @struct FNote
+ * @brief VOICEVOXのNote構造体
+ */
+USTRUCT(BlueprintType)
+struct  FNote
+{
+	GENERATED_USTRUCT_BODY()
+	
+	//! ID
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString ID;
+	
+	//! 音階
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int Key = 0;
+	
+	//! 音符のフレーム長
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int Frame_Length = 0;
+	
+	//! 音符の歌詞
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString Lyric;
+};
+
+/**
+ * @struct FScore
+ * @brief VOICEVOXのScore構造体
+ */
+USTRUCT(BlueprintType)
+struct  FScore
+{
+	GENERATED_USTRUCT_BODY()
+	
+	//! 音符のリスト
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	TArray<FNote> Notes;
+};
+
+/**
+ * @struct FFramePhoneme
+ * @brief VOICEVOXのFramePhoneme構造体
+ */
+USTRUCT(BlueprintType)
+struct FFramePhoneme 
+{
+	GENERATED_USTRUCT_BODY()
+	
+	//! 音素
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString  Phoneme;
+	
+	//! 音素のフレーム長
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int Frame_Length = 0;
+	
+	//! 音符のID
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	FString  Note_ID;
+};
+
+/**
+ * @struct FFrameAudioQuery
+ * @brief VOICEVOXのFrameAudioQuery構造体
+ */
+USTRUCT(BlueprintType)
+struct FFrameAudioQuery 
+{
+	GENERATED_USTRUCT_BODY()
+	
+	//! フレームごとの基本周波数
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	TArray<float> F0;
+
+	//! フレームごとの音量
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	TArray<float> Volume;
+	
+	//! 音素のリスト
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	TArray<FFramePhoneme> Phoneme;
+
+	//! 全体の音量
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	float VolumeScale = 0;
+	
+	//! 音声データの出力サンプリングレート
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	int OutputSamplingRate = 0;
+	
+	//! 音声データをステレオ出力するか否か
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")		
+	bool bOutputStereo = true;
 };
 
 /**
