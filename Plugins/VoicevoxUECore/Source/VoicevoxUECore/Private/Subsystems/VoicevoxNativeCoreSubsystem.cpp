@@ -489,12 +489,6 @@ bool UVoicevoxNativeCoreSubsystem::LoadModel(const VoicevoxStyleId StyleId)
 
 	for (const FString& FileName : FoundFiles)
 	{
-		// ソング機能のVVMファイルは特殊な編集が必要になるため、除外する
-		if (FString FileNameOnly = FPaths::GetBaseFilename(FileName); FileNameOnly.StartsWith(TEXT("s")))
-		{
-			continue;
-		}
-		
 		VoicevoxVoiceModelFile* Model = nullptr;
 		if (!VoiceModelFileOpen(FileName, &Model))
 		{
@@ -600,12 +594,6 @@ bool UVoicevoxNativeCoreSubsystem::AllLoadVoiceModel()
 
 	for (const FString& FileName : FoundFiles)
 	{
-		// ソング機能のVVMファイルは特殊な編集が必要になるため、除外する
-		if (FString FileNameOnly = FPaths::GetBaseFilename(FileName); FileNameOnly.StartsWith(TEXT("s")))
-		{
-			continue;
-		}
-		
 		VoicevoxVoiceModelFile* Model = nullptr;
 		if (!VoiceModelFileOpen(FileName, &Model))
 		{
@@ -1152,9 +1140,9 @@ VoicevoxSynthesisOptions UVoicevoxNativeCoreSubsystem::MakeDefaultSynthesisOptio
 /**
  * @brief 楽譜から歌唱音声合成用のクエリを作成する。
  */
-FFrameAudioQuery UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameAudioQuery(const FScore Score, const VoicevoxStyleId StyleId)
+FVoicevoxFrameAudioQuery UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameAudioQuery(const FVoicevoxScore Score, const VoicevoxStyleId StyleId)
 {
-	FFrameAudioQuery AudioQuery{};
+	FVoicevoxFrameAudioQuery AudioQuery{};
 	
 	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
 	if (!bIsInit) return AudioQuery; 
@@ -1194,7 +1182,7 @@ FFrameAudioQuery UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameAudioQu
 /**
  * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
  */
-TArray<float> UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameF0(const FScore Score, const FFrameAudioQuery FrameAudioQuery, const VoicevoxStyleId StyleId)
+TArray<float> UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameF0(const FVoicevoxScore Score, const FVoicevoxFrameAudioQuery FrameAudioQuery, const VoicevoxStyleId StyleId)
 {
 	TArray<float> F0;
 	F0.Empty();
@@ -1250,7 +1238,7 @@ TArray<float> UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameF0(const F
 /**
  * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
  */
-TArray<float> UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameVolume(const FScore Score, const FFrameAudioQuery FrameAudioQuery, const VoicevoxStyleId StyleId)
+TArray<float> UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameVolume(const FVoicevoxScore Score, const FVoicevoxFrameAudioQuery FrameAudioQuery, const VoicevoxStyleId StyleId)
 {
 	TArray<float> Volumes;
 	Volumes.Empty();
@@ -1311,7 +1299,7 @@ TArray<float> UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameVolume(con
  *
  * @returns 音声データを出力する先のポインタ。
  */
-TArray<uint8> UVoicevoxNativeCoreSubsystem::SynthesizerFrameSynthesis(FFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId)
+TArray<uint8> UVoicevoxNativeCoreSubsystem::SynthesizerFrameSynthesis(FVoicevoxFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId)
 {
 	TArray<uint8> PCMData;
 	PCMData.Empty();
@@ -1552,11 +1540,6 @@ TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetAllVoiceModelFileMetaList
 
 	for (const FString& FileName : FoundFiles)
 	{
-		// ソング機能のVVMファイルは特殊な編集が必要になるため、除外する
-		if (FString FileNameOnly = FPaths::GetBaseFilename(FileName); FileNameOnly.StartsWith(TEXT("s")))
-		{
-			continue;
-		}
 		
 		VoicevoxVoiceModelFile* Model = nullptr;
 		if (!VoiceModelFileOpen(FileName, &Model))
@@ -1608,12 +1591,6 @@ TMap<int, FString> UVoicevoxNativeCoreSubsystem::GetVvmFileNameMapToStyleId()
 
 	for (const FString& FileName : FoundFiles)
 	{
-		// ソング機能のVVMファイルは特殊な編集が必要になるため、除外する
-		if (FString FileNameOnly = FPaths::GetBaseFilename(FileName); FileNameOnly.StartsWith(TEXT("s")))
-		{
-			continue;
-		}
-		
 		VoicevoxVoiceModelFile* Model = nullptr;
 		if (!VoiceModelFileOpen(FileName, &Model))
 		{

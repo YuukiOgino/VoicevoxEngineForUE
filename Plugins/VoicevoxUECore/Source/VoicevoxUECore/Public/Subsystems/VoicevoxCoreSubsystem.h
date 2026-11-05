@@ -324,7 +324,7 @@ public:
 	 *
 	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
 	 */
-	 FFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(const FScore& Score, VoicevoxStyleId StyleId) const;
+	 FVoicevoxFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(const FVoicevoxScore& Score, VoicevoxStyleId StyleId) const;
 
 	/**
 	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
@@ -335,7 +335,7 @@ public:
 	 *
 	 * @returns フレームごとの基本周波数
 	 */
-	 TArray<float> SynthesizerCreateSingFrameF0(const FScore& Score, const FFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const;
+	 TArray<float> SynthesizerCreateSingFrameF0(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const;
 
 	/**
 	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
@@ -346,7 +346,7 @@ public:
 	 *
 	 * @returns フレームごとの音量
 	 */
-	 TArray<float> SynthesizerCreateSingFrameVolume(const FScore& Score, const FFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const;
+	 TArray<float> SynthesizerCreateSingFrameVolume(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const;
 
 	/**
 	 * @brief 歌唱音声合成を行う。
@@ -356,7 +356,7 @@ public:
 	 *
 	 * @returns 音声データを出力する先のポインタ。
 	 */
-	 TArray<uint8> SynthesizerFrameSynthesis(const FFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const;
+	 TArray<uint8> SynthesizerFrameSynthesis(const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const;
 	
 	//--------------------------------
 	// VOICEVOX CORE validate関連

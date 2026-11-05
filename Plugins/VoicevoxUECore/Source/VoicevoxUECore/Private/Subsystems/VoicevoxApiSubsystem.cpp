@@ -134,7 +134,7 @@ TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxApiSubsystem::JsonObject
 /**
  * @brief AccentPhraseの配列を無名配列のJSONに変換する
  */
-FString UVoicevoxApiSubsystem::ScoreConverterToJsonString(FScore Score)
+FString UVoicevoxApiSubsystem::ScoreConverterToJsonString(FVoicevoxScore Score)
 {
 	const TSharedRef<FJsonObject> Obj = MakeShared<FJsonObject>();
 	TArray<TSharedPtr<FJsonValue>> NoteJsonArray;
@@ -174,7 +174,7 @@ FString UVoicevoxApiSubsystem::ScoreConverterToJsonString(FScore Score)
  * @param [in] FrameAudioQuery : フレームごとの音声合成用のクエリ
  * @return FrameAudioQueryのJSON
  */
-FString UVoicevoxApiSubsystem::FrameAudioQueryConverterToJsonString(FFrameAudioQuery FrameAudioQuery)
+FString UVoicevoxApiSubsystem::FrameAudioQueryConverterToJsonString(FVoicevoxFrameAudioQuery FrameAudioQuery)
 {
 	const TSharedRef<FJsonObject> Obj = MakeShared<FJsonObject>();
 	

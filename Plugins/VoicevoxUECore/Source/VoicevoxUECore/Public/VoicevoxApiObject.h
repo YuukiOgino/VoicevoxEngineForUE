@@ -273,7 +273,7 @@ class UVoicevoxApiObject : public UObject
 	 *
 	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
 	 */
-	VOICEVOXUECORE_API FFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(const FScore& Score, VoicevoxStyleId StyleId);
+	VOICEVOXUECORE_API FVoicevoxFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(const FVoicevoxScore& Score, VoicevoxStyleId StyleId);
 
 	/**
 	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
@@ -284,7 +284,7 @@ class UVoicevoxApiObject : public UObject
 	 *
 	 * @returns フレームごとの基本周波数
 	 */
-	VOICEVOXUECORE_API TArray<float> SynthesizerCreateSingFrameF0(const FScore& Score, const FFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId);
+	VOICEVOXUECORE_API TArray<float> SynthesizerCreateSingFrameF0(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId);
 
 	/**
 	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
@@ -295,7 +295,7 @@ class UVoicevoxApiObject : public UObject
 	 *
 	 * @returns フレームごとの音量
 	 */
-	VOICEVOXUECORE_API TArray<float> SynthesizerCreateSingFrameVolume(const FScore& Score, const FFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId);
+	VOICEVOXUECORE_API TArray<float> SynthesizerCreateSingFrameVolume(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId);
 
 	/**
 	 * @brief 歌唱音声合成を行う。
@@ -305,7 +305,7 @@ class UVoicevoxApiObject : public UObject
 	 *
 	 * @returns 音声データを出力する先のポインタ。
 	 */
-	VOICEVOXUECORE_API TArray<uint8> SynthesizerFrameSynthesis(const FFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId);
+	VOICEVOXUECORE_API TArray<uint8> SynthesizerFrameSynthesis(const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId);
 	
 	//--------------------------------
 	// VOICEVOX CORE validate関連

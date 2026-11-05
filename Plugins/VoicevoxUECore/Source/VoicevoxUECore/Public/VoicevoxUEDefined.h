@@ -266,11 +266,11 @@ struct FVoicevoxAudioQuery
 };
 
 /**
- * @struct FSingNote
+ * @struct FVoicevoxNote
  * @brief VOICEVOXのNote構造体
  */
 USTRUCT(BlueprintType)
-struct FSingNote
+struct FVoicevoxNote
 {
 	GENERATED_USTRUCT_BODY()
 	
@@ -292,25 +292,25 @@ struct FSingNote
 };
 
 /**
- * @struct FScore
+ * @struct FVoicevoxScore
  * @brief VOICEVOXのScore構造体
  */
 USTRUCT(BlueprintType)
-struct  FScore
+struct FVoicevoxScore
 {
 	GENERATED_USTRUCT_BODY()
 	
 	//! 音符のリスト
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	TArray<FSingNote> Notes;
+	TArray<FVoicevoxNote> Notes;
 };
 
 /**
- * @struct FFramePhoneme
+ * @struct FVoicevoxFramePhoneme
  * @brief VOICEVOXのFramePhoneme構造体
  */
 USTRUCT(BlueprintType)
-struct FFramePhoneme 
+struct FVoicevoxFramePhoneme 
 {
 	GENERATED_USTRUCT_BODY()
 	
@@ -328,11 +328,11 @@ struct FFramePhoneme
 };
 
 /**
- * @struct FFrameAudioQuery
+ * @struct FVoicevoxFrameAudioQuery
  * @brief VOICEVOXのFrameAudioQuery構造体
  */
 USTRUCT(BlueprintType)
-struct FFrameAudioQuery 
+struct FVoicevoxFrameAudioQuery 
 {
 	GENERATED_USTRUCT_BODY()
 	
@@ -346,7 +346,7 @@ struct FFrameAudioQuery
 	
 	//! 音素のリスト
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	TArray<FFramePhoneme> Phoneme;
+	TArray<FVoicevoxFramePhoneme> Phoneme;
 
 	//! 全体の音量
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")

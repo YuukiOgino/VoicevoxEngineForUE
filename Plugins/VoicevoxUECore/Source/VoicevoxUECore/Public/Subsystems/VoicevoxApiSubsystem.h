@@ -67,14 +67,14 @@ protected:
 	 * @param [in] Score : 楽譜情報
 	 * @return ScoreのJSON
 	 */
-	VOICEVOXUECORE_API static FString ScoreConverterToJsonString(FScore Score);
+	VOICEVOXUECORE_API static FString ScoreConverterToJsonString(FVoicevoxScore Score);
 	
 	/**
 	 * @brief 楽譜情報をJSONに変換する
 	 * @param [in] FrameAudioQuery : フレームごとの音声合成用のクエリ
 	 * @return FrameAudioQueryのJSON
 	 */
-	VOICEVOXUECORE_API static FString FrameAudioQueryConverterToJsonString(FFrameAudioQuery FrameAudioQuery);
+	VOICEVOXUECORE_API static FString FrameAudioQueryConverterToJsonString(FVoicevoxFrameAudioQuery FrameAudioQuery);
 	
 public:
 
@@ -296,7 +296,7 @@ public:
 	 *
 	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
 	 */
-	virtual FFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(FScore Score, VoicevoxStyleId StyleId) { return FFrameAudioQuery(); };
+	virtual FVoicevoxFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(FVoicevoxScore Score, VoicevoxStyleId StyleId) { return FVoicevoxFrameAudioQuery(); };
 
 	/**
 	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
@@ -307,7 +307,7 @@ public:
 	 *
 	 * @returns フレームごとの基本周波数
 	 */
-	virtual TArray<float> SynthesizerCreateSingFrameF0(FScore Score, FFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) { return TArray<float>(); }
+	virtual TArray<float> SynthesizerCreateSingFrameF0(FVoicevoxScore Score, FVoicevoxFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) { return TArray<float>(); }
 
 	/**
 	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
@@ -318,7 +318,7 @@ public:
 	 *
 	 * @returns フレームごとの音量
 	 */
-	virtual TArray<float> SynthesizerCreateSingFrameVolume(FScore Score, FFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) { return TArray<float>(); }
+	virtual TArray<float> SynthesizerCreateSingFrameVolume(FVoicevoxScore Score, FVoicevoxFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) { return TArray<float>(); }
 
 	/**
 	 * @brief 歌唱音声合成を行う。
@@ -328,7 +328,7 @@ public:
 	 *
 	 * @returns 音声データを出力する先のポインタ。
 	 */
-	virtual TArray<uint8> SynthesizerFrameSynthesis(FFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) { return TArray<uint8>(); }
+	virtual TArray<uint8> SynthesizerFrameSynthesis(FVoicevoxFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) { return TArray<uint8>(); }
 	
 	//--------------------------------
 	// VOICEVOX CORE Property関連
