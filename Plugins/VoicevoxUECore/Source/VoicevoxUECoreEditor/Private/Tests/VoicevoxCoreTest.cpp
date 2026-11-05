@@ -101,7 +101,7 @@ bool FVoicevoxCoreAPSimpleTest::RunTest(const FString& Parameters)
 		return false;
 	}
 	
-	UE_LOG(LogTemp, Log, TEXT("VOICEVOX CORE AudioQuery:RunTest"));
+	UE_LOG(LogTemp, Log, TEXT("VOICEVOX CORE AccentPhrases:RunTest"));
 	if (GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Initialize(true, 0, false))
 	{
 		if (GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->LoadModel(3))
@@ -168,7 +168,7 @@ bool FVoicevoxCoreMoraSimpleTest::RunTest(const FString& Parameters)
 		return false;
 	}
 	
-	UE_LOG(LogTemp, Log, TEXT("VOICEVOX CORE AudioQuery:RunTest"));
+	UE_LOG(LogTemp, Log, TEXT("VOICEVOX CORE Mora:RunTest"));
 	// 母音、子音、ッ、句読点、句読点なし（アクセントの区切り）をチェック。バージョンアップによる正常パターンの変更をチェックする目的のため、エラーパターンは考慮しない
 	TArray<FVoicevoxMora> Moras;
 	Moras.Add({.Text = TEXT("オ"), .Consonant = TEXT(""), .Consonant_Length = 0, .Vowel = TEXT("o"), .Vowel_Length = 0.19f, .Pitch = 5.76f});
@@ -190,6 +190,41 @@ bool FVoicevoxCoreMoraSimpleTest::RunTest(const FString& Parameters)
 			UE_LOG(LogTemp, Error, TEXT("%s"), *MOutputJson);
 			return false;
 		}
+	}
+				
+	UE_LOG(LogTemp, Log, TEXT("VOICEVOX_RESULT:OK"));
+	return true;
+}
+
+/**
+ * @brief JSON(Score型)を検証するテストコード
+ */
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FVoicevoxCoreScoreSimpleTest, "VOICEVOX.ScoreTest", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FVoicevoxCoreScoreSimpleTest::RunTest(const FString& Parameters)
+{
+	// GEngineが有効か確認
+	if (!TestNotNull(TEXT("GEngine"), GEngine))
+	{
+		UE_LOG(LogTemp, Error, TEXT("GEngine null"));
+		return false;
+	}
+	
+	UE_LOG(LogTemp, Log, TEXT("VOICEVOX CORE Score:RunTest"));
+	
+	FVoicevoxScore Score{};
+	Score.Notes.Add({"", 10, 10, ""});
+	Score.Notes.Add({"", 10, 10, "か"});
+	Score.Notes.Add({"あ122", 50, 10, "か"});
+			
+	// JSONに変換して正しい型になっているかをチェックする
+	FString OutputJson = FVoicevoxJsonObjectConverter::ScoreConverterToJsonString(Score);
+
+	if (const VoicevoxResultCode MCode = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->VoicevoxValidate(EVoicevoxCoreValidateType::Score, OutputJson); 
+		MCode == VoicevoxResultCode::VOICEVOX_RESULT_INVALID_MORA_ERROR)
+	{
+		UE_LOG(LogTemp, Error, TEXT("VOICEVOX_RESULT:INVALID_MORA_ERROR"));
+		UE_LOG(LogTemp, Error, TEXT("%s"), *OutputJson);
+		return false;
 	}
 				
 	UE_LOG(LogTemp, Log, TEXT("VOICEVOX_RESULT:OK"));
