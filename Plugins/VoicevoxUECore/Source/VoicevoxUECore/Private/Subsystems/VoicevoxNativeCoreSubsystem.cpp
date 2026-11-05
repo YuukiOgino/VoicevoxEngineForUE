@@ -1524,7 +1524,7 @@ TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetVoiceModelFileMetaList(co
 /**
  * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
  */
-TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetAllVoiceModelFileMetaList()
+TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetAllVoiceModelFileMetaList(const EGetMetaType Type)
 {
 	const FString PlatformFolderName = GetPlatformFolderName();
 	if (PlatformFolderName.IsEmpty())
@@ -1540,6 +1540,15 @@ TArray<FVoicevoxMeta> UVoicevoxNativeCoreSubsystem::GetAllVoiceModelFileMetaList
 
 	for (const FString& FileName : FoundFiles)
 	{
+		// ソング機能のVVMファイルかを判定
+		if (FString FileNameOnly = FPaths::GetBaseFilename(FileName); FileNameOnly.StartsWith(TEXT("s")))
+		{
+			if (Type == EGetMetaType::Talk) continue;
+		}
+		else
+		{
+			if (Type == EGetMetaType::Song) continue;
+		}
 		
 		VoicevoxVoiceModelFile* Model = nullptr;
 		if (!VoiceModelFileOpen(FileName, &Model))

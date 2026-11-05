@@ -57,8 +57,6 @@ enum class EVoicevoxCoreUserDictWordType : uint8
 	Suffix 			UMETA(DisplayName = "接尾辞",	ToolTip = "接尾辞"),
 };
 
-
-
 /**
  * @enum EVoicevoxCoreValidateType
  * @brief 型チェックの種類
@@ -83,6 +81,18 @@ UENUM(BlueprintType)
 enum class EVoicevoxCoreMultiValidateType : uint8
 {
 	EnsureCompatible		UMETA(DisplayName = "楽譜と歌唱合成",		ToolTip = "楽譜と歌唱合成用クエリの組み合わせ"),
+};
+
+/**
+ * @enum EGetMetaType
+ * @brief 取得するMeta情報を示す列挙体
+ */
+UENUM(BlueprintType)
+enum class EGetMetaType : uint8
+{
+	All		UMETA(DisplayName = "全て",		ToolTip = "全てのMetaを取得する"),
+	Talk	UMETA(DisplayName = "トーク",	ToolTip = "トークに対応したMetaを取得"),
+	Song	UMETA(DisplayName = "ソング",	ToolTip = "ソングに対応したMetaを取得"),
 };
 
 //------------------------------------------------------------------------
@@ -174,7 +184,7 @@ struct FVoicevoxMora
 
 	//! 子音長さ
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Consonant_length = 0;
+	float Consonant_Length = 0;
 
 	//! 母音
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
@@ -182,7 +192,7 @@ struct FVoicevoxMora
 
 	//! 母音長さ
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	float Vowel_length = 0;
+	float Vowel_Length = 0;
 
 	//! イントネーション
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
@@ -208,11 +218,11 @@ struct FVoicevoxAccentPhrase
 
 	//! 句読点モーラ情報（カナで句読点が存在する場合、無音時間が格納）
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	FVoicevoxMora Pause_mora;
+	FVoicevoxMora Pause_Mora;
 
 	//! 疑問文か
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	bool Is_interrogative = false;
+	bool bIs_Interrogative = false;
 };
 
 /**
@@ -226,7 +236,7 @@ struct FVoicevoxAudioQuery
 	
 	//! アクセントリスト
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	TArray<FVoicevoxAccentPhrase> Accent_phrases;
+	TArray<FVoicevoxAccentPhrase> Accent_Phrases;
 
 	//! 話速
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "0.5", ClampMax = "2.0", UIMin = "0.5", UIMax = "2.0"))
@@ -252,13 +262,21 @@ struct FVoicevoxAudioQuery
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "0", ClampMax = "1.5", UIMin = "0", UIMax = "1.5"))
 	float PostPhonemeLength = 0;
 
+	//! 句読点などの無音時間
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "0", ClampMax = "2.0", UIMin = "0", UIMax = "2.0"))
+	float PauseLength = 1.0f;
+	
+	//! 句読点などの無音時間（倍率）
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (ClampMin = "0", ClampMax = "2.0", UIMin = "0", UIMax = "2.0"))
+	float PauseLengthScale = 1.0f;
+	
 	//! 出力サンプリングレート
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	int OutputSamplingRate = 0;
 
 	//! 出力時にステレオにするか
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	bool outputStereo = false;
+	bool bOutputStereo = false;
 
 	//! カナ（AquesTalkライクな記法）
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")

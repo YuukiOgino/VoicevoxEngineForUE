@@ -252,7 +252,7 @@ FVoicevoxAudioQuery UVoicevoxApiObject::GetAudioQueryFromAccentPhrases(const TAr
 	for (const auto Element : SubsystemClasses)
 	{
 		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
-		if (FVoicevoxAudioQuery AudioQuery = Subsystem->GetAudioQueryFromAccentPhrases(AccentPhrases); !AudioQuery.Accent_phrases.IsEmpty()) return AudioQuery;
+		if (FVoicevoxAudioQuery AudioQuery = Subsystem->GetAudioQueryFromAccentPhrases(AccentPhrases); !AudioQuery.Accent_Phrases.IsEmpty()) return AudioQuery;
 	}
 
 	return FVoicevoxAudioQuery();
@@ -509,13 +509,13 @@ TArray<FVoicevoxMeta> UVoicevoxApiObject::GetVoiceModelFileMetaList(const FStrin
 /**
  * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
  */
-TArray<FVoicevoxMeta> UVoicevoxApiObject::GetAllVoiceModelFileMetaList()
+TArray<FVoicevoxMeta> UVoicevoxApiObject::GetAllVoiceModelFileMetaList(const EGetMetaType Type)
 {
 	TArray<FVoicevoxMeta> MetaList;
 	for (const auto Element : SubsystemClasses)
 	{
 		for (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
-			auto Meta : Subsystem->GetAllVoiceModelFileMetaList())
+			auto Meta : Subsystem->GetAllVoiceModelFileMetaList(Type))
 		{
 			MetaList.Emplace(Meta);
 		}

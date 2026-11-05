@@ -526,7 +526,7 @@ public:
 	 * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
 	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
 	 */
-	VOICEVOXUECORE_API virtual TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList() override;
+	VOICEVOXUECORE_API virtual TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList(EGetMetaType Type) override;
 
 	/**
 	 * @brief StyleIdをキーとした全てのVoicevoxVoiceModelFile名を格納したTMapを取得

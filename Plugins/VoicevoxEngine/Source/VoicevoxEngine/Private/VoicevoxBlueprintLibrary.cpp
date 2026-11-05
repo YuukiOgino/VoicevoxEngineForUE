@@ -79,9 +79,9 @@ TArray<FVoicevoxMeta> UVoicevoxBlueprintLibrary::GetVoiceModelFileMetaList(const
 /**
  * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
  */
-TArray<FVoicevoxMeta> UVoicevoxBlueprintLibrary::GetAllVoiceModelFileMetaList()
+TArray<FVoicevoxMeta> UVoicevoxBlueprintLibrary::GetAllVoiceModelFileMetaList(const EGetMetaType Type)
 {
-	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAllVoiceModelFileMetaList();
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAllVoiceModelFileMetaList(Type);
 }
 
 /**

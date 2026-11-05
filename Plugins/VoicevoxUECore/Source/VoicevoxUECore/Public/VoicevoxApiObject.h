@@ -353,9 +353,10 @@ class UVoicevoxApiObject : public UObject
 
 	/**
 	 * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
+	 * @param [in] Type : 取得するMetaの種類
 	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
 	 */
-	VOICEVOXUECORE_API TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList();
+	VOICEVOXUECORE_API TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList(EGetMetaType Type);
 
 	/**
 	 * @brief StyleIdをキーとした全てのVoicevoxVoiceModelFile名を格納したTMapを取得

@@ -102,7 +102,7 @@ public:
 	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetAllVoicevoxModelFileMetas"))
-	static UPARAM(DisplayName="Metas")   TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList();
+	static UPARAM(DisplayName="Metas")   TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList(EGetMetaType Type);
 	
 	/**
 	 * @brief サポートデバイス情報を取得する(Blueprint公開ノード)

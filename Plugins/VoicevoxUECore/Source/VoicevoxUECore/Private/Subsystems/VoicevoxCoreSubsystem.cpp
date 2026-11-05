@@ -304,7 +304,7 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 
 	List.Add({ELipSyncVowelType::Non, AudioQuery.PrePhonemeLength / AudioQuery.SpeedScale, false, false});
 	
-	for (auto [Moras, Accent, Pause_mora, Is_interrogative] : AudioQuery.Accent_phrases)
+	for (auto [Moras, Accent, Pause_mora, Is_interrogative] : AudioQuery.Accent_Phrases)
 	{
 		for (auto [Text, Consonant, Consonant_length, Vowel, Vowel_length, Pitch] : Moras)
 		{
@@ -327,7 +327,7 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 
 		if (Pause_mora.Vowel.Equals(TEXT("pau"), ESearchCase::IgnoreCase))
 		{
-			List.Add({.VowelType = ELipSyncVowelType::Non, .Length = Pause_mora.Vowel_length / AudioQuery.SpeedScale, .IsConsonant = false, .IsLabialOrPlosive = false});
+			List.Add({.VowelType = ELipSyncVowelType::Non, .Length = Pause_mora.Vowel_Length / AudioQuery.SpeedScale, .IsConsonant = false, .IsLabialOrPlosive = false});
 		}
 	}
 
@@ -359,9 +359,9 @@ TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetVoiceModelFileMetaList(const FS
 /**
  * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
  */
-TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetAllVoiceModelFileMetaList() const
+TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetAllVoiceModelFileMetaList(const EGetMetaType Type) const
 {
-	return NativeInstance->GetAllVoiceModelFileMetaList();
+	return NativeInstance->GetAllVoiceModelFileMetaList(Type);
 }
 
 /**
@@ -369,7 +369,7 @@ TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetAllVoiceModelFileMetaList() con
  */
 FString UVoicevoxCoreSubsystem::GetMetaName(const VoicevoxStyleId StyleId) const
 {
-	for  (TArray<FVoicevoxMeta> List = GetAllVoiceModelFileMetaList();
+	for  (TArray<FVoicevoxMeta> List = GetAllVoiceModelFileMetaList(EGetMetaType::All);
 		auto [Name, Styles, Speaker_uuid, Version] : List)
 	{
 		for (const auto Style :Styles)
