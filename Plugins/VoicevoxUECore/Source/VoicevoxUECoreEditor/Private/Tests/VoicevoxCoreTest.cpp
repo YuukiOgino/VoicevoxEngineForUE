@@ -155,4 +155,45 @@ bool FVoicevoxCoreAPSimpleTest::RunTest(const FString& Parameters)
 	return false;
 }
 
+/**
+ * @brief JSON(Mora型)を検証するテストコード
+ */
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FVoicevoxCoreMoraSimpleTest, "VOICEVOX.MoraTest", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FVoicevoxCoreMoraSimpleTest::RunTest(const FString& Parameters)
+{
+	// GEngineが有効か確認
+	if (!TestNotNull(TEXT("GEngine"), GEngine))
+	{
+		UE_LOG(LogTemp, Error, TEXT("GEngine null"));
+		return false;
+	}
+	
+	UE_LOG(LogTemp, Log, TEXT("VOICEVOX CORE AudioQuery:RunTest"));
+	// 母音、子音、ッ、句読点、句読点なし（アクセントの区切り）をチェック。バージョンアップによる正常パターンの変更をチェックする目的のため、エラーパターンは考慮しない
+	TArray<FVoicevoxMora> Moras;
+	Moras.Add({.Text = TEXT("オ"), .Consonant = TEXT(""), .Consonant_Length = 0, .Vowel = TEXT("o"), .Vowel_Length = 0.19f, .Pitch = 5.76f});
+	Moras.Add({.Text = TEXT("ッ"), .Consonant = TEXT(""), .Consonant_Length = 0, .Vowel = TEXT("cl"),.Vowel_Length = 0.07f, .Pitch = 0});
+	Moras.Add({.Text = TEXT("ケ"), .Consonant = TEXT("k"), .Consonant_Length = 0.08f, .Vowel = TEXT("e"),.Vowel_Length = 0.11f, .Pitch = 6.06f});
+	Moras.Add({.Text = TEXT("、"), .Consonant = TEXT(""), .Consonant_Length = 0, .Vowel = TEXT("pau"),.Vowel_Length = 0.31f, .Pitch = 0});
+	Moras.Add({.Text = TEXT(""),  .Consonant = TEXT(""), .Consonant_Length = 0, .Vowel = TEXT("pau"),.Vowel_Length = 0, .Pitch = 0});
+			
+	// JSONに変換して正しい型になっているかをチェックする
+	for (FVoicevoxMora MoraValue : Moras)
+	{
+		FString MOutputJson = "";
+		FVoicevoxJsonObjectConverter::MoraToJsonObject(MoraValue, MOutputJson);
+
+		if (const VoicevoxResultCode MCode = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->VoicevoxValidate(EVoicevoxCoreValidateType::Mora, MOutputJson); 
+			MCode == VoicevoxResultCode::VOICEVOX_RESULT_INVALID_MORA_ERROR)
+		{
+			UE_LOG(LogTemp, Error, TEXT("VOICEVOX_RESULT:INVALID_MORA_ERROR"));
+			UE_LOG(LogTemp, Error, TEXT("%s"), *MOutputJson);
+			return false;
+		}
+	}
+				
+	UE_LOG(LogTemp, Log, TEXT("VOICEVOX_RESULT:OK"));
+	return true;
+}
+
 #endif
