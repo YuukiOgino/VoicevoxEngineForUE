@@ -50,9 +50,17 @@ public:
 	static bool MoraToJsonObject(const FVoicevoxMora& Mora, FString& OutJsonString);
 	
 	/**
+	 * @brief 音符情報をJSON(Note型)に変換する
+	 * @param [in] Note : 音符
+	 * @param [out] OutJsonString : JSON(Note型)
+	 * @return 出力処理が成功したか
+	 */
+	static bool NoteToJsonObject(const FVoicevoxNote& Note, FString& OutJsonString);
+	
+	/**
 	 * @brief 楽譜情報をJSON(Score型)に変換する
 	 * @param [in] Score : 楽譜情報
-	 * @return ScoreのJSON(Score型)
+	 * @return JSON(Score型)
 	 */
 	static FString ScoreConverterToJsonString(FVoicevoxScore Score);
 	
@@ -78,4 +86,11 @@ private:
 	 * @return Moraを変換したJsonObject
 	 */
 	static TSharedRef<FJsonObject> MoraToJsonObject(const FVoicevoxMora& Mora);
+	
+	/**
+	 * @brief 音符情報をJsonObjectへ変換する
+	 * @param [in] Note : 音符
+	 * @return Moraを変換したJsonObject
+	 */
+	static TSharedRef<FJsonObject> NoteToJsonObject(const FVoicevoxNote& Note);
 };

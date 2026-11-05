@@ -151,6 +151,48 @@ TSharedRef<FJsonObject> FVoicevoxJsonObjectConverter::MoraToJsonObject(const FVo
 }
 
 /**
+ * @brief 音符情報をJSON(Note型)に変換する
+ */
+bool FVoicevoxJsonObjectConverter::NoteToJsonObject(const FVoicevoxNote& Note, FString& OutJsonString)
+{
+	const auto Writer = TJsonWriterFactory<>::Create(&OutJsonString);
+	FJsonSerializer::Serialize(NoteToJsonObject(Note), Writer);
+	return true;
+}
+
+/**
+ * @brief 音符情報をJsonObjectへ変換する
+ */
+TSharedRef<FJsonObject> FVoicevoxJsonObjectConverter::NoteToJsonObject(const FVoicevoxNote& Note)
+{
+	TSharedRef<FJsonObject> NoteObj = MakeShared<FJsonObject>();
+		
+	// IDにnullか文字列を入れる必要があるため、UStructToJsonObjectは使用しない
+	if (Note.ID.IsEmpty())
+	{
+		NoteObj->SetObjectField(TEXT("id"), nullptr);
+	}
+	else
+	{
+		NoteObj->SetStringField(TEXT("id"),  Note.ID);
+	}
+	
+	if (Note.Key < 0)
+	{
+		NoteObj->SetObjectField(TEXT("key"), nullptr);
+	}
+	else
+	{
+		NoteObj->SetNumberField(TEXT("key"),  Note.Key);
+	}
+	
+	NoteObj->SetNumberField(TEXT("frame_length"),  Note.Frame_Length);
+	NoteObj->SetStringField(TEXT("lyric"),  Note.Lyric);
+	
+	return NoteObj;
+}
+
+/**
  * @brief 楽譜情報をJSON(Score型)に変換する
  */
 FString FVoicevoxJsonObjectConverter::ScoreConverterToJsonString(FVoicevoxScore Score)
@@ -158,25 +200,9 @@ FString FVoicevoxJsonObjectConverter::ScoreConverterToJsonString(FVoicevoxScore 
 	const TSharedRef<FJsonObject> Obj = MakeShared<FJsonObject>();
 	TArray<TSharedPtr<FJsonValue>> NoteJsonArray;
 	
-	for (const auto& [ID, Key, Frame_Length, Lyric] : Score.Notes)
+	for (const auto& Note: Score.Notes)
 	{
-		TSharedPtr<FJsonObject> NoteObj = MakeShared<FJsonObject>();
-		
-		// IDにnullか文字列を入れる必要があるため、UStructToJsonObjectは使用しない
-		if (ID.IsEmpty())
-		{
-			NoteObj->SetObjectField(TEXT("id"), nullptr);
-		}
-		else
-		{
-			NoteObj->SetStringField(TEXT("id"),  ID);
-		}
-		
-		NoteObj->SetNumberField(TEXT("key"),  Key);
-		NoteObj->SetNumberField(TEXT("frame_length"),  Frame_Length);
-		NoteObj->SetStringField(TEXT("lyric"),  Lyric);
-		
-		NoteJsonArray.Add(MakeShared<FJsonValueObject>(NoteObj));
+		NoteJsonArray.Add(MakeShared<FJsonValueObject>(NoteToJsonObject(Note)));
 	}
 	
 	Obj->SetArrayField(TEXT("notes"), NoteJsonArray);

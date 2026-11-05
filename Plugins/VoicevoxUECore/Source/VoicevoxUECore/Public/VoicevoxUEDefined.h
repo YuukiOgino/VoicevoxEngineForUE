@@ -334,7 +334,7 @@ struct FVoicevoxFramePhoneme
 	
 	//! 音素
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	FString  Phoneme;
+	FString Phoneme;
 	
 	//! 音素のフレーム長
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
@@ -342,7 +342,7 @@ struct FVoicevoxFramePhoneme
 	
 	//! 音符のID
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	FString  Note_ID;
+	FString Note_ID;
 };
 
 /**
