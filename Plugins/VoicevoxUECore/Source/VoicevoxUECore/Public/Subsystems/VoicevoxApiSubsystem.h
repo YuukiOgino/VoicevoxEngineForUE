@@ -47,13 +47,6 @@ protected:
 	 * @retun AccentPhrase (アクセント句)の配列
 	 */
 	VOICEVOXUECORE_API static TArray<FVoicevoxAccentPhrase> JsonObjectConverterToAccentPhrase(const FString& JsonString);
-
-	/**
-	 * @brief AccentPhraseの配列を無名配列のJSONに変換する
-	 * @param [in] AccentPhrases : AccentPhrase (アクセント句)の配列
-	 * @return AccentPhraseのJSON
-	 */
-	VOICEVOXUECORE_API static FString AccentPhraseConverterToJsonString(TArray<FVoicevoxAccentPhrase> AccentPhrases);
 	
 	/**
 	 * @brief VOICEVOXから受信したRegisteredUserDictWordの連想配列のJSONを変換する
@@ -61,20 +54,6 @@ protected:
 	 * @retun ユーザ辞書に登録した単語データのMap
 	 */
 	VOICEVOXUECORE_API static TMap<FString, FVoicevoxRegisteredUserDictWord> JsonObjectConverterToRegisteredUserDictWord(const FString& JsonString);
-	
-	/**
-	 * @brief 楽譜情報をJSONに変換する
-	 * @param [in] Score : 楽譜情報
-	 * @return ScoreのJSON
-	 */
-	VOICEVOXUECORE_API static FString ScoreConverterToJsonString(FVoicevoxScore Score);
-	
-	/**
-	 * @brief 楽譜情報をJSONに変換する
-	 * @param [in] FrameAudioQuery : フレームごとの音声合成用のクエリ
-	 * @return FrameAudioQueryのJSON
-	 */
-	VOICEVOXUECORE_API static FString FrameAudioQueryConverterToJsonString(FVoicevoxFrameAudioQuery FrameAudioQuery);
 	
 public:
 

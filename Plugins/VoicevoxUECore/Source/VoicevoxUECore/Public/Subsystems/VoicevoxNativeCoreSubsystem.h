@@ -377,14 +377,14 @@ public:
 	 * @fn
 	 * VOICEVOX COREのvoicevox_synthesisを実行
 	 * @brief AudioQueryを音声データに変換する。
-	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery構造体
+	 * @param[in] AudioQuery jsonフォーマットされた AudioQuery構造体
 	 * @param[in] StyleId スタイルID
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API virtual TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, VoicevoxStyleId StyleId, bool bEnableInterrogativeUpspeak) override;
+	VOICEVOXUECORE_API virtual TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQuery, VoicevoxStyleId StyleId, bool bEnableInterrogativeUpspeak) override;
 
 	/**
 	 * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。

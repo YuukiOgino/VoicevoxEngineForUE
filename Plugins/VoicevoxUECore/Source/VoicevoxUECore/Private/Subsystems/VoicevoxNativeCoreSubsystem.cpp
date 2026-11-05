@@ -9,6 +9,7 @@
 #include "JsonObjectConverter.h"
 #include "HAL/FileManager.h"
 #include "Misc/Paths.h"
+#include "Utilities/VoicevoxJsonObjectConverter.h"
 
 DEFINE_LOG_CATEGORY(LogVoicevoxNativeCore);
 
@@ -866,7 +867,7 @@ FVoicevoxAudioQuery UVoicevoxNativeCoreSubsystem::GetAudioQueryFromAccentPhrases
 	else
 	{
 		// 無名配列のJSONを作成
-		const FString OutputString = AccentPhraseConverterToJsonString(AccentPhrases);
+		const FString OutputString = FVoicevoxJsonObjectConverter::AccentPhraseConverterToJsonString(AccentPhrases);
 		char* AccentPhrasesJSON = nullptr;
 		if (const VoicevoxResultCode Result = FuncPtr(TCHAR_TO_UTF8(*OutputString), &AccentPhrasesJSON);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
@@ -1006,10 +1007,10 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const char* AudioQueryJ
 /**
  * @brief AudioQueryを音声データに変換する。
  */
-TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, const VoicevoxStyleId StyleId, const bool bEnableInterrogativeUpspeak)
+TArray<uint8> UVoicevoxNativeCoreSubsystem::RunSynthesis(const FVoicevoxAudioQuery& AudioQuery, const VoicevoxStyleId StyleId, const bool bEnableInterrogativeUpspeak)
 {
 	FString OutputJson = "";
-	FJsonObjectConverter::UStructToJsonObjectString(AudioQueryJson, OutputJson, 0, 0, 0, nullptr, false);
+	FVoicevoxJsonObjectConverter::AudioQueryToJsonObject(AudioQuery, OutputJson);
 	
 	TArray<uint8> OutputWAV = RunSynthesis(TCHAR_TO_UTF8(*OutputJson), StyleId, bEnableInterrogativeUpspeak);
 	return OutputWAV;
@@ -1092,7 +1093,7 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxNativeCoreSubsystem::SynthesizerReplace(c
 	else
 	{
 		// 無名配列のJSONを作成
-		const FString OutputString = AccentPhraseConverterToJsonString(AccentPhrases);
+		const FString OutputString = FVoicevoxJsonObjectConverter::AccentPhraseConverterToJsonString(AccentPhrases);
 		char* AccentPhrasesJSON = nullptr;
 		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*OutputString), StyleId, &AccentPhrasesJSON);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
@@ -1163,7 +1164,7 @@ FVoicevoxFrameAudioQuery UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFram
 	}
 	else
 	{
-		const FString OutputJson = ScoreConverterToJsonString(Score);
+		const FString OutputJson = FVoicevoxJsonObjectConverter::ScoreConverterToJsonString(Score);
 		char* Output = nullptr;
 		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*OutputJson), StyleId, &Output);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
@@ -1207,8 +1208,8 @@ TArray<float> UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameF0(const F
 	else
 	{
 		char* Output = nullptr;
-		const FString OutputScoreJson = ScoreConverterToJsonString(Score);
-		const FString OutputFrameJson = FrameAudioQueryConverterToJsonString(FrameAudioQuery);
+		const FString OutputScoreJson = FVoicevoxJsonObjectConverter::ScoreConverterToJsonString(Score);
+		const FString OutputFrameJson = FVoicevoxJsonObjectConverter::FrameAudioQueryConverterToJsonString(FrameAudioQuery);
 		
 		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*OutputScoreJson), TCHAR_TO_UTF8(*OutputFrameJson), StyleId, &Output);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
@@ -1263,8 +1264,8 @@ TArray<float> UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameVolume(con
 	else
 	{
 		char* Output = nullptr;
-		const FString OutputScoreJson = ScoreConverterToJsonString(Score);
-		const FString OutputFrameJson = FrameAudioQueryConverterToJsonString(FrameAudioQuery);
+		const FString OutputScoreJson = FVoicevoxJsonObjectConverter::ScoreConverterToJsonString(Score);
+		const FString OutputFrameJson = FVoicevoxJsonObjectConverter::FrameAudioQueryConverterToJsonString(FrameAudioQuery);
 		
 		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*OutputScoreJson), TCHAR_TO_UTF8(*OutputFrameJson), StyleId, &Output);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)
@@ -1323,7 +1324,7 @@ TArray<uint8> UVoicevoxNativeCoreSubsystem::SynthesizerFrameSynthesis(FVoicevoxF
 	{
 		uint8* OutputWAV = nullptr;
 		uintptr_t OutPutSize = 0;
-		const FString OutputFrameJson = FrameAudioQueryConverterToJsonString(FrameAudioQuery);
+		const FString OutputFrameJson = FVoicevoxJsonObjectConverter::FrameAudioQueryConverterToJsonString(FrameAudioQuery);
 		
 		if (const VoicevoxResultCode Result = FuncPtr(Synthesizer, TCHAR_TO_UTF8(*OutputFrameJson), StyleId, &OutPutSize, &OutputWAV);
 			Result != VoicevoxResultCode::VOICEVOX_RESULT_OK)

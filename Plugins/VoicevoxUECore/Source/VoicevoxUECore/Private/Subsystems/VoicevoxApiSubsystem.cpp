@@ -9,6 +9,7 @@
 
 #include "JsonObjectConverter.h"
 #include "Engine/Engine.h"
+#include "Utilities/VoicevoxJsonObjectConverter.h"
 
 DEFINE_LOG_CATEGORY(LogVoicevoxApi);
 
@@ -48,58 +49,6 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxApiSubsystem::JsonObjectConverterToAccent
 	return AccentPhrases;
 }
 
-/**
- * @brief AccentPhraseの配列を無名配列のJSONに変換する
- */
-FString UVoicevoxApiSubsystem::AccentPhraseConverterToJsonString(TArray<FVoicevoxAccentPhrase> AccentPhrases)
-{
-	// JSON値配列を作成
-	TArray<TSharedPtr<FJsonValue>> JsonArray;
-
-	for (const auto& [Moras, Accent, Pause_mora, Is_interrogative] : AccentPhrases)
-	{
-		TSharedPtr<FJsonObject> Obj = MakeShared<FJsonObject>();
-		TArray<TSharedPtr<FJsonValue>> MoraJsonArray;
-
-		for (const FVoicevoxMora& Mora : Moras)
-		{
-			TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
-			FJsonObjectConverter::UStructToJsonObject(FVoicevoxMora::StaticStruct(), &Mora, JsonObject.ToSharedRef(), 0, 0);
-			MoraJsonArray.Add(MakeShared<FJsonValueObject>(JsonObject));
-		}
-		Obj->SetArrayField(TEXT("moras"), MoraJsonArray);
-		Obj->SetNumberField(TEXT("accent"), Accent);
-
-		if (Pause_mora.Text.IsEmpty())
-		{
-			Obj->SetObjectField(TEXT("pause_mora"), nullptr);
-		}
-		else
-		{
-			// pause_moraは子音のパラメータ（consonant、consonant_length）にnull以外が入るとインデックス範囲外エラーが起きるため、UStructToJsonObjectは使用しない
-			TSharedPtr<FJsonObject> StructObject = MakeShared<FJsonObject>();
-			StructObject->SetStringField(TEXT("text"),  Pause_mora.Text);
-			StructObject->SetObjectField(TEXT("consonant"),  nullptr);
-			StructObject->SetObjectField(TEXT("consonant_length"),  nullptr);
-			StructObject->SetStringField(TEXT("vowel"),  Pause_mora.Vowel);
-			StructObject->SetNumberField(TEXT("vowel_length"),  0);
-			StructObject->SetNumberField(TEXT("pitch"),  0);
-				
-			Obj->SetObjectField(TEXT("pause_mora"), StructObject);
-		}
-			
-		Obj->SetBoolField(TEXT("is_interrogative"), Is_interrogative);
-		JsonArray.Add(MakeShared<FJsonValueObject>(Obj));
-	}
-
-	// 配列を書き出し
-	FString OutputString;
-	const auto Writer = TJsonWriterFactory<>::Create(&OutputString);
-	FJsonSerializer::Serialize(JsonArray, Writer);
-
-	return OutputString;
-}
-
 
 /**
  * @brief VOICEVOXから受信したRegisteredUserDictWordの連想配列のJSONを変換する
@@ -129,100 +78,4 @@ TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxApiSubsystem::JsonObject
 	}
 	
 	return Result;
-}
-
-/**
- * @brief AccentPhraseの配列を無名配列のJSONに変換する
- */
-FString UVoicevoxApiSubsystem::ScoreConverterToJsonString(FVoicevoxScore Score)
-{
-	const TSharedRef<FJsonObject> Obj = MakeShared<FJsonObject>();
-	TArray<TSharedPtr<FJsonValue>> NoteJsonArray;
-	
-	for (const auto& [ID, Key, Frame_Length, Lyric] : Score.Notes)
-	{
-		TSharedPtr<FJsonObject> NoteObj = MakeShared<FJsonObject>();
-		
-		// IDにnullか文字列を入れる必要があるため、UStructToJsonObjectは使用しない
-		if (ID.IsEmpty())
-		{
-			NoteObj->SetObjectField(TEXT("id"), nullptr);
-		}
-		else
-		{
-			NoteObj->SetStringField(TEXT("id"),  ID);
-		}
-		
-		NoteObj->SetNumberField(TEXT("key"),  Key);
-		NoteObj->SetNumberField(TEXT("frame_length"),  Frame_Length);
-		NoteObj->SetStringField(TEXT("lyric"),  Lyric);
-		
-		NoteJsonArray.Add(MakeShared<FJsonValueObject>(NoteObj));
-	}
-	
-	Obj->SetArrayField(TEXT("notes"), NoteJsonArray);
-	
-	FString OutputString;
-	const auto Writer = TJsonWriterFactory<>::Create(&OutputString);
-	FJsonSerializer::Serialize(Obj, Writer);
-	
-	return OutputString;
-}
-
-/**
- * @brief 楽譜情報をJSONに変換する
- * @param [in] FrameAudioQuery : フレームごとの音声合成用のクエリ
- * @return FrameAudioQueryのJSON
- */
-FString UVoicevoxApiSubsystem::FrameAudioQueryConverterToJsonString(FVoicevoxFrameAudioQuery FrameAudioQuery)
-{
-	const TSharedRef<FJsonObject> Obj = MakeShared<FJsonObject>();
-	
-	TArray<TSharedPtr<FJsonValue>> F0JsonArray;
-	for (const float& f : FrameAudioQuery.F0)
-	{
-		F0JsonArray.Add(MakeShared<FJsonValueNumber>(f));
-	}
-	
-	Obj->SetArrayField(TEXT("f0"), F0JsonArray);
-	
-	TArray<TSharedPtr<FJsonValue>> VolumeJsonArray;
-	for (const float& v : FrameAudioQuery.Volume)
-	{
-		VolumeJsonArray.Add(MakeShared<FJsonValueNumber>(v));
-	}
-	
-	Obj->SetArrayField(TEXT("volume"), VolumeJsonArray);
-	
-	TArray<TSharedPtr<FJsonValue>> PhonemeJsonArray;
-	for (const auto& [Phoneme, Frame_Length, Note_ID] : FrameAudioQuery.Phoneme)
-	{
-		TSharedPtr<FJsonObject> FramePhonemeObj = MakeShared<FJsonObject>();
-		
-		// note_idにnullか文字列を入れる必要があるため、UStructToJsonObjectは使用しない
-		if (Note_ID.IsEmpty())
-		{
-			FramePhonemeObj->SetObjectField(TEXT("note_id"), nullptr);
-		}
-		else
-		{
-			FramePhonemeObj->SetStringField(TEXT("note_id"),  Note_ID);
-		}
-		
-		FramePhonemeObj->SetStringField(TEXT("phoneme"),  Phoneme);
-		FramePhonemeObj->SetNumberField(TEXT("frame_length"),  Frame_Length);
-		
-		PhonemeJsonArray.Add(MakeShared<FJsonValueObject>(FramePhonemeObj));
-	}
-	
-	Obj->SetArrayField(TEXT("phonemes"), PhonemeJsonArray);
-	Obj->SetNumberField(TEXT("volumeScale"), FrameAudioQuery.VolumeScale);
-	Obj->SetNumberField(TEXT("outputSamplingRate"), FrameAudioQuery.OutputSamplingRate);
-	Obj->SetBoolField(TEXT("outputStereo"), FrameAudioQuery.bOutputStereo);
-	
-	FString OutputString;
-	const auto Writer = TJsonWriterFactory<>::Create(&OutputString);
-	FJsonSerializer::Serialize(Obj, Writer);
-		
-	return OutputString;
 }
