@@ -1143,11 +1143,11 @@ VoicevoxSynthesisOptions UVoicevoxNativeCoreSubsystem::MakeDefaultSynthesisOptio
  */
 FVoicevoxFrameAudioQuery UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFrameAudioQuery(const FVoicevoxScore Score, const VoicevoxStyleId StyleId)
 {
-	FVoicevoxFrameAudioQuery AudioQuery{};
+	FVoicevoxFrameAudioQuery FrameAudioQuery{};
 	
 	// 初期化が行われていない場合はJSON変換時にクラッシュするため、Empty状態で返却する
-	if (!bIsInit) return AudioQuery; 
-	if (!IsValidCoreLibraryHandle()) return AudioQuery;
+	if (!bIsInit) return FrameAudioQuery; 
+	if (!IsValidCoreLibraryHandle()) return FrameAudioQuery;
 		
 	const FString FuncName = "voicevox_synthesizer_create_sing_frame_audio_query"; 
 	using DLL_Function = const VoicevoxResultCode(*)(const VoicevoxSynthesizer*, const char*, VoicevoxStyleId, char**);
@@ -1173,11 +1173,12 @@ FVoicevoxFrameAudioQuery UVoicevoxNativeCoreSubsystem::SynthesizerCreateSingFram
 		}
 		else
 		{
-			FJsonObjectConverter::JsonObjectStringToUStruct(UTF8_TO_TCHAR(Output), &AudioQuery, 0, 0);
+			// FJsonObjectConverter::JsonObjectStringToUStructだとphonemesの変換に失敗してしまうため、手動で変換をかける
+			FrameAudioQuery = FVoicevoxJsonObjectConverter::JsonObjectStringToxFrameAudioQuery(UTF8_TO_TCHAR(Output));
 			JsonFree(Output);
 		}
 	}
-	return AudioQuery;
+	return FrameAudioQuery;
 }
 
 /**

@@ -313,14 +313,15 @@ bool FVoicevoxCoreFAQSimpleTest::RunTest(const FString& Parameters)
 	UE_LOG(LogTemp, Log, TEXT("VOICEVOX CORE FrameAudioQuery:RunTest"));
 	if (GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Initialize(true, 0, false))
 	{
-		//波音リツ（ノーマル）　6000が実質APIでFrameAudioQueryを生成できる唯一のID
+		// 波音リツ（ノーマル）　6000が実質APIでFrameAudioQueryを生成できる唯一のID
 		if (constexpr int Singing_Teacher = 6000; 
 			GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->LoadModel(Singing_Teacher))
 		{
 			FVoicevoxScore Score{};
 			Score.Notes.Add({.ID = TEXT(""), .Key = -1, .Frame_Length = 10, .Lyric = TEXT("")}); // 休符は空白、Keyを‐1に
 			Score.Notes.Add({.ID = TEXT(""), .Key = 10, .Frame_Length = 10, .Lyric = TEXT("か")});
-			Score.Notes.Add({.ID = TEXT("あ122"), .Key = 50, .Frame_Length = 10, .Lyric = TEXT("か")});
+			Score.Notes.Add({.ID = TEXT("あ122"), .Key = 50, .Frame_Length = 45, .Lyric = TEXT("あ")});
+			Score.Notes.Add({.ID = TEXT("あ123"), .Key = -1, .Frame_Length = 90, .Lyric = TEXT("")}); 
 			
 			const FVoicevoxFrameAudioQuery AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameAudioQuery(Score, Singing_Teacher);
 			

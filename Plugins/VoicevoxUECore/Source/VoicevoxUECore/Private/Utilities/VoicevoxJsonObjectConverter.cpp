@@ -6,6 +6,7 @@
  */
 
 #include "Utilities/VoicevoxJsonObjectConverter.h"
+#include "JsonObjectConverter.h"
 
 /**
  * @brief AudioQueryをJSON(AudioQuery型)へ変換する
@@ -216,7 +217,7 @@ FString FVoicevoxJsonObjectConverter::ScoreConverterToJsonString(FVoicevoxScore 
 
 
 /**
- * @brief 楽譜情報をJSON(FrameAudioQuery型)に変換する
+ * @brief フレームごとの音声合成用のクエリをJSON(FrameAudioQuery型)に変換する
  */
 FString FVoicevoxJsonObjectConverter::FrameAudioQueryConverterToJsonString(FVoicevoxFrameAudioQuery FrameAudioQuery)
 {
@@ -269,4 +270,58 @@ FString FVoicevoxJsonObjectConverter::FrameAudioQueryConverterToJsonString(FVoic
 	FJsonSerializer::Serialize(Obj, Writer);
 		
 	return OutputString;
+}
+
+/**
+ * @brief JSON(FrameAudioQuery型)をフレームごとの音声合成用のクエリに変換する
+ * @param [in] JsonString : JSON(FrameAudioQuery型)
+ * @return フレームごとの音声合成用のクエリ
+ */
+FVoicevoxFrameAudioQuery FVoicevoxJsonObjectConverter::JsonObjectStringToxFrameAudioQuery(const FString& JsonString)
+{
+	FVoicevoxFrameAudioQuery FrameAudioQuery{};
+	
+	const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
+	if (TSharedPtr<FJsonValue> JsonValue; FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid())
+	{
+		if (JsonValue.IsValid() && JsonValue->Type == EJson::Object)
+		{
+			const TSharedPtr<FJsonObject> JsonObject = JsonValue->AsObject();
+
+			for (const TArray<TSharedPtr<FJsonValue>> F0JsonArray = JsonObject->GetArrayField("f0");
+				const TSharedPtr<FJsonValue>& Element : F0JsonArray)
+			{
+				if (float F0 = 0.f; Element->TryGetNumber(F0))
+				{
+					FrameAudioQuery.F0.Add(F0);
+				}
+			}
+					
+			for (const TArray<TSharedPtr<FJsonValue>> VolumeJsonArray = JsonObject->GetArrayField("volume");
+				const TSharedPtr<FJsonValue>& Element : VolumeJsonArray)
+			{
+				if (float Volume = 0.f; Element->TryGetNumber(Volume))
+				{
+					FrameAudioQuery.Volume.Add(Volume);
+				}
+			}
+					
+			for (const TArray<TSharedPtr<FJsonValue>> PhonemesJsonArray = JsonObject->GetArrayField("phonemes");
+				const TSharedPtr<FJsonValue>& Element : PhonemesJsonArray)
+			{
+				FVoicevoxFramePhoneme Phoneme;
+				if (FJsonObjectConverter::JsonObjectToUStruct(Element->AsObject().ToSharedRef(), FVoicevoxFramePhoneme::StaticStruct(), &Phoneme))
+				{
+					FrameAudioQuery.Phoneme.Add(Phoneme);
+				}
+			}
+					
+			FrameAudioQuery.bOutputStereo = JsonObject->GetBoolField(TEXT("outputStereo"));
+			FrameAudioQuery.OutputSamplingRate = JsonObject->GetIntegerField(TEXT("outputSamplingRate"));
+			FrameAudioQuery.VolumeScale = JsonObject->GetNumberField(TEXT("volumeScale"));
+		}
+				
+	}
+	
+	return FrameAudioQuery;
 }

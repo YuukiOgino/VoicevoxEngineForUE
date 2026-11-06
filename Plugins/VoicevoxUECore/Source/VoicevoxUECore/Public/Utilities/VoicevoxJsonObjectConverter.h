@@ -65,11 +65,18 @@ public:
 	static FString ScoreConverterToJsonString(FVoicevoxScore Score);
 	
 	/**
-	 * @brief 楽譜情報をJSON(FrameAudioQuery型)に変換する
+	 * @brief フレームごとの音声合成用のクエリをJSON(FrameAudioQuery型)に変換する
 	 * @param [in] FrameAudioQuery : フレームごとの音声合成用のクエリ
 	 * @return JSON(FrameAudioQuery型)
 	 */
 	static FString FrameAudioQueryConverterToJsonString(FVoicevoxFrameAudioQuery FrameAudioQuery);
+	
+	/**
+	 * @brief JSON(FrameAudioQuery型)をフレームごとの音声合成用のクエリに変換する
+	 * @param [in] JsonString : JSON(FrameAudioQuery型)
+	 * @return フレームごとの音声合成用のクエリ
+	 */
+	static FVoicevoxFrameAudioQuery JsonObjectStringToxFrameAudioQuery(const FString& JsonString);
 	
 private:
 	
