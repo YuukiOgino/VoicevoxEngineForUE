@@ -291,3 +291,57 @@ void UVoicevoxAudioQueryToSpeechAsyncTask::BeginDestroy()
 	Task.Wait();
 	Super::BeginDestroy();
 }
+
+//------------------------------------------------------------------------
+// UVoicevoxFrameSynthesisAsyncTask
+//------------------------------------------------------------------------
+
+/**
+ * @brief 非同期でVOICEVOX COREで取得したFrameAudioQueryを元に音声データを取得(Blueprint公開ノード)
+ */
+UVoicevoxFrameSynthesisAsyncTask* UVoicevoxFrameSynthesisAsyncTask::FrameSynthesisOutput(UObject* WorldContextObject, const int32 StyleId, const FVoicevoxFrameAudioQuery FrameAudioQuery)
+{
+	UVoicevoxFrameSynthesisAsyncTask* Task = NewObject<UVoicevoxFrameSynthesisAsyncTask>();
+	Task->StyleId = StyleId;
+	Task->FrameAudioQuery = FrameAudioQuery;
+	Task->RegisterWithGameInstance(WorldContextObject);
+	return Task;
+}
+
+/**
+ * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
+ */	
+void UVoicevoxFrameSynthesisAsyncTask::Activate()
+{
+	if (StyleId == 0)
+	{
+		OnFail.Broadcast();
+		SetReadyToDestroy();
+		return;
+	}
+	
+	Task = UE::Tasks::Launch<>(TEXT("VoicevoxCoreFrameSynthesisTask"), [&]
+	{
+		if (USoundWave* Sound = UVoicevoxBlueprintLibrary::FrameSynthesisOutput(FrameAudioQuery, StyleId);
+			Sound != nullptr)
+		{
+			OnSuccess.Broadcast(Sound);
+		}
+		else
+		{
+			OnFail.Broadcast();
+		}
+		
+		SetReadyToDestroy();
+	});
+
+}
+
+/**
+ * @brief BeginDestroy
+ */
+void UVoicevoxFrameSynthesisAsyncTask::BeginDestroy()
+{
+	Task.Wait();
+	Super::BeginDestroy();
+}
