@@ -273,7 +273,7 @@ FVoicevoxFrameAudioQuery FVoicevoxJsonObjectConverter::JsonObjectStringToxFrameA
 		{
 			const TSharedPtr<FJsonObject> JsonObject = JsonValue->AsObject();
 
-			for (const TArray<TSharedPtr<FJsonValue>> F0JsonArray = JsonObject->GetArrayField("f0");
+			for (const TArray<TSharedPtr<FJsonValue>> F0JsonArray = JsonObject->GetArrayField(TEXT("f0"));
 				const TSharedPtr<FJsonValue>& Element : F0JsonArray)
 			{
 				if (float F0 = 0.f; Element->TryGetNumber(F0))
@@ -282,7 +282,7 @@ FVoicevoxFrameAudioQuery FVoicevoxJsonObjectConverter::JsonObjectStringToxFrameA
 				}
 			}
 					
-			for (const TArray<TSharedPtr<FJsonValue>> VolumeJsonArray = JsonObject->GetArrayField("volume");
+			for (const TArray<TSharedPtr<FJsonValue>> VolumeJsonArray = JsonObject->GetArrayField(TEXT("volume"));
 				const TSharedPtr<FJsonValue>& Element : VolumeJsonArray)
 			{
 				if (float Volume = 0.f; Element->TryGetNumber(Volume))
@@ -291,7 +291,7 @@ FVoicevoxFrameAudioQuery FVoicevoxJsonObjectConverter::JsonObjectStringToxFrameA
 				}
 			}
 					
-			for (const TArray<TSharedPtr<FJsonValue>> PhonemesJsonArray = JsonObject->GetArrayField("phonemes");
+			for (const TArray<TSharedPtr<FJsonValue>> PhonemesJsonArray = JsonObject->GetArrayField(TEXT("phonemes"));
 				const TSharedPtr<FJsonValue>& Element : PhonemesJsonArray)
 			{
 				FVoicevoxFramePhoneme Phoneme;
