@@ -237,6 +237,43 @@ TArray<FVoicevoxLipSync> UVoicevoxBlueprintLibrary::GetLipSyncList(const FVoicev
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetLipSyncList(AudioQuery);
 }
 
+/**
+ * @brief 楽譜から歌唱音声合成用のクエリを取得する。(Blueprint公開ノード)
+ */
+FVoicevoxFrameAudioQuery UVoicevoxBlueprintLibrary::GetSingFrameAudioQuery(const FVoicevoxScore Score, const int32 StyleId)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameAudioQuery(Score, StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
+ */
+TArray<float> UVoicevoxBlueprintLibrary::CreateSingFrameF0(const FVoicevoxScore Score, const FVoicevoxFrameAudioQuery FrameAudioQuery, const int32 StyleId)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameF0(Score, FrameAudioQuery, StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
+ */
+TArray<float> UVoicevoxBlueprintLibrary::CreateSingFrameVolume(const FVoicevoxScore Score, const FVoicevoxFrameAudioQuery FrameAudioQuery, const int32 StyleId)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameVolume(Score, FrameAudioQuery, StyleId);
+}
+
+/**
+ * @brief 歌唱音声合成を行う。(Blueprint公開ノード)
+ */
+USoundWave* UVoicevoxBlueprintLibrary::FrameSynthesisOutput(const FVoicevoxFrameAudioQuery FrameAudioQuery, const int32 StyleId)
+{
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerFrameSynthesis(FrameAudioQuery, StyleId); !OutputWAV.IsEmpty())
+	{
+		return CreateSoundWave(OutputWAV);
+	}
+
+	return nullptr;
+}
+
 //--------------------------------
 // VOICEVOX CORE Dict関連
 //--------------------------------

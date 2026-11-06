@@ -220,6 +220,52 @@ public:
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxLipSyncList"))
 	static UPARAM(DisplayName="LipSyncList") TArray<FVoicevoxLipSync> GetLipSyncList(FVoicevoxAudioQuery AudioQuery);
 	
+	/**
+	 * @brief 楽譜から歌唱音声合成用のクエリを取得する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Score  楽譜情報
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxSingFrameAudioQuery"))
+	static UPARAM(DisplayName="FrameAudioQuery")FVoicevoxFrameAudioQuery GetSingFrameAudioQuery(FVoicevoxScore Score, int32 StyleId);
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateVoicevoxSingFrameF0"))
+	static UPARAM(DisplayName="f0")TArray<float> CreateSingFrameF0(FVoicevoxScore Score, FVoicevoxFrameAudioQuery FrameAudioQuery, int32 StyleId);
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns フレームごとの音量
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateVoicevoxSingFrameVolume"))
+	static UPARAM(DisplayName="Volume")TArray<float> CreateSingFrameVolume(FVoicevoxScore Score, FVoicevoxFrameAudioQuery FrameAudioQuery, int32 StyleId);
+
+	/**
+	 * @brief 歌唱音声合成を行う。(Blueprint公開ノード)
+	 *
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID
+	 *
+	 * @returns  FrameAudioQuery情報を元に作成された音楽データが格納されたUSoundWave
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxFrameSynthesisOutput"))
+	static UPARAM(DisplayName="Sound")USoundWave* FrameSynthesisOutput(FVoicevoxFrameAudioQuery FrameAudioQuery, int32 StyleId);
+	
 	//--------------------------------
 	// VOICEVOX CORE Dict関連
 	//--------------------------------
