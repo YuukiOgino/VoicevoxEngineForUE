@@ -269,7 +269,7 @@ class UVoicevoxApiObject : public UObject
 	 * @brief 楽譜から歌唱音声合成用のクエリを作成する。
 	 *
 	 * @param [in] Score  楽譜情報
-	 * @param [in] StyleId スタイルID
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
 	 *
 	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
 	 */
@@ -280,7 +280,7 @@ class UVoicevoxApiObject : public UObject
 	 *
 	 * @param [in] Score 楽譜情報
 	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
-	 * @param [in] StyleId スタイルID
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
 	 *
 	 * @returns フレームごとの基本周波数
 	 */
@@ -291,7 +291,7 @@ class UVoicevoxApiObject : public UObject
 	 *
 	 * @param [in] Score 楽譜情報
 	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
-	 * @param [in] StyleId スタイルID
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
 	 *
 	 * @returns フレームごとの音量
 	 */
