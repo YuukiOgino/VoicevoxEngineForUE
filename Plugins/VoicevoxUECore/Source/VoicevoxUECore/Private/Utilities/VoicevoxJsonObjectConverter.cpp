@@ -240,24 +240,9 @@ FString FVoicevoxJsonObjectConverter::FrameAudioQueryConverterToJsonString(FVoic
 	Obj->SetArrayField(TEXT("volume"), VolumeJsonArray);
 	
 	TArray<TSharedPtr<FJsonValue>> PhonemeJsonArray;
-	for (const auto& [Phoneme, Frame_Length, Note_ID] : FrameAudioQuery.Phoneme)
+	for (const auto& FramePhoneme : FrameAudioQuery.Phoneme)
 	{
-		TSharedPtr<FJsonObject> FramePhonemeObj = MakeShared<FJsonObject>();
-		
-		// note_idにnullか文字列を入れる必要があるため、UStructToJsonObjectは使用しない
-		if (Note_ID.IsEmpty())
-		{
-			FramePhonemeObj->SetObjectField(TEXT("note_id"), nullptr);
-		}
-		else
-		{
-			FramePhonemeObj->SetStringField(TEXT("note_id"),  Note_ID);
-		}
-		
-		FramePhonemeObj->SetStringField(TEXT("phoneme"),  Phoneme);
-		FramePhonemeObj->SetNumberField(TEXT("frame_length"),  Frame_Length);
-		
-		PhonemeJsonArray.Add(MakeShared<FJsonValueObject>(FramePhonemeObj));
+		PhonemeJsonArray.Add(MakeShared<FJsonValueObject>(FramePhonemeToJsonObject(FramePhoneme)));
 	}
 	
 	Obj->SetArrayField(TEXT("phonemes"), PhonemeJsonArray);
@@ -324,4 +309,42 @@ FVoicevoxFrameAudioQuery FVoicevoxJsonObjectConverter::JsonObjectStringToxFrameA
 	}
 	
 	return FrameAudioQuery;
+}
+
+/**
+ * @brief 音素情報をJSON(FramePhoneme型)に変換する
+ * @param [in] FramePhoneme : 音素
+ * @param [out] OutJsonString : JSON(FramePhoneme型)
+ * @return 出力処理が成功したか
+ */
+bool FVoicevoxJsonObjectConverter::FramePhonemeToJsonObject(const FVoicevoxFramePhoneme& FramePhoneme, FString& OutJsonString)
+{
+	const auto Writer = TJsonWriterFactory<>::Create(&OutJsonString);
+	FJsonSerializer::Serialize(FramePhonemeToJsonObject(FramePhoneme), Writer);
+	return true;
+}
+
+/**
+ * @brief 音素情報をJsonObjectへ変換する
+ * @param [in] FramePhoneme : 音素
+ * @return FramePhonemeを変換したJsonObject
+ */
+TSharedRef<FJsonObject> FVoicevoxJsonObjectConverter::FramePhonemeToJsonObject(const FVoicevoxFramePhoneme& FramePhoneme)
+{
+	TSharedRef<FJsonObject> FramePhonemeObj = MakeShared<FJsonObject>();
+		
+	// note_idにnullか文字列を入れる必要があるため、UStructToJsonObjectは使用しない
+	if (FramePhoneme.Note_ID.IsEmpty())
+	{
+		FramePhonemeObj->SetObjectField(TEXT("note_id"), nullptr);
+	}
+	else
+	{
+		FramePhonemeObj->SetStringField(TEXT("note_id"),  FramePhoneme.Note_ID);
+	}
+		
+	FramePhonemeObj->SetStringField(TEXT("phoneme"),  FramePhoneme.Phoneme);
+	FramePhonemeObj->SetNumberField(TEXT("frame_length"),  FramePhoneme.Frame_Length);
+	
+	return FramePhonemeObj;
 }

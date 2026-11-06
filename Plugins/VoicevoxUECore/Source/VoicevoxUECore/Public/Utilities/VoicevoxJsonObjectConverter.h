@@ -78,6 +78,14 @@ public:
 	 */
 	static FVoicevoxFrameAudioQuery JsonObjectStringToxFrameAudioQuery(const FString& JsonString);
 	
+	/**
+	 * @brief 音素情報をJSON(FramePhoneme型)に変換する
+	 * @param [in] FramePhoneme : 音素
+	 * @param [out] OutJsonString : JSON(FramePhoneme型)
+	 * @return 出力処理が成功したか
+	 */
+	static bool FramePhonemeToJsonObject(const FVoicevoxFramePhoneme& FramePhoneme, FString& OutJsonString);
+	
 private:
 	
 	/**
@@ -97,7 +105,14 @@ private:
 	/**
 	 * @brief 音符情報をJsonObjectへ変換する
 	 * @param [in] Note : 音符
-	 * @return Moraを変換したJsonObject
+	 * @return Noteを変換したJsonObject
 	 */
 	static TSharedRef<FJsonObject> NoteToJsonObject(const FVoicevoxNote& Note);
+	
+	/**
+	 * @brief 音素情報をJsonObjectへ変換する
+	 * @param [in] FramePhoneme : 音素
+	 * @return FramePhonemeを変換したJsonObject
+	 */
+	static TSharedRef<FJsonObject> FramePhonemeToJsonObject(const FVoicevoxFramePhoneme& FramePhoneme);
 };

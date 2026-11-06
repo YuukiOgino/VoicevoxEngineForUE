@@ -349,4 +349,67 @@ bool FVoicevoxCoreFAQSimpleTest::RunTest(const FString& Parameters)
 	return false;
 }
 
+/**
+ * @brief JSON(FramePhonemeTest)を検証するテストコード
+ */
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FVoicevoxCoreFPSimpleTest, "VOICEVOX.FramePhonemeTest", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FVoicevoxCoreFPSimpleTest::RunTest(const FString& Parameters)
+{
+	// GEngineが有効か確認
+	if (!TestNotNull(TEXT("GEngine"), GEngine))
+	{
+		UE_LOG(LogTemp, Error, TEXT("GEngine null"));
+		return false;
+	}
+	
+	UE_LOG(LogTemp, Log, TEXT("VOICEVOX CORE FramePhoneme:RunTest"));
+
+	const FVoicevoxFramePhoneme Phoneme1{.Phoneme = TEXT("pau"), .Frame_Length = 8, .Note_ID = TEXT("")};
+	const FVoicevoxFramePhoneme Phoneme2{.Phoneme = TEXT("k"), .Frame_Length = 2, .Note_ID = TEXT("")};
+	const FVoicevoxFramePhoneme Phoneme3{.Phoneme = TEXT("a"), .Frame_Length = 45, .Note_ID = TEXT("あ122")};
+	const FVoicevoxFramePhoneme Phoneme4{.Phoneme = TEXT("pau"), .Frame_Length = 8, .Note_ID = TEXT("あ123")};
+	
+	// JSONに変換して正しい型になっているかをチェックする
+	FString OutputJson = "";
+	FVoicevoxJsonObjectConverter::FramePhonemeToJsonObject(Phoneme1, OutputJson);
+
+	if (const VoicevoxResultCode MCode = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->VoicevoxValidate(EVoicevoxCoreValidateType::FramePhoneme, OutputJson); 
+		MCode == VoicevoxResultCode::VOICEVOX_RESULT_INVALID_FRAME_PHONEME_ERROR)
+	{
+		UE_LOG(LogTemp, Error, TEXT("VOICEVOX_RESULT:INVALID_FRAME_PHONEME_ERROR"));
+		UE_LOG(LogTemp, Error, TEXT("%s"), *OutputJson);
+		return false;
+	}
+	
+	FVoicevoxJsonObjectConverter::FramePhonemeToJsonObject(Phoneme2, OutputJson);
+	if (const VoicevoxResultCode MCode = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->VoicevoxValidate(EVoicevoxCoreValidateType::FramePhoneme, OutputJson); 
+	MCode == VoicevoxResultCode::VOICEVOX_RESULT_INVALID_FRAME_PHONEME_ERROR)
+	{
+		UE_LOG(LogTemp, Error, TEXT("VOICEVOX_RESULT:INVALID_FRAME_PHONEME_ERROR"));
+		UE_LOG(LogTemp, Error, TEXT("%s"), *OutputJson);
+		return false;
+	}
+	
+	FVoicevoxJsonObjectConverter::FramePhonemeToJsonObject(Phoneme3, OutputJson);
+	if (const VoicevoxResultCode MCode = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->VoicevoxValidate(EVoicevoxCoreValidateType::FramePhoneme, OutputJson); 
+	MCode == VoicevoxResultCode::VOICEVOX_RESULT_INVALID_FRAME_PHONEME_ERROR)
+	{
+		UE_LOG(LogTemp, Error, TEXT("VOICEVOX_RESULT:INVALID_FRAME_PHONEME_ERROR"));
+		UE_LOG(LogTemp, Error, TEXT("%s"), *OutputJson);
+		return false;
+	}
+	
+	FVoicevoxJsonObjectConverter::FramePhonemeToJsonObject(Phoneme4, OutputJson);
+	if (const VoicevoxResultCode MCode = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->VoicevoxValidate(EVoicevoxCoreValidateType::FramePhoneme, OutputJson); 
+	MCode == VoicevoxResultCode::VOICEVOX_RESULT_INVALID_FRAME_PHONEME_ERROR)
+	{
+		UE_LOG(LogTemp, Error, TEXT("VOICEVOX_RESULT:INVALID_FRAME_PHONEME_ERROR"));
+		UE_LOG(LogTemp, Error, TEXT("%s"), *OutputJson);
+		return false;
+	}
+				
+	UE_LOG(LogTemp, Log, TEXT("VOICEVOX_RESULT:OK"));
+	return true;
+}
+
 #endif
