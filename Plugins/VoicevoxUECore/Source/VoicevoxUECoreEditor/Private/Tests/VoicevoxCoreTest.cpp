@@ -331,7 +331,7 @@ bool FVoicevoxCoreFAQSimpleTest::RunTest(const FString& Parameters)
 			const VoicevoxResultCode Code = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->VoicevoxValidate(EVoicevoxCoreValidateType::FrameAudioQuery, OutputJson);
 			if (Code == VoicevoxResultCode::VOICEVOX_RESULT_INVALID_FRAME_AUDIO_QUERY_ERROR)
 			{
-				UE_LOG(LogTemp, Error, TEXT("VOICEVOX_RESULT:FRAME_AUDIO_QUERY_ERROR"));
+				UE_LOG(LogTemp, Error, TEXT("VOICEVOX_RESULT:INVALID_FRAME_AUDIO_QUERY_ERROR"));
 				UE_LOG(LogTemp, Error, TEXT("%s"), *OutputJson);
 				GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Finalize();
 				return false;
@@ -340,7 +340,7 @@ bool FVoicevoxCoreFAQSimpleTest::RunTest(const FString& Parameters)
 			GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Finalize();
 			return Code == VoicevoxResultCode::VOICEVOX_RESULT_OK;
 		}
-		UE_LOG(LogTemp, Error, TEXT("No Loaded VVM StyleId 3"));
+		UE_LOG(LogTemp, Error, TEXT("No Loaded VVM StyleId 6000"));
 		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Finalize();
 		return false;
 	}
@@ -350,7 +350,7 @@ bool FVoicevoxCoreFAQSimpleTest::RunTest(const FString& Parameters)
 }
 
 /**
- * @brief JSON(FramePhonemeTest)を検証するテストコード
+ * @brief JSON(FramePhoneme型)を検証するテストコード
  */
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FVoicevoxCoreFPSimpleTest, "VOICEVOX.FramePhonemeTest", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FVoicevoxCoreFPSimpleTest::RunTest(const FString& Parameters)
@@ -410,6 +410,103 @@ bool FVoicevoxCoreFPSimpleTest::RunTest(const FString& Parameters)
 				
 	UE_LOG(LogTemp, Log, TEXT("VOICEVOX_RESULT:OK"));
 	return true;
+}
+
+/**
+ * @brief 与えられた楽譜と歌唱合成用のクエリの組み合わせを検証するテストコード
+ */
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FVoicevoxCoreEnsureSimpleTest, "VOICEVOX.EnsureTest", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FVoicevoxCoreEnsureSimpleTest::RunTest(const FString& Parameters)
+{
+	// GEngineが有効か確認
+	if (!TestNotNull(TEXT("GEngine"), GEngine))
+	{
+		UE_LOG(LogTemp, Error, TEXT("GEngine null"));
+		return false;
+	}
+	
+	UE_LOG(LogTemp, Log, TEXT("VOICEVOX CORE FrameAudioQuery:RunTest"));
+	if (GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Initialize(true, 0, false))
+	{
+		// 波音リツ（ノーマル）　6000が実質APIでFrameAudioQueryを生成できる唯一のID
+		if (constexpr int Singing_Teacher = 6000; 
+			GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->LoadModel(Singing_Teacher))
+		{
+			FVoicevoxScore Score{};
+			Score.Notes.Add({.ID = TEXT(""), .Key = -1, .Frame_Length = 10, .Lyric = TEXT("")}); // 休符は空白、Keyを‐1に
+			Score.Notes.Add({.ID = TEXT(""), .Key = 10, .Frame_Length = 10, .Lyric = TEXT("か")});
+			Score.Notes.Add({.ID = TEXT("あ122"), .Key = 50, .Frame_Length = 45, .Lyric = TEXT("あ")});
+			Score.Notes.Add({.ID = TEXT("あ123"), .Key = -1, .Frame_Length = 90, .Lyric = TEXT("")}); 
+			
+			const FVoicevoxFrameAudioQuery AudioQuery = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameAudioQuery(Score, Singing_Teacher);
+			
+			// JSONに変換して正しい型になっているかをチェックする
+			const FString OutputJson = FVoicevoxJsonObjectConverter::FrameAudioQueryConverterToJsonString(AudioQuery);
+
+			const VoicevoxResultCode Code = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->VoicevoxValidate(EVoicevoxCoreValidateType::FrameAudioQuery, OutputJson);
+			if (Code == VoicevoxResultCode::VOICEVOX_RESULT_INVALID_FRAME_AUDIO_QUERY_ERROR)
+			{
+				UE_LOG(LogTemp, Error, TEXT("VOICEVOX_RESULT:INVALID_FRAME_AUDIO_QUERY_ERROR"));
+				UE_LOG(LogTemp, Error, TEXT("%s"), *OutputJson);
+				GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Finalize();
+				return false;
+			}
+			
+			FVoicevoxScore Score2{};
+			Score2.Notes.Add({.ID = TEXT(""), .Key = -1, .Frame_Length = 45, .Lyric = TEXT("")}); // 休符は空白、Keyを‐1に
+			Score2.Notes.Add({.ID = TEXT(""), .Key = 10, .Frame_Length = 90, .Lyric = TEXT("く")});
+			Score2.Notes.Add({.ID = TEXT("あ122"), .Key = 50, .Frame_Length = 45, .Lyric = TEXT("お")});
+			Score2.Notes.Add({.ID = TEXT(""), .Key = 50, .Frame_Length = 45, .Lyric = TEXT("ら")});
+			Score2.Notes.Add({.ID = TEXT("あ123"), .Key = -1, .Frame_Length = 90, .Lyric = TEXT("")}); 
+			Score2.Notes.Add({.ID = TEXT(""), .Key = 50, .Frame_Length = 45, .Lyric = TEXT("ま")});
+			
+			const FString ScoreOutputJson = FVoicevoxJsonObjectConverter::ScoreConverterToJsonString(Score);
+			const VoicevoxResultCode ECode = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->VoicevoxValidate(EVoicevoxCoreMultiValidateType::EnsureCompatible, ScoreOutputJson, OutputJson);
+			if (ECode == VoicevoxResultCode::VOICEVOX_RESULT_INCOMPATIBLE_QUERIES_ERROR)
+			{
+				UE_LOG(LogTemp, Error, TEXT("VOICEVOX_RESULT:INCOMPATIBLE_QUERIES_ERROR"));
+				GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Finalize();
+				return false;
+			}
+			
+			if (ECode == VoicevoxResultCode::VOICEVOX_RESULT_INVALID_SCORE_ERROR)
+			{
+				for (auto Note : Score.Notes)
+				{
+					FString NOutputJson = "";
+					FVoicevoxJsonObjectConverter::NoteToJsonObject(Note, NOutputJson);
+
+					if (const VoicevoxResultCode NCode = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->VoicevoxValidate(EVoicevoxCoreValidateType::Note, NOutputJson); 
+						NCode == VoicevoxResultCode::VOICEVOX_RESULT_INVALID_NOTE_ERROR)
+					{
+						UE_LOG(LogTemp, Error, TEXT("VOICEVOX_RESULT:INVALID_NOTE_ERROR"));
+						UE_LOG(LogTemp, Error, TEXT("%s"), *NOutputJson);
+						return false;
+					}
+				}
+				UE_LOG(LogTemp, Error, TEXT("VOICEVOX_RESULT:INVALID_SCORE_ERROR"));
+				UE_LOG(LogTemp, Error, TEXT("%s"), *OutputJson);
+				return false;
+			}
+			if (ECode == VoicevoxResultCode::VOICEVOX_RESULT_INVALID_FRAME_AUDIO_QUERY_ERROR)
+			{
+				UE_LOG(LogTemp, Error, TEXT("VOICEVOX_RESULT:INVALID_FRAME_AUDIO_QUERY_ERROR"));
+				UE_LOG(LogTemp, Error, TEXT("%s"), *OutputJson);
+				GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Finalize();
+				return false;
+			}
+			
+			UE_LOG(LogTemp, Log, TEXT("VOICEVOX_RESULT:OK"));
+			GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Finalize();
+			return Code == VoicevoxResultCode::VOICEVOX_RESULT_OK;
+		}
+		UE_LOG(LogTemp, Error, TEXT("No Loaded VVM StyleId 6000"));
+		GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->Finalize();
+		return false;
+	}
+	
+	UE_LOG(LogTemp, Error, TEXT("VOICEVOX CORE Initialize Failed"));
+	return false;
 }
 
 #endif
