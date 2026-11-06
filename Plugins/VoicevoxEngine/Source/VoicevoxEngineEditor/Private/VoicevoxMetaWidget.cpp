@@ -32,10 +32,10 @@ void SVoicevoxMetaWidget::Construct(const FArguments& InArgs)
 			[
 				SNew(SHorizontalBox)
 				+ SHorizontalBox::Slot()
-				.MaxWidth(160.0f)
+				.MaxWidth(300.0f)
 				[
 					SNew(STextBlock)
-					.Text(FText::FromString(FString::Printf(TEXT(" - %s (ID=%d)"), *Style.Name, Style.Id)))
+					.Text(FText::FromString(FString::Printf(TEXT(" - %s (ID=%d, Type=%s)"), *Style.Name, Style.Id, *Style.Type)))
 				]
 				+ SHorizontalBox::Slot()
 				.AutoWidth()

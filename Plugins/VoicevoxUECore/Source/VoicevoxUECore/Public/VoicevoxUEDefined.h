@@ -115,6 +115,14 @@ struct FVoicevoxStyle
 	//! スタイルID
 	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
 	int32 Id = 0;
+	
+	//! スタイルの種類
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	FString Type;
+	
+	//! 並び順
+	UPROPERTY(BlueprintReadOnly, Category="VOICEVOX Engine")
+	int32 Order = 0;
 };
 
 /**

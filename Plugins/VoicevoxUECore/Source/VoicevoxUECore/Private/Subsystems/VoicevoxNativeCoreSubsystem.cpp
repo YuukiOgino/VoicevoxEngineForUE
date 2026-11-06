@@ -1610,7 +1610,7 @@ TMap<int, FString> UVoicevoxNativeCoreSubsystem::GetVvmFileNameMapToStyleId()
 
 		for (auto Metas = VoiceModelFileCreateMetas(*Model); const auto& Meta : Metas)
 		{
-			for (auto [Name, Id]: Meta.Styles)
+			for (auto [Name, Id, Type, Order]: Meta.Styles)
 			{
 				FString FileNameOnly = FPaths::GetBaseFilename(FileName);
 				Map.Add(Id, FileNameOnly);
