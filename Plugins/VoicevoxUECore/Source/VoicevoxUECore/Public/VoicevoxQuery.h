@@ -8,6 +8,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/Object.h"
 #include "VoicevoxUEDefined.h"
 #include "VoicevoxQuery.generated.h"
 

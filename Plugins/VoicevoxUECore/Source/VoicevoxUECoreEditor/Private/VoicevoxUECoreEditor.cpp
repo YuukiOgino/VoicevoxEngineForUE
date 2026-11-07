@@ -8,6 +8,7 @@
 #include "VoicevoxUECoreEditor.h"
 #include "AssetToolsModule.h"
 #include "AssetTypeActions/VoicevoxQueryTypeActions.h"
+#include "AssetTypeActions/VoicevoxSingScoreTypeAction.h"
 #include "Subsystems/VoicevoxEditorSubsystem.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxUECoreEditorModule"
@@ -23,6 +24,8 @@ void FVoicevoxUECoreEditorModule::StartupModule()
 		const auto AssetCategoryBit = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("VOICEVOX")), FText::FromString(TEXT("VOICEVOX")));
 		const auto Actions = MakeShareable(new FVoicevoxQueryTypeActions(AssetCategoryBit));
 		AssetTools.RegisterAssetTypeActions(Actions);
+		const auto ScoreActions = MakeShareable(new FVoicevoxSingScoreTypeAction(AssetCategoryBit));
+		AssetTools.RegisterAssetTypeActions(ScoreActions);
 	}
 
 	FCoreDelegates::OnFEngineLoopInitComplete.AddLambda([]
