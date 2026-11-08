@@ -16,7 +16,7 @@
  * @classs UVoicevoxSingFrameQuery
  * @brief Voicevoxのソング機能で使用するフレームごとの音声合成用のクエリ情報を保存するためのクラス
  */
-UCLASS()
+UCLASS(HideCategories=Object, BlueprintType, EditInlineNew)
 class VOICEVOXUECORE_API UVoicevoxSingFrameQuery : public UObject
 {
 	GENERATED_BODY()
