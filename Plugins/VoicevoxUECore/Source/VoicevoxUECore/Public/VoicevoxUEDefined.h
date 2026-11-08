@@ -474,48 +474,63 @@ struct FVoicevoxRegisteredUserDictWord
 {
 	GENERATED_USTRUCT_BODY()
 	
+	//! 表層形
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Surface;
 	
+	//! 優先度
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	int Priority = 0;
 	
+	//! 文脈ID
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	int Context_ID = 0;
 	
+	//! 品詞
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Part_Of_Speech;
 	
+	//! 品詞細分類1
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Part_Of_Speech_Detail_1;
 	
+	//! 品詞細分類2
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Part_Of_Speech_Detail_2;
 
+	//! 品詞細分類3
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Part_Of_Speech_Detail_3;
 	
+	//! 活用型
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Inflectional_Type;
 	
+	//! 活用形
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Inflectional_Form;
 	
+	//! 原形
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Stem;
 	
+	//! 読み
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Yomi;
 	
+	//! 発音
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Pronunciation;
 	
+	//! アクセント型
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	int Accent_Type = 0;
 	
+	//! モーラ数
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	int Mora_Count = 0;
 	
+	//! アクセント結合規則
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
 	FString Accent_Associative_Rule;
 };
