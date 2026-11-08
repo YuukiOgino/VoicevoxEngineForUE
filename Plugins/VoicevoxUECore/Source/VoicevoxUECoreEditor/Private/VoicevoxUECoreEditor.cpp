@@ -9,7 +9,7 @@
 #include "AssetToolsModule.h"
 #include "AssetTypeActions/VoicevoxQueryTypeActions.h"
 #include "AssetTypeActions/VoicevoxSingFrameQueryTypeActions.h"
-#include "AssetTypeActions/VoicevoxSingScoreTypeAction.h"
+#include "AssetTypeActions/VoicevoxSingScoreTypeActions.h"
 #include "Subsystems/VoicevoxEditorSubsystem.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxUECoreEditorModule"
@@ -25,7 +25,7 @@ void FVoicevoxUECoreEditorModule::StartupModule()
 		const auto AssetCategoryBit = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("VOICEVOX")), FText::FromString(TEXT("VOICEVOX")));
 		const auto Actions = MakeShareable(new FVoicevoxQueryTypeActions(AssetCategoryBit));
 		AssetTools.RegisterAssetTypeActions(Actions);
-		const auto ScoreActions = MakeShareable(new FVoicevoxSingScoreTypeAction(AssetCategoryBit));
+		const auto ScoreActions = MakeShareable(new FVoicevoxSingScoreTypeActions(AssetCategoryBit));
 		AssetTools.RegisterAssetTypeActions(ScoreActions);
 		const auto FrameAudioQueryActions = MakeShareable(new FVoicevoxSingFrameQueryTypeActions(AssetCategoryBit));
 		AssetTools.RegisterAssetTypeActions(FrameAudioQueryActions);

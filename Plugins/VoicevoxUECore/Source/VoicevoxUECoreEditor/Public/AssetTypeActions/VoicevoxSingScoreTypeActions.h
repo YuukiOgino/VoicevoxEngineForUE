@@ -1,7 +1,7 @@
 // Copyright Yuuki Ogino. All Rights Reserved.
 
 /**
- * @headerfile VoicevoxSingScoreTypeAction.h
+ * @headerfile VoicevoxSingScoreTypeActions.h
  * @brief  Voicevoxのソング機能で使用する楽譜のデータアセットをエディターから生成するためのヘッダーファイル
  * @author Yuuki Ogino
  */
@@ -15,10 +15,10 @@
 //------------------------------------------------------------------------
 
 /**
- * @class FVoicevoxSingScoreTypeAction
+ * @class FVoicevoxSingScoreTypeActions
  * @brief Voicevoxのソング機能で使用する楽譜のデータアセットをエディターから生成するためのアクションクラス
  */
-class FVoicevoxSingScoreTypeAction : public FAssetTypeActions_Base
+class FVoicevoxSingScoreTypeActions : public FAssetTypeActions_Base
 {
 	//! 項目名
 	FText                       Name;
@@ -30,13 +30,13 @@ public:
 	/**
 	 * @brief コンストラクタ
 	 */
-	FVoicevoxSingScoreTypeAction();
+	FVoicevoxSingScoreTypeActions();
 
 	/**
 	 * @brief コンストラクタ
 	 * @param AssetCategoryBit 
 	 */
-	explicit FVoicevoxSingScoreTypeAction(EAssetTypeCategories::Type AssetCategoryBit);
+	explicit FVoicevoxSingScoreTypeActions(EAssetTypeCategories::Type AssetCategoryBit);
 
 	/**
 	 * @brief GetName　override

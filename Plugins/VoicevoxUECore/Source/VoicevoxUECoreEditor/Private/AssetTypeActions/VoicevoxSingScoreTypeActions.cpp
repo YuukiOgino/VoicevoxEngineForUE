@@ -1,18 +1,18 @@
 // Copyright Yuuki Ogino. All Rights Reserved
 
 /**
- * @headerfile VoicevoxSingScoreTypeAction.cpp
+ * @headerfile VoicevoxSingScoreTypeActions.cpp
  * @brief  Voicevoxのソング機能で使用する楽譜のデータアセットをエディターから生成するためのCPPファイル
  * @author Yuuki Ogino
  */
 
-#include "AssetTypeActions/VoicevoxSingScoreTypeAction.h"
+#include "AssetTypeActions/VoicevoxSingScoreTypeActions.h"
 #include "VoicevoxSingScore.h"
 
 /**
  * @brief コンストラクタ
  */
-FVoicevoxSingScoreTypeAction::FVoicevoxSingScoreTypeAction():
+FVoicevoxSingScoreTypeActions::FVoicevoxSingScoreTypeActions():
 	Name(FText::FromString(TEXT("Voicevox Score"))),
 	AssetCategoryBit(EAssetTypeCategories::Misc)
 {
@@ -22,7 +22,7 @@ FVoicevoxSingScoreTypeAction::FVoicevoxSingScoreTypeAction():
  * @brief コンストラクタ
  * @param AssetCategoryBit 
  */
-FVoicevoxSingScoreTypeAction::FVoicevoxSingScoreTypeAction(EAssetTypeCategories::Type AssetCategoryBit):
+FVoicevoxSingScoreTypeActions::FVoicevoxSingScoreTypeActions(EAssetTypeCategories::Type AssetCategoryBit):
 	Name(FText::FromString(TEXT("Voicevox Score"))),
 	AssetCategoryBit(AssetCategoryBit)
 {
@@ -31,7 +31,7 @@ FVoicevoxSingScoreTypeAction::FVoicevoxSingScoreTypeAction(EAssetTypeCategories:
 /**
  * @brief GetName 
  */	
-FText FVoicevoxSingScoreTypeAction::GetName() const
+FText FVoicevoxSingScoreTypeActions::GetName() const
 {
 	return Name;
 }
@@ -39,7 +39,7 @@ FText FVoicevoxSingScoreTypeAction::GetName() const
 /**
  * @brief GetSupportedClass 
  */	
-UClass* FVoicevoxSingScoreTypeAction::GetSupportedClass() const
+UClass* FVoicevoxSingScoreTypeActions::GetSupportedClass() const
 {
 	return UVoicevoxSingScore::StaticClass();
 }
@@ -47,7 +47,7 @@ UClass* FVoicevoxSingScoreTypeAction::GetSupportedClass() const
 /**
  * @brief GetTypeColor 
  */	
-FColor FVoicevoxSingScoreTypeAction::GetTypeColor() const
+FColor FVoicevoxSingScoreTypeActions::GetTypeColor() const
 {
 	return FColor::Cyan;
 }
@@ -55,7 +55,7 @@ FColor FVoicevoxSingScoreTypeAction::GetTypeColor() const
 /**
  * @brief GetCategories 
  */	
-uint32 FVoicevoxSingScoreTypeAction::GetCategories()
+uint32 FVoicevoxSingScoreTypeActions::GetCategories()
 {
 	return AssetCategoryBit;
 }
@@ -63,7 +63,7 @@ uint32 FVoicevoxSingScoreTypeAction::GetCategories()
 /**
  * @brief OpenAssetEditor 
  */	
-void FVoicevoxSingScoreTypeAction::OpenAssetEditor(const TArray<UObject*>& InObjects, TSharedPtr<IToolkitHost> EditWithinLevelEditor)
+void FVoicevoxSingScoreTypeActions::OpenAssetEditor(const TArray<UObject*>& InObjects, TSharedPtr<IToolkitHost> EditWithinLevelEditor)
 {
 	for(int i = 0; i < InObjects.Num(); ++i)
 	{
