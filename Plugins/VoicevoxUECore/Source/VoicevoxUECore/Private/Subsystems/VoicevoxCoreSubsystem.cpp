@@ -230,9 +230,17 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxCoreSubsystem::SynthesizerReplace(const E
 /**
  * @brief 楽譜から歌唱音声合成用のクエリを作成する。
  */
-FVoicevoxFrameAudioQuery UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameAudioQuery(const FVoicevoxScore& Score, VoicevoxStyleId StyleId) const
+FVoicevoxFrameAudioQuery UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameAudioQuery(const FVoicevoxScore& Score, const VoicevoxStyleId StyleId) const
 {
 	return NativeInstance->SynthesizerCreateSingFrameAudioQuery(Score, StyleId);
+}
+
+/**
+ * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+ */
+FVoicevoxFrameAudioQuery UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameAudioQuery(const UVoicevoxSingScore& Score, const VoicevoxStyleId StyleId) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameAudioQuery(Score.Score, StyleId);
 }
 
 /**
@@ -244,6 +252,22 @@ TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameF0(const FVoicev
 }
 
 /**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+ */
+TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameF0(const FVoicevoxScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameF0(Score, FrameAudioQuery.FrameAudioQuery, FrameAudioQuery.StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+ */
+TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameF0(const UVoicevoxSingScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameF0(Score.Score, FrameAudioQuery.FrameAudioQuery, FrameAudioQuery.StyleId);
+}
+
+/**
  * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
  */
 TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameVolume(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const
@@ -252,11 +276,35 @@ TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameVolume(const FVo
 }
 
 /**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+ */
+TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameVolume(const FVoicevoxScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameVolume(Score, FrameAudioQuery.FrameAudioQuery, FrameAudioQuery.StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+ */
+TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameVolume(const UVoicevoxSingScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameVolume(Score.Score, FrameAudioQuery.FrameAudioQuery, FrameAudioQuery.StyleId);
+}
+
+/**
  * @brief 歌唱音声合成を行う。
  */
-TArray<uint8> UVoicevoxCoreSubsystem::SynthesizerFrameSynthesis(const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const
+TArray<uint8> UVoicevoxCoreSubsystem::SynthesizerFrameSynthesis(const FVoicevoxFrameAudioQuery& FrameAudioQuery, const VoicevoxStyleId StyleId) const
 {
 	return NativeInstance->SynthesizerFrameSynthesis(FrameAudioQuery, StyleId);
+}
+
+/**
+ * @brief 歌唱音声合成を行う。
+ */
+TArray<uint8> UVoicevoxCoreSubsystem::SynthesizerFrameSynthesis(const UVoicevoxSingFrameQuery& FrameAudioQuery) const
+{
+	return NativeInstance->SynthesizerFrameSynthesis(FrameAudioQuery.FrameAudioQuery, FrameAudioQuery.StyleId);
 }
 
 //--------------------------------

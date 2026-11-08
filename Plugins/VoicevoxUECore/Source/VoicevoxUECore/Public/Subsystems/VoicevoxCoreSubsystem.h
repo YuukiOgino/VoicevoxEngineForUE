@@ -12,6 +12,8 @@
 #include "VoicevoxApiObject.h"
 #include "VoicevoxUEDefined.h"
 #include "VoicevoxQuery.h"
+#include "VoicevoxSingFrameQuery.h"
+#include "VoicevoxSingScore.h"
 #include "Subsystems/EngineSubsystem.h"
 #include "VoicevoxCoreSubsystem.generated.h"
 
@@ -327,6 +329,16 @@ public:
 	 FVoicevoxFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(const FVoicevoxScore& Score, VoicevoxStyleId StyleId) const;
 
 	/**
+	 * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+	 *
+	 * @param [in] Score  楽譜情報アセット
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
+	 */
+	FVoicevoxFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(const UVoicevoxSingScore& Score, VoicevoxStyleId StyleId) const;
+	
+	/**
 	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
 	 *
 	 * @param [in] Score 楽譜情報
@@ -337,6 +349,26 @@ public:
 	 */
 	 TArray<float> SynthesizerCreateSingFrameF0(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const;
 
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	TArray<float> SynthesizerCreateSingFrameF0(const FVoicevoxScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const;
+	
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+	 *
+	 * @param [in] Score 楽譜情報アセット
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	TArray<float> SynthesizerCreateSingFrameF0(const UVoicevoxSingScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const;
+	
 	/**
 	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
 	 *
@@ -349,6 +381,26 @@ public:
 	 TArray<float> SynthesizerCreateSingFrameVolume(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const;
 
 	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの音量
+	 */
+	TArray<float> SynthesizerCreateSingFrameVolume(const FVoicevoxScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const;
+	
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+	 *
+	 * @param [in] Score 楽譜情報アセット
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの音量
+	 */
+	TArray<float> SynthesizerCreateSingFrameVolume(const UVoicevoxSingScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const;
+	
+	/**
 	 * @brief 歌唱音声合成を行う。
 	 *
 	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
@@ -357,6 +409,13 @@ public:
 	 * @returns 音声データを出力する先のポインタ。
 	 */
 	 TArray<uint8> SynthesizerFrameSynthesis(const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const;
+	
+	/**
+	 * @brief 歌唱音声合成を行う。
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 * @returns 音声データを出力する先のポインタ。
+	 */
+	TArray<uint8> SynthesizerFrameSynthesis(const UVoicevoxSingFrameQuery& FrameAudioQuery) const;
 	
 	//--------------------------------
 	// VOICEVOX CORE validate関連
