@@ -8,6 +8,7 @@
 #include "VoicevoxUECoreEditor.h"
 #include "AssetToolsModule.h"
 #include "AssetTypeActions/VoicevoxQueryTypeActions.h"
+#include "AssetTypeActions/VoicevoxSingFrameQueryTypeActions.h"
 #include "AssetTypeActions/VoicevoxSingScoreTypeAction.h"
 #include "Subsystems/VoicevoxEditorSubsystem.h"
 
@@ -26,6 +27,8 @@ void FVoicevoxUECoreEditorModule::StartupModule()
 		AssetTools.RegisterAssetTypeActions(Actions);
 		const auto ScoreActions = MakeShareable(new FVoicevoxSingScoreTypeAction(AssetCategoryBit));
 		AssetTools.RegisterAssetTypeActions(ScoreActions);
+		const auto FrameAudioQueryActions = MakeShareable(new FVoicevoxSingFrameQueryTypeActions(AssetCategoryBit));
+		AssetTools.RegisterAssetTypeActions(FrameAudioQueryActions);
 	}
 
 	FCoreDelegates::OnFEngineLoopInitComplete.AddLambda([]

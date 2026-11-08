@@ -19,7 +19,7 @@
 
 /**
  * @class UVoicevoxSingScoreFactory
- * @brief VOicevox Scoreデータ生成クラス
+ * @brief Voicevox Scoreデータ生成クラス
  */
 UCLASS()
 class VOICEVOXUECOREEDITOR_API UVoicevoxSingScoreFactory : public UFactory

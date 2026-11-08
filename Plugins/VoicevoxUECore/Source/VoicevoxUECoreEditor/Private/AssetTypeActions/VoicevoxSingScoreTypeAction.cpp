@@ -7,7 +7,6 @@
  */
 
 #include "AssetTypeActions/VoicevoxSingScoreTypeAction.h"
-
 #include "VoicevoxSingScore.h"
 
 /**

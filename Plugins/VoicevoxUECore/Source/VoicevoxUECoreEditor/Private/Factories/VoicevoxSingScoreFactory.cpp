@@ -35,7 +35,10 @@ UObject* UVoicevoxSingScoreFactory::FactoryCreateNew(UClass* InClass, UObject* I
 		return NewScoreAsset;
 	}
 	
-	return NewObject<UVoicevoxSingScore>(InParent, InClass, InName, Flags, Context);
+	UVoicevoxSingScore* Object = NewObject<UVoicevoxSingScore>(InParent, InClass, InName, Flags, Context);
+	// 休符ノードをデフォルトとして追加
+	Object->Score.Notes.Add({.ID = TEXT(""), .Key = -1, .Frame_Length = 45, .Lyric = TEXT("")});
+	return Object;
 }
 
 /**
