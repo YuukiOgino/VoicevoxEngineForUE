@@ -11,6 +11,8 @@
 #include "CoreMinimal.h"
 #include "VoicevoxUEDefined.h"
 #include "VoicevoxQuery.h"
+#include "VoicevoxSingScore.h"
+#include "VoicevoxSingFrameQuery.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Sound/SoundWave.h"
 #include "VoicevoxBlueprintLibrary.generated.h"
@@ -255,6 +257,28 @@ public:
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateVoicevoxSingFrameF0"))
 	static UPARAM(DisplayName="f0")TArray<float> CreateSingFrameF0(FVoicevoxScore Score, FVoicevoxFrameAudioQuery FrameAudioQuery, int32 StyleId);
 
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateFrameQueryAssetToSingFrameF0"))
+	static UPARAM(DisplayName="f0")TArray<float> SynthesizerCreateFrameQueryAssetSingFrameF0(const FVoicevoxScore Score, const UVoicevoxSingFrameQuery* FrameAudioQuery);
+	
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+	 *
+	 * @param [in] Score 楽譜情報アセット
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateVoicevoxScoreAndFrameQueryAssetToSingFrameF0"))
+	static UPARAM(DisplayName="f0")TArray<float> SynthesizerCreateScoreAndFrameQueryAssetSingFrameF0(const UVoicevoxSingScore* Score, const UVoicevoxSingFrameQuery* FrameAudioQuery);
+	
 	/**
 	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
 	 *
