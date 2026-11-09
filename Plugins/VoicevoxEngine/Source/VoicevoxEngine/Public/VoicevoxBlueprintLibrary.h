@@ -12,6 +12,7 @@
 #include "VoicevoxUEDefined.h"
 #include "VoicevoxQuery.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Sound/SoundWave.h"
 #include "VoicevoxBlueprintLibrary.generated.h"
 
 /**
@@ -230,7 +231,18 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxSingFrameAudioQuery"))
 	static UPARAM(DisplayName="FrameAudioQuery")FVoicevoxFrameAudioQuery GetSingFrameAudioQuery(FVoicevoxScore Score, int32 StyleId);
-
+	
+	/**
+	 * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+	 *
+	 * @param [in] Score  楽譜情報アセット
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxSingScoreAssetToFrameAudioQuery"))
+	static UPARAM(DisplayName="FrameAudioQuery")FVoicevoxFrameAudioQuery GetSingScoreAssetFrameAudioQuery(UVoicevoxSingScore* Score, int32 StyleId);
+	
 	/**
 	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
 	 *

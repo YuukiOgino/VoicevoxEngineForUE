@@ -246,6 +246,14 @@ FVoicevoxFrameAudioQuery UVoicevoxBlueprintLibrary::GetSingFrameAudioQuery(const
 }
 
 /**
+ * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+ */
+FVoicevoxFrameAudioQuery UVoicevoxBlueprintLibrary::GetSingScoreAssetFrameAudioQuery(UVoicevoxSingScore* Score, const int32 StyleId)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameAudioQuery(*Score, StyleId);
+}
+
+/**
  * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
  */
 TArray<float> UVoicevoxBlueprintLibrary::CreateSingFrameF0(const FVoicevoxScore Score, const FVoicevoxFrameAudioQuery FrameAudioQuery, const int32 StyleId)
