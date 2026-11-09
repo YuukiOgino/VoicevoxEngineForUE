@@ -246,7 +246,7 @@ FVoicevoxFrameAudioQuery UVoicevoxBlueprintLibrary::GetSingFrameAudioQuery(const
 }
 
 /**
- * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+ * @brief 楽譜から歌唱音声合成用のクエリを作成する。(Blueprint公開ノード)
  */
 FVoicevoxFrameAudioQuery UVoicevoxBlueprintLibrary::GetSingScoreAssetFrameAudioQuery(UVoicevoxSingScore* Score, const int32 StyleId)
 {
@@ -262,17 +262,17 @@ TArray<float> UVoicevoxBlueprintLibrary::CreateSingFrameF0(const FVoicevoxScore 
 }
 
 /**
- * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
  */
-TArray<float> UVoicevoxBlueprintLibrary::SynthesizerCreateFrameQueryAssetSingFrameF0(const FVoicevoxScore Score, const UVoicevoxSingFrameQuery* FrameAudioQuery)
+TArray<float> UVoicevoxBlueprintLibrary::CreateFrameQueryAssetSingFrameF0(const FVoicevoxScore Score, const UVoicevoxSingFrameQuery* FrameAudioQuery)
 {
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameF0(Score, *FrameAudioQuery);
 }
 
 /**
- * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
  */
-TArray<float> UVoicevoxBlueprintLibrary::SynthesizerCreateScoreAndFrameQueryAssetSingFrameF0(const UVoicevoxSingScore* Score, const UVoicevoxSingFrameQuery* FrameAudioQuery)
+TArray<float> UVoicevoxBlueprintLibrary::CreateScoreAndFrameQueryAssetSingFrameF0(const UVoicevoxSingScore* Score, const UVoicevoxSingFrameQuery* FrameAudioQuery)
 {
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameF0(*Score, *FrameAudioQuery);	
 }
@@ -283,6 +283,22 @@ TArray<float> UVoicevoxBlueprintLibrary::SynthesizerCreateScoreAndFrameQueryAsse
 TArray<float> UVoicevoxBlueprintLibrary::CreateSingFrameVolume(const FVoicevoxScore Score, const FVoicevoxFrameAudioQuery FrameAudioQuery, const int32 StyleId)
 {
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameVolume(Score, FrameAudioQuery, StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
+ */
+TArray<float> UVoicevoxBlueprintLibrary::CreateFrameQueryAssetToSingFrameVolume(const FVoicevoxScore Score, const UVoicevoxSingFrameQuery* FrameAudioQuery)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameVolume(Score, *FrameAudioQuery);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
+ */
+TArray<float> UVoicevoxBlueprintLibrary::CreateScoreAndFrameQueryAssetToSingFrameVolume(const UVoicevoxSingScore* Score, const UVoicevoxSingFrameQuery* FrameAudioQuery)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameVolume(*Score, *FrameAudioQuery);
 }
 
 /**

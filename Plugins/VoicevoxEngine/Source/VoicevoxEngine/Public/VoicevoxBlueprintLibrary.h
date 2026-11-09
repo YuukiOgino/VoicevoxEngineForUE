@@ -235,7 +235,7 @@ public:
 	static UPARAM(DisplayName="FrameAudioQuery")FVoicevoxFrameAudioQuery GetSingFrameAudioQuery(FVoicevoxScore Score, int32 StyleId);
 	
 	/**
-	 * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+	 * @brief 楽譜から歌唱音声合成用のクエリを作成する。(Blueprint公開ノード)
 	 *
 	 * @param [in] Score  楽譜情報アセット
 	 * @param [in] StyleId スタイルID(Typeがsingのみ)
@@ -258,7 +258,7 @@ public:
 	static UPARAM(DisplayName="f0")TArray<float> CreateSingFrameF0(FVoicevoxScore Score, FVoicevoxFrameAudioQuery FrameAudioQuery, int32 StyleId);
 
 	/**
-	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
 	 *
 	 * @param [in] Score 楽譜情報
 	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
@@ -266,10 +266,10 @@ public:
 	 * @returns フレームごとの基本周波数
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateFrameQueryAssetToSingFrameF0"))
-	static UPARAM(DisplayName="f0")TArray<float> SynthesizerCreateFrameQueryAssetSingFrameF0(const FVoicevoxScore Score, const UVoicevoxSingFrameQuery* FrameAudioQuery);
+	static UPARAM(DisplayName="f0")TArray<float> CreateFrameQueryAssetSingFrameF0(const FVoicevoxScore Score, const UVoicevoxSingFrameQuery* FrameAudioQuery);
 	
 	/**
-	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
 	 *
 	 * @param [in] Score 楽譜情報アセット
 	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
@@ -277,7 +277,7 @@ public:
 	 * @returns フレームごとの基本周波数
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateVoicevoxScoreAndFrameQueryAssetToSingFrameF0"))
-	static UPARAM(DisplayName="f0")TArray<float> SynthesizerCreateScoreAndFrameQueryAssetSingFrameF0(const UVoicevoxSingScore* Score, const UVoicevoxSingFrameQuery* FrameAudioQuery);
+	static UPARAM(DisplayName="f0")TArray<float> CreateScoreAndFrameQueryAssetSingFrameF0(const UVoicevoxSingScore* Score, const UVoicevoxSingFrameQuery* FrameAudioQuery);
 	
 	/**
 	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
@@ -291,6 +291,29 @@ public:
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateVoicevoxSingFrameVolume"))
 	static UPARAM(DisplayName="Volume")TArray<float> CreateSingFrameVolume(FVoicevoxScore Score, FVoicevoxFrameAudioQuery FrameAudioQuery, int32 StyleId);
 
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの音量
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateVoicevoxFrameQueryAssetToSingFrameVolume"))
+	static UPARAM(DisplayName="Volume")TArray<float> CreateFrameQueryAssetToSingFrameVolume(const FVoicevoxScore Score, const UVoicevoxSingFrameQuery* FrameAudioQuery);
+	
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Score 楽譜情報アセット
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの音量
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateVoicevoxScoreAndFrameQueryAssetToSingFrameVolume"))
+	static UPARAM(DisplayName="Volume")TArray<float> CreateScoreAndFrameQueryAssetToSingFrameVolume(const UVoicevoxSingScore* Score, const UVoicevoxSingFrameQuery* FrameAudioQuery);
+	
+	
 	/**
 	 * @brief 歌唱音声合成を行う。(Blueprint公開ノード)
 	 *
