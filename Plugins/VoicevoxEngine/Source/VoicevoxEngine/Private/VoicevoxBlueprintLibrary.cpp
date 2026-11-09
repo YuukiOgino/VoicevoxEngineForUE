@@ -274,6 +274,19 @@ USoundWave* UVoicevoxBlueprintLibrary::FrameSynthesisOutput(const FVoicevoxFrame
 	return nullptr;
 }
 
+/**
+ * @brief フレームごとの音声合成用のクエリアセットから歌唱音声合成を行う。(Blueprint公開ノード)
+ */
+USoundWave* UVoicevoxBlueprintLibrary::VoicevoxSingFrameQueryOutput(UVoicevoxSingFrameQuery* FrameAudioQuery)
+{
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerFrameSynthesis(*FrameAudioQuery); !OutputWAV.IsEmpty())
+	{
+		return CreateSoundWave(OutputWAV);
+	}
+
+	return nullptr;
+}
+
 //--------------------------------
 // VOICEVOX CORE Dict関連
 //--------------------------------

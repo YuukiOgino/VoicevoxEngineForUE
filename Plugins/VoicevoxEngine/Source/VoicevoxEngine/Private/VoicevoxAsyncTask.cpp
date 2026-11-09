@@ -309,6 +309,19 @@ UVoicevoxFrameSynthesisAsyncTask* UVoicevoxFrameSynthesisAsyncTask::FrameSynthes
 }
 
 /**
+ * @brief 非同期でフレームごとの音声合成用のクエリアセットを元に音声データを取得(Blueprint公開ノード)
+ */
+UVoicevoxFrameSynthesisAsyncTask* UVoicevoxFrameSynthesisAsyncTask::VoicevoxSingFrameQueryOutput(UObject* WorldContextObject, UVoicevoxSingFrameQuery* FrameAudioQuery)
+{
+	UVoicevoxFrameSynthesisAsyncTask* Task = NewObject<UVoicevoxFrameSynthesisAsyncTask>();
+	Task->StyleId = FrameAudioQuery->StyleId;
+	Task->FrameAudioQuery = FrameAudioQuery->FrameAudioQuery;
+	Task->RegisterWithGameInstance(WorldContextObject);
+	return Task;
+}
+
+
+/**
  * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
  */	
 void UVoicevoxFrameSynthesisAsyncTask::Activate()

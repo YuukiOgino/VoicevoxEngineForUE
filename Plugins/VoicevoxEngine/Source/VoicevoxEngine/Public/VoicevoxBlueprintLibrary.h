@@ -266,6 +266,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxFrameSynthesisOutput"))
 	static UPARAM(DisplayName="Sound")USoundWave* FrameSynthesisOutput(FVoicevoxFrameAudioQuery FrameAudioQuery, int32 StyleId);
 	
+	/**
+	 * @brief フレームごとの音声合成用のクエリアセットから歌唱音声合成を行う。(Blueprint公開ノード)
+	 *
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 * @returns  FrameAudioQuery情報を元に作成された音楽データが格納されたUSoundWave
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxSingFrameQueryAssetOutput"))
+	static UPARAM(DisplayName="Sound") USoundWave* VoicevoxSingFrameQueryOutput(UVoicevoxSingFrameQuery* FrameAudioQuery);
+	
 	//--------------------------------
 	// VOICEVOX CORE Dict関連
 	//--------------------------------

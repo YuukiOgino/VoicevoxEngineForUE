@@ -11,6 +11,7 @@
 #include "CoreMinimal.h"
 #include "VoicevoxUEDefined.h"
 #include "VoicevoxQuery.h"
+#include "VoicevoxSingFrameQuery.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Tasks/Task.h"
 #include "VoicevoxAsyncTask.generated.h"
@@ -340,8 +341,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxFrameSynthesisOutputAsync", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
 	static UVoicevoxFrameSynthesisAsyncTask* FrameSynthesisOutput(UObject* WorldContextObject, int32 StyleId, FVoicevoxFrameAudioQuery FrameAudioQuery);
 	
+	/**
+	 * @brief 非同期でフレームごとの音声合成用のクエリアセットを元に音声データを取得(Blueprint公開ノード)
+	 * @param[in] WorldContextObject
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxSingFrameQueryAssetOutputAsync", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
+	static UVoicevoxFrameSynthesisAsyncTask* VoicevoxSingFrameQueryOutput(UObject* WorldContextObject, UVoicevoxSingFrameQuery* FrameAudioQuery);
+	
 	//! スタイルID
 	int32 StyleId = 0;
+	
 	//! FrameAudioQuery
 	FVoicevoxFrameAudioQuery FrameAudioQuery;
 	
