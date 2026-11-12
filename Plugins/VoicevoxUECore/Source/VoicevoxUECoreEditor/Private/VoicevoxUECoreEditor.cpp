@@ -10,6 +10,7 @@
 #include "AssetTypeActions/VoicevoxQueryTypeActions.h"
 #include "AssetTypeActions/VoicevoxSingFrameQueryTypeActions.h"
 #include "AssetTypeActions/VoicevoxSingScoreTypeActions.h"
+#include "AssetTypeActions/VoicevoxUserDictWordTypeActions.h"
 #include "Subsystems/VoicevoxEditorSubsystem.h"
 
 #define LOCTEXT_NAMESPACE "FVoicevoxUECoreEditorModule"
@@ -29,6 +30,8 @@ void FVoicevoxUECoreEditorModule::StartupModule()
 		AssetTools.RegisterAssetTypeActions(ScoreActions);
 		const auto FrameAudioQueryActions = MakeShareable(new FVoicevoxSingFrameQueryTypeActions(AssetCategoryBit));
 		AssetTools.RegisterAssetTypeActions(FrameAudioQueryActions);
+		const auto UserDictWordActions = MakeShareable(new FVoicevoxUserDictWordTypeActions(AssetCategoryBit));
+		AssetTools.RegisterAssetTypeActions(UserDictWordActions);
 	}
 
 	FCoreDelegates::OnFEngineLoopInitComplete.AddLambda([]

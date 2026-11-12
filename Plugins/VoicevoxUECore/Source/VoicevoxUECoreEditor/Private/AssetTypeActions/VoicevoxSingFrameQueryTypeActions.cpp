@@ -1,11 +1,9 @@
 // Copyright Yuuki Ogino. All Rights Reserved
 
 /**
- * @headerfile VoicevoxSingFrameQueryTypeActions.cpp
  * @brief  Voicevoxのソング機能で使用するフレームごとの音声合成用のクエリデータアセットをエディターから生成するためのCPPファイル
  * @author Yuuki Ogino
  */
-
 #include "AssetTypeActions/VoicevoxSingFrameQueryTypeActions.h"
 #include "VoicevoxSingFrameQuery.h"
 

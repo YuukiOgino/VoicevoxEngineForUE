@@ -1,11 +1,9 @@
 // Copyright Yuuki Ogino. All Rights Reserved
 
 /**
- * @headerfile VoicevoxSingScoreTypeActions.cpp
  * @brief  Voicevoxのソング機能で使用する楽譜のデータアセットをエディターから生成するためのCPPファイル
  * @author Yuuki Ogino
  */
-
 #include "AssetTypeActions/VoicevoxSingScoreTypeActions.h"
 #include "VoicevoxSingScore.h"
 
