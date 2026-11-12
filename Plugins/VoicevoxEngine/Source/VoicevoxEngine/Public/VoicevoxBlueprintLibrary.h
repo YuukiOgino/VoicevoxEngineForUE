@@ -13,6 +13,7 @@
 #include "VoicevoxQuery.h"
 #include "VoicevoxSingScore.h"
 #include "VoicevoxSingFrameQuery.h"
+#include "VoicevoxUserDictWord.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Sound/SoundWave.h"
 #include "VoicevoxBlueprintLibrary.generated.h"
@@ -365,6 +366,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxUserDictAddWord"))
 	static UPARAM(DisplayName="UUID") TArray<uint8> UserDictAddWord(const FVoicevoxCoreUserDictWord Word);
 
+	/**
+	 * @brief ユーザー辞書アセットから単語を登録する。(Blueprint公開ノード)
+	 * @param [in] UserDictWordAsset ユーザー辞書アセット
+	 * @returns 追加した単語のUUIDをキーとしたMap
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxUserDictAssetAddWord"))
+	static UPARAM(DisplayName="UUID Map")TMap<FGuid, FVoicevoxCoreUserDictWord> UserDictAssetAddWord(UVoicevoxUserDictWord* UserDictWordAsset);
+	
 	/**
 	 * @brief ユーザー辞書の単語を更新する。(Blueprint公開ノード)
 	 *

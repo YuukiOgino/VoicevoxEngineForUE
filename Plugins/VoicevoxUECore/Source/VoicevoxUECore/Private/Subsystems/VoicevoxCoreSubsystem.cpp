@@ -522,7 +522,38 @@ bool UVoicevoxCoreSubsystem::UserDictInitialize(const FString& DictPath) const
 {
 	return NativeInstance->UserDictInitialize(DictPath);
 }
+
+/**
+ * @brief ユーザー辞書アセットから単語を登録する
+ */
+TMap<FGuid, FVoicevoxCoreUserDictWord> UVoicevoxCoreSubsystem::UserDictAssetAddWord(UVoicevoxUserDictWord& UserDictWordAsset) const
+{
+	TMap<FGuid, FVoicevoxCoreUserDictWord> Map;
+	for (auto Value : UserDictWordAsset.UserDictWordList)
+	{
+		VoicevoxUserDictWord Word
+		{
+			.surface = TCHAR_TO_UTF8(*Value.Surface), 
+			.pronunciation = TCHAR_TO_UTF8(*Value.Pronunciation), 
+			.accent_type = static_cast<uintptr_t>(Value.AccentType), 
+			.word_type = static_cast<VoicevoxUserDictWordType>(Value.WordType), 
+			.priority = static_cast<uint32_t>(Value.Priority)
+		};
+		TArray<uint8_t> UUID = NativeInstance->UserDictAddWord(&Word);
+		
+		uint32 A, B, C, D;
+
+		FMemory::Memcpy(&A, UUID.GetData() + 0, 4);
+		FMemory::Memcpy(&B, UUID.GetData() + 4, 4);
+		FMemory::Memcpy(&C, UUID.GetData() + 8, 4);
+		FMemory::Memcpy(&D, UUID.GetData() + 12, 4);
+		
+		Map.Add(FGuid(A, B, C, D), Value);
+	}
 	
+	return Map;
+}
+
 /**
  * @brief ユーザー辞書に単語を追加する。
  */

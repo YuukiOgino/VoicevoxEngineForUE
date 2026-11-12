@@ -14,6 +14,7 @@
 #include "VoicevoxQuery.h"
 #include "VoicevoxSingFrameQuery.h"
 #include "VoicevoxSingScore.h"
+#include "VoicevoxUserDictWord.h"
 #include "Subsystems/EngineSubsystem.h"
 #include "VoicevoxCoreSubsystem.generated.h"
 
@@ -554,6 +555,13 @@ public:
 	 * @returns 初期化が成功したか
 	 */
 	bool UserDictInitialize(const FString& DictPath = TEXT("")) const;
+	
+	/**
+	 * @brief ユーザー辞書アセットから単語を登録する
+	 * @param [in] UserDictWordAsset ユーザー辞書アセット
+	 * @returns 追加した単語のUUIDをキーとしたMap
+	 */
+	TMap<FGuid, FVoicevoxCoreUserDictWord> UserDictAssetAddWord(UVoicevoxUserDictWord& UserDictWordAsset) const;
 	
 	/**
 	 * @brief ユーザー辞書に単語を追加する。

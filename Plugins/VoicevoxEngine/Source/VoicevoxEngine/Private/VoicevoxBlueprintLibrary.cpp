@@ -375,6 +375,14 @@ TArray<uint8> UVoicevoxBlueprintLibrary::UserDictAddWord(const FVoicevoxCoreUser
 }
 
 /**
+ * @brief ユーザー辞書アセットから単語を登録する。(Blueprint公開ノード)
+ */
+TMap<FGuid, FVoicevoxCoreUserDictWord> UVoicevoxBlueprintLibrary::UserDictAssetAddWord(UVoicevoxUserDictWord* UserDictWordAsset)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->UserDictAssetAddWord(*UserDictWordAsset);
+}
+
+/**
  * @brief ユーザー辞書の単語を更新する。(Blueprint公開ノード)
  */
 bool UVoicevoxBlueprintLibrary::RewriteUserDictWord(const TArray<uint8>& WordUuid, const FVoicevoxCoreUserDictWord Word)
