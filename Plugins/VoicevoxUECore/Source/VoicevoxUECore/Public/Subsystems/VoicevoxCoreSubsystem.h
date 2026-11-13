@@ -592,7 +592,7 @@ public:
 	 * @brief ユーザー辞書の単語を取得する。
 	 * @returns 登録したユーザー辞書の単語マップ
 	 */
-	TMap<FString, FVoicevoxRegisteredUserDictWord> GetUserDictWord() const;
+	TMap<FGuid, FVoicevoxRegisteredUserDictWord> GetUserDictWord() const;
 
 	/**
 	 * @brief ユーザー辞書をファイルに保存する。

@@ -398,7 +398,7 @@ public:
 	 * @returns 登録したユーザー辞書の単語マップ
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxUserDictWord"))
-	static TMap<FString, FVoicevoxRegisteredUserDictWord> GetUserDictWord();
+	static TMap<FGuid, FVoicevoxRegisteredUserDictWord> GetUserDictWord();
 
 	/**
 	 * @brief ユーザー辞書をファイルに保存する。(Blueprint公開ノード)

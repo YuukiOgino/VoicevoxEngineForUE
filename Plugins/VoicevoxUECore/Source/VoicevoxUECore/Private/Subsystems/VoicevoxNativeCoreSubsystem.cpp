@@ -2034,10 +2034,10 @@ bool UVoicevoxNativeCoreSubsystem::UserDictRemoveWord(const TArray<uint8_t>& Wor
 /**
  * @brief ユーザー辞書の単語を取得する。
  */
-TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxNativeCoreSubsystem::GetUserDictWord()
+TMap<FGuid, FVoicevoxRegisteredUserDictWord> UVoicevoxNativeCoreSubsystem::GetUserDictWord()
 {
 	const FString Result = UserDictToJson();
-	TMap<FString, FVoicevoxRegisteredUserDictWord> Map = JsonObjectConverterToRegisteredUserDictWord(Result);
+	TMap<FGuid, FVoicevoxRegisteredUserDictWord> Map = JsonObjectConverterToRegisteredUserDictWord(Result);
 	return Map;
 }
 

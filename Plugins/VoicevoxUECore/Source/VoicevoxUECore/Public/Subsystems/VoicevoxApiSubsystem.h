@@ -53,7 +53,7 @@ protected:
 	 * @param [in] JsonString : RegisteredUserDictWordのJSON
 	 * @retun ユーザ辞書に登録した単語データのMap
 	 */
-	VOICEVOXUECORE_API static TMap<FString, FVoicevoxRegisteredUserDictWord> JsonObjectConverterToRegisteredUserDictWord(const FString& JsonString);
+	VOICEVOXUECORE_API static TMap<FGuid, FVoicevoxRegisteredUserDictWord> JsonObjectConverterToRegisteredUserDictWord(const FString& JsonString);
 	
 public:
 

@@ -663,7 +663,7 @@ public:
 	 * @brief ユーザー辞書の単語を取得する。
 	 * @returns 登録したユーザー辞書の単語マップ
 	 */
-	VOICEVOXUECORE_API TMap<FString, FVoicevoxRegisteredUserDictWord> GetUserDictWord();
+	VOICEVOXUECORE_API TMap<FGuid, FVoicevoxRegisteredUserDictWord> GetUserDictWord();
 	
 protected:
 	

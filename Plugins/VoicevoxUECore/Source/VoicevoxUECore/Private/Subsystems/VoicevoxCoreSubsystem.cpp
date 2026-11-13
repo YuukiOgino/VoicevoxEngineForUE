@@ -551,7 +551,6 @@ TMap<FGuid, FVoicevoxCoreUserDictWord> UVoicevoxCoreSubsystem::UserDictAssetAddW
 		FMemory::Memcpy(&A, UUID.GetData() + 12, 4);
 		
 		Map.Add(FGuid(A, B, C, D), Value);
-		FGuid g = FGuid(A, B, C, D);
 	}
 	
 	return Map;
@@ -584,7 +583,7 @@ bool UVoicevoxCoreSubsystem::DeleteUserDictWord(const TArray<uint8_t>& WordUuid)
 /**
  * @brief ユーザー辞書の単語を取得する。
  */
-TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxCoreSubsystem::GetUserDictWord() const
+TMap<FGuid, FVoicevoxRegisteredUserDictWord> UVoicevoxCoreSubsystem::GetUserDictWord() const
 {
 	return NativeInstance->GetUserDictWord();
 }

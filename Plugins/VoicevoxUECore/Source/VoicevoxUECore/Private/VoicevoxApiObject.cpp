@@ -648,7 +648,7 @@ bool UVoicevoxApiObject::DeleteUserDictWord(const TArray<uint8_t>& WordUuid)
 /**
  * @brief ユーザー辞書の単語を取得する。
  */
-TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxApiObject::GetUserDictWord()
+TMap<FGuid, FVoicevoxRegisteredUserDictWord> UVoicevoxApiObject::GetUserDictWord()
 {
 	for (const auto Element : SubsystemClasses)
 	{
@@ -656,7 +656,7 @@ TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxApiObject::GetUserDictWo
 		return Subsystem->GetUserDictWord();
 	}
 	
-	return TMap<FString, FVoicevoxRegisteredUserDictWord>();
+	return TMap<FGuid, FVoicevoxRegisteredUserDictWord>();
 }
 
 /**

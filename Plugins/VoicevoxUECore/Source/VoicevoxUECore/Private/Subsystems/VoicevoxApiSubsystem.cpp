@@ -53,9 +53,9 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxApiSubsystem::JsonObjectConverterToAccent
 /**
  * @brief VOICEVOXから受信したRegisteredUserDictWordの連想配列のJSONを変換する
  */
-TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxApiSubsystem::JsonObjectConverterToRegisteredUserDictWord(const FString& JsonString)
+TMap<FGuid, FVoicevoxRegisteredUserDictWord> UVoicevoxApiSubsystem::JsonObjectConverterToRegisteredUserDictWord(const FString& JsonString)
 {
-	TMap<FString, FVoicevoxRegisteredUserDictWord> Result;
+	TMap<FGuid, FVoicevoxRegisteredUserDictWord> Result;
 	TSharedPtr<FJsonObject> RootObject;
 	if (const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString); !FJsonSerializer::Deserialize(Reader, RootObject) || !RootObject.IsValid())
 	{
@@ -73,7 +73,7 @@ TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxApiSubsystem::JsonObject
 		FVoicevoxRegisteredUserDictWord UserDict;
 		if (FJsonObjectConverter::JsonObjectToUStruct(EntryObj.ToSharedRef(), FVoicevoxRegisteredUserDictWord::StaticStruct(), &UserDict))
 		{
-			Result.Add(Key, UserDict);
+			Result.Add(FGuid(Key), UserDict);
 		}
 	}
 	
