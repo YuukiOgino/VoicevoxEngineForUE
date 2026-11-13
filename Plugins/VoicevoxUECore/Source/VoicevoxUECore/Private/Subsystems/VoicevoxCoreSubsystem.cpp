@@ -531,13 +531,15 @@ TMap<FGuid, FVoicevoxCoreUserDictWord> UVoicevoxCoreSubsystem::UserDictAssetAddW
 	TMap<FGuid, FVoicevoxCoreUserDictWord> Map;
 	for (auto Value : UserDictWordAsset.UserDictWordList)
 	{
+		FTCHARToUTF8 SurfaceConvert(*Value.Surface);
+		FTCHARToUTF8 PronunciationConvert(*Value.Pronunciation);
 		VoicevoxUserDictWord Word
 		{
-			.surface = TCHAR_TO_UTF8(*Value.Surface), 
-			.pronunciation = TCHAR_TO_UTF8(*Value.Pronunciation), 
-			.accent_type = static_cast<uintptr_t>(Value.AccentType), 
-			.word_type = static_cast<VoicevoxUserDictWordType>(Value.WordType), 
-			.priority = static_cast<uint32_t>(Value.Priority)
+			Word.surface = SurfaceConvert.Get(), 
+			Word.pronunciation = PronunciationConvert.Get(), 
+			Word.accent_type = static_cast<uintptr_t>(Value.AccentType), 
+			Word.word_type = static_cast<VoicevoxUserDictWordType>(Value.WordType), 
+			Word.priority = static_cast<uint32_t>(Value.Priority)
 		};
 		
 		Map.Add(FVoicevoxUserDictUUIDConverter::UUIDConverterToGuid(NativeInstance->UserDictAddWord(&Word)), Value);
