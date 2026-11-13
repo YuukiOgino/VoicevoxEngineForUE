@@ -262,6 +262,75 @@ class UVoicevoxApiObject : public UObject
 	VOICEVOXUECORE_API TArray<FVoicevoxAccentPhrase> SynthesizerReplace(EReplaceType ReplaceType, const TArray<FVoicevoxAccentPhrase>& AccentPhrases, VoicevoxStyleId StyleId);
 	
 	//--------------------------------
+	// VOICEVOX CORE Sing関連
+	//--------------------------------
+	
+	/**
+	 * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+	 *
+	 * @param [in] Score  楽譜情報
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
+	 */
+	VOICEVOXUECORE_API FVoicevoxFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(const FVoicevoxScore& Score, VoicevoxStyleId StyleId);
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	VOICEVOXUECORE_API TArray<float> SynthesizerCreateSingFrameF0(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId);
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns フレームごとの音量
+	 */
+	VOICEVOXUECORE_API TArray<float> SynthesizerCreateSingFrameVolume(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId);
+
+	/**
+	 * @brief 歌唱音声合成を行う。
+	 *
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID
+	 *
+	 * @returns 音声データを出力する先のポインタ。
+	 */
+	VOICEVOXUECORE_API TArray<uint8> SynthesizerFrameSynthesis(const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId);
+	
+	//--------------------------------
+	// VOICEVOX CORE validate関連
+	//--------------------------------
+	
+	/**
+	 * @brief 与えられたJSONが指定した型として不正であるときエラーを返す。
+	 * @param [in] Type チェックしたい型の種類
+	 * @param [in] Json JSON文字列
+	 *
+	 * @returns 成功時には ::VOICEVOX_RESULT_OK 、失敗時には対応するエラーコード
+	 */
+	VOICEVOXUECORE_API VoicevoxResultCode VoicevoxValidate(EVoicevoxCoreValidateType Type, const FString& Json);
+
+	/**
+	 * @brief 与えられた2つのJSONの組み合わせが不正であるときエラーを返す。
+	 * @param [in] Type チェックしたい組み合わせの種類
+	 * @param [in] Json JSON文字列（16.4時点では`Score`型のJSONのみ）
+	 * @param [in] Json2 JSON文字列 その２（16.4時点では`FrameAudioQuery`型のJSONのみ）
+	 *
+	 * @returns 成功時には ::VOICEVOX_RESULT_OK 、失敗時には対応するエラーコード
+	 */
+	VOICEVOXUECORE_API VoicevoxResultCode VoicevoxValidate(EVoicevoxCoreMultiValidateType Type, const FString& Json, const FString& Json2);
+	
+	//--------------------------------
 	// VOICEVOX CORE Property関連
 	//--------------------------------
 	
@@ -277,16 +346,17 @@ class UVoicevoxApiObject : public UObject
 	 * @fn
 	 * 指定のVoicevoxVoiceModelFileからメタ情報を取得する
 	 * @brief 話者名や話者IDのリストを取得する
-	* @param [in] VvmFileName vvmファイル名
+	 * @param [in] VvmFileName vvmファイル名
 	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
 	 */
 	VOICEVOXUECORE_API TArray<FVoicevoxMeta> GetVoiceModelFileMetaList(const FString& VvmFileName);
 
 	/**
 	 * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
+	 * @param [in] Type : 取得するMetaの種類
 	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
 	 */
-	VOICEVOXUECORE_API TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList();
+	VOICEVOXUECORE_API TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList(EGetMetaType Type);
 
 	/**
 	 * @brief StyleIdをキーとした全てのVoicevoxVoiceModelFile名を格納したTMapを取得
@@ -343,7 +413,7 @@ class UVoicevoxApiObject : public UObject
 	 * @brief ユーザー辞書の単語を取得する。
 	 * @returns 登録したユーザー辞書の単語マップ
 	 */
-	VOICEVOXUECORE_API TMap<FString, FVoicevoxRegisteredUserDictWord> GetUserDictWord();
+	VOICEVOXUECORE_API TMap<FGuid, FVoicevoxRegisteredUserDictWord> GetUserDictWord();
 
 	/**
 	 * @brief ユーザー辞書をファイルに保存する。

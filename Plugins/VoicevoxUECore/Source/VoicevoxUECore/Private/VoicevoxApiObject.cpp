@@ -252,7 +252,7 @@ FVoicevoxAudioQuery UVoicevoxApiObject::GetAudioQueryFromAccentPhrases(const TAr
 	for (const auto Element : SubsystemClasses)
 	{
 		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
-		if (FVoicevoxAudioQuery AudioQuery = Subsystem->GetAudioQueryFromAccentPhrases(AccentPhrases); !AudioQuery.Accent_phrases.IsEmpty()) return AudioQuery;
+		if (FVoicevoxAudioQuery AudioQuery = Subsystem->GetAudioQueryFromAccentPhrases(AccentPhrases); !AudioQuery.Accent_Phrases.IsEmpty()) return AudioQuery;
 	}
 
 	return FVoicevoxAudioQuery();
@@ -366,6 +366,107 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxApiObject::SynthesizerReplace(const ERepl
 }
 
 //--------------------------------
+// VOICEVOX CORE Sing関連
+//--------------------------------
+
+/**
+ * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+ */
+FVoicevoxFrameAudioQuery UVoicevoxApiObject::SynthesizerCreateSingFrameAudioQuery(const FVoicevoxScore& Score, const VoicevoxStyleId StyleId)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (FVoicevoxFrameAudioQuery FrameAudioQuery = Subsystem->SynthesizerCreateSingFrameAudioQuery(Score, StyleId); FrameAudioQuery.OutputSamplingRate != 0)
+		{
+			return FrameAudioQuery;
+		}
+	}
+
+	return FVoicevoxFrameAudioQuery{};
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+ */
+TArray<float> UVoicevoxApiObject::SynthesizerCreateSingFrameF0(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, const VoicevoxStyleId StyleId)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (TArray<float> F0 = Subsystem->SynthesizerCreateSingFrameF0(Score, FrameAudioQuery, StyleId); !F0.IsEmpty())
+		{
+			return F0;
+		}
+	}
+
+	return  TArray<float>();
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+ */
+TArray<float> UVoicevoxApiObject::SynthesizerCreateSingFrameVolume(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, const VoicevoxStyleId StyleId)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (TArray<float> Volumes = Subsystem->SynthesizerCreateSingFrameVolume(Score, FrameAudioQuery, StyleId); !Volumes.IsEmpty())
+		{
+			return Volumes;
+		}
+	}
+
+	return  TArray<float>();
+}
+
+/**
+ * @brief 歌唱音声合成を行う。
+ */
+TArray<uint8> UVoicevoxApiObject::SynthesizerFrameSynthesis(const FVoicevoxFrameAudioQuery& FrameAudioQuery, const VoicevoxStyleId StyleId)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (TArray<uint8> Wav = Subsystem->SynthesizerFrameSynthesis(FrameAudioQuery, StyleId); !Wav.IsEmpty()) return Wav;
+	}
+
+	return TArray<uint8>();
+}
+	
+//--------------------------------
+// VOICEVOX CORE validate関連
+//--------------------------------
+
+/**
+ * @brief 与えられたJSONが指定した型として不正であるときエラーを返す。
+ */
+VoicevoxResultCode UVoicevoxApiObject::VoicevoxValidate(const EVoicevoxCoreValidateType Type, const FString& Json)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (const VoicevoxResultCode Code = Subsystem->VoicevoxValidate(Type, Json); Code != VoicevoxResultCode::VOICEVOX_RESULT_ANALYZE_TEXT_ERROR) return Code;
+	}
+
+	return VoicevoxResultCode::VOICEVOX_RESULT_ANALYZE_TEXT_ERROR;
+}
+
+/**
+ * @brief 与えられた2つのJSONの組み合わせが不正であるときエラーを返す。
+ */
+VoicevoxResultCode UVoicevoxApiObject::VoicevoxValidate(const EVoicevoxCoreMultiValidateType Type, const FString& Json, const FString& Json2)
+{
+	for (const auto Element : SubsystemClasses)
+	{
+		const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
+		if (const VoicevoxResultCode Code = Subsystem->VoicevoxValidate(Type, Json, Json2); Code != VoicevoxResultCode::VOICEVOX_RESULT_ANALYZE_TEXT_ERROR) return Code;
+	}
+
+	return VoicevoxResultCode::VOICEVOX_RESULT_ANALYZE_TEXT_ERROR;
+}
+
+//--------------------------------
 // VOICEVOX CORE Property関連
 //--------------------------------
 
@@ -408,13 +509,13 @@ TArray<FVoicevoxMeta> UVoicevoxApiObject::GetVoiceModelFileMetaList(const FStrin
 /**
  * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
  */
-TArray<FVoicevoxMeta> UVoicevoxApiObject::GetAllVoiceModelFileMetaList()
+TArray<FVoicevoxMeta> UVoicevoxApiObject::GetAllVoiceModelFileMetaList(const EGetMetaType Type)
 {
 	TArray<FVoicevoxMeta> MetaList;
 	for (const auto Element : SubsystemClasses)
 	{
 		for (const auto Subsystem = static_cast<UVoicevoxNativeCoreSubsystem*>(VoicevoxSubsystemCollection.GetSubsystem(Element));
-			auto Meta : Subsystem->GetAllVoiceModelFileMetaList())
+			auto Meta : Subsystem->GetAllVoiceModelFileMetaList(Type))
 		{
 			MetaList.Emplace(Meta);
 		}
@@ -547,7 +648,7 @@ bool UVoicevoxApiObject::DeleteUserDictWord(const TArray<uint8_t>& WordUuid)
 /**
  * @brief ユーザー辞書の単語を取得する。
  */
-TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxApiObject::GetUserDictWord()
+TMap<FGuid, FVoicevoxRegisteredUserDictWord> UVoicevoxApiObject::GetUserDictWord()
 {
 	for (const auto Element : SubsystemClasses)
 	{
@@ -555,7 +656,7 @@ TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxApiObject::GetUserDictWo
 		return Subsystem->GetUserDictWord();
 	}
 	
-	return TMap<FString, FVoicevoxRegisteredUserDictWord>();
+	return TMap<FGuid, FVoicevoxRegisteredUserDictWord>();
 }
 
 /**

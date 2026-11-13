@@ -79,9 +79,9 @@ TArray<FVoicevoxMeta> UVoicevoxBlueprintLibrary::GetVoiceModelFileMetaList(const
 /**
  * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
  */
-TArray<FVoicevoxMeta> UVoicevoxBlueprintLibrary::GetAllVoiceModelFileMetaList()
+TArray<FVoicevoxMeta> UVoicevoxBlueprintLibrary::GetAllVoiceModelFileMetaList(const EGetMetaType Type)
 {
-	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAllVoiceModelFileMetaList();
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAllVoiceModelFileMetaList(Type);
 }
 
 /**
@@ -237,6 +237,96 @@ TArray<FVoicevoxLipSync> UVoicevoxBlueprintLibrary::GetLipSyncList(const FVoicev
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetLipSyncList(AudioQuery);
 }
 
+/**
+ * @brief 楽譜から歌唱音声合成用のクエリを取得する。(Blueprint公開ノード)
+ */
+FVoicevoxFrameAudioQuery UVoicevoxBlueprintLibrary::GetSingFrameAudioQuery(const FVoicevoxScore Score, const int32 StyleId)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameAudioQuery(Score, StyleId);
+}
+
+/**
+ * @brief 楽譜から歌唱音声合成用のクエリを作成する。(Blueprint公開ノード)
+ */
+FVoicevoxFrameAudioQuery UVoicevoxBlueprintLibrary::GetSingScoreAssetFrameAudioQuery(UVoicevoxSingScore* Score, const int32 StyleId)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameAudioQuery(*Score, StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
+ */
+TArray<float> UVoicevoxBlueprintLibrary::CreateSingFrameF0(const FVoicevoxScore Score, const FVoicevoxFrameAudioQuery FrameAudioQuery, const int32 StyleId)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameF0(Score, FrameAudioQuery, StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
+ */
+TArray<float> UVoicevoxBlueprintLibrary::CreateFrameQueryAssetSingFrameF0(const FVoicevoxScore Score, const UVoicevoxSingFrameQuery* FrameAudioQuery)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameF0(Score, *FrameAudioQuery);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
+ */
+TArray<float> UVoicevoxBlueprintLibrary::CreateScoreAndFrameQueryAssetSingFrameF0(const UVoicevoxSingScore* Score, const UVoicevoxSingFrameQuery* FrameAudioQuery)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameF0(*Score, *FrameAudioQuery);	
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
+ */
+TArray<float> UVoicevoxBlueprintLibrary::CreateSingFrameVolume(const FVoicevoxScore Score, const FVoicevoxFrameAudioQuery FrameAudioQuery, const int32 StyleId)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameVolume(Score, FrameAudioQuery, StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
+ */
+TArray<float> UVoicevoxBlueprintLibrary::CreateFrameQueryAssetToSingFrameVolume(const FVoicevoxScore Score, const UVoicevoxSingFrameQuery* FrameAudioQuery)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameVolume(Score, *FrameAudioQuery);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
+ */
+TArray<float> UVoicevoxBlueprintLibrary::CreateScoreAndFrameQueryAssetToSingFrameVolume(const UVoicevoxSingScore* Score, const UVoicevoxSingFrameQuery* FrameAudioQuery)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerCreateSingFrameVolume(*Score, *FrameAudioQuery);
+}
+
+/**
+ * @brief 歌唱音声合成を行う。(Blueprint公開ノード)
+ */
+USoundWave* UVoicevoxBlueprintLibrary::FrameSynthesisOutput(const FVoicevoxFrameAudioQuery FrameAudioQuery, const int32 StyleId)
+{
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerFrameSynthesis(FrameAudioQuery, StyleId); !OutputWAV.IsEmpty())
+	{
+		return CreateSoundWave(OutputWAV);
+	}
+
+	return nullptr;
+}
+
+/**
+ * @brief フレームごとの音声合成用のクエリアセットから歌唱音声合成を行う。(Blueprint公開ノード)
+ */
+USoundWave* UVoicevoxBlueprintLibrary::VoicevoxSingFrameQueryOutput(UVoicevoxSingFrameQuery* FrameAudioQuery)
+{
+	if (const TArray<uint8> OutputWAV = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->SynthesizerFrameSynthesis(*FrameAudioQuery); !OutputWAV.IsEmpty())
+	{
+		return CreateSoundWave(OutputWAV);
+	}
+
+	return nullptr;
+}
+
 //--------------------------------
 // VOICEVOX CORE Dict関連
 //--------------------------------
@@ -285,9 +375,49 @@ TArray<uint8> UVoicevoxBlueprintLibrary::UserDictAddWord(const FVoicevoxCoreUser
 }
 
 /**
+ * @brief ユーザー辞書に単語を追加する。(Blueprint公開ノード)
+ */
+FGuid UVoicevoxBlueprintLibrary::UserDictAddWordToCreateGuid(const FVoicevoxCoreUserDictWord Word)
+{
+	VoicevoxUserDictWord DictWord;
+	DictWord.priority = static_cast<uint32_t>(Word.Priority);
+	DictWord.accent_type = static_cast<uintptr_t>(Word.AccentType);
+	const FTCHARToUTF8 PronunciationConvert(*Word.Pronunciation);
+	DictWord.pronunciation = const_cast<ANSICHAR*>(PronunciationConvert.Get());
+	const FTCHARToUTF8 SurfaceConvert(*Word.Surface);
+	DictWord.surface = const_cast<ANSICHAR*>(SurfaceConvert.Get());
+	DictWord.word_type = static_cast<VoicevoxUserDictWordType>(Word.WordType);
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->UserDictAddWordToCreateGuid(&DictWord);
+}
+
+/**
+ * @brief ユーザー辞書アセットから単語を登録する。(Blueprint公開ノード)
+ */
+TMap<FGuid, FVoicevoxCoreUserDictWord> UVoicevoxBlueprintLibrary::UserDictAssetAddWord(UVoicevoxUserDictWord* UserDictWordAsset)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->UserDictAssetAddWord(*UserDictWordAsset);
+}
+
+/**
  * @brief ユーザー辞書の単語を更新する。(Blueprint公開ノード)
  */
 bool UVoicevoxBlueprintLibrary::RewriteUserDictWord(const TArray<uint8>& WordUuid, const FVoicevoxCoreUserDictWord Word)
+{
+	VoicevoxUserDictWord DictWord;
+	DictWord.priority = static_cast<uint32_t>(Word.Priority);
+	DictWord.accent_type = static_cast<uintptr_t>(Word.AccentType);
+	const FTCHARToUTF8 PronunciationConvert(*Word.Pronunciation);
+	DictWord.pronunciation = const_cast<ANSICHAR*>(PronunciationConvert.Get());
+	const FTCHARToUTF8 SurfaceConvert(*Word.Surface);
+	DictWord.surface = const_cast<ANSICHAR*>(SurfaceConvert.Get());
+	DictWord.word_type = static_cast<VoicevoxUserDictWordType>(Word.WordType);
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RewriteUserDictWord(WordUuid, &DictWord);
+}
+
+/**
+ * @brief ユーザー辞書の単語を更新する。(Blueprint公開ノード)
+ */
+bool UVoicevoxBlueprintLibrary::RewriteUserDictWordUseGuid(const FGuid WordUuid, const FVoicevoxCoreUserDictWord Word)
 {
 	VoicevoxUserDictWord DictWord;
 	DictWord.priority = static_cast<uint32_t>(Word.Priority);
@@ -307,12 +437,20 @@ bool UVoicevoxBlueprintLibrary::DeleteUserDictWord(const TArray<uint8>& WordUuid
 {
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->DeleteUserDictWord(WordUuid);
 }
-	
+
+/**
+ * @brief ユーザー辞書から単語を削除する。(Blueprint公開ノード)
+ */
+bool UVoicevoxBlueprintLibrary::DeleteUserDictWordUseGuid(const FGuid WordUuid)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->DeleteUserDictWord(WordUuid);
+}
+
 /**
  * @brief ユーザー辞書の単語を取得する。(Blueprint公開ノード)
  * @returns 登録したユーザー辞書の単語マップ
  */
-TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxBlueprintLibrary::GetUserDictWord()
+TMap<FGuid, FVoicevoxRegisteredUserDictWord> UVoicevoxBlueprintLibrary::GetUserDictWord()
 {
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetUserDictWord();
 }

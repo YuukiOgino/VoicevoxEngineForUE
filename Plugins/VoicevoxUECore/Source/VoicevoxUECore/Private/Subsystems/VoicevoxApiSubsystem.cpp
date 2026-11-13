@@ -9,6 +9,7 @@
 
 #include "JsonObjectConverter.h"
 #include "Engine/Engine.h"
+#include "Utilities/VoicevoxJsonObjectConverter.h"
 
 DEFINE_LOG_CATEGORY(LogVoicevoxApi);
 
@@ -48,65 +49,13 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxApiSubsystem::JsonObjectConverterToAccent
 	return AccentPhrases;
 }
 
-/**
- * @brief AccentPhraseの配列を無名配列のJSONに変換する
- */
-FString UVoicevoxApiSubsystem::AccentPhraseConverterToJsonString(TArray<FVoicevoxAccentPhrase> AccentPhrases)
-{
-	// JSON値配列を作成
-	TArray<TSharedPtr<FJsonValue>> JsonArray;
-
-	for (const auto& [Moras, Accent, Pause_mora, Is_interrogative] : AccentPhrases)
-	{
-		TSharedPtr<FJsonObject> Obj = MakeShared<FJsonObject>();
-		TArray<TSharedPtr<FJsonValue>> MoraJsonArray;
-
-		for (const FVoicevoxMora& Mora : Moras)
-		{
-			TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
-			FJsonObjectConverter::UStructToJsonObject(FVoicevoxMora::StaticStruct(), &Mora, JsonObject.ToSharedRef(), 0, 0);
-			MoraJsonArray.Add(MakeShared<FJsonValueObject>(JsonObject));
-		}
-		Obj->SetArrayField(TEXT("moras"), MoraJsonArray);
-		Obj->SetNumberField(TEXT("accent"), Accent);
-
-		if (Pause_mora.Text.IsEmpty())
-		{
-			Obj->SetObjectField(TEXT("pause_mora"), nullptr);
-		}
-		else
-		{
-			// pause_moraは子音のパラメータ（consonant、consonant_length）にnull以外が入るとインデックス範囲外エラーが起きるため、UStructToJsonObjectは使用しない
-			TSharedPtr<FJsonObject> StructObject = MakeShared<FJsonObject>();
-			StructObject->SetStringField(TEXT("text"),  Pause_mora.Text);
-			StructObject->SetObjectField(TEXT("consonant"),  nullptr);
-			StructObject->SetObjectField(TEXT("consonant_length"),  nullptr);
-			StructObject->SetStringField(TEXT("vowel"),  Pause_mora.Vowel);
-			StructObject->SetNumberField(TEXT("vowel_length"),  0);
-			StructObject->SetNumberField(TEXT("pitch"),  0);
-				
-			Obj->SetObjectField(TEXT("pause_mora"), StructObject);
-		}
-			
-		Obj->SetBoolField(TEXT("is_interrogative"), Is_interrogative);
-		JsonArray.Add(MakeShared<FJsonValueObject>(Obj));
-	}
-
-	// 配列を書き出し
-	FString OutputString;
-	const auto Writer = TJsonWriterFactory<>::Create(&OutputString);
-	FJsonSerializer::Serialize(JsonArray, Writer);
-
-	return OutputString;
-}
-
 
 /**
  * @brief VOICEVOXから受信したRegisteredUserDictWordの連想配列のJSONを変換する
  */
-TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxApiSubsystem::JsonObjectConverterToRegisteredUserDictWord(const FString& JsonString)
+TMap<FGuid, FVoicevoxRegisteredUserDictWord> UVoicevoxApiSubsystem::JsonObjectConverterToRegisteredUserDictWord(const FString& JsonString)
 {
-	TMap<FString, FVoicevoxRegisteredUserDictWord> Result;
+	TMap<FGuid, FVoicevoxRegisteredUserDictWord> Result;
 	TSharedPtr<FJsonObject> RootObject;
 	if (const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString); !FJsonSerializer::Deserialize(Reader, RootObject) || !RootObject.IsValid())
 	{
@@ -124,7 +73,7 @@ TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxApiSubsystem::JsonObject
 		FVoicevoxRegisteredUserDictWord UserDict;
 		if (FJsonObjectConverter::JsonObjectToUStruct(EntryObj.ToSharedRef(), FVoicevoxRegisteredUserDictWord::StaticStruct(), &UserDict))
 		{
-			Result.Add(Key, UserDict);
+			Result.Add(FGuid(Key), UserDict);
 		}
 	}
 	

@@ -11,7 +11,11 @@
 #include "CoreMinimal.h"
 #include "VoicevoxUEDefined.h"
 #include "VoicevoxQuery.h"
+#include "VoicevoxSingScore.h"
+#include "VoicevoxSingFrameQuery.h"
+#include "VoicevoxUserDictWord.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Sound/SoundWave.h"
 #include "VoicevoxBlueprintLibrary.generated.h"
 
 /**
@@ -102,7 +106,7 @@ public:
 	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetAllVoicevoxModelFileMetas"))
-	static UPARAM(DisplayName="Metas")   TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList();
+	static UPARAM(DisplayName="Metas")   TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList(EGetMetaType Type);
 	
 	/**
 	 * @brief サポートデバイス情報を取得する(Blueprint公開ノード)
@@ -220,6 +224,117 @@ public:
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxLipSyncList"))
 	static UPARAM(DisplayName="LipSyncList") TArray<FVoicevoxLipSync> GetLipSyncList(FVoicevoxAudioQuery AudioQuery);
 	
+	/**
+	 * @brief 楽譜から歌唱音声合成用のクエリを取得する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Score  楽譜情報
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxSingFrameAudioQuery"))
+	static UPARAM(DisplayName="FrameAudioQuery")FVoicevoxFrameAudioQuery GetSingFrameAudioQuery(FVoicevoxScore Score, int32 StyleId);
+	
+	/**
+	 * @brief 楽譜から歌唱音声合成用のクエリを作成する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Score  楽譜情報アセット
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxSingScoreAssetToFrameAudioQuery"))
+	static UPARAM(DisplayName="FrameAudioQuery")FVoicevoxFrameAudioQuery GetSingScoreAssetFrameAudioQuery(UVoicevoxSingScore* Score, int32 StyleId);
+	
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateVoicevoxSingFrameF0"))
+	static UPARAM(DisplayName="f0")TArray<float> CreateSingFrameF0(FVoicevoxScore Score, FVoicevoxFrameAudioQuery FrameAudioQuery, int32 StyleId);
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateFrameQueryAssetToSingFrameF0"))
+	static UPARAM(DisplayName="f0")TArray<float> CreateFrameQueryAssetSingFrameF0(const FVoicevoxScore Score, const UVoicevoxSingFrameQuery* FrameAudioQuery);
+	
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Score 楽譜情報アセット
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateVoicevoxScoreAndFrameQueryAssetToSingFrameF0"))
+	static UPARAM(DisplayName="f0")TArray<float> CreateScoreAndFrameQueryAssetSingFrameF0(const UVoicevoxSingScore* Score, const UVoicevoxSingFrameQuery* FrameAudioQuery);
+	
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns フレームごとの音量
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateVoicevoxSingFrameVolume"))
+	static UPARAM(DisplayName="Volume")TArray<float> CreateSingFrameVolume(FVoicevoxScore Score, FVoicevoxFrameAudioQuery FrameAudioQuery, int32 StyleId);
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの音量
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateVoicevoxFrameQueryAssetToSingFrameVolume"))
+	static UPARAM(DisplayName="Volume")TArray<float> CreateFrameQueryAssetToSingFrameVolume(const FVoicevoxScore Score, const UVoicevoxSingFrameQuery* FrameAudioQuery);
+	
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Score 楽譜情報アセット
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの音量
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "CreateVoicevoxScoreAndFrameQueryAssetToSingFrameVolume"))
+	static UPARAM(DisplayName="Volume")TArray<float> CreateScoreAndFrameQueryAssetToSingFrameVolume(const UVoicevoxSingScore* Score, const UVoicevoxSingFrameQuery* FrameAudioQuery);
+	
+	
+	/**
+	 * @brief 歌唱音声合成を行う。(Blueprint公開ノード)
+	 *
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID
+	 *
+	 * @returns  FrameAudioQuery情報を元に作成された音楽データが格納されたUSoundWave
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxFrameSynthesisOutput"))
+	static UPARAM(DisplayName="Sound")USoundWave* FrameSynthesisOutput(FVoicevoxFrameAudioQuery FrameAudioQuery, int32 StyleId);
+	
+	/**
+	 * @brief フレームごとの音声合成用のクエリアセットから歌唱音声合成を行う。(Blueprint公開ノード)
+	 *
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 * @returns  FrameAudioQuery情報を元に作成された音楽データが格納されたUSoundWave
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxSingFrameQueryAssetOutput"))
+	static UPARAM(DisplayName="Sound") USoundWave* VoicevoxSingFrameQueryOutput(UVoicevoxSingFrameQuery* FrameAudioQuery);
+	
 	//--------------------------------
 	// VOICEVOX CORE Dict関連
 	//--------------------------------
@@ -251,6 +366,24 @@ public:
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxUserDictAddWord"))
 	static UPARAM(DisplayName="UUID") TArray<uint8> UserDictAddWord(const FVoicevoxCoreUserDictWord Word);
 
+	
+	/**
+	 * @brief ユーザー辞書に単語を追加する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Word 追加する単語
+	 * @returns 追加した単語のUUID
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxUserDictAddWordToCreateGuid"))
+	static UPARAM(DisplayName="UUID") FGuid UserDictAddWordToCreateGuid(const FVoicevoxCoreUserDictWord Word);
+	
+	/**
+	 * @brief ユーザー辞書アセットから単語を登録する。(Blueprint公開ノード)
+	 * @param [in] UserDictWordAsset ユーザー辞書アセット
+	 * @returns 追加した単語のUUIDをキーとしたMap
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxUserDictAssetAddWord"))
+	static UPARAM(DisplayName="UUID Map")TMap<FGuid, FVoicevoxCoreUserDictWord> UserDictAssetAddWord(UVoicevoxUserDictWord* UserDictWordAsset);
+	
 	/**
 	 * @brief ユーザー辞書の単語を更新する。(Blueprint公開ノード)
 	 *
@@ -262,6 +395,16 @@ public:
 	static bool RewriteUserDictWord(const TArray<uint8>& WordUuid, const FVoicevoxCoreUserDictWord Word);
 
 	/**
+	 * @brief ユーザー辞書の単語を更新する。(Blueprint公開ノード)
+	 *
+	 * @param [in] WordUuid 更新する単語のUUID
+	 * @param [in] Word 新しい単語のデータ
+	 * @returns 結果
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxRewriteUserDictWordUseGuid"))
+	static bool RewriteUserDictWordUseGuid(FGuid WordUuid, const FVoicevoxCoreUserDictWord Word);
+	
+	/**
 	 * @brief ユーザー辞書から単語を削除する。(Blueprint公開ノード)
 	 *
 	 * @param [in] WordUuid 削除する単語のUUID
@@ -271,11 +414,20 @@ public:
 	static bool DeleteUserDictWord(const TArray<uint8>& WordUuid);
 	
 	/**
+	 * @brief ユーザー辞書から単語を削除する。(Blueprint公開ノード)
+	 *
+	 * @param [in] WordUuid 削除する単語のUUID
+	 * @returns 結果
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxDeleteUserDictWordUseGuid"))
+	static bool DeleteUserDictWordUseGuid(FGuid WordUuid);
+	
+	/**
 	 * @brief ユーザー辞書の単語を取得する。(Blueprint公開ノード)
 	 * @returns 登録したユーザー辞書の単語マップ
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "GetVoicevoxUserDictWord"))
-	static TMap<FString, FVoicevoxRegisteredUserDictWord> GetUserDictWord();
+	static TMap<FGuid, FVoicevoxRegisteredUserDictWord> GetUserDictWord();
 
 	/**
 	 * @brief ユーザー辞書をファイルに保存する。(Blueprint公開ノード)

@@ -20,7 +20,7 @@
 void UVoicevoxEditorSubsystem::LoadAllVvmMetaList()
 {
 	MetaList.Empty();
-	MetaList = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAllVoiceModelFileMetaList();
+	MetaList = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetAllVoiceModelFileMetaList(EGetMetaType::All);
 	VvmFileNameMapToStyleId = GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->GetVvmFileNameMapToStyleId();
 }
 

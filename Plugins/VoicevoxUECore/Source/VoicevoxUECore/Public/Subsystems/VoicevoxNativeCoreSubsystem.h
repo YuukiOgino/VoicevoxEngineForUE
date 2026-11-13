@@ -377,14 +377,14 @@ public:
 	 * @fn
 	 * VOICEVOX COREのvoicevox_synthesisを実行
 	 * @brief AudioQueryを音声データに変換する。
-	 * @param[in] AudioQueryJson jsonフォーマットされた AudioQuery構造体
+	 * @param[in] AudioQuery jsonフォーマットされた AudioQuery構造体
 	 * @param[in] StyleId スタイルID
 	 * @param[in] bEnableInterrogativeUpspeak 疑問文の調整を有効にする
 	 * @return 音声データを出力する先のポインタ。使用が終わったらvoicevox_wav_freeで開放する必要がある
 	 * @details
 	 * ※メインスレッドが暫く止まるほど重いので、非同期で処理してください。（UE::Tasks::Launch等）
 	 */
-	VOICEVOXUECORE_API virtual TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQueryJson, VoicevoxStyleId StyleId, bool bEnableInterrogativeUpspeak) override;
+	VOICEVOXUECORE_API virtual TArray<uint8> RunSynthesis(const FVoicevoxAudioQuery& AudioQuery, VoicevoxStyleId StyleId, bool bEnableInterrogativeUpspeak) override;
 
 	/**
 	 * @brief 日本語テキストから、AccentPhrase (アクセント句)の配列を生成する。
@@ -409,6 +409,75 @@ public:
 	 * @return デフォルト値が設定された `voicevox_synthesis` のオプション
 	 */
 	VOICEVOXUECORE_API virtual VoicevoxSynthesisOptions MakeDefaultSynthesisOptions() override;
+	
+	//--------------------------------
+	// VOICEVOX CORE Sing関連
+	//--------------------------------
+	
+	/**
+	 * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+	 *
+	 * @param [in] Score  楽譜情報
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
+	 */
+	VOICEVOXUECORE_API virtual FVoicevoxFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(FVoicevoxScore Score, VoicevoxStyleId StyleId) override;
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	VOICEVOXUECORE_API virtual TArray<float> SynthesizerCreateSingFrameF0(FVoicevoxScore Score, FVoicevoxFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) override;
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns フレームごとの音量
+	 */
+	VOICEVOXUECORE_API virtual TArray<float> SynthesizerCreateSingFrameVolume(FVoicevoxScore Score, FVoicevoxFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) override;
+
+	/**
+	 * @brief 歌唱音声合成を行う。
+	 *
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID
+	 *
+	 * @returns 音声データを出力する先のポインタ。
+	 */
+	VOICEVOXUECORE_API virtual TArray<uint8> SynthesizerFrameSynthesis(FVoicevoxFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) override;
+	
+	//--------------------------------
+	// VOICEVOX CORE validate関連
+	//--------------------------------
+	
+	/**
+	 * @brief 与えられたJSONが指定した型として不正であるときエラーを返す。
+	 * @param [in] Type チェックしたい型の種類
+	 * @param [in] Json JSON文字列
+	 *
+	 * @returns 成功時には ::VOICEVOX_RESULT_OK 、失敗時には対応するエラーコード
+	 */
+	VOICEVOXUECORE_API VoicevoxResultCode VoicevoxValidate(EVoicevoxCoreValidateType Type, const FString& Json);
+
+	/**
+	 * @brief 与えられた2つのJSONの組み合わせが不正であるときエラーを返す。
+	 * @param [in] Type チェックしたい組み合わせの種類
+	 * @param [in] Json JSON文字列（16.4時点では`Score`型のJSONのみ）
+	 * @param [in] Json2 JSON文字列 その２（16.4時点では`FrameAudioQuery`型のJSONのみ）
+	 *
+	 * @returns 成功時には ::VOICEVOX_RESULT_OK 、失敗時には対応するエラーコード
+	 */
+	VOICEVOXUECORE_API VoicevoxResultCode VoicevoxValidate(EVoicevoxCoreMultiValidateType Type, const FString& Json, const FString& Json2);
 	
 	//--------------------------------
 	// VOICEVOX CORE Property関連
@@ -457,7 +526,7 @@ public:
 	 * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
 	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
 	 */
-	VOICEVOXUECORE_API virtual TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList() override;
+	VOICEVOXUECORE_API virtual TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList(EGetMetaType Type) override;
 
 	/**
 	 * @brief StyleIdをキーとした全てのVoicevoxVoiceModelFile名を格納したTMapを取得
@@ -594,7 +663,7 @@ public:
 	 * @brief ユーザー辞書の単語を取得する。
 	 * @returns 登録したユーザー辞書の単語マップ
 	 */
-	VOICEVOXUECORE_API TMap<FString, FVoicevoxRegisteredUserDictWord> GetUserDictWord();
+	VOICEVOXUECORE_API TMap<FGuid, FVoicevoxRegisteredUserDictWord> GetUserDictWord();
 	
 protected:
 	

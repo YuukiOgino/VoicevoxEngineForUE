@@ -12,6 +12,9 @@
 #include "VoicevoxApiObject.h"
 #include "VoicevoxUEDefined.h"
 #include "VoicevoxQuery.h"
+#include "VoicevoxSingFrameQuery.h"
+#include "VoicevoxSingScore.h"
+#include "VoicevoxUserDictWord.h"
 #include "Subsystems/EngineSubsystem.h"
 #include "VoicevoxCoreSubsystem.generated.h"
 
@@ -313,6 +316,132 @@ public:
 	TArray<FVoicevoxAccentPhrase> SynthesizerReplace(EReplaceType ReplaceType, const TArray<FVoicevoxAccentPhrase>& AccentPhrases, VoicevoxStyleId StyleId) const;
 	
 	//--------------------------------
+	// VOICEVOX CORE Sing関連
+	//--------------------------------
+	
+	/**
+	 * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+	 *
+	 * @param [in] Score  楽譜情報
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
+	 */
+	 FVoicevoxFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(const FVoicevoxScore& Score, VoicevoxStyleId StyleId) const;
+
+	/**
+	 * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+	 *
+	 * @param [in] Score  楽譜情報アセット
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
+	 */
+	FVoicevoxFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(const UVoicevoxSingScore& Score, VoicevoxStyleId StyleId) const;
+	
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	 TArray<float> SynthesizerCreateSingFrameF0(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const;
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	TArray<float> SynthesizerCreateSingFrameF0(const FVoicevoxScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const;
+	
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+	 *
+	 * @param [in] Score 楽譜情報アセット
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	TArray<float> SynthesizerCreateSingFrameF0(const UVoicevoxSingScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const;
+	
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID(Typeがsingのみ)
+	 *
+	 * @returns フレームごとの音量
+	 */
+	 TArray<float> SynthesizerCreateSingFrameVolume(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const;
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの音量
+	 */
+	TArray<float> SynthesizerCreateSingFrameVolume(const FVoicevoxScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const;
+	
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+	 *
+	 * @param [in] Score 楽譜情報アセット
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 *
+	 * @returns フレームごとの音量
+	 */
+	TArray<float> SynthesizerCreateSingFrameVolume(const UVoicevoxSingScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const;
+	
+	/**
+	 * @brief 歌唱音声合成を行う。
+	 *
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID
+	 *
+	 * @returns 音声データを出力する先のポインタ。
+	 */
+	 TArray<uint8> SynthesizerFrameSynthesis(const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const;
+	
+	/**
+	 * @brief 歌唱音声合成を行う。
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 * @returns 音声データを出力する先のポインタ。
+	 */
+	TArray<uint8> SynthesizerFrameSynthesis(const UVoicevoxSingFrameQuery& FrameAudioQuery) const;
+	
+	//--------------------------------
+	// VOICEVOX CORE validate関連
+	//--------------------------------
+	
+	/**
+	 * @brief 与えられたJSONが指定した型として不正であるときエラーを返す。
+	 * @param [in] Type チェックしたい型の種類
+	 * @param [in] Json JSON文字列
+	 *
+	 * @returns 成功時には ::VOICEVOX_RESULT_OK 、失敗時には対応するエラーコード
+	 */
+	 VoicevoxResultCode VoicevoxValidate(EVoicevoxCoreValidateType Type, const FString& Json) const;
+
+	/**
+	 * @brief 与えられた2つのJSONの組み合わせが不正であるときエラーを返す。
+	 * @param [in] Type チェックしたい組み合わせの種類
+	 * @param [in] Json JSON文字列（16.4時点では`Score`型のJSONのみ）
+	 * @param [in] Json2 JSON文字列 その２（16.4時点では`FrameAudioQuery`型のJSONのみ）
+	 *
+	 * @returns 成功時には ::VOICEVOX_RESULT_OK 、失敗時には対応するエラーコード
+	 */
+	 VoicevoxResultCode VoicevoxValidate(EVoicevoxCoreMultiValidateType Type, const FString& Json, const FString& Json2) const;
+	
+	//--------------------------------
 	// VOICEVOX CORE LipSync関連
 	//--------------------------------
 	
@@ -348,9 +477,10 @@ public:
 
 	/**
 	 * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
+	 * @param [in] Type : 取得するMetaの種類
 	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
 	 */
-	TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList() const;
+	TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList(EGetMetaType Type) const;
 	
 	/**
 	 * @fn
@@ -427,6 +557,13 @@ public:
 	bool UserDictInitialize(const FString& DictPath = TEXT("")) const;
 	
 	/**
+	 * @brief ユーザー辞書アセットから単語を登録する
+	 * @param [in] UserDictWordAsset ユーザー辞書アセット
+	 * @returns 追加した単語のUUIDをキーとしたMap
+	 */
+	TMap<FGuid, FVoicevoxCoreUserDictWord> UserDictAssetAddWord(UVoicevoxUserDictWord& UserDictWordAsset) const;
+	
+	/**
 	 * @brief ユーザー辞書に単語を追加する。
 	 *
 	 * @param [in] Word 追加する単語
@@ -434,6 +571,14 @@ public:
 	 */
 	TArray<uint8_t> UserDictAddWord(const VoicevoxUserDictWord* Word) const;
 
+	/**
+	 * @brief ユーザー辞書に単語を追加する。
+	 *
+	 * @param [in] Word 追加する単語
+	 * @returns 追加した単語のUUID
+	 */
+	FGuid UserDictAddWordToCreateGuid(const VoicevoxUserDictWord* Word) const;
+	
 	/**
 	 * @brief ユーザー辞書の単語を更新する。
 	 *
@@ -444,6 +589,15 @@ public:
 	bool RewriteUserDictWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord *Word) const;
 
 	/**
+	 * @brief ユーザー辞書の単語を更新する。
+	 *
+	 * @param [in] WordUuid 更新する単語のUUID
+	 * @param [in] Word 新しい単語のデータ
+	 * @returns 結果
+	 */
+	bool RewriteUserDictWord(FGuid WordUuid, const VoicevoxUserDictWord *Word) const;
+	
+	/**
 	 * @brief ユーザー辞書から単語を削除する。
 	 *
 	 * @param [in] WordUuid 削除する単語のUUID
@@ -452,10 +606,18 @@ public:
 	bool DeleteUserDictWord(const TArray<uint8_t>& WordUuid) const;
 	
 	/**
+	 * @brief ユーザー辞書から単語を削除する。
+	 *
+	 * @param [in] WordUuid 削除する単語のUUID
+	 * @returns 結果
+	 */
+	bool DeleteUserDictWord(FGuid WordUuid) const;
+	
+	/**
 	 * @brief ユーザー辞書の単語を取得する。
 	 * @returns 登録したユーザー辞書の単語マップ
 	 */
-	TMap<FString, FVoicevoxRegisteredUserDictWord> GetUserDictWord() const;
+	TMap<FGuid, FVoicevoxRegisteredUserDictWord> GetUserDictWord() const;
 
 	/**
 	 * @brief ユーザー辞書をファイルに保存する。

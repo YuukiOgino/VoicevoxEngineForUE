@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TpsData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <Name>VOICEVOX CORE 0.14.6</Name>
+    <Name>VOICEVOX CORE 0.16.4</Name>
     <Location>/VoicevoxNativeCore/Source/ThirdParty/VoicevoxCore/</Location>
     <Platforms>
         <Platform>WIN64</Platform>

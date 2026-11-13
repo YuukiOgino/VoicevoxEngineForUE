@@ -47,20 +47,14 @@ protected:
 	 * @retun AccentPhrase (アクセント句)の配列
 	 */
 	VOICEVOXUECORE_API static TArray<FVoicevoxAccentPhrase> JsonObjectConverterToAccentPhrase(const FString& JsonString);
-
-	/**
-	 * @brief AccentPhraseの配列を無名配列のJSONに変換する
-	 * @param [in] AccentPhrases : AccentPhrase (アクセント句)の配列
-	 * @return AccentPhraseのJSON
-	 */
-	VOICEVOXUECORE_API static FString AccentPhraseConverterToJsonString(TArray<FVoicevoxAccentPhrase> AccentPhrases);
 	
 	/**
 	 * @brief VOICEVOXから受信したRegisteredUserDictWordの連想配列のJSONを変換する
 	 * @param [in] JsonString : RegisteredUserDictWordのJSON
 	 * @retun ユーザ辞書に登録した単語データのMap
 	 */
-	VOICEVOXUECORE_API static TMap<FString, FVoicevoxRegisteredUserDictWord> JsonObjectConverterToRegisteredUserDictWord(const FString& JsonString);
+	VOICEVOXUECORE_API static TMap<FGuid, FVoicevoxRegisteredUserDictWord> JsonObjectConverterToRegisteredUserDictWord(const FString& JsonString);
+	
 public:
 
 	//----------------------------------------------------------------
@@ -270,6 +264,52 @@ public:
 	virtual TArray<FVoicevoxAccentPhrase> SynthesizerReplace(EReplaceType ReplaceType, TArray<FVoicevoxAccentPhrase> AccentPhrases, VoicevoxStyleId StyleId) { return TArray<FVoicevoxAccentPhrase>(); }
 	
 	//--------------------------------
+	// VOICEVOX CORE Sing関連
+	//--------------------------------
+	
+	/**
+	 * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+	 *
+	 * @param [in] Score  楽譜情報
+	 * @param [in] StyleId スタイルID
+	 *
+	 * @returns 歌唱音声合成用のクエリ（FrameAudioQuery型）　失敗した場合は空のデータが入る
+	 */
+	virtual FVoicevoxFrameAudioQuery SynthesizerCreateSingFrameAudioQuery(FVoicevoxScore Score, VoicevoxStyleId StyleId) { return FVoicevoxFrameAudioQuery(); };
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID
+	 *
+	 * @returns フレームごとの基本周波数
+	 */
+	virtual TArray<float> SynthesizerCreateSingFrameF0(FVoicevoxScore Score, FVoicevoxFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) { return TArray<float>(); }
+
+	/**
+	 * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+	 *
+	 * @param [in] Score 楽譜情報
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID
+	 *
+	 * @returns フレームごとの音量
+	 */
+	virtual TArray<float> SynthesizerCreateSingFrameVolume(FVoicevoxScore Score, FVoicevoxFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) { return TArray<float>(); }
+
+	/**
+	 * @brief 歌唱音声合成を行う。
+	 *
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリ
+	 * @param [in] StyleId スタイルID
+	 *
+	 * @returns 音声データを出力する先のポインタ。
+	 */
+	virtual TArray<uint8> SynthesizerFrameSynthesis(FVoicevoxFrameAudioQuery FrameAudioQuery, VoicevoxStyleId StyleId) { return TArray<uint8>(); }
+	
+	//--------------------------------
 	// VOICEVOX CORE Property関連
 	//--------------------------------
 	
@@ -300,9 +340,10 @@ public:
 
 	/**
 	 * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
+	 * @param [in] Type : 取得するMetaの種類
 	 * @return メタ情報が格納されたjson形式の構造体リスト、ない場合は空のリスト
 	 */
-	virtual TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList() { return TArray<FVoicevoxMeta>(); }
+	virtual TArray<FVoicevoxMeta> GetAllVoiceModelFileMetaList(EGetMetaType Type) { return TArray<FVoicevoxMeta>(); }
 	
 	/**
 	 * @brief サポートデバイス情報を取得する

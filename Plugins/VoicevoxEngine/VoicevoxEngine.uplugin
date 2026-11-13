@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 13,
-	"VersionName": "2.2",
+	"Version": 14,
+	"VersionName": "2.3",
 	"FriendlyName": "VoicevoxEngine",
 	"Description": "Voicevox Engine for UnrealEngine",
 	"Category": "TextToSpeech",

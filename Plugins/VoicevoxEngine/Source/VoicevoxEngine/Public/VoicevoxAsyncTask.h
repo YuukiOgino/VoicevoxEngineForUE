@@ -11,6 +11,7 @@
 #include "CoreMinimal.h"
 #include "VoicevoxUEDefined.h"
 #include "VoicevoxQuery.h"
+#include "VoicevoxSingFrameQuery.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Tasks/Task.h"
 #include "VoicevoxAsyncTask.generated.h"
@@ -293,6 +294,66 @@ public:
 	FVoicevoxAudioQuery AudioQuery;
 	//! 疑問文の調整を有効
 	bool bEnableInterrogativeUpspeak = true;
+	
+	/**
+	 * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される
+	 */	
+	virtual void Activate() override;
+
+	/**
+	 * @brief BeginDestroy
+	 */
+	virtual void BeginDestroy() override;
+};
+
+//------------------------------------------------------------------------
+// UVoicevoxAudioQueryToSpeechAsyncTask
+//------------------------------------------------------------------------
+
+/**
+ * @class UVoicevoxFrameSynthesisAsyncTask
+ * @brief BlueprintでVOICEVOX CORE APIのvoicevox_synthesizer_frame_synthesisを実行後、再生用のUSwondWaveを生成させるLatentノードクラス
+ */
+UCLASS()
+class VOICEVOXENGINE_API UVoicevoxFrameSynthesisAsyncTask : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+
+	//! 実行タスク
+	UE::Tasks::TTask<void> Task;
+	
+public:
+
+	//! 処理成功時のデリゲート
+	UPROPERTY(BlueprintAssignable)
+	FVoicevoxCoreAsyncTaskTextToSpeechDelegate OnSuccess;
+
+	//! 処理失敗時のデリゲート
+	UPROPERTY(BlueprintAssignable)
+	FVoicevoxCoreAsyncTaskDelegate OnFail;
+	
+	/**
+	 * @brief 非同期でVOICEVOX COREで取得したFrameAudioQueryを元に音声データを取得(Blueprint公開ノード)
+	 * @param[in] WorldContextObject
+	 * @param[in] StyleId							スタイルID
+	 * @param[in] FrameAudioQuery					FrameAudioQuery構造体
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxFrameSynthesisOutputAsync", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
+	static UVoicevoxFrameSynthesisAsyncTask* FrameSynthesisOutput(UObject* WorldContextObject, int32 StyleId, FVoicevoxFrameAudioQuery FrameAudioQuery);
+	
+	/**
+	 * @brief 非同期でフレームごとの音声合成用のクエリアセットを元に音声データを取得(Blueprint公開ノード)
+	 * @param[in] WorldContextObject
+	 * @param [in] FrameAudioQuery フレームごとの音声合成用のクエリアセット
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxSingFrameQueryAssetOutputAsync", BlueprintInternalUseOnly="true", WorldContext="WorldContextObject"))
+	static UVoicevoxFrameSynthesisAsyncTask* VoicevoxSingFrameQueryOutput(UObject* WorldContextObject, UVoicevoxSingFrameQuery* FrameAudioQuery);
+	
+	//! スタイルID
+	int32 StyleId = 0;
+	
+	//! FrameAudioQuery
+	FVoicevoxFrameAudioQuery FrameAudioQuery;
 	
 	/**
 	 * @brief デリゲートがバインドされた後、アクションをトリガーするために呼び出される

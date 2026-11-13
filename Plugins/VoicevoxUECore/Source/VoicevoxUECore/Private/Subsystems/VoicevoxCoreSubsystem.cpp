@@ -4,9 +4,9 @@
  * @brief  各VOICEVOX COREのAPIを呼び出すSubsystem　CPPファイル
  * @author Yuuki Ogino
  */
-
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 #include "VoicevoxApiObject.h"
+#include "Utilities/VoicevoxUserDictUUIDConverter.h"
 
 //--------------------------------
 // override
@@ -224,6 +224,110 @@ TArray<FVoicevoxAccentPhrase> UVoicevoxCoreSubsystem::SynthesizerReplace(const E
 }
 
 //--------------------------------
+// VOICEVOX CORE Sing関連
+//--------------------------------
+
+/**
+ * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+ */
+FVoicevoxFrameAudioQuery UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameAudioQuery(const FVoicevoxScore& Score, const VoicevoxStyleId StyleId) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameAudioQuery(Score, StyleId);
+}
+
+/**
+ * @brief 楽譜から歌唱音声合成用のクエリを作成する。
+ */
+FVoicevoxFrameAudioQuery UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameAudioQuery(const UVoicevoxSingScore& Score, const VoicevoxStyleId StyleId) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameAudioQuery(Score.Score, StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+ */
+TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameF0(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameF0(Score, FrameAudioQuery, StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+ */
+TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameF0(const FVoicevoxScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameF0(Score, FrameAudioQuery.FrameAudioQuery, FrameAudioQuery.StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの基本周波数を生成する。
+ */
+TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameF0(const UVoicevoxSingScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameF0(Score.Score, FrameAudioQuery.FrameAudioQuery, FrameAudioQuery.StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+ */
+TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameVolume(const FVoicevoxScore& Score, const FVoicevoxFrameAudioQuery& FrameAudioQuery, VoicevoxStyleId StyleId) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameVolume(Score, FrameAudioQuery, StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+ */
+TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameVolume(const FVoicevoxScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameVolume(Score, FrameAudioQuery.FrameAudioQuery, FrameAudioQuery.StyleId);
+}
+
+/**
+ * @brief 楽譜と歌唱音声合成用のクエリから、フレームごとの音量を生成する。
+ */
+TArray<float> UVoicevoxCoreSubsystem::SynthesizerCreateSingFrameVolume(const UVoicevoxSingScore& Score, const UVoicevoxSingFrameQuery& FrameAudioQuery) const
+{
+	return NativeInstance->SynthesizerCreateSingFrameVolume(Score.Score, FrameAudioQuery.FrameAudioQuery, FrameAudioQuery.StyleId);
+}
+
+/**
+ * @brief 歌唱音声合成を行う。
+ */
+TArray<uint8> UVoicevoxCoreSubsystem::SynthesizerFrameSynthesis(const FVoicevoxFrameAudioQuery& FrameAudioQuery, const VoicevoxStyleId StyleId) const
+{
+	return NativeInstance->SynthesizerFrameSynthesis(FrameAudioQuery, StyleId);
+}
+
+/**
+ * @brief 歌唱音声合成を行う。
+ */
+TArray<uint8> UVoicevoxCoreSubsystem::SynthesizerFrameSynthesis(const UVoicevoxSingFrameQuery& FrameAudioQuery) const
+{
+	return NativeInstance->SynthesizerFrameSynthesis(FrameAudioQuery.FrameAudioQuery, FrameAudioQuery.StyleId);
+}
+
+//--------------------------------
+// VOICEVOX CORE validate関連
+//--------------------------------
+	
+/**
+ * @brief 与えられたJSONが指定した型として不正であるときエラーを返す。
+ */
+VoicevoxResultCode UVoicevoxCoreSubsystem::VoicevoxValidate(const EVoicevoxCoreValidateType Type, const FString& Json) const
+{
+	return NativeInstance->VoicevoxValidate(Type, Json);
+}
+
+/**
+ * @brief 与えられた2つのJSONの組み合わせが不正であるときエラーを返す。
+ */
+VoicevoxResultCode UVoicevoxCoreSubsystem::VoicevoxValidate(EVoicevoxCoreMultiValidateType Type, const FString& Json, const FString& Json2) const
+{
+	return NativeInstance->VoicevoxValidate(Type, Json, Json2);
+}
+
+//--------------------------------
 // VOICEVOX CORE LipSync関連
 //--------------------------------
 	
@@ -248,7 +352,7 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 
 	List.Add({ELipSyncVowelType::Non, AudioQuery.PrePhonemeLength / AudioQuery.SpeedScale, false, false});
 	
-	for (auto [Moras, Accent, Pause_mora, Is_interrogative] : AudioQuery.Accent_phrases)
+	for (auto [Moras, Accent, Pause_mora, Is_interrogative] : AudioQuery.Accent_Phrases)
 	{
 		for (auto [Text, Consonant, Consonant_length, Vowel, Vowel_length, Pitch] : Moras)
 		{
@@ -271,11 +375,11 @@ TArray<FVoicevoxLipSync> UVoicevoxCoreSubsystem::GetLipSyncList(FVoicevoxAudioQu
 
 		if (Pause_mora.Vowel.Equals(TEXT("pau"), ESearchCase::IgnoreCase))
 		{
-			List.Add({ELipSyncVowelType::Non, Pause_mora.Vowel_length / AudioQuery.SpeedScale, false, false});
+			List.Add({.VowelType = ELipSyncVowelType::Non, .Length = Pause_mora.Vowel_Length / AudioQuery.SpeedScale, .IsConsonant = false, .IsLabialOrPlosive = false});
 		}
 	}
 
-	List.Add({ELipSyncVowelType::Non, AudioQuery.PostPhonemeLength / AudioQuery.SpeedScale, false, false});
+	List.Add({.VowelType = ELipSyncVowelType::Non, .Length = AudioQuery.PostPhonemeLength / AudioQuery.SpeedScale, .IsConsonant = false, .IsLabialOrPlosive = false});
 	
 	return List;
 }
@@ -303,9 +407,9 @@ TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetVoiceModelFileMetaList(const FS
 /**
  * @brief 全てのVoicevoxVoiceModelFileからメタ情報を取得する
  */
-TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetAllVoiceModelFileMetaList() const
+TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetAllVoiceModelFileMetaList(const EGetMetaType Type) const
 {
-	return NativeInstance->GetAllVoiceModelFileMetaList();
+	return NativeInstance->GetAllVoiceModelFileMetaList(Type);
 }
 
 /**
@@ -313,7 +417,7 @@ TArray<FVoicevoxMeta> UVoicevoxCoreSubsystem::GetAllVoiceModelFileMetaList() con
  */
 FString UVoicevoxCoreSubsystem::GetMetaName(const VoicevoxStyleId StyleId) const
 {
-	for  (TArray<FVoicevoxMeta> List = GetAllVoiceModelFileMetaList();
+	for  (TArray<FVoicevoxMeta> List = GetAllVoiceModelFileMetaList(EGetMetaType::All);
 		auto [Name, Styles, Speaker_uuid, Version] : List)
 	{
 		for (const auto Style :Styles)
@@ -418,7 +522,30 @@ bool UVoicevoxCoreSubsystem::UserDictInitialize(const FString& DictPath) const
 {
 	return NativeInstance->UserDictInitialize(DictPath);
 }
+
+/**
+ * @brief ユーザー辞書アセットから単語を登録する
+ */
+TMap<FGuid, FVoicevoxCoreUserDictWord> UVoicevoxCoreSubsystem::UserDictAssetAddWord(UVoicevoxUserDictWord& UserDictWordAsset) const
+{
+	TMap<FGuid, FVoicevoxCoreUserDictWord> Map;
+	for (auto Value : UserDictWordAsset.UserDictWordList)
+	{
+		VoicevoxUserDictWord Word
+		{
+			.surface = TCHAR_TO_UTF8(*Value.Surface), 
+			.pronunciation = TCHAR_TO_UTF8(*Value.Pronunciation), 
+			.accent_type = static_cast<uintptr_t>(Value.AccentType), 
+			.word_type = static_cast<VoicevoxUserDictWordType>(Value.WordType), 
+			.priority = static_cast<uint32_t>(Value.Priority)
+		};
+		
+		Map.Add(FVoicevoxUserDictUUIDConverter::UUIDConverterToGuid(NativeInstance->UserDictAddWord(&Word)), Value);
+	}
 	
+	return Map;
+}
+
 /**
  * @brief ユーザー辞書に単語を追加する。
  */
@@ -428,11 +555,27 @@ TArray<uint8_t> UVoicevoxCoreSubsystem::UserDictAddWord(const VoicevoxUserDictWo
 }
 
 /**
+ * @brief ユーザー辞書に単語を追加する。
+ */
+FGuid UVoicevoxCoreSubsystem::UserDictAddWordToCreateGuid(const VoicevoxUserDictWord* Word) const
+{
+	return FVoicevoxUserDictUUIDConverter::UUIDConverterToGuid(NativeInstance->UserDictAddWord(Word));
+}
+
+/**
  * @brief ユーザー辞書の単語を更新する。
  */
-bool UVoicevoxCoreSubsystem::RewriteUserDictWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord *Word) const
+bool UVoicevoxCoreSubsystem::RewriteUserDictWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord* Word) const
 {
 	return NativeInstance->RewriteUserDictWord(WordUuid, Word);
+}
+
+/**
+ * @brief ユーザー辞書の単語を更新する。
+ */
+bool UVoicevoxCoreSubsystem::RewriteUserDictWord(const FGuid WordUuid, const VoicevoxUserDictWord* Word) const
+{
+	return NativeInstance->RewriteUserDictWord(FVoicevoxUserDictUUIDConverter::GuidConverterToUUID(WordUuid), Word);
 }
 
 /**
@@ -442,11 +585,22 @@ bool UVoicevoxCoreSubsystem::DeleteUserDictWord(const TArray<uint8_t>& WordUuid)
 {
 	return NativeInstance->DeleteUserDictWord(WordUuid);
 }
+
+/**
+ * @brief ユーザー辞書から単語を削除する。
+ *
+ * @param [in] WordUuid 削除する単語のUUID
+ * @returns 結果
+ */
+bool UVoicevoxCoreSubsystem::DeleteUserDictWord(const FGuid WordUuid) const
+{
+	return NativeInstance->DeleteUserDictWord(FVoicevoxUserDictUUIDConverter::GuidConverterToUUID(WordUuid));
+}
 	
 /**
  * @brief ユーザー辞書の単語を取得する。
  */
-TMap<FString, FVoicevoxRegisteredUserDictWord> UVoicevoxCoreSubsystem::GetUserDictWord() const
+TMap<FGuid, FVoicevoxRegisteredUserDictWord> UVoicevoxCoreSubsystem::GetUserDictWord() const
 {
 	return NativeInstance->GetUserDictWord();
 }

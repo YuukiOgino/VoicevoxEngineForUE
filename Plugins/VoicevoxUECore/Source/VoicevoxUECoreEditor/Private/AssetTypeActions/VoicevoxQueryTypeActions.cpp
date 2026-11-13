@@ -1,11 +1,9 @@
 // Copyright Yuuki Ogino. All Rights Reserved
 
 /**
- * @headerfile VoicevoxQueryTypeActions.cpp
  * @brief  Voicevox関連のデータアセットをエディターから生成するためのCPPファイル
  * @author Yuuki Ogino
  */
-
 #include "AssetTypeActions/VoicevoxQueryTypeActions.h"
 #include "VoicevoxQuery.h"
 

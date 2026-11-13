@@ -28,7 +28,7 @@
 ダウンローダー　DirectML版コマンド例
 ```PowerShell
 Invoke-WebRequest https://github.com/VOICEVOX/voicevox_core/releases/download/0.16.4/download-windows-x64.exe -OutFile ./download.exe
-./download.exe --c-api-version 0.16.0 --exclude c-api --devices directml
+./download.exe --c-api-version 0.16.4 --exclude c-api --devices directml
 ```
 
 ### DirectML版

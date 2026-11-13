@@ -49,7 +49,7 @@ public:
 	virtual UObject* FactoryCreateNew(UClass* InClass, UObject* InParent,
 	                                  FName InName, EObjectFlags Flags,
 	                                  UObject* Context, FFeedbackContext* Warn) override;
-
+protected:
 	/**
 	 * @brief FactoryCreateText override
 	 */	
