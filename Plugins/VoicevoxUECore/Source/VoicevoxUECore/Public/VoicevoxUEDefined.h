@@ -445,24 +445,24 @@ struct FVoicevoxCoreUserDictWord
 	GENERATED_USTRUCT_BODY()
 	
 	//! 表記
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (DisplayName = "単語",  ToolTip = "単語は全角と半角の区別はしません"))
 	FString Surface;
 	
 	//! 読み
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (DisplayName = "単語の読み", ToolTip = "読みに使える文字はひらがなとカタカナのみ"))
 	FString Pronunciation;
 	
 	//! アクセント型
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (DisplayName = "アクセント", ToolTip = "アクセント調整。音が下がる場所を指定"))
 	int64 AccentType = 0;
 	
 	//! 単語の種類
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (DisplayName = "単語の種類", ToolTip = "単語の種類"))
 	EVoicevoxCoreUserDictWordType WordType = EVoicevoxCoreUserDictWordType::ProperNoun;
 	
 	//! 優先度
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine")
-	int Priority = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="VOICEVOX Engine", meta = (DisplayName = "単語の優先度", ToolTip = "単語の優先度（0から10までの整数）。数字が大きいほど優先度が高くなる。1から9までの値を指定することを推奨"))
+	int Priority = 5;
 };
 
 /**
