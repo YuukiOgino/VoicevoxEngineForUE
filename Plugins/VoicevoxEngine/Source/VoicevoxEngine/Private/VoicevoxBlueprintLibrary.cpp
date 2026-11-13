@@ -399,13 +399,37 @@ bool UVoicevoxBlueprintLibrary::RewriteUserDictWord(const TArray<uint8>& WordUui
 }
 
 /**
+ * @brief ユーザー辞書の単語を更新する。(Blueprint公開ノード)
+ */
+bool UVoicevoxBlueprintLibrary::RewriteUserDictWordUseGuid(const FGuid WordUuid, const FVoicevoxCoreUserDictWord Word)
+{
+	VoicevoxUserDictWord DictWord;
+	DictWord.priority = static_cast<uint32_t>(Word.Priority);
+	DictWord.accent_type = static_cast<uintptr_t>(Word.AccentType);
+	const FTCHARToUTF8 PronunciationConvert(*Word.Pronunciation);
+	DictWord.pronunciation = const_cast<ANSICHAR*>(PronunciationConvert.Get());
+	const FTCHARToUTF8 SurfaceConvert(*Word.Surface);
+	DictWord.surface = const_cast<ANSICHAR*>(SurfaceConvert.Get());
+	DictWord.word_type = static_cast<VoicevoxUserDictWordType>(Word.WordType);
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->RewriteUserDictWord(WordUuid, &DictWord);
+}
+
+/**
  * @brief ユーザー辞書から単語を削除する。(Blueprint公開ノード)
  */
 bool UVoicevoxBlueprintLibrary::DeleteUserDictWord(const TArray<uint8>& WordUuid)
 {
 	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->DeleteUserDictWord(WordUuid);
 }
-	
+
+/**
+ * @brief ユーザー辞書から単語を削除する。(Blueprint公開ノード)
+ */
+bool UVoicevoxBlueprintLibrary::DeleteUserDictWordUseGuid(const FGuid WordUuid)
+{
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->DeleteUserDictWord(WordUuid);
+}
+
 /**
  * @brief ユーザー辞書の単語を取得する。(Blueprint公開ノード)
  * @returns 登録したユーザー辞書の単語マップ

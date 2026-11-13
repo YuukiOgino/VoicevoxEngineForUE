@@ -385,6 +385,16 @@ public:
 	static bool RewriteUserDictWord(const TArray<uint8>& WordUuid, const FVoicevoxCoreUserDictWord Word);
 
 	/**
+	 * @brief ユーザー辞書の単語を更新する。(Blueprint公開ノード)
+	 *
+	 * @param [in] WordUuid 更新する単語のUUID
+	 * @param [in] Word 新しい単語のデータ
+	 * @returns 結果
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxRewriteUserDictWordUseGuid"))
+	static bool RewriteUserDictWordUseGuid(FGuid WordUuid, const FVoicevoxCoreUserDictWord Word);
+	
+	/**
 	 * @brief ユーザー辞書から単語を削除する。(Blueprint公開ノード)
 	 *
 	 * @param [in] WordUuid 削除する単語のUUID
@@ -392,6 +402,15 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxDeleteUserDictWord"))
 	static bool DeleteUserDictWord(const TArray<uint8>& WordUuid);
+	
+	/**
+	 * @brief ユーザー辞書から単語を削除する。(Blueprint公開ノード)
+	 *
+	 * @param [in] WordUuid 削除する単語のUUID
+	 * @returns 結果
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxDeleteUserDictWordUseGuid"))
+	static bool DeleteUserDictWordUseGuid(FGuid WordUuid);
 	
 	/**
 	 * @brief ユーザー辞書の単語を取得する。(Blueprint公開ノード)

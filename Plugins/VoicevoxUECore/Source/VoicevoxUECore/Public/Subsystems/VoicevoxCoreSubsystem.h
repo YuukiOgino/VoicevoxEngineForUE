@@ -581,12 +581,29 @@ public:
 	bool RewriteUserDictWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord *Word) const;
 
 	/**
+	 * @brief ユーザー辞書の単語を更新する。
+	 *
+	 * @param [in] WordUuid 更新する単語のUUID
+	 * @param [in] Word 新しい単語のデータ
+	 * @returns 結果
+	 */
+	bool RewriteUserDictWord(FGuid WordUuid, const VoicevoxUserDictWord *Word) const;
+	
+	/**
 	 * @brief ユーザー辞書から単語を削除する。
 	 *
 	 * @param [in] WordUuid 削除する単語のUUID
 	 * @returns 結果
 	 */
 	bool DeleteUserDictWord(const TArray<uint8_t>& WordUuid) const;
+	
+	/**
+	 * @brief ユーザー辞書から単語を削除する。
+	 *
+	 * @param [in] WordUuid 削除する単語のUUID
+	 * @returns 結果
+	 */
+	bool DeleteUserDictWord(FGuid WordUuid) const;
 	
 	/**
 	 * @brief ユーザー辞書の単語を取得する。

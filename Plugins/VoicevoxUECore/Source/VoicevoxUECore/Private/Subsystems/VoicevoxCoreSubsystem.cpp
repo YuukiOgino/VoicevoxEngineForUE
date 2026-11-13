@@ -567,9 +567,28 @@ TArray<uint8_t> UVoicevoxCoreSubsystem::UserDictAddWord(const VoicevoxUserDictWo
 /**
  * @brief ユーザー辞書の単語を更新する。
  */
-bool UVoicevoxCoreSubsystem::RewriteUserDictWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord *Word) const
+bool UVoicevoxCoreSubsystem::RewriteUserDictWord(const TArray<uint8_t>& WordUuid, const VoicevoxUserDictWord* Word) const
 {
 	return NativeInstance->RewriteUserDictWord(WordUuid, Word);
+}
+
+/**
+ * @brief ユーザー辞書の単語を更新する。
+ */
+bool UVoicevoxCoreSubsystem::RewriteUserDictWord(const FGuid WordUuid, const VoicevoxUserDictWord* Word) const
+{
+	TArray<uint8> Bytes;
+	Bytes.SetNumUninitialized(16);
+
+	FMemory::Memcpy(Bytes.GetData() + 0, &WordUuid.D, 4);
+	FMemory::Memcpy(Bytes.GetData() + 4,  &WordUuid.C, 4);
+	FMemory::Memcpy(Bytes.GetData() + 8,  &WordUuid.B, 4);
+	FMemory::Memcpy(Bytes.GetData() + 12,  &WordUuid.A, 4);
+	
+	// JSONには反転させてRFC 4122規定に従ったハイフン区切りのようなので、反転を実行して元に戻す。
+	Algo::Reverse(Bytes);
+	
+	return NativeInstance->RewriteUserDictWord(Bytes, Word);
 }
 
 /**
@@ -578,6 +597,28 @@ bool UVoicevoxCoreSubsystem::RewriteUserDictWord(const TArray<uint8_t>& WordUuid
 bool UVoicevoxCoreSubsystem::DeleteUserDictWord(const TArray<uint8_t>& WordUuid) const
 {
 	return NativeInstance->DeleteUserDictWord(WordUuid);
+}
+
+/**
+ * @brief ユーザー辞書から単語を削除する。
+ *
+ * @param [in] WordUuid 削除する単語のUUID
+ * @returns 結果
+ */
+bool UVoicevoxCoreSubsystem::DeleteUserDictWord(const FGuid WordUuid) const
+{
+	TArray<uint8> Bytes;
+	Bytes.SetNumUninitialized(16);
+
+	FMemory::Memcpy(Bytes.GetData() + 0, &WordUuid.D, 4);
+	FMemory::Memcpy(Bytes.GetData() + 4,  &WordUuid.C, 4);
+	FMemory::Memcpy(Bytes.GetData() + 8,  &WordUuid.B, 4);
+	FMemory::Memcpy(Bytes.GetData() + 12,  &WordUuid.A, 4);
+	
+	// JSONには反転させてRFC 4122規定に従ったハイフン区切りのようなので、反転を実行して元に戻す。
+	Algo::Reverse(Bytes);
+	
+	return NativeInstance->DeleteUserDictWord(Bytes);
 }
 	
 /**
