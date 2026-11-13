@@ -84,8 +84,8 @@ VOICEVOXのマルチエンジン機能をUEで実現させるために、プラ�
 VOICEVOX COREのReadMEに従って、CPUモード、もしくはGPUモードの動作に必要なライブラリを取得します。
 
 > [!NOTE]
-> v2.2は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
-> [VOICEVOX CORE 0.16.0](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.16.0)<br/><br/>
+> v2.3は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
+> [VOICEVOX CORE 0.16.4](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.16.4)<br/><br/>
 > v1.3は以下のVOICEVOX COREライブラリで開発しました。<br/><br/>
 > [VOICEVOX CORE 0.15.7](https://github.com/VOICEVOX/voicevox_core/releases/tag/0.15.7)<br/>
 > [VOICEVOX NEMO CORE 0.15.0](https://github.com/VOICEVOX/voicevox_nemo_core/releases/tag/0.15.0)<br/>
@@ -249,6 +249,8 @@ VOICEVOX ENGINEのライセンスを継承し、LGPL v3と、ソースコード�
 
 # 更新履歴
 
+- 2026/11/14
+  - 2.3 中規模のアップデートを実施。以下、更新内容要約。<br/>・VOICEVOX CORE 0.16.4対応。<br/>・ユーザー辞書のAPIを一部修正。<br/>・ユーザー辞書のアセットを追加。<br/>・ソング機能のAPIを追加。
 - 2026/11/04
   - 2.2 UE5.8対応、CUDA版のパッケージングが失敗する不具合修正、Macで一部ライブラリの読み込みに失敗してしまう不具合修正。
 - 2026/11/03
