@@ -539,16 +539,19 @@ TMap<FGuid, FVoicevoxCoreUserDictWord> UVoicevoxCoreSubsystem::UserDictAssetAddW
 			.word_type = static_cast<VoicevoxUserDictWordType>(Value.WordType), 
 			.priority = static_cast<uint32_t>(Value.Priority)
 		};
-		TArray<uint8_t> UUID = NativeInstance->UserDictAddWord(&Word);
 		
-		uint32 A, B, C, D;
+		TArray<uint8_t> UUID = NativeInstance->UserDictAddWord(&Word);
+		// JSONには反転させてRFC 4122規定に従ったハイフン区切りのようなので、処理統一のためUE側もあえて反転させる。削除、更新は元に戻す。
+		Algo::Reverse(UUID);
+		uint32 A, B, C, D = 0;
 
-		FMemory::Memcpy(&A, UUID.GetData() + 0, 4);
-		FMemory::Memcpy(&B, UUID.GetData() + 4, 4);
-		FMemory::Memcpy(&C, UUID.GetData() + 8, 4);
-		FMemory::Memcpy(&D, UUID.GetData() + 12, 4);
+		FMemory::Memcpy(&D, UUID.GetData() + 0, 4);
+		FMemory::Memcpy(&C, UUID.GetData() + 4, 4);
+		FMemory::Memcpy(&B, UUID.GetData() + 8, 4);
+		FMemory::Memcpy(&A, UUID.GetData() + 12, 4);
 		
 		Map.Add(FGuid(A, B, C, D), Value);
+		FGuid g = FGuid(A, B, C, D);
 	}
 	
 	return Map;
