@@ -4,7 +4,6 @@
  * @brief VOICEVOXのJSON変換を実行する CPPファイル
  * @author Yuuki Ogino
  */
-
 #include "Utilities/VoicevoxJsonObjectConverter.h"
 #include "JsonObjectConverter.h"
 

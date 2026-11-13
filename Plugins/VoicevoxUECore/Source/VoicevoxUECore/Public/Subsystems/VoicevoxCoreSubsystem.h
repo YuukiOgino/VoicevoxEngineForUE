@@ -572,6 +572,14 @@ public:
 	TArray<uint8_t> UserDictAddWord(const VoicevoxUserDictWord* Word) const;
 
 	/**
+	 * @brief ユーザー辞書に単語を追加する。
+	 *
+	 * @param [in] Word 追加する単語
+	 * @returns 追加した単語のUUID
+	 */
+	FGuid UserDictAddWordToCreateGuid(const VoicevoxUserDictWord* Word) const;
+	
+	/**
 	 * @brief ユーザー辞書の単語を更新する。
 	 *
 	 * @param [in] WordUuid 更新する単語のUUID

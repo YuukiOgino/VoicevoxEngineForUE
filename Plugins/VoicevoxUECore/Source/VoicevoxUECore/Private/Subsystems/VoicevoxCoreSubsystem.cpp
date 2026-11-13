@@ -4,9 +4,9 @@
  * @brief  各VOICEVOX COREのAPIを呼び出すSubsystem　CPPファイル
  * @author Yuuki Ogino
  */
-
 #include "Subsystems/VoicevoxCoreSubsystem.h"
 #include "VoicevoxApiObject.h"
+#include "Utilities/VoicevoxUserDictUUIDConverter.h"
 
 //--------------------------------
 // override
@@ -540,17 +540,7 @@ TMap<FGuid, FVoicevoxCoreUserDictWord> UVoicevoxCoreSubsystem::UserDictAssetAddW
 			.priority = static_cast<uint32_t>(Value.Priority)
 		};
 		
-		TArray<uint8_t> UUID = NativeInstance->UserDictAddWord(&Word);
-		// JSONには反転させてRFC 4122規定に従ったハイフン区切りのようなので、処理統一のためUE側もあえて反転させる。削除、更新は元に戻す。
-		Algo::Reverse(UUID);
-		uint32 A, B, C, D = 0;
-
-		FMemory::Memcpy(&D, UUID.GetData() + 0, 4);
-		FMemory::Memcpy(&C, UUID.GetData() + 4, 4);
-		FMemory::Memcpy(&B, UUID.GetData() + 8, 4);
-		FMemory::Memcpy(&A, UUID.GetData() + 12, 4);
-		
-		Map.Add(FGuid(A, B, C, D), Value);
+		Map.Add(FVoicevoxUserDictUUIDConverter::UUIDConverterToGuid(NativeInstance->UserDictAddWord(&Word)), Value);
 	}
 	
 	return Map;
@@ -562,6 +552,14 @@ TMap<FGuid, FVoicevoxCoreUserDictWord> UVoicevoxCoreSubsystem::UserDictAssetAddW
 TArray<uint8_t> UVoicevoxCoreSubsystem::UserDictAddWord(const VoicevoxUserDictWord* Word) const
 {
 	return NativeInstance->UserDictAddWord(Word);
+}
+
+/**
+ * @brief ユーザー辞書に単語を追加する。
+ */
+FGuid UVoicevoxCoreSubsystem::UserDictAddWordToCreateGuid(const VoicevoxUserDictWord* Word) const
+{
+	return FVoicevoxUserDictUUIDConverter::UUIDConverterToGuid(NativeInstance->UserDictAddWord(Word));
 }
 
 /**
@@ -577,18 +575,7 @@ bool UVoicevoxCoreSubsystem::RewriteUserDictWord(const TArray<uint8_t>& WordUuid
  */
 bool UVoicevoxCoreSubsystem::RewriteUserDictWord(const FGuid WordUuid, const VoicevoxUserDictWord* Word) const
 {
-	TArray<uint8> Bytes;
-	Bytes.SetNumUninitialized(16);
-
-	FMemory::Memcpy(Bytes.GetData() + 0, &WordUuid.D, 4);
-	FMemory::Memcpy(Bytes.GetData() + 4,  &WordUuid.C, 4);
-	FMemory::Memcpy(Bytes.GetData() + 8,  &WordUuid.B, 4);
-	FMemory::Memcpy(Bytes.GetData() + 12,  &WordUuid.A, 4);
-	
-	// JSONには反転させてRFC 4122規定に従ったハイフン区切りのようなので、反転を実行して元に戻す。
-	Algo::Reverse(Bytes);
-	
-	return NativeInstance->RewriteUserDictWord(Bytes, Word);
+	return NativeInstance->RewriteUserDictWord(FVoicevoxUserDictUUIDConverter::GuidConverterToUUID(WordUuid), Word);
 }
 
 /**
@@ -607,18 +594,7 @@ bool UVoicevoxCoreSubsystem::DeleteUserDictWord(const TArray<uint8_t>& WordUuid)
  */
 bool UVoicevoxCoreSubsystem::DeleteUserDictWord(const FGuid WordUuid) const
 {
-	TArray<uint8> Bytes;
-	Bytes.SetNumUninitialized(16);
-
-	FMemory::Memcpy(Bytes.GetData() + 0, &WordUuid.D, 4);
-	FMemory::Memcpy(Bytes.GetData() + 4,  &WordUuid.C, 4);
-	FMemory::Memcpy(Bytes.GetData() + 8,  &WordUuid.B, 4);
-	FMemory::Memcpy(Bytes.GetData() + 12,  &WordUuid.A, 4);
-	
-	// JSONには反転させてRFC 4122規定に従ったハイフン区切りのようなので、反転を実行して元に戻す。
-	Algo::Reverse(Bytes);
-	
-	return NativeInstance->DeleteUserDictWord(Bytes);
+	return NativeInstance->DeleteUserDictWord(FVoicevoxUserDictUUIDConverter::GuidConverterToUUID(WordUuid));
 }
 	
 /**

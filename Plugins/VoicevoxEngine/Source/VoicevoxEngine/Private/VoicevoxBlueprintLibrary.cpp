@@ -375,6 +375,22 @@ TArray<uint8> UVoicevoxBlueprintLibrary::UserDictAddWord(const FVoicevoxCoreUser
 }
 
 /**
+ * @brief ユーザー辞書に単語を追加する。(Blueprint公開ノード)
+ */
+FGuid UVoicevoxBlueprintLibrary::UserDictAddWordToCreateGuid(const FVoicevoxCoreUserDictWord Word)
+{
+	VoicevoxUserDictWord DictWord;
+	DictWord.priority = static_cast<uint32_t>(Word.Priority);
+	DictWord.accent_type = static_cast<uintptr_t>(Word.AccentType);
+	const FTCHARToUTF8 PronunciationConvert(*Word.Pronunciation);
+	DictWord.pronunciation = const_cast<ANSICHAR*>(PronunciationConvert.Get());
+	const FTCHARToUTF8 SurfaceConvert(*Word.Surface);
+	DictWord.surface = const_cast<ANSICHAR*>(SurfaceConvert.Get());
+	DictWord.word_type = static_cast<VoicevoxUserDictWordType>(Word.WordType);
+	return GEngine->GetEngineSubsystem<UVoicevoxCoreSubsystem>()->UserDictAddWordToCreateGuid(&DictWord);
+}
+
+/**
  * @brief ユーザー辞書アセットから単語を登録する。(Blueprint公開ノード)
  */
 TMap<FGuid, FVoicevoxCoreUserDictWord> UVoicevoxBlueprintLibrary::UserDictAssetAddWord(UVoicevoxUserDictWord* UserDictWordAsset)

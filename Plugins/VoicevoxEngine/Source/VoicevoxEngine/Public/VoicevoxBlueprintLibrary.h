@@ -366,6 +366,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxUserDictAddWord"))
 	static UPARAM(DisplayName="UUID") TArray<uint8> UserDictAddWord(const FVoicevoxCoreUserDictWord Word);
 
+	
+	/**
+	 * @brief ユーザー辞書に単語を追加する。(Blueprint公開ノード)
+	 *
+	 * @param [in] Word 追加する単語
+	 * @returns 追加した単語のUUID
+	 */
+	UFUNCTION(BlueprintCallable, Category="VOICEVOX Engine", meta=(Keywords="voicevox", DisplayName = "VoicevoxUserDictAddWordToCreateGuid"))
+	static UPARAM(DisplayName="UUID") FGuid UserDictAddWordToCreateGuid(const FVoicevoxCoreUserDictWord Word);
+	
 	/**
 	 * @brief ユーザー辞書アセットから単語を登録する。(Blueprint公開ノード)
 	 * @param [in] UserDictWordAsset ユーザー辞書アセット

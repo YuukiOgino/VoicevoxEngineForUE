@@ -5,7 +5,6 @@
  * @brief VOICEVOXのJSON変換を実行するヘッダーファイル
  * @author Yuuki Ogino
  */
-
 #pragma once
 
 #include "VoicevoxUEDefined.h"
